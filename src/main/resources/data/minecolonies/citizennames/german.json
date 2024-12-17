@@ -1,7 +1,8 @@
 {
-  "parts":2,
-  "order":"WESTERN",
-  "male_firstname":["Adam",
+  "parts": 2,
+  "order": "WESTERN",
+  "male_firstname": [
+    "Adam",
     "Auberlin",
     "Aulber",
     "Auberli",
@@ -119,9 +120,9 @@
     "Will",
     "Willin",
     "Ytel",
-    "Zyppolt"],
-
-  "female_firstname":[
+    "Zyppolt"
+  ],
+  "female_firstname": [
     "Abeleken",
     "Abelken",
     "Alheyden",
@@ -173,9 +174,9 @@
     "Wibeke",
     "Wobbeken",
     "Wobbeke",
-    "Wommelken"],
-
-  "surnames":[
+    "Wommelken"
+  ],
+  "surnames": [
     "Alschawer",
     "Arnold",
     "Bantzschman",

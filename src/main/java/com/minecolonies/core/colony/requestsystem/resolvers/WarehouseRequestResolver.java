@@ -13,20 +13,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * ----------------------- Not Documented Object ---------------------
  */
-public class WarehouseRequestResolver extends AbstractWarehouseRequestResolver
-{
+public class WarehouseRequestResolver extends AbstractWarehouseRequestResolver {
     public WarehouseRequestResolver(
-      @NotNull final ILocation location,
-      @NotNull final IToken<?> token)
-    {
+            @NotNull final ILocation location,
+            @NotNull final IToken<?> token) {
         super(location, token);
     }
 
     @Override
-    protected int getWarehouseInternalCount(final BuildingWareHouse wareHouse, final IRequest<? extends IDeliverable> requestToCheck)
-    {
-        if (requestToCheck.getRequest() instanceof IConcreteDeliverable)
-        {
+    protected int getWarehouseInternalCount(final BuildingWareHouse wareHouse, final IRequest<? extends IDeliverable> requestToCheck) {
+        if (requestToCheck.getRequest() instanceof IConcreteDeliverable) {
             return 0;
         }
 

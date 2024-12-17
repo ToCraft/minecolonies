@@ -10,8 +10,7 @@ import net.minecraft.world.level.Level;
 /**
  * Class for the Pirate entity.
  */
-public class EntityDrownedPirate extends AbstractDrownedEntityPirate implements IMeleePirateEntity
-{
+public class EntityDrownedPirate extends AbstractDrownedEntityPirate implements IMeleePirateEntity {
 
     /**
      * Constructor of the entity.
@@ -19,15 +18,13 @@ public class EntityDrownedPirate extends AbstractDrownedEntityPirate implements 
      * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityDrownedPirate(final EntityType<? extends EntityDrownedPirate> type, final Level worldIn)
-    {
+    public EntityDrownedPirate(final EntityType<? extends EntityDrownedPirate> type, final Level worldIn) {
         super(type, worldIn);
         this.moveControl = new MovementHandler(this);
     }
 
     @Override
-    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
-    {
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage) {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
         this.getAttribute(Attributes.ARMOR).setBaseValue(0.25);
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth * 1.5);

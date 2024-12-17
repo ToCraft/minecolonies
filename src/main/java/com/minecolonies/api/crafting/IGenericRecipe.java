@@ -22,8 +22,7 @@ import java.util.Optional;
  * player).  It is primarily used to make recipe validity checks and
  * used in the JEI integration display, but not for actual crafting.
  */
-public interface IGenericRecipe
-{
+public interface IGenericRecipe {
     /**
      * Gets the required size of the crafting grid, 1-3.  (In
      * particular, a value of 3 means that it can't be crafted in
@@ -78,8 +77,8 @@ public interface IGenericRecipe
      * Gets the input ingredient lists of this recipe.
      *
      * @return The list of slots, each of which is a list of alternatives.  Note that some recipes may have been
-     *         "compacted" with a count of multiple items required in one slot, so you can't ignore that.  As
-     *         such this does not preserve the original crafting grid layout (if any).
+     * "compacted" with a count of multiple items required in one slot, so you can't ignore that.  As
+     * such this does not preserve the original crafting grid layout (if any).
      */
     @NotNull
     List<List<ItemStack>> getInputs();
@@ -89,7 +88,7 @@ public interface IGenericRecipe
      *
      * @param predicate The predicate to test.
      * @return True if the output of this recipe matches the predicate;
-     *         false if the output fails the predicate; empty otherwise.
+     * false if the output fails the predicate; empty otherwise.
      */
     Optional<Boolean> matchesOutput(@NotNull OptionalPredicate<ItemStack> predicate);
 
@@ -100,8 +99,8 @@ public interface IGenericRecipe
      *
      * @param predicate The predicate to test.
      * @return True if any input (including alternates) matches the predicate;
-     *         false if any input (including alternates) fails the predicate;
-     *         empty otherwise.
+     * false if any input (including alternates) fails the predicate;
+     * empty otherwise.
      */
     Optional<Boolean> matchesInput(@NotNull OptionalPredicate<ItemStack> predicate);
 
@@ -148,6 +147,7 @@ public interface IGenericRecipe
 
     /**
      * Returns an arbitrary integer that influences recipe sort order based on level.
+     *
      * @return a sorting number
      */
     int getLevelSort();

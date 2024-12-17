@@ -3,8 +3,7 @@ package com.minecolonies.api.util.constant;
 /**
  * All colony manager related constants.
  */
-public final class ColonyManagerConstants
-{
+public final class ColonyManagerConstants {
     /**
      * Distance NBT tag.
      */
@@ -58,8 +57,7 @@ public final class ColonyManagerConstants
     /**
      * Private constructor to hide implicit one.
      */
-    private ColonyManagerConstants()
-    {
+    private ColonyManagerConstants() {
         /*
          * Intentionally left empty.
          */

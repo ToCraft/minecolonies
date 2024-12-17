@@ -5,27 +5,27 @@ import com.minecolonies.core.entity.other.NewBobberEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 /**
  * Determines how the fish hook is rendered.
  */
 @OnlyIn(Dist.CLIENT)
-public class RenderFishHook extends EntityRenderer<NewBobberEntity>
-{
+public class RenderFishHook extends EntityRenderer<NewBobberEntity> {
     /**
      * The resource location containing the particle textures (Spawned by the fishHook).
      */
@@ -41,16 +41,13 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
      *
      * @param context context that we use.
      */
-    public RenderFishHook(final EntityRendererProvider.Context context)
-    {
+    public RenderFishHook(final EntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
-    public void render(@NotNull NewBobberEntity entity, float p_114706_, float p_114707_, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int partialTicks)
-    {
-        if (entity.getOwner() instanceof AbstractEntityCitizen citizen)
-        {
+    public void render(@NotNull NewBobberEntity entity, float p_114706_, float p_114707_, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int partialTicks) {
+        if (entity.getOwner() instanceof AbstractEntityCitizen citizen) {
             poseStack.pushPose();
             poseStack.pushPose();
             poseStack.scale(0.5F, 0.5F, 0.5F);
@@ -67,8 +64,7 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
             poseStack.popPose();
             int i = citizen.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
             ItemStack itemstack = citizen.getMainHandItem();
-            if (!itemstack.is(Items.FISHING_ROD))
-            {
+            if (!itemstack.is(Items.FISHING_ROD)) {
                 i = -i;
             }
 
@@ -97,8 +93,7 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
             PoseStack.Pose posestack$pose1 = poseStack.last();
             int j = 16;
 
-            for (int k = 0; k <= 16; ++k)
-            {
+            for (int k = 0; k <= 16; ++k) {
                 stringVertex(f4, f5, f6, vertexconsumer1, posestack$pose1, fraction(k, 16), fraction(k + 1, 16));
             }
 
@@ -107,23 +102,20 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
         }
     }
 
-    private static float fraction(int first, int second)
-    {
+    private static float fraction(int first, int second) {
         return (float) first / (float) second;
     }
 
-    private static void vertex(VertexConsumer consumer, Matrix4f p_114713_, PoseStack.Pose p_114714_, int p_114715_, float p_114716_, int p_114717_, int p_114718_, int p_114719_)
-    {
+    private static void vertex(VertexConsumer consumer, Matrix4f p_114713_, PoseStack.Pose p_114714_, int p_114715_, float p_114716_, int p_114717_, int p_114718_, int p_114719_) {
         consumer.addVertex(p_114713_, p_114716_ - 0.5F, (float) p_114717_ - 0.5F, 0.0F)
-          .setColor(255, 255, 255, 255)
-          .setUv((float) p_114718_, (float) p_114719_)
-          .setOverlay(OverlayTexture.NO_OVERLAY)
-          .setLight(p_114715_)
-          .setNormal(p_114714_, 0.0F, 1.0F, 0.0F);
+                .setColor(255, 255, 255, 255)
+                .setUv((float) p_114718_, (float) p_114719_)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(p_114715_)
+                .setNormal(p_114714_, 0.0F, 1.0F, 0.0F);
     }
 
-    private static void stringVertex(float p_174119_, float p_174120_, float p_174121_, VertexConsumer p_174122_, PoseStack.Pose p_174123_, float p_174124_, float p_174125_)
-    {
+    private static void stringVertex(float p_174119_, float p_174120_, float p_174121_, VertexConsumer p_174122_, PoseStack.Pose p_174123_, float p_174124_, float p_174125_) {
         float f = p_174119_ * p_174124_;
         float f1 = p_174120_ * (p_174124_ * p_174124_ + p_174124_) * 0.5F + 0.25F;
         float f2 = p_174121_ * p_174124_;
@@ -145,8 +137,7 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
      */
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(@NotNull final NewBobberEntity entity)
-    {
+    public ResourceLocation getTextureLocation(@NotNull final NewBobberEntity entity) {
         return getTexture();
     }
 
@@ -156,8 +147,7 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
      * @return the address of the resource
      */
     @NotNull
-    private static ResourceLocation getTexture()
-    {
+    private static ResourceLocation getTexture() {
         return TEXTURE;
     }
 }

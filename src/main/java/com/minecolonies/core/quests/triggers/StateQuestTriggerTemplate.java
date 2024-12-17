@@ -5,7 +5,8 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.List;
 
@@ -14,8 +15,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 /**
  * Random quest trigger.
  */
-public class StateQuestTriggerTemplate implements IQuestTriggerTemplate
-{
+public class StateQuestTriggerTemplate implements IQuestTriggerTemplate {
     /**
      * Path of keys to the nbt we are trying to match,
      */
@@ -33,12 +33,12 @@ public class StateQuestTriggerTemplate implements IQuestTriggerTemplate
 
     /**
      * Create a new state quest trigger.
+     *
      * @param paths the path to the state to match.
      * @param match the state to match.
      * @param count the number of matches we have to find.
      */
-    public StateQuestTriggerTemplate(final String[] paths, final JsonElement match, final int count)
-    {
+    public StateQuestTriggerTemplate(final String[] paths, final JsonElement match, final int count) {
         this.nbtPath = List.of(paths);
         this.matchTag = match;
         this.matchCount = count;
@@ -46,35 +46,29 @@ public class StateQuestTriggerTemplate implements IQuestTriggerTemplate
 
     /**
      * Create a new trigger directly from json.
+     *
      * @param questTriggerJson the json associated to this trigger.
      */
-    public static StateQuestTriggerTemplate createStateTrigger(final JsonObject questTriggerJson)
-    {
+    public static StateQuestTriggerTemplate createStateTrigger(final JsonObject questTriggerJson) {
         final JsonObject subObj = questTriggerJson.get(STATE_ID).getAsJsonObject();
         return new StateQuestTriggerTemplate(subObj.get(PATH_ID).getAsString().split("/"),
-          subObj.get(MATCH_ID),
-          subObj.has(COUNT_ID) ? subObj.get(COUNT_ID).getAsInt() : 1);
+                subObj.get(MATCH_ID),
+                subObj.has(COUNT_ID) ? subObj.get(COUNT_ID).getAsInt() : 1);
 
     }
 
     @Override
-    public ITriggerReturnData canTriggerQuest(final IColony colony)
-    {
+    public ITriggerReturnData canTriggerQuest(final IColony colony) {
         Tag subPathCompound = colony.getColonyTag();
-        for (final String subPath : nbtPath)
-        {
-            if (subPathCompound instanceof CompoundTag && ((CompoundTag) subPathCompound).contains(subPath))
-            {
+        for (final String subPath : nbtPath) {
+            if (subPathCompound instanceof CompoundTag && ((CompoundTag) subPathCompound).contains(subPath)) {
                 subPathCompound = ((CompoundTag) subPathCompound).get(subPath);
-            }
-            else
-            {
+            } else {
                 return new BooleanTriggerReturnData(false);
             }
         }
 
-        if (subPathCompound == null)
-        {
+        if (subPathCompound == null) {
             return new BooleanTriggerReturnData(false);
         }
 

@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -44,8 +43,7 @@ import java.util.Map;
 /**
  * Block class for the plantation field block.
  */
-public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<BlockPlantationField> implements IBuilderUndestroyable, IAnchorBlock, IBuildingBrowsableBlock, EntityBlock
-{
+public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<BlockPlantationField> implements IBuilderUndestroyable, IAnchorBlock, IBuildingBrowsableBlock, EntityBlock {
     public static final MapCodec<BlockPlantationField> CODEC = simpleCodec(BlockPlantationField::new);
 
     /**
@@ -76,70 +74,59 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     /**
      * Default constructor.
      */
-    public BlockPlantationField()
-    {
+    public BlockPlantationField() {
         this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
     }
 
-    public BlockPlantationField(final Properties properties)
-    {
+    public BlockPlantationField(final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(MIRROR, false));
     }
 
     @Override
-    protected MapCodec<BlockPlantationField> codec()
-    {
+    protected MapCodec<BlockPlantationField> codec() {
         return CODEC;
     }
 
     @Override
-    public ResourceLocation getRegistryName()
-    {
+    public ResourceLocation getRegistryName() {
         return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Override
-    public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
-    {
+    public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState) {
         return new TileEntityPlantationField(blockPos, blockState);
     }
 
     @NotNull
     @Override
-    public BlockState rotate(@NotNull BlockState state, Rotation rot)
-    {
+    public BlockState rotate(@NotNull BlockState state, Rotation rot) {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     @NotNull
     @Override
-    public BlockState mirror(@NotNull BlockState state, Mirror mirrorIn)
-    {
+    public BlockState mirror(@NotNull BlockState state, Mirror mirrorIn) {
         return state.setValue(MIRROR, mirrorIn != Mirror.NONE);
     }
 
     @Override
     public ItemInteractionResult useItemOn(
-      final ItemStack stack,
-      final BlockState state,
-      final Level worldIn,
-      final BlockPos pos,
-      final Player player,
-      final InteractionHand hand,
-      final BlockHitResult ray)
-    {
+            final ItemStack stack,
+            final BlockState state,
+            final Level worldIn,
+            final BlockPos pos,
+            final Player player,
+            final InteractionHand hand,
+            final BlockHitResult ray) {
         // If this is the client side, open the plantation field GUI
-        if (worldIn.isClientSide)
-        {
-            if (hand == InteractionHand.OFF_HAND)
-            {
+        if (worldIn.isClientSide) {
+            if (hand == InteractionHand.OFF_HAND) {
                 return ItemInteractionResult.FAIL;
             }
 
             final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if (tileEntity instanceof TileEntityPlantationField plantationField)
-            {
+            if (tileEntity instanceof TileEntityPlantationField plantationField) {
                 new WindowPlantationField(plantationField).open();
                 return ItemInteractionResult.SUCCESS;
             }
@@ -151,62 +138,52 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     }
 
     @Override
-    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
-    {
+    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context) {
         Direction dir = state.getValue(FACING);
-        if (SHAPES.containsKey(dir))
-        {
+        if (SHAPES.containsKey(dir)) {
             return SHAPES.get(dir);
         }
         VoxelShape shape = Shapes.box(
-          0D + (dir.getStepX() > 0 ? 0.5 : 0),
-          0D,
-          0D + (dir.getStepZ() > 0 ? 0.5 : 0),
-          1D - (dir.getStepX() < 0 ? 0.5 : 0),
-          0.625D,
-          1D - (dir.getStepZ() < 0 ? 0.5 : 0)
+                0D + (dir.getStepX() > 0 ? 0.5 : 0),
+                0D,
+                0D + (dir.getStepZ() > 0 ? 0.5 : 0),
+                1D - (dir.getStepX() < 0 ? 0.5 : 0),
+                0.625D,
+                1D - (dir.getStepZ() < 0 ? 0.5 : 0)
         );
         SHAPES.put(dir, shape);
         return shape;
     }
 
     @Override
-    public void wasExploded(final Level worldIn, final BlockPos pos, final Explosion explosionIn)
-    {
+    public void wasExploded(final Level worldIn, final BlockPos pos, final Explosion explosionIn) {
         notifyColonyAboutDestruction(worldIn, pos);
         super.wasExploded(worldIn, pos, explosionIn);
     }
 
     @Override
-    public BlockState getStateForPlacement(final BlockPlaceContext context)
-    {
+    public BlockState getStateForPlacement(final BlockPlaceContext context) {
         return super.getStateForPlacement(context).setValue(FACING, context.getHorizontalDirection());
     }
 
     @Override
-    public void setPlacedBy(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
-    {
+    public void setPlacedBy(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
 
-        if (worldIn.isClientSide)
-        {
+        if (worldIn.isClientSide) {
             return;
         }
 
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (tileEntity instanceof TileEntityPlantationField tileEntityPlantationField)
-        {
+        if (tileEntity instanceof TileEntityPlantationField tileEntityPlantationField) {
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
-            if (colony != null)
-            {
-                for (FieldRegistries.FieldEntry plantationFieldType : tileEntityPlantationField.getPlantationFieldTypes())
-                {
+            if (colony != null) {
+                for (FieldRegistries.FieldEntry plantationFieldType : tileEntityPlantationField.getPlantationFieldTypes()) {
                     final PlantationField plantationField = PlantationField.create(plantationFieldType, pos);
 
                     final List<BlockPos> workingPositions = tileEntityPlantationField.getWorkingPositions(plantationField.getModule().getWorkTag());
                     final List<BlockPos> validPositions = plantationField.getModule().getValidWorkingPositions(worldIn, workingPositions);
-                    if (!validPositions.isEmpty())
-                    {
+                    if (!validPositions.isEmpty()) {
                         plantationField.setWorkingPositions(validPositions);
                         colony.getBuildingManager().addField(plantationField);
                         colony.getBuildingManager().addLeisureSite(pos);
@@ -217,15 +194,13 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     }
 
     @Override
-    public BlockState playerWillDestroy(final Level worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final Player player)
-    {
+    public BlockState playerWillDestroy(final Level worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final Player player) {
         notifyColonyAboutDestruction(worldIn, pos);
         return super.playerWillDestroy(worldIn, pos, state, player);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
-    {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, MIRROR);
     }
 
@@ -235,18 +210,13 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
      * @param worldIn the world.
      * @param pos     the position of the block.
      */
-    private void notifyColonyAboutDestruction(final Level worldIn, final BlockPos pos)
-    {
-        if (!worldIn.isClientSide())
-        {
+    private void notifyColonyAboutDestruction(final Level worldIn, final BlockPos pos) {
+        if (!worldIn.isClientSide()) {
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
-            if (colony != null)
-            {
+            if (colony != null) {
                 final BlockEntity blockEntity = worldIn.getBlockEntity(pos);
-                if (blockEntity instanceof TileEntityPlantationField plantationField)
-                {
-                    for (FieldRegistries.FieldEntry plantationFieldType : plantationField.getPlantationFieldTypes())
-                    {
+                if (blockEntity instanceof TileEntityPlantationField plantationField) {
+                    for (FieldRegistries.FieldEntry plantationFieldType : plantationField.getPlantationFieldTypes()) {
                         colony.getBuildingManager().removeField(field -> field.getFieldType().equals(plantationFieldType) && field.getPosition().equals(pos));
                         colony.getBuildingManager().removeLeisureSite(pos);
                     }

@@ -1,18 +1,17 @@
 package com.minecolonies.core.colony.eventhooks.buildingEvents;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The event handling a building being deconstructed.
  */
-public class BuildingDeconstructedEvent extends AbstractBuildingEvent
-{
+public class BuildingDeconstructedEvent extends AbstractBuildingEvent {
 
     /**
      * This events id, registry entries use res locations as ids.
@@ -22,32 +21,28 @@ public class BuildingDeconstructedEvent extends AbstractBuildingEvent
     /**
      * Creates a new building deconstructed event.
      */
-    public BuildingDeconstructedEvent()
-    {
+    public BuildingDeconstructedEvent() {
         super();
     }
 
     /**
      * Creates a new building deconstructed event.
-     * 
+     *
      * @param eventPos      the position of the hut block of the building.
      * @param buildingName  the name of the building.
      * @param buildingLevel the level of the building before this event.
      */
-    public BuildingDeconstructedEvent(BlockPos eventPos, String buildingName, int buildingLevel)
-    {
+    public BuildingDeconstructedEvent(BlockPos eventPos, String buildingName, int buildingLevel) {
         super(eventPos, buildingName, buildingLevel);
     }
 
     @Override
-    public ResourceLocation getEventTypeId()
-    {
+    public ResourceLocation getEventTypeId() {
         return BUILDING_DECONSTRUCTED_EVENT_ID;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "Building Deconstructed";
     }
 
@@ -57,8 +52,7 @@ public class BuildingDeconstructedEvent extends AbstractBuildingEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static BuildingDeconstructedEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public static BuildingDeconstructedEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         final BuildingDeconstructedEvent deconstructionEvent = new BuildingDeconstructedEvent();
         deconstructionEvent.deserializeNBT(provider, compound);
         return deconstructionEvent;
@@ -70,8 +64,7 @@ public class BuildingDeconstructedEvent extends AbstractBuildingEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static BuildingDeconstructedEvent loadFromFriendlyByteBuf(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public static BuildingDeconstructedEvent loadFromFriendlyByteBuf(@NotNull final RegistryFriendlyByteBuf buf) {
         final BuildingDeconstructedEvent deconstructionEvent = new BuildingDeconstructedEvent();
         deconstructionEvent.deserialize(buf);
         return deconstructionEvent;

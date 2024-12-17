@@ -3,8 +3,7 @@ package com.minecolonies.api.colony;
 /**
  * Interface type for entities belonging to a colony
  */
-public interface IColonyRelated
-{
+public interface IColonyRelated {
     /**
      * Register the entity with the related colony
      */

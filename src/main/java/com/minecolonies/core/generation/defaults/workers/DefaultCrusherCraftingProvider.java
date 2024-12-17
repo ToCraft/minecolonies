@@ -19,25 +19,21 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CUSTOM
 /**
  * Datagen for Crusher
  */
-public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
-{
+public class DefaultCrusherCraftingProvider extends CustomRecipeProvider {
     private static final String CRUSHER = ModJobs.CRUSHER_ID.getPath();
 
-    public DefaultCrusherCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultCrusherCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "DefaultCrusherCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
         final Rule noGildedHammer = builder -> builder.maxResearchId(ResearchConstants.CRUSHING_11);
         final Rule withGildedHammer = builder -> builder.minResearchId(ResearchConstants.CRUSHING_11);
         final Rule withTheDepths = builder -> builder.minResearchId(ResearchConstants.THE_DEPTHS);
@@ -67,13 +63,11 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
                        @NotNull final String name,
                        @NotNull final ItemStack input,
                        @NotNull final ItemStack output,
-                       @NotNull final Rule... rules)
-    {
+                       @NotNull final Rule... rules) {
         final CustomRecipeBuilder builder = recipe(CRUSHER, MODULE_CUSTOM, name)
                 .inputs(List.of(new ItemStorage(input)))
                 .result(output);
-        for (final Rule rule : rules)
-        {
+        for (final Rule rule : rules) {
             rule.accept(builder);
         }
         builder.build(consumer);
@@ -82,7 +76,6 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
     /**
      * Convenience alias to stop the analyzer getting mad about variadic generics
      */
-    private interface Rule extends Consumer<CustomRecipeBuilder>
-    {
+    private interface Rule extends Consumer<CustomRecipeBuilder> {
     }
 }

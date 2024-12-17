@@ -9,10 +9,10 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.tileentities.TileEntityGrave;
-import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.tileentities.TileEntityGrave;
+import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -34,8 +34,7 @@ import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 /**
  * The graveyard list module.
  */
-public class GraveyardManagementModule extends AbstractBuildingModule implements IBuildingModule, IPersistentModule, IBuildingEventsModule
-{
+public class GraveyardManagementModule extends AbstractBuildingModule implements IBuildingModule, IPersistentModule, IBuildingEventsModule {
     /**
      * The tag to store the list of resting citizen in this graveyard
      */
@@ -58,57 +57,45 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     private GraveData lastGraveData;
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         restingCitizen.clear();
-        if (compound.contains(TAG_RIP_CITIZEN_LIST))
-        {
+        if (compound.contains(TAG_RIP_CITIZEN_LIST)) {
             final ListTag ripCitizen = compound.getList(TAG_RIP_CITIZEN_LIST, TAG_STRING);
-            for (int i = 0; i < ripCitizen.size(); i++)
-            {
+            for (int i = 0; i < ripCitizen.size(); i++) {
                 final String citizenName = ripCitizen.getString(i);
                 restingCitizen.add(citizenName);
             }
         }
 
-        if (compound.contains(TAG_GRAVE_DATA))
-        {
+        if (compound.contains(TAG_GRAVE_DATA)) {
             lastGraveData = new GraveData();
             lastGraveData.read(compound.getCompound(TAG_GRAVE_DATA));
-        }
-        else lastGraveData = null;
+        } else lastGraveData = null;
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         @NotNull final ListTag ripCitizen = new ListTag();
-        for (@NotNull final String citizenName : restingCitizen)
-        {
+        for (@NotNull final String citizenName : restingCitizen) {
             ripCitizen.add(StringTag.valueOf(citizenName));
         }
         compound.put(TAG_RIP_CITIZEN_LIST, ripCitizen);
 
-        if(lastGraveData != null)
-        {
+        if (lastGraveData != null) {
             compound.put(TAG_GRAVE_DATA, lastGraveData.write());
         }
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf) {
         final IColony colony = building.getColony();
         final List<BlockPos> graves = new ArrayList<>(colony.getGraveManager().getGraves().keySet());
         final List<BlockPos> cleanList = new ArrayList<>();
 
-        for (@NotNull final BlockPos grave : graves)
-        {
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), grave))
-            {
+        for (@NotNull final BlockPos grave : graves) {
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), grave)) {
                 final BlockEntity tileEntity = colony.getWorld().getBlockEntity(grave);
-                if (tileEntity instanceof TileEntityGrave)
-                {
+                if (tileEntity instanceof TileEntityGrave) {
                     cleanList.add(grave);
                 }
             }
@@ -116,49 +103,45 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
 
         // grave list
         buf.writeInt(cleanList.size());
-        for (@NotNull final BlockPos grave : cleanList)
-        {
+        for (@NotNull final BlockPos grave : cleanList) {
             buf.writeBlockPos(grave);
         }
 
         //resting citizen list
         buf.writeInt(restingCitizen.size());
-        for (@NotNull final String citizenName : restingCitizen)
-        {
+        for (@NotNull final String citizenName : restingCitizen) {
             buf.writeUtf(citizenName);
         }
     }
 
     /**
      * Setter for the last grave data.
+     *
      * @param graveData the last grave the worker has dug.
      */
-    public void setLastGraveData(final GraveData graveData)
-    {
+    public void setLastGraveData(final GraveData graveData) {
         this.lastGraveData = graveData;
         markDirty();
     }
 
     /**
      * Get for the last grave.
+     *
      * @return the last grave the worker has dug.
      */
-    public GraveData getLastGraveData()
-    {
+    public GraveData getLastGraveData() {
         return this.lastGraveData;
     }
 
     /**
      * Check if one of the citizens in the list is resting.
+     *
      * @param citizens the citizens to check.
      * @return true if so.
      */
-    public boolean hasRestingCitizen(final Set<String> citizens)
-    {
-        for (final String citizen : citizens)
-        {
-            if (restingCitizen.contains(citizen))
-            {
+    public boolean hasRestingCitizen(final Set<String> citizens) {
+        for (final String citizen : citizens) {
+            if (restingCitizen.contains(citizen)) {
                 return true;
             }
         }
@@ -168,14 +151,11 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     /**
      * Add a citizen to the list of resting citizen in this graveyard
      */
-    public void buryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection, final AbstractEntityCitizen worker)
-    {
-        if(lastGraveData != null && !restingCitizen.contains(lastGraveData.getCitizenName()))
-        {
+    public void buryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection, final AbstractEntityCitizen worker) {
+        if (lastGraveData != null && !restingCitizen.contains(lastGraveData.getCitizenName())) {
             final IColony colony = building.getColony();
             Direction facing = positionAndDirection.getB();
-            if(facing == Direction.UP || facing == Direction.DOWN)
-            {
+            if (facing == Direction.UP || facing == Direction.DOWN) {
                 facing = Direction.NORTH; //prevent setting an invalid HorizontalDirection
             }
 
@@ -184,16 +164,14 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
                     ModBlocks.blockNamedGrave.defaultBlockState().setValue(AbstractBlockMinecoloniesNamedGrave.FACING, facing));
 
             BlockEntity tileEntity = colony.getWorld().getBlockEntity(positionAndDirection.getA());
-            if (tileEntity instanceof TileEntityNamedGrave)
-            {
+            if (tileEntity instanceof TileEntityNamedGrave) {
                 final String firstName = StringUtils.split(lastGraveData.getCitizenName())[0];
-                final String lastName = lastGraveData.getCitizenName().replaceFirst(firstName,"");
+                final String lastName = lastGraveData.getCitizenName().replaceFirst(firstName, "");
 
                 final ArrayList<String> lines = new ArrayList<>();
                 lines.add(firstName);
                 lines.add(lastName);
-                if (lastGraveData.getCitizenJobName() != null)
-                {
+                if (lastGraveData.getCitizenJobName() != null) {
                     lines.add(lastGraveData.getCitizenJobName());
                 }
                 ((TileEntityNamedGrave) tileEntity).setTextLines(lines);

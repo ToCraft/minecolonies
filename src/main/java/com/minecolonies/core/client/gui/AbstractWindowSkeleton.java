@@ -21,18 +21,17 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Manage windows and their events.
  */
-public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonHandler
-{
+public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonHandler {
     @NotNull
     private final HashMap<String, Consumer<Button>> buttons;
 
     /**
      * Panes used by the generic page handler
      */
-    protected final Text       pageNum;
-    protected final Button     buttonPrevPage;
-    protected final Button     buttonNextPage;
-    protected       SwitchView switchView;
+    protected final Text pageNum;
+    protected final Button buttonPrevPage;
+    protected final Button buttonNextPage;
+    protected SwitchView switchView;
 
     /**
      * This window's resource location
@@ -50,8 +49,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      *
      * @param resource Resource location string.
      */
-    public AbstractWindowSkeleton(final String resource)
-    {
+    public AbstractWindowSkeleton(final String resource) {
         this(resource, null);
     }
 
@@ -60,8 +58,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      *
      * @param resource Resource location string.
      */
-    public AbstractWindowSkeleton(final String resource, @Nullable final BOWindow parent)
-    {
+    public AbstractWindowSkeleton(final String resource, @Nullable final BOWindow parent) {
         super(ResourceLocation.parse(resource));
         this.resource = resource;
         this.parent = parent;
@@ -69,8 +66,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
         buttons = new HashMap<>();
 
         switchView = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class);
-        if (switchView != null)
-        {
+        if (switchView != null) {
             buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
             buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
             PaneBuilders.singleLineTooltip(Component.translatableEscape("com.minecolonies.core.gui.nextpage"), buttonNextPage);
@@ -79,9 +75,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
             pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Text.class);
             registerButton(BUTTON_NEXTPAGE, () -> setPage(true, 1));
             registerButton(BUTTON_PREVPAGE, () -> setPage(true, -1));
-        }
-        else
-        {
+        } else {
             buttonNextPage = null;
             buttonPrevPage = null;
             pageNum = null;
@@ -96,8 +90,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      * @param id     Button ID.
      * @param action Consumer with the action to be performed.
      */
-    public final void registerButton(final String id, final Runnable action)
-    {
+    public final void registerButton(final String id, final Runnable action) {
         registerButton(id, button -> action.run());
     }
 
@@ -107,8 +100,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      * @param id     Button ID.
      * @param action Consumer with the action to be performed.
      */
-    public final void registerButton(final String id, final Consumer<Button> action)
-    {
+    public final void registerButton(final String id, final Consumer<Button> action) {
         buttons.put(id, action);
     }
 
@@ -120,10 +112,8 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      * @param button the button that was clicked.
      */
     @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        if (buttons.containsKey(button.getID()))
-        {
+    public void onButtonClicked(@NotNull final Button button) {
+        if (buttons.containsKey(button.getID())) {
             buttons.get(button.getID()).accept(button);
             new ClickGuiButtonTriggerMessage(button.getID(), this.resource).sendToServer();
         }
@@ -134,8 +124,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      *
      * @param ignored Parameter is ignored. Since some actions require a button, we must accept a button parameter.
      */
-    public final void doNothing(final Button ignored)
-    {
+    public final void doNothing(final Button ignored) {
         //do nothing with that event
     }
 
@@ -143,19 +132,16 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      * Generic page handler, uses common ids
      *
      * @param relative whether page param is relative or absolute
-     * @param page if relative turn x pages forward/backward, if absolute turn to x-th page
+     * @param page     if relative turn x pages forward/backward, if absolute turn to x-th page
      */
-    public void setPage(final boolean relative, final int page)
-    {
-        if (switchView == null)
-        {
+    public void setPage(final boolean relative, final int page) {
+        if (switchView == null) {
             return;
         }
 
         final int switchPagesSize = switchView.getChildrenSize();
-    
-        if (switchPagesSize <= 1)
-        {
+
+        if (switchPagesSize <= 1) {
             buttonPrevPage.off();
             buttonNextPage.off();
             pageNum.off();
@@ -166,26 +152,21 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
 
         buttonNextPage.on();
         buttonPrevPage.on();
-        if (curPage == 1 && !switchView.isEndlessScrollingEnabled())
-        {
+        if (curPage == 1 && !switchView.isEndlessScrollingEnabled()) {
             buttonPrevPage.off();
         }
-        if (curPage == switchPagesSize && !switchView.isEndlessScrollingEnabled())
-        {
+        if (curPage == switchPagesSize && !switchView.isEndlessScrollingEnabled()) {
             buttonNextPage.off();
         }
-        if (pageNum != null)
-        {
+        if (pageNum != null) {
             pageNum.setText(Component.literal(curPage + "/" + switchPagesSize));
         }
     }
 
     @Override
-    public void close()
-    {
+    public void close() {
         super.close();
-        if (parent != null)
-        {
+        if (parent != null) {
             parent.open();
         }
     }

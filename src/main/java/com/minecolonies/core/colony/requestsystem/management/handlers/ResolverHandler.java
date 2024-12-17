@@ -25,8 +25,7 @@ import java.util.stream.Collectors;
 /**
  * Class used to handle the inner workings of the request system with regards to resolvers.
  */
-public class ResolverHandler implements IResolverHandler
-{
+public class ResolverHandler implements IResolverHandler {
 
     private final IStandardRequestManager manager;
 
@@ -35,14 +34,12 @@ public class ResolverHandler implements IResolverHandler
      */
     private List<IToken<?>> tempBlackList = new ArrayList<>();
 
-    public ResolverHandler(final IStandardRequestManager manager)
-    {
+    public ResolverHandler(final IStandardRequestManager manager) {
         this.manager = manager;
     }
 
     @Override
-    public IRequestManager getManager()
-    {
+    public IRequestManager getManager() {
         return manager;
     }
 
@@ -57,8 +54,7 @@ public class ResolverHandler implements IResolverHandler
      * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the given Resolvers.
      */
     @Override
-    public Collection<IToken<?>> registerResolvers(final IRequestResolver<?>... resolvers)
-    {
+    public Collection<IToken<?>> registerResolvers(final IRequestResolver<?>... resolvers) {
         return Arrays.stream(resolvers).map(this::registerResolver).collect(Collectors.toList());
     }
 
@@ -73,15 +69,12 @@ public class ResolverHandler implements IResolverHandler
      * @throws IllegalArgumentException is thrown when either the token attached to the resolver is already registered or the resolver is already registered with a different token
      */
     @Override
-    public IToken<?> registerResolver(final IRequestResolver<? extends IRequestable> resolver)
-    {
-        if (manager.getRequestResolverIdentitiesDataStore().getIdentities().containsKey(resolver.getId()))
-        {
+    public IToken<?> registerResolver(final IRequestResolver<? extends IRequestable> resolver) {
+        if (manager.getRequestResolverIdentitiesDataStore().getIdentities().containsKey(resolver.getId())) {
             throw new IllegalArgumentException("The token attached to this resolver is already registered. Cannot register twice!");
         }
 
-        if (manager.getRequestResolverIdentitiesDataStore().getIdentities().containsValue(resolver))
-        {
+        if (manager.getRequestResolverIdentitiesDataStore().getIdentities().containsValue(resolver)) {
             throw new IllegalArgumentException("The given resolver is already registered with a different token. Cannot register twice!");
         }
 
@@ -90,8 +83,7 @@ public class ResolverHandler implements IResolverHandler
         final Set<TypeToken<?>> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         resolverTypes.remove(TypeConstants.OBJECT);
         resolverTypes.forEach(c -> {
-            if (!manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().containsKey(c))
-            {
+            if (!manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().containsKey(c)) {
                 manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().put(c, new ArrayList<>());
             }
 
@@ -113,8 +105,7 @@ public class ResolverHandler implements IResolverHandler
      * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the given Resolvers.
      */
     @Override
-    public Collection<IToken<?>> registerResolvers(final Collection<IRequestResolver<?>> resolvers)
-    {
+    public Collection<IToken<?>> registerResolvers(final Collection<IRequestResolver<?>> resolvers) {
         return resolvers.stream().map(this::registerResolver).collect(Collectors.toList());
     }
 
@@ -128,10 +119,8 @@ public class ResolverHandler implements IResolverHandler
      * @throws IllegalArgumentException is thrown when the given resolver is not registered or the token of the given resolver is not registered to the same resolver.
      */
     @Override
-    public void removeResolver(final IToken<?> token)
-    {
-        if (!manager.getRequestResolverIdentitiesDataStore().getIdentities().containsKey(token))
-        {
+    public void removeResolver(final IToken<?> token) {
+        if (!manager.getRequestResolverIdentitiesDataStore().getIdentities().containsKey(token)) {
             throw new IllegalArgumentException("The token is unknown to this manager.");
         }
 
@@ -148,20 +137,17 @@ public class ResolverHandler implements IResolverHandler
      * @throws IllegalArgumentException is thrown when the given resolver is not registered or the token of the given resolver is not registered to the same resolver.
      */
     @Override
-    public void removeResolver(final IRequestResolver<?> resolver)
-    {
+    public void removeResolver(final IRequestResolver<?> resolver) {
         final IRequestResolver<?> registeredResolver = getResolver(resolver.getId());
 
-        if (!registeredResolver.equals(resolver))
-        {
+        if (!registeredResolver.equals(resolver)) {
             throw new IllegalArgumentException("The given resolver and the resolver that is registered with its token are not the same.");
         }
 
         if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
-              .containsKey(registeredResolver.getId())
-              && !manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
-                    .get(registeredResolver.getId()).isEmpty())
-        {
+                .containsKey(registeredResolver.getId())
+                && !manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
+                .get(registeredResolver.getId()).isEmpty()) {
             throw new IllegalArgumentException("Cannot remove a resolver that is still in use. Reassign all registered requests before removing");
         }
 
@@ -175,15 +161,13 @@ public class ResolverHandler implements IResolverHandler
      * @param resolverToken     The id of the resolver which is being removed, needs to be part of the assignedResolvers list.
      */
     @Override
-    public void processResolverForRemoval(final Collection<IToken<?>> assignedResolvers, final IToken<?> resolverToken)
-    {
+    public void processResolverForRemoval(final Collection<IToken<?>> assignedResolvers, final IToken<?> resolverToken) {
         //Make sure that the resolver is actually supposed to be deleted.
         Validate.isTrue(assignedResolvers.contains(resolverToken));
 
         //Skip if the resolver has no requests assigned.
         if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolverToken)
-              || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty())
-        {
+                || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty()) {
             //No requests assigned so lets process this resolver as such.
             removeResolverWithoutAssignedRequests(resolverToken);
             return;
@@ -199,8 +183,7 @@ public class ResolverHandler implements IResolverHandler
      * @param resolverToken The resolver from the provider which is being removed, but has no requests assigned anymore.
      */
     @VisibleForTesting
-    void removeResolverWithoutAssignedRequests(@NotNull final IToken<?> resolverToken)
-    {
+    void removeResolverWithoutAssignedRequests(@NotNull final IToken<?> resolverToken) {
         manager.log("Removing resolver without assigned requests: " + resolverToken);
         manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolverToken);
 
@@ -215,8 +198,7 @@ public class ResolverHandler implements IResolverHandler
      * @param resolverToken     The particular resolver that is being removed. Needs to be part of the assignedResolvers list.
      */
     @VisibleForTesting
-    void removeResolverWithAssignedRequests(@NotNull final Collection<IToken<?>> assignedResolvers, final IToken<?> resolverToken)
-    {
+    void removeResolverWithAssignedRequests(@NotNull final Collection<IToken<?>> assignedResolvers, final IToken<?> resolverToken) {
         //Make sure that the resolver is actually supposed to be deleted
         Validate.isTrue(assignedResolvers.contains(resolverToken));
 
@@ -225,19 +207,16 @@ public class ResolverHandler implements IResolverHandler
         manager.log("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
         tempBlackList.addAll(assignedResolvers);
 
-        for (final IToken<?> requestToken : assignedRequests)
-        {
+        for (final IToken<?> requestToken : assignedRequests) {
             final IRequest<?> req = manager.getRequestForToken(requestToken);
-            for (final IToken<?> childReq : req.getChildren())
-            {
+            for (final IToken<?> childReq : req.getChildren()) {
                 manager.getRequestHandler().onRequestCancelledDirectly(childReq);
             }
         }
 
         assignedRequests = new ArrayList<>(manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
         //Get all assigned requests and reassign them.
-        for (final IToken<?> requestToken : assignedRequests)
-        {
+        for (final IToken<?> requestToken : assignedRequests) {
             manager.reassignRequest(requestToken, assignedResolvers);
         }
 
@@ -255,11 +234,9 @@ public class ResolverHandler implements IResolverHandler
      * @return A collection with requests tokens.
      */
     @Override
-    public Collection<IToken<?>> getRequestsAssignedToResolver(final IRequestResolver<?> resolver)
-    {
+    public Collection<IToken<?>> getRequestsAssignedToResolver(final IRequestResolver<?> resolver) {
         if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
-              .containsKey(resolver.getId()))
-        {
+                .containsKey(resolver.getId())) {
             return manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId());
         }
 
@@ -277,10 +254,8 @@ public class ResolverHandler implements IResolverHandler
      * @throws IllegalArgumentException is thrown when the given token is not registered to any IRequestResolver
      */
     @Override
-    public IRequestResolver<? extends IRequestable> getResolver(final IToken<?> token)
-    {
-        if (!manager.getRequestResolverIdentitiesDataStore().getIdentities().containsKey(token))
-        {
+    public IRequestResolver<? extends IRequestable> getResolver(final IToken<?> token) {
+        if (!manager.getRequestResolverIdentitiesDataStore().getIdentities().containsKey(token)) {
             throw new IllegalArgumentException("The given token for a resolver is not known to this manager!");
         }
 
@@ -288,8 +263,7 @@ public class ResolverHandler implements IResolverHandler
     }
 
     @Override
-    public void removeResolverInternal(final IRequestResolver<?> resolver)
-    {
+    public void removeResolverInternal(final IRequestResolver<?> resolver) {
         manager.getRequestResolverIdentitiesDataStore().getIdentities().remove(resolver.getId());
         final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         requestTypes.remove(TypeConstants.OBJECT);
@@ -309,8 +283,7 @@ public class ResolverHandler implements IResolverHandler
      * @throws IllegalArgumentException is thrown when removeResolver throws an IllegalArgumentException for any of the given resolvers.
      */
     @Override
-    public void removeResolvers(final IRequestResolver<?>... resolvers)
-    {
+    public void removeResolvers(final IRequestResolver<?>... resolvers) {
         removeResolvers(Arrays.asList(resolvers));
     }
 
@@ -324,8 +297,7 @@ public class ResolverHandler implements IResolverHandler
      * @throws IllegalArgumentException is thrown when removeResolver throws an IllegalArgumentException for any of the given resolvers.
      */
     @Override
-    public void removeResolvers(final Iterable<IRequestResolver<?>> resolvers)
-    {
+    public void removeResolvers(final Iterable<IRequestResolver<?>> resolvers) {
         resolvers.forEach(this::removeResolver);
     }
 
@@ -339,10 +311,8 @@ public class ResolverHandler implements IResolverHandler
      * @param request  The request to add to the resolver.
      */
     @Override
-    public void addRequestToResolver(final IRequestResolver<?> resolver, final IRequest<?> request)
-    {
-        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getId()))
-        {
+    public void addRequestToResolver(final IRequestResolver<?> resolver, final IRequest<?> request) {
+        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getId())) {
             manager.getRequestResolverRequestAssignmentDataStore().getAssignments().put(resolver.getId(), new HashSet<>());
         }
 
@@ -364,23 +334,19 @@ public class ResolverHandler implements IResolverHandler
      * @throws IllegalArgumentException is thrown when the resolver is unknown, or when the given request is not registered to the given resolver.
      */
     @Override
-    public void removeRequestFromResolver(final IRequestResolver<?> resolver, final IRequest<?> request)
-    {
-        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getId()))
-        {
+    public void removeRequestFromResolver(final IRequestResolver<?> resolver, final IRequest<?> request) {
+        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getId())) {
             throw new IllegalArgumentException("The given resolver is unknown to this Manager");
         }
 
-        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).contains(request.getId()))
-        {
+        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).contains(request.getId())) {
             throw new IllegalArgumentException("The given request is not registered to the given resolver.");
         }
 
         manager.log("Removing request: " + request + " from resolver: " + resolver);
 
         manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).remove(request.getId());
-        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).isEmpty())
-        {
+        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).isEmpty()) {
             manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolver.getId());
         }
     }
@@ -393,13 +359,11 @@ public class ResolverHandler implements IResolverHandler
      * @throws IllegalArgumentException when the token is unknown or the request is not assigned yet.
      */
     @Override
-    public IRequestResolver<? extends IRequestable> getResolverForRequest(final IToken<?> requestToken)
-    {
+    public IRequestResolver<? extends IRequestable> getResolverForRequest(final IToken<?> requestToken) {
         manager.getRequestHandler().getRequest(requestToken);
 
         @Nullable final IToken<?> resolverToken = manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(requestToken);
-        if (resolverToken == null)
-        {
+        if (resolverToken == null) {
             throw new IllegalArgumentException("The given request: " + requestToken + " is not resolved.");
         }
 
@@ -414,8 +378,7 @@ public class ResolverHandler implements IResolverHandler
      * @throws IllegalArgumentException when the token is unknown or the request is not assigned yet.
      */
     @Override
-    public IRequestResolver<? extends IRequestable> getResolverForRequest(final IRequest<?> request)
-    {
+    public IRequestResolver<? extends IRequestable> getResolverForRequest(final IRequest<?> request) {
         return getResolverForRequest((IToken<?>) request.getId());
     }
 
@@ -425,14 +388,12 @@ public class ResolverHandler implements IResolverHandler
      * @param shouldTriggerReassign the predicate to determine whether a request should be reassigned
      */
     @Override
-    public void onColonyUpdate(final Predicate<IRequest<?>> shouldTriggerReassign)
-    {
+    public void onColonyUpdate(final Predicate<IRequest<?>> shouldTriggerReassign) {
         manager.getRequestResolverIdentitiesDataStore().getIdentities().values().forEach(resolver -> resolver.onColonyUpdate(manager, shouldTriggerReassign));
     }
 
     @Override
-    public boolean isBeingRemoved(final IToken<?> id)
-    {
+    public boolean isBeingRemoved(final IToken<?> id) {
         return tempBlackList.contains(id);
     }
 }

@@ -9,8 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Describes the {@link StandardRequestManager} data access. Is only used for internal handling.
  */
-public interface IStandardRequestManager extends IRequestManager
-{
+public interface IStandardRequestManager extends IRequestManager {
 
     @NotNull
     IRequestIdentitiesDataStore getRequestIdentitiesDataStore();

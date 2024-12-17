@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for Chief norsemen.
  */
-public class RendererChiefNorsemen extends AbstractRendererNorsemen<AbstractEntityNorsemen, ModelChiefNorsemen>
-{
+public class RendererChiefNorsemen extends AbstractRendererNorsemen<AbstractEntityNorsemen, ModelChiefNorsemen> {
     /**
      * Texture of the entity.
      */
@@ -22,15 +21,13 @@ public class RendererChiefNorsemen extends AbstractRendererNorsemen<AbstractEnti
      *
      * @param context the renderManager
      */
-    public RendererChiefNorsemen(final EntityRendererProvider.Context context)
-    {
+    public RendererChiefNorsemen(final EntityRendererProvider.Context context) {
         super(context, new ModelChiefNorsemen(context.bakeLayer(ClientRegistryHandler.NORSEMEN_CHIEF)), 0.5F);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityNorsemen entity)
-    {
+    public ResourceLocation getTextureLocation(final AbstractEntityNorsemen entity) {
         return TEXTURE;
     }
 }

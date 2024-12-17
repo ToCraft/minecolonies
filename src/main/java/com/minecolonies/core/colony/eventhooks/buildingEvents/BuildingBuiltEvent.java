@@ -1,18 +1,17 @@
 package com.minecolonies.core.colony.eventhooks.buildingEvents;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Event handling a new building being built.
  */
-public class BuildingBuiltEvent extends AbstractBuildingEvent
-{
+public class BuildingBuiltEvent extends AbstractBuildingEvent {
 
     /**
      * This events id, registry entries use res locations as ids.
@@ -22,31 +21,27 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
     /**
      * Creates a new building built event.
      */
-    public BuildingBuiltEvent()
-    {
+    public BuildingBuiltEvent() {
         super();
     }
 
     /**
      * Creates a new building built event.
-     * 
-     * @param eventPos      the position of the hut block of the building.
-     * @param buildingName  the name of the building.
+     *
+     * @param eventPos     the position of the hut block of the building.
+     * @param buildingName the name of the building.
      */
-    public BuildingBuiltEvent(BlockPos eventPos, String buildingName)
-    {
+    public BuildingBuiltEvent(BlockPos eventPos, String buildingName) {
         super(eventPos, buildingName, 1);
     }
 
     @Override
-    public ResourceLocation getEventTypeId()
-    {
+    public ResourceLocation getEventTypeId() {
         return BUILDING_BUILT_EVENT_ID;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "Building Built";
     }
 
@@ -56,8 +51,7 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static BuildingBuiltEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public static BuildingBuiltEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         final BuildingBuiltEvent buildEvent = new BuildingBuiltEvent();
         buildEvent.deserializeNBT(provider, compound);
         return buildEvent;
@@ -69,8 +63,7 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static BuildingBuiltEvent loadFromFriendlyByteBuf(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public static BuildingBuiltEvent loadFromFriendlyByteBuf(@NotNull final RegistryFriendlyByteBuf buf) {
         final BuildingBuiltEvent buildEvent = new BuildingBuiltEvent();
         buildEvent.deserialize(buf);
         return buildEvent;

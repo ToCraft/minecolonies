@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message for the research execution.
  */
-public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUniversity>
-{
+public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUniversity> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "try_research_message", TryResearchMessage::new);
 
     /**
@@ -43,16 +42,14 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
      * @param branch     the research branch.
      * @param building   the building we're executing on.
      */
-    public TryResearchMessage(final IBuildingView building, @NotNull final ResourceLocation researchId, final ResourceLocation branch, final boolean reset)
-    {
+    public TryResearchMessage(final IBuildingView building, @NotNull final ResourceLocation researchId, final ResourceLocation branch, final boolean reset) {
         super(TYPE, building);
         this.researchId = researchId;
         this.branch = branch;
         this.reset = reset;
     }
 
-    protected TryResearchMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected TryResearchMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         researchId = buf.readResourceLocation();
         branch = buf.readResourceLocation();
@@ -60,8 +57,7 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeResourceLocation(researchId);
         buf.writeResourceLocation(branch);
@@ -69,21 +65,15 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingUniversity building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingUniversity building) {
         final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
-        if(reset)
-        {
-            if(colony.getResearchManager().getResearchTree().getResearch(branch, researchId) != null)
-            {
+        if (reset) {
+            if (colony.getResearchManager().getResearchTree().getResearch(branch, researchId) != null) {
                 colony.getResearchManager().getResearchTree().attemptResetResearch(player, colony, colony.getResearchManager().getResearchTree().getResearch(branch, researchId));
             }
-        }
-        else
-        {
-            if((research.canResearch(building.getBuildingLevel() == building.getMaxBuildingLevel() ? Integer.MAX_VALUE : building.getBuildingLevel(), colony.getResearchManager().getResearchTree()))
-                 || player.isCreative())
-            {
+        } else {
+            if ((research.canResearch(building.getBuildingLevel() == building.getMaxBuildingLevel() ? Integer.MAX_VALUE : building.getBuildingLevel(), colony.getResearchManager().getResearchTree()))
+                    || player.isCreative()) {
                 colony.getResearchManager().getResearchTree().attemptBeginResearch(player, colony, research);
             }
         }

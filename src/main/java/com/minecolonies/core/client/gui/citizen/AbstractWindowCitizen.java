@@ -14,16 +14,14 @@ import net.minecraft.network.chat.Component;
 /**
  * BOWindow for the citizen.
  */
-public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
-{
+public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree {
     /**
      * Constructor to initiate the citizen windows.
      *
      * @param citizen citizen to bind the window to.
-     * @param ui the xml res loc.
+     * @param ui      the xml res loc.
      */
-    public AbstractWindowCitizen(final ICitizenDataView citizen, final String ui)
-    {
+    public AbstractWindowCitizen(final ICitizenDataView citizen, final String ui) {
         super(citizen.getWorkBuilding(), ui, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().level.dimension()));
 
         registerButton("mainTab", () -> new MainWindowCitizen(citizen).open());
@@ -48,17 +46,14 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
 
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
-        if (building instanceof AbstractBuildingView && building.getBuildingType() != ModBuildings.library.get())
-        {
+        if (building instanceof AbstractBuildingView && building.getBuildingType() != ModBuildings.library.get()) {
             findPaneByID("jobTab").setVisible(true);
             findPaneByID("jobIcon").setVisible(true);
 
             registerButton("jobTab", () -> new JobWindowCitizen(citizen).open());
             registerButton("jobIcon", () -> new JobWindowCitizen(citizen).open());
             PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("jobIcon")).build().setText(Component.translatableEscape("com.minecolonies.coremod.gui.citizen.job"));
-        }
-        else
-        {
+        } else {
             findPaneByID("jobTab").setVisible(false);
             findPaneByID("jobIcon").setVisible(false);
         }

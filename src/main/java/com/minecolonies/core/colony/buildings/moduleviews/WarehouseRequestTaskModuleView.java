@@ -11,27 +11,23 @@ import java.util.List;
 /**
  * Warehouse task module to display tasks in the UI.
  */
-public class WarehouseRequestTaskModuleView extends RequestTaskModuleView
-{
+public class WarehouseRequestTaskModuleView extends RequestTaskModuleView {
     /**
      * Warehouse tasks.
      */
     final List<IToken<?>> tasks = new ArrayList<>();
 
     @Override
-    public List<IToken<?>> getTasks()
-    {
+    public List<IToken<?>> getTasks() {
         return tasks;
     }
 
     @Override
-    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf) {
         tasks.clear();
         super.deserialize(buf);
         int size = buf.readInt();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             tasks.add(StandardFactoryController.getInstance().deserialize(buf));
         }
     }

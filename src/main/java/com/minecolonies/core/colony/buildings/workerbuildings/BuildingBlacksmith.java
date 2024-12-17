@@ -10,7 +10,8 @@ import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -21,8 +22,7 @@ import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_BLACKSMIT
 /**
  * Creates a new building for the blacksmith.
  */
-public class BuildingBlacksmith extends AbstractBuilding
-{
+public class BuildingBlacksmith extends AbstractBuilding {
     /**
      * Description of the job executed in the hut.
      */
@@ -34,57 +34,49 @@ public class BuildingBlacksmith extends AbstractBuilding
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingBlacksmith(final IColony c, final BlockPos l)
-    {
+    public BuildingBlacksmith(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return BLACKSMITH;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
-    {
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public CraftingModule(final JobEntry jobEntry)
-        {
+        public CraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         @NotNull
         @Override
-        public OptionalPredicate<ItemStack> getIngredientValidator()
-        {
+        public OptionalPredicate<ItemStack> getIngredientValidator() {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_BLACKSMITH)
                     .combine(super.getIngredientValidator());
         }
 
         @Override
-        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-        {
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) {
             if (!super.isRecipeCompatible(recipe)) return false;
 
             if (recipe.matchesInput(OptionalPredicate.failIf(input -> input.is(Items.LEATHER)))
-                    .equals(Optional.of(false)))
-            {
+                    .equals(Optional.of(false))) {
                 // explicitly disallow anything using leather; that's the fletcher's responsibility
                 return false;
             }
             if (recipe.matchesOutput(OptionalPredicate.passIf(output ->
-                                    ModEquipmentTypes.axe.get().checkIsEquipment(output) ||
+                            ModEquipmentTypes.axe.get().checkIsEquipment(output) ||
                                     ModEquipmentTypes.pickaxe.get().checkIsEquipment(output) ||
                                     ModEquipmentTypes.shovel.get().checkIsEquipment(output) ||
                                     ModEquipmentTypes.hoe.get().checkIsEquipment(output) ||
@@ -97,8 +89,7 @@ public class BuildingBlacksmith extends AbstractBuilding
                                     ModEquipmentTypes.boots.get().checkIsEquipment(output) ||
                                     // deliberately excluding FISHINGROD and FLINT_N_STEEL
                                     Compatibility.isTinkersWeapon(output)))
-                    .equals(Optional.of(true)))
-            {
+                    .equals(Optional.of(true))) {
                 // allow any other tool/armor even if it uses an excluded ingredient
                 return true;
             }

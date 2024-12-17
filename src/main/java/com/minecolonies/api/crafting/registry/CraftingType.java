@@ -13,19 +13,18 @@ import java.util.Objects;
 /**
  * Class to represent the different types of crafting supported by MineColonies
  */
-public abstract class CraftingType
-{
+public abstract class CraftingType {
     private ResourceLocation registryName;
 
-    protected CraftingType(@NotNull final ResourceLocation id)
-    {
+    protected CraftingType(@NotNull final ResourceLocation id) {
         this.registryName = id;
     }
 
     /**
      * Find all teachable recipes supported by this particular crafting type
+     *
      * @param recipeManager the vanilla recipe manager
-     * @param world the world (if available)
+     * @param world         the world (if available)
      * @return the list of teachable recipes
      */
     @NotNull
@@ -33,18 +32,15 @@ public abstract class CraftingType
                                                      @Nullable final Level world);
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj instanceof CraftingType)
-        {
+    public boolean equals(Object obj) {
+        if (obj instanceof CraftingType) {
             return Objects.equals(registryName, ((CraftingType) obj).registryName);
         }
         return false;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return registryName.hashCode();
     }
 }

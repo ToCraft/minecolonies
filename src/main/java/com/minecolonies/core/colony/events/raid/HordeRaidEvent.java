@@ -51,8 +51,7 @@ import static com.minecolonies.core.colony.events.raid.pirateEvent.PirateRaidEve
 /**
  * Horde raid event for the colony, triggers a horde that spawn and attack the colony.
  */
-public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFireRaidEvent
-{
+public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFireRaidEvent {
     /**
      * Spacing between waypoints
      */
@@ -86,9 +85,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     /**
      * The references to living raiders left
      */
-    protected Map<Entity, UUID> normal  = new WeakHashMap<>();
+    protected Map<Entity, UUID> normal = new WeakHashMap<>();
     protected Map<Entity, UUID> archers = new WeakHashMap<>();
-    protected Map<Entity, UUID> boss    = new WeakHashMap<>();
+    protected Map<Entity, UUID> boss = new WeakHashMap<>();
 
     /**
      * List of respawns to do
@@ -145,27 +144,23 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      */
     private List<BlockPos> wayPoints = new ArrayList<>();
 
-    public HordeRaidEvent(IColony colony)
-    {
+    public HordeRaidEvent(IColony colony) {
         this.colony = colony;
         id = colony.getEventManager().getAndTakeNextEventID();
     }
 
     @Override
-    public void setSpawnPoint(final BlockPos spawnPoint)
-    {
+    public void setSpawnPoint(final BlockPos spawnPoint) {
         this.spawnPoint = spawnPoint;
     }
 
     @Override
-    public BlockPos getSpawnPos()
-    {
+    public BlockPos getSpawnPos() {
         return spawnPoint;
     }
 
     @Override
-    public List<Entity> getEntities()
-    {
+    public List<Entity> getEntities() {
         List<Entity> entities = new ArrayList<>();
         entities.addAll(archers.keySet());
         entities.addAll(boss.keySet());
@@ -174,26 +169,22 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     @Override
-    public EventStatus getStatus()
-    {
+    public EventStatus getStatus() {
         return status;
     }
 
     @Override
-    public void setStatus(final EventStatus status)
-    {
+    public void setStatus(final EventStatus status) {
         this.status = status;
     }
 
     @Override
-    public int getID()
-    {
+    public int getID() {
         return id;
     }
 
     @Override
-    public void setColony(@NotNull final IColony colony)
-    {
+    public void setColony(@NotNull final IColony colony) {
         this.colony = colony;
     }
 
@@ -203,11 +194,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      * @param entity the entity to unregister.
      */
     @Override
-    public void unregisterEntity(final Entity entity)
-    {
+    public void unregisterEntity(final Entity entity) {
         if (!(archers.containsKey(entity) || boss.containsKey(entity) || normal.containsKey(entity)) || status != EventStatus.PROGRESSING
-              || colony.getState() != ColonyState.ACTIVE)
-        {
+                || colony.getState() != ColonyState.ACTIVE) {
             return;
         }
 
@@ -220,10 +209,8 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     @Override
-    public void onEntityDeath(final LivingEntity entity)
-    {
-        if (entity instanceof AbstractEntityRaiderMob)
-        {
+    public void onEntityDeath(final LivingEntity entity) {
+        if (entity instanceof AbstractEntityRaiderMob) {
             colony.getRaiderManager().onRaiderDeath((AbstractEntityRaiderMob) entity);
         }
     }
@@ -238,26 +225,22 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      * @param numberOfBosses  the bosses.
      * @param numberOfRaiders the normal raiders.
      */
-    protected void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfBosses, final int numberOfArchers, final int numberOfRaiders)
-    {
+    protected void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfBosses, final int numberOfArchers, final int numberOfRaiders) {
         RaiderMobUtils.spawn(getNormalRaiderType(), numberOfRaiders, spawnPos, colony.getWorld(), colony, id);
         RaiderMobUtils.spawn(getBossRaiderType(), numberOfBosses, spawnPos, colony.getWorld(), colony, id);
         RaiderMobUtils.spawn(getArcherRaiderType(), numberOfArchers, spawnPos, colony.getWorld(), colony, id);
     }
 
     @Override
-    public void setMercyEnd()
-    {
+    public void setMercyEnd() {
         this.mercyEnd = true;
     }
 
     /**
      * Prepares the horde event, makes them wait at campfires for a while,deciding on their plans.
      */
-    private void prepareEvent()
-    {
-        if (--campFireTime <= 0)
-        {
+    private void prepareEvent() {
+        if (--campFireTime <= 0) {
             // Start raiding
             status = EventStatus.PROGRESSING;
         }
@@ -268,16 +251,12 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      *
      * @param pos the pos to spawn it at.
      */
-    private void spawnCampFires(final BlockPos pos)
-    {
+    private void spawnCampFires(final BlockPos pos) {
         final int fireCount = Math.max(1, horde.hordeSize / 5);
-        for (int i = 0; i < fireCount; i++)
-        {
-            for (int tries = 0; tries < 3; tries++)
-            {
+        for (int i = 0; i < fireCount; i++) {
+            for (int tries = 0; tries < 3; tries++) {
                 BlockPos spawn = BlockPosUtil.getRandomPosition(colony.getWorld(), pos, BlockPos.ZERO, 3, 7);
-                if (spawn != BlockPos.ZERO)
-                {
+                if (spawn != BlockPos.ZERO) {
                     colony.getWorld().setBlockAndUpdate(spawn, Blocks.CAMPFIRE.defaultBlockState());
                     campFires.add(spawn);
                     break;
@@ -287,46 +266,36 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     @Override
-    public void onFinish()
-    {
-        for (final Entity entity : getEntities())
-        {
+    public void onFinish() {
+        for (final Entity entity : getEntities()) {
             entity.remove(Entity.RemovalReason.DISCARDED);
         }
 
-        for (final BlockPos pos : campFires)
-        {
+        for (final BlockPos pos : campFires) {
             colony.getWorld().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
         }
 
         raidBar.setVisible(false);
         raidBar.removeAllPlayers();
 
-        if (horde.hordeSize > 0)
-        {
-            if (mercyEnd)
-            {
+        if (horde.hordeSize > 0) {
+            if (mercyEnd) {
                 MessageUtils.format(ALL_BARBARIANS_MERCY_MESSAGE, colony.getName()).sendTo(colony).forManagers();
-            }
-            else
-            {
+            } else {
                 MessageUtils.format(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
             }
         }
     }
 
     @Override
-    public void onNightFall()
-    {
+    public void onNightFall() {
         daysToGo--;
-        if (daysToGo < 0)
-        {
+        if (daysToGo < 0) {
             status = EventStatus.DONE;
         }
     }
 
-    public void setHorde(final Horde horde)
-    {
+    public void setHorde(final Horde horde) {
         this.horde = horde;
     }
 
@@ -335,31 +304,25 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      *
      * @return a random campfire.
      */
-    public BlockPos getRandomCampfire()
-    {
-        if (campFires.isEmpty())
-        {
+    public BlockPos getRandomCampfire() {
+        if (campFires.isEmpty()) {
             return null;
         }
         return campFires.get(colony.getWorld().random.nextInt(campFires.size()));
     }
 
     @Override
-    public void onStart()
-    {
-        if (spawnPathResult != null && spawnPathResult.isDone())
-        {
+    public void onStart() {
+        if (spawnPathResult != null && spawnPathResult.isDone()) {
             final Path path = spawnPathResult.getPath();
-            if (path != null && path.canReach())
-            {
+            if (path != null && path.canReach()) {
                 spawnPoint = path.getEndNode().asBlockPos();
             }
             this.wayPoints = ShipBasedRaiderUtils.createWaypoints(colony.getWorld(), path, WAYPOINT_SPACING);
         }
 
         final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_SPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
-        if (spawnPos == null)
-        {
+        if (spawnPos == null) {
             status = EventStatus.CANCELED;
             return;
         }
@@ -367,12 +330,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         status = EventStatus.PREPARING;
         spawnCampFires(spawnPos);
         final double dist = colony.getCenter().distSqr(spawnPos);
-        if (dist < MIN_CENTER_DISTANCE * MIN_CENTER_DISTANCE)
-        {
+        if (dist < MIN_CENTER_DISTANCE * MIN_CENTER_DISTANCE) {
             campFireTime = 6;
-        }
-        else
-        {
+        } else {
             campFireTime = 3;
         }
 
@@ -381,9 +341,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         updateRaidBar();
 
         MessageUtils.format(RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText(), colony.getName())
-          .withPriority(MessagePriority.DANGER)
-          .sendTo(colony)
-          .forManagers();
+                .withPriority(MessagePriority.DANGER)
+                .sendTo(colony)
+                .forManagers();
         Log.getLogger().debug("Raiders coming from: " + spawnPoint.toShortString() + " towards colony: " + colony.getName());
 
         PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundSource.RECORDS);
@@ -395,20 +355,17 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      *
      * @return the colony.
      */
-    public IColony getColony()
-    {
+    public IColony getColony() {
         return colony;
     }
 
     /**
      * Updates the raid bar
      */
-    protected void updateRaidBar()
-    {
+    protected void updateRaidBar() {
         final Component directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText();
         raidBar.setName(getDisplayName().append(" - ").append(directionName));
-        for (final Player player : colony.getPackageManager().getCloseSubscribers())
-        {
+        for (final Player player : colony.getPackageManager().getCloseSubscribers()) {
             raidBar.addPlayer((ServerPlayer) player);
         }
         raidBar.setVisible(true);
@@ -422,10 +379,8 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     protected abstract MutableComponent getDisplayName();
 
     @Override
-    public void onUpdate()
-    {
-        if (status == EventStatus.PREPARING)
-        {
+    public void onUpdate() {
+        if (status == EventStatus.PREPARING) {
             prepareEvent();
         }
 
@@ -433,18 +388,14 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         colony.getRaiderManager().setNightsSinceLastRaid(0);
 
-        if (horde.hordeSize <= 0)
-        {
+        if (horde.hordeSize <= 0) {
             status = EventStatus.DONE;
         }
 
-        if (!respawns.isEmpty())
-        {
-            for (final Tuple<EntityType<?>, BlockPos> entry : respawns)
-            {
+        if (!respawns.isEmpty()) {
+            for (final Tuple<EntityType<?>, BlockPos> entry : respawns) {
                 final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(entry.getB(), colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
-                if (spawnPos != null)
-                {
+                if (spawnPos != null) {
                     RaiderMobUtils.spawn(entry.getA(), 1, spawnPos, colony.getWorld(), colony, id);
                 }
             }
@@ -452,31 +403,25 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
             return;
         }
 
-        if (boss.size() + archers.size() + normal.size() < horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers)
-        {
+        if (boss.size() + archers.size() + normal.size() < horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers) {
             final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
-            if (spawnPos != null)
-            {
+            if (spawnPos != null) {
                 spawnHorde(spawnPos, colony, id, horde.numberOfBosses - boss.size(), horde.numberOfArchers - archers.size(), horde.numberOfRaiders - normal.size());
             }
         }
 
-        if (horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers < Math.round(horde.initialSize * 0.05))
-        {
+        if (horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers < Math.round(horde.initialSize * 0.05)) {
             status = EventStatus.DONE;
         }
 
-        for (final Entity entity : getEntities())
-        {
-            if (!entity.isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), entity.blockPosition()))
-            {
+        for (final Entity entity : getEntities()) {
+            if (!entity.isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), entity.blockPosition())) {
                 entity.remove(Entity.RemovalReason.DISCARDED);
                 respawns.add(new Tuple<>(entity.getType(), entity.blockPosition()));
                 continue;
             }
 
-            if (colony.getRaiderManager().areSpiesEnabled() || horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers < Math.round(horde.initialSize * 0.15))
-            {
+            if (colony.getRaiderManager().areSpiesEnabled() || horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers < Math.round(horde.initialSize * 0.15)) {
                 ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.GLOWING, 550));
             }
         }
@@ -485,47 +430,38 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     /**
      * Sends the right horde message.
      */
-    protected void sendHordeMessage()
-    {
+    protected void sendHordeMessage() {
         int total = 0;
 
-        for (IColonyEvent event : colony.getEventManager().getEvents().values())
-        {
-            if (event instanceof HordeRaidEvent)
-            {
+        for (IColonyEvent event : colony.getEventManager().getEvents().values()) {
+            if (event instanceof HordeRaidEvent) {
                 total += ((HordeRaidEvent) event).horde.hordeSize;
             }
         }
         raidBar.setProgress((float) horde.hordeSize / horde.initialSize);
 
-        if (total == 0)
-        {
+        if (total == 0) {
             MessageUtils.format(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
 
             PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundSource.RECORDS);
             PlayAudioMessage.sendToAll(getColony(), false, true, audio);
 
-            if (colony.getRaiderManager().getLostCitizen() == 0)
-            {
+            if (colony.getRaiderManager().getLostCitizen() == 0) {
                 colony.getCitizenManager().injectModifier(new ExpirationBasedHappinessModifier(RAIDWITHOUTDEATH, 1.0, new StaticHappinessSupplier(2.0), 3));
             }
-        }
-        else if (total > 0 && total <= SMALL_HORDE_SIZE)
-        {
+        } else if (total > 0 && total <= SMALL_HORDE_SIZE) {
             MessageUtils.format(ONLY_X_BARBARIANS_LEFT_MESSAGE, total).sendTo(colony).forManagers();
         }
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag compound = new CompoundTag();
         compound.putInt(TAG_EVENT_ID, id);
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
         ListTag campFiresNBT = new ListTag();
 
-        for (final BlockPos pos : campFires)
-        {
+        for (final BlockPos pos : campFires) {
             campFiresNBT.add(BlockPosUtil.write(new CompoundTag(), NbtTagConstants.TAG_POS, pos));
         }
 
@@ -539,14 +475,12 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         id = compound.getInt(TAG_EVENT_ID);
         setHorde(Horde.loadFromNbt(compound));
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
 
-        for (final Tag posCompound : compound.getList(TAG_CAMPFIRE_LIST, TAG_COMPOUND))
-        {
+        for (final Tag posCompound : compound.getList(TAG_CAMPFIRE_LIST, TAG_COMPOUND)) {
             campFires.add(BlockPosUtil.read((CompoundTag) posCompound, NbtTagConstants.TAG_POS));
         }
 
@@ -556,20 +490,17 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     @Override
-    public void setCampFireTime(final int time)
-    {
+    public void setCampFireTime(final int time) {
         campFireTime = time;
     }
 
     @Override
-    public void addSpawner(final BlockPos pos)
-    {
+    public void addSpawner(final BlockPos pos) {
         // do noting
     }
 
     @Override
-    public List<BlockPos> getWayPoints()
-    {
+    public List<BlockPos> getWayPoints() {
         return wayPoints;
     }
 
@@ -578,8 +509,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      *
      * @param result pathing result to wait for
      */
-    public void setSpawnPath(final PathResult result)
-    {
+    public void setSpawnPath(final PathResult result) {
         this.spawnPathResult = result;
     }
 }

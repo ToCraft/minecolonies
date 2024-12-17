@@ -7,8 +7,7 @@ package com.minecolonies.api.colony.requestsystem.token;
  * <p>
  * Also extends INBTSerializable to make writing the data to disk a lot easier.
  */
-public interface IToken<T>
-{
+public interface IToken<T> {
 
     /**
      * The identifier used to represent a request.

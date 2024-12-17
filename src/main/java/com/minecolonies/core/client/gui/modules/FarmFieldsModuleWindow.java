@@ -21,14 +21,15 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRING_ON;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_LABEL_DISTANCE;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_LABEL_FIELD_COUNT;
 
 /**
  * BOWindow for the fields tab in huts.
  */
-public class FarmFieldsModuleWindow extends AbstractModuleWindow
-{
+public class FarmFieldsModuleWindow extends AbstractModuleWindow {
     /**
      * Resource suffix of the GUI.
      */
@@ -99,8 +100,7 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
      *
      * @param moduleView {@link FieldsModuleView}.
      */
-    public FarmFieldsModuleWindow(final IBuildingView building, final FieldsModuleView moduleView)
-    {
+    public FarmFieldsModuleWindow(final IBuildingView building, final FieldsModuleView moduleView) {
         super(building, Constants.MOD_ID + HUT_FIELDS_RESOURCE_SUFFIX);
         this.moduleView = moduleView;
 
@@ -113,8 +113,7 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
      *
      * @param button clicked button.
      */
-    private void assignmentModeClicked(@NotNull final Button button)
-    {
+    private void assignmentModeClicked(@NotNull final Button button) {
         moduleView.setAssignFieldManually(!moduleView.assignFieldManually());
         updateUI();
     }
@@ -124,16 +123,12 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
      *
      * @param button clicked button.
      */
-    private void assignClicked(@NotNull final Button button)
-    {
+    private void assignClicked(@NotNull final Button button) {
         final int row = fieldList.getListElementIndexByPane(button);
         final IField field = moduleView.getFields().get(row);
-        if (field.isTaken())
-        {
+        if (field.isTaken()) {
             moduleView.freeField(field);
-        }
-        else
-        {
+        } else {
             moduleView.assignField(field);
         }
         updateUI();
@@ -142,34 +137,28 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
     /**
      * Contains the logic to refresh the UI whenever something changes.
      */
-    private void updateUI()
-    {
+    private void updateUI() {
         findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class)
-          .setText(Component.translatableEscape(moduleView.assignFieldManually() ? COM_MINECOLONIES_COREMOD_GUI_HIRING_ON : COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
+                .setText(Component.translatableEscape(moduleView.assignFieldManually() ? COM_MINECOLONIES_COREMOD_GUI_HIRING_ON : COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
         findPaneOfTypeByID(TAG_FIELD_COUNT, Text.class)
-          .setText(Component.translatableEscape(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getOwnedFields().size(), moduleView.getMaxFieldCount()));
+                .setText(Component.translatableEscape(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getOwnedFields().size(), moduleView.getMaxFieldCount()));
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
 
         fieldList = findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class);
-        fieldList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        fieldList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return moduleView.getFields().size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final IField field = moduleView.getFields().get(index);
-                if (field instanceof FarmField farmField && !farmField.getSeed().isEmpty())
-                {
+                if (field instanceof FarmField farmField && !farmField.getSeed().isEmpty()) {
                     rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(farmField.getSeed());
                 }
 
@@ -178,7 +167,8 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
 
                 final Component directionText = switch (direction) {
                     case UP, DOWN -> direction.getLongText();
-                    default -> Component.translatableEscape(FIELD_LIST_LABEL_DISTANCE, Component.literal(distance + "m"), direction.getShortText());
+                    default ->
+                            Component.translatableEscape(FIELD_LIST_LABEL_DISTANCE, Component.literal(distance + "m"), direction.getShortText());
                 };
 
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(directionText);
@@ -188,26 +178,21 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
                 assignButton.show();
                 assignButton.setHoverPane(null);
 
-                if (field.isTaken())
-                {
+                if (field.isTaken()) {
                     setAssignButtonTexture(assignButton, true);
-                }
-                else
-                {
+                } else {
                     // Field may be claimed
                     setAssignButtonTexture(assignButton, false);
 
-                    if (!moduleView.canAssignField(field))
-                    {
+                    if (!moduleView.canAssignField(field)) {
                         assignButton.disable();
 
                         MutableComponent warningTooltip = moduleView.getFieldWarningTooltip(field);
-                        if (warningTooltip != null && moduleView.assignFieldManually())
-                        {
+                        if (warningTooltip != null && moduleView.assignFieldManually()) {
                             PaneBuilders.tooltipBuilder()
-                              .append(warningTooltip.withStyle(ChatFormatting.RED))
-                              .hoverPane(assignButton)
-                              .build();
+                                    .append(warningTooltip.withStyle(ChatFormatting.RED))
+                                    .hoverPane(assignButton)
+                                    .build();
                         }
                     }
                 }
@@ -218,8 +203,7 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
         updateUI();
     }
@@ -230,15 +214,11 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
      * @param button the button instance.
      * @param isOn   whether the button is on or off.
      */
-    private void setAssignButtonTexture(final ButtonImage button, boolean isOn)
-    {
-        if (isOn)
-        {
+    private void setAssignButtonTexture(final ButtonImage button, boolean isOn) {
+        if (isOn) {
             button.setImage(ResourceLocation.parse(TEXTURE_ASSIGN_ON_NORMAL));
             button.setImageDisabled(ResourceLocation.parse(TEXTURE_ASSIGN_ON_DISABLED));
-        }
-        else
-        {
+        } else {
             button.setImage(ResourceLocation.parse(TEXTURE_ASSIGN_OFF_NORMAL));
             button.setImageDisabled(ResourceLocation.parse(TEXTURE_ASSIGN_OFF_DISABLED));
         }

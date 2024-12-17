@@ -11,8 +11,7 @@ import java.util.List;
 /**
  * The Classic Recipe type
  */
-public class ClassicRecipe extends AbstractRecipeType<IRecipeStorage>
-{
+public class ClassicRecipe extends AbstractRecipeType<IRecipeStorage> {
     /**
      * Cache of item stacks for display
      */
@@ -21,18 +20,14 @@ public class ClassicRecipe extends AbstractRecipeType<IRecipeStorage>
     /**
      * Classic Recipe constructor
      */
-    public ClassicRecipe(IRecipeStorage recipe)
-    {
+    public ClassicRecipe(IRecipeStorage recipe) {
         super(recipe);
     }
 
     @Override
-    public List<ItemStack> getOutputDisplayStacks()
-    {
-        if(outputDisplayStacks.isEmpty())
-        {
-            if(!ItemStackUtils.isEmpty(recipe.getPrimaryOutput()) || recipe.getSecondaryOutputs().isEmpty())
-            {
+    public List<ItemStack> getOutputDisplayStacks() {
+        if (outputDisplayStacks.isEmpty()) {
+            if (!ItemStackUtils.isEmpty(recipe.getPrimaryOutput()) || recipe.getSecondaryOutputs().isEmpty()) {
                 outputDisplayStacks.addAll(super.getOutputDisplayStacks());
             }
             outputDisplayStacks.addAll(recipe.getSecondaryOutputs());
@@ -41,9 +36,8 @@ public class ClassicRecipe extends AbstractRecipeType<IRecipeStorage>
     }
 
     @Override
-    public ResourceLocation getId()
-    {
+    public ResourceLocation getId() {
         return ModRecipeTypes.CLASSIC_ID;
     }
-    
+
 }

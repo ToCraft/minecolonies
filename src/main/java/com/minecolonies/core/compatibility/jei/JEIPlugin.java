@@ -34,71 +34,58 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 @mezz.jei.api.JeiPlugin
-public class JEIPlugin implements IModPlugin
-{
+public class JEIPlugin implements IModPlugin {
     @NotNull
     @Override
-    public ResourceLocation getPluginUid()
-    {
+    public ResourceLocation getPluginUid() {
         return new ResourceLocation(Constants.MOD_ID, Constants.MOD_ID);
     }
 
     private final List<JobBasedRecipeCategory<?>> categories = new ArrayList<>();
 
     @Override
-    public void registerCategories(@NotNull final IRecipeCategoryRegistration registration)
-    {
+    public void registerCategories(@NotNull final IRecipeCategoryRegistration registration) {
         final IJeiHelpers jeiHelpers = registration.getJeiHelpers();
         final IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
         final IModIdHelper modIdHelper = jeiHelpers.getModIdHelper();
 
         registration.addRecipeCategories(
-          new CropRecipeCategory(guiHelper),
-            new ToolRecipeCategory(guiHelper),
-            new CompostRecipeCategory(guiHelper),
-            new FishermanRecipeCategory(guiHelper),
-            new FloristRecipeCategory(guiHelper)
+                new CropRecipeCategory(guiHelper),
+                new ToolRecipeCategory(guiHelper),
+                new CompostRecipeCategory(guiHelper),
+                new FishermanRecipeCategory(guiHelper),
+                new FloristRecipeCategory(guiHelper)
         );
 
         categories.clear();
-        for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
-        {
+        for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry()) {
             final Map<JobEntry, GenericRecipeCategory> craftingCategories = new HashMap<>();
 
-            for (final BuildingEntry.ModuleProducer<?, ?> producer : building.getModuleProducers())
-            {
-                if (!producer.hasServerModule())
-                {
+            for (final BuildingEntry.ModuleProducer<?, ?> producer : building.getModuleProducers()) {
+                if (!producer.hasServerModule()) {
                     continue;
                 }
 
                 final var module = BuildingEntry.produceModuleWithoutBuilding(producer.key);
 
-                if (module == null)
-                {
+                if (module == null) {
                     continue;
                 }
 
-                if (module instanceof final ICraftingBuildingModule crafting)
-                {
+                if (module instanceof final ICraftingBuildingModule crafting) {
                     final IJob<?> job = crafting.getCraftingJob();
-                    if (job != null)
-                    {
+                    if (job != null) {
                         GenericRecipeCategory category = craftingCategories.get(job.getJobRegistryEntry());
-                        if (category == null)
-                        {
+                        if (category == null) {
                             category = new GenericRecipeCategory(building, job, guiHelper, modIdHelper);
                             craftingCategories.put(job.getJobRegistryEntry(), category);
                         }
                         category.addModule(crafting);
                     }
-                }
-                else if (module instanceof final AnimalHerdingModule herding)
-                {
+                } else if (module instanceof final AnimalHerdingModule herding) {
                     final IJob<?> job = herding.getHerdingJob();
                     GenericRecipeCategory category = craftingCategories.get(job.getJobRegistryEntry());
-                    if (category == null)
-                    {
+                    if (category == null) {
                         category = new GenericRecipeCategory(building, job, guiHelper, modIdHelper);
                         craftingCategories.put(job.getJobRegistryEntry(), category);
                     }
@@ -106,23 +93,20 @@ public class JEIPlugin implements IModPlugin
                 }
             }
 
-            for (final GenericRecipeCategory category : craftingCategories.values())
-            {
+            for (final GenericRecipeCategory category : craftingCategories.values()) {
                 registerCategory(registration, category);
             }
         }
     }
 
     private void registerCategory(@NotNull final IRecipeCategoryRegistration registration,
-                                  @NotNull final JobBasedRecipeCategory<?> category)
-    {
+                                  @NotNull final JobBasedRecipeCategory<?> category) {
         categories.add(category);
         registration.addRecipeCategories(category);
     }
 
     @Override
-    public void registerRecipes(@NotNull final IRecipeRegistration registration)
-    {
+    public void registerRecipes(@NotNull final IRecipeRegistration registration) {
         registration.addIngredientInfo(ModBlocks.blockHutComposter,
                 Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
@@ -136,8 +120,7 @@ public class JEIPlugin implements IModPlugin
         final Map<CraftingType, List<IGenericRecipe>> vanilla = RecipeAnalyzer.buildVanillaRecipesMap(level.getRecipeManager(), level);
         final List<Animal> animals = RecipeAnalyzer.createAnimals(level);
 
-        for (final JobBasedRecipeCategory<?> category : this.categories)
-        {
+        for (final JobBasedRecipeCategory<?> category : this.categories) {
             addJobBasedRecipes(vanilla, animals, category, registration::addRecipes, level);
         }
     }
@@ -146,43 +129,35 @@ public class JEIPlugin implements IModPlugin
                                         @NotNull final List<Animal> animals,
                                         @NotNull final JobBasedRecipeCategory<R> category,
                                         @NotNull final BiConsumer<RecipeType<R>, List<R>> registrar,
-                                        @NotNull final Level world)
-    {
-        try
-        {
+                                        @NotNull final Level world) {
+        try {
             registrar.accept(category.getRecipeType(), category.findRecipes(vanilla, animals, world));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.getLogger().error("Failed to process recipes for " + category.getTitle(), e);
         }
     }
 
     @Override
-    public void registerRecipeCatalysts(@NotNull final IRecipeCatalystRegistration registration)
-    {
+    public void registerRecipeCatalysts(@NotNull final IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(ModBlocks.blockBarrel, ModRecipeTypes.COMPOSTING);
         registration.addRecipeCatalyst(ModBlocks.blockHutComposter, ModRecipeTypes.COMPOSTING);
         registration.addRecipeCatalyst(ModBlocks.blockHutFisherman, ModRecipeTypes.FISHING);
         registration.addRecipeCatalyst(ModBlocks.blockHutFlorist, ModRecipeTypes.FLOWERS);
 
-        for (final JobBasedRecipeCategory<?> category : this.categories)
-        {
+        for (final JobBasedRecipeCategory<?> category : this.categories) {
             registration.addRecipeCatalyst(category.getCatalyst(), category.getRecipeType());
         }
     }
 
     @Override
-    public void registerRecipeTransferHandlers(@NotNull final IRecipeTransferRegistration registration)
-    {
+    public void registerRecipeTransferHandlers(@NotNull final IRecipeTransferRegistration registration) {
         registration.addRecipeTransferHandler(new PrivateCraftingTeachingTransferHandler(registration.getTransferHelper()), RecipeTypes.CRAFTING);
         registration.addRecipeTransferHandler(new PrivateSmeltingTeachingTransferHandler(registration.getTransferHelper()), RecipeTypes.SMELTING);
         registration.addRecipeTransferHandler(new PrivateBrewingTeachingTransferHandler(registration.getTransferHelper()), RecipeTypes.BREWING);
     }
 
     @Override
-    public void registerGuiHandlers(@NotNull final IGuiHandlerRegistration registration)
-    {
+    public void registerGuiHandlers(@NotNull final IGuiHandlerRegistration registration) {
         new CraftingGuiHandler(this.categories).register(registration);
         new FurnaceCraftingGuiHandler(this.categories).register(registration);
         new BrewingCraftingGuiHandler(this.categories).register(registration);

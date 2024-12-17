@@ -5,6 +5,5 @@ package com.minecolonies.api.blocks.interfaces;
  * <p>
  * Originally intended for detecting Stash and Postbox instances
  */
-public interface IRSComponentBlock
-{
+public interface IRSComponentBlock {
 }

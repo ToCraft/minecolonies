@@ -27,8 +27,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_MANA
 /**
  * The implementation of the colonyTagCapability.
  */
-public class ServerColonySaveData extends SavedData implements IServerColonySaveData
-{
+public class ServerColonySaveData extends SavedData implements IServerColonySaveData {
     /**
      * World save data name.
      */
@@ -37,7 +36,7 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
     /**
      * Worldsavedata factory.
      */
-    public static final SavedData.Factory<ServerColonySaveData> FACTORY = new SavedData.Factory<>(ServerColonySaveData::new, (d,a) -> {
+    public static final SavedData.Factory<ServerColonySaveData> FACTORY = new SavedData.Factory<>(ServerColonySaveData::new, (d, a) -> {
         final ServerColonySaveData colonyManagerData = new ServerColonySaveData();
         colonyManagerData.readNBT(a, d);
         return colonyManagerData;
@@ -54,81 +53,66 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
      */
     private boolean overworld;
 
-    private ServerColonySaveData()
-    {
+    private ServerColonySaveData() {
 
     }
 
     @NotNull
     @Override
-    public CompoundTag save(final @NotNull CompoundTag tag, @NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag save(final @NotNull CompoundTag tag, @NotNull final HolderLookup.Provider provider) {
         return writeNBT(provider, tag);
     }
 
     @Override
-    public IColony createColony(@NotNull final ServerLevel w, @NotNull final String name, @NotNull final BlockPos pos)
-    {
+    public IColony createColony(@NotNull final ServerLevel w, @NotNull final String name, @NotNull final BlockPos pos) {
         return colonies.create(w, name, pos);
     }
 
     @Override
-    public void deleteColony(final int id)
-    {
+    public void deleteColony(final int id) {
         colonies.remove(id);
     }
 
     @Override
-    public IColony getColony(final int id)
-    {
+    public IColony getColony(final int id) {
         return colonies.get(id);
     }
 
     @Override
-    public List<IColony> getColonies()
-    {
+    public List<IColony> getColonies() {
         return colonies.getCopyAsList();
     }
 
     @Override
-    public void addColony(final IColony colony)
-    {
+    public void addColony(final IColony colony) {
         colonies.add(colony);
     }
 
     @Override
-    public int getTopID()
-    {
+    public int getTopID() {
         return colonies.getTopID();
     }
 
     @Override
-    public boolean isDirty()
-    {
+    public boolean isDirty() {
         return true;
     }
 
-    private CompoundTag writeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag inputTag)
-    {
+    private CompoundTag writeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag inputTag) {
         final CompoundTag compound = new CompoundTag();
         final ListTag colonyTag = new ListTag();
-        for (final IColony colony : colonies)
-        {
-            try
-            {
+        for (final IColony colony : colonies) {
+            try {
                 colonyTag.add(colony.getColonyTag());
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.getLogger()
-                  .error("Colony: " + colony.getName() + " id:" + colony.getID() + " owner:" + colony.getPermissions().getOwnerName() + " could not be saved! Error:", e);
+                        .error("Colony: " + colony.getName() + " id:" + colony.getID() + " owner:" + colony.getPermissions().getOwnerName() + " could not be saved! Error:", e);
             }
         }
 
         compound.put(TAG_COLONIES, colonyTag);
 
-        if (overworld)
-        {
+        if (overworld) {
             final CompoundTag managerCompound = new CompoundTag();
             IColonyManager.getInstance().write(provider, managerCompound);
             compound.put(TAG_COLONY_MANAGER, managerCompound);
@@ -139,55 +123,46 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
     }
 
     @Override
-    public IServerColonySaveData setOverworld(final boolean overworld)
-    {
+    public IServerColonySaveData setOverworld(final boolean overworld) {
         this.overworld = overworld;
         return this;
     }
 
-    private void readNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag inputTag)
-    {
+    private void readNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag inputTag) {
         final CompoundTag compound = inputTag.getCompound(Constants.MOD_ID);
 
-        if (!compound.contains(TAG_COLONIES))
-        {
+        if (!compound.contains(TAG_COLONIES)) {
             BackUpHelper.loadManagerBackup(provider);
             return;
         }
 
         // Load all colonies from Nbt
         Multimap<BlockPos, IColony> tempColonies = ArrayListMultimap.create();
-        for (final Tag tag : compound.getList(TAG_COLONIES, Tag.TAG_COMPOUND))
-        {
+        for (final Tag tag : compound.getList(TAG_COLONIES, Tag.TAG_COMPOUND)) {
             final IColony colony = Colony.loadColony((CompoundTag) tag, null, provider);
-            if (colony != null)
-            {
+            if (colony != null) {
                 tempColonies.put(colony.getCenter(), colony);
                 colonies.add(colony);
             }
         }
 
-        if (compound.contains(TAG_COLONY_MANAGER))
-        {
+        if (compound.contains(TAG_COLONY_MANAGER)) {
             IColonyManager.getInstance().read(provider, compound.getCompound(TAG_COLONY_MANAGER));
             this.overworld = true;
         }
 
         // Check colonies for duplicates causing issues.
-        for (final BlockPos pos : tempColonies.keySet())
-        {
+        for (final BlockPos pos : tempColonies.keySet()) {
             // Check if any position has more than one colony
-            if (tempColonies.get(pos).size() > 1)
-            {
+            if (tempColonies.get(pos).size() > 1) {
                 Log.getLogger().warn("Detected duplicate colonies which are at the same position:");
-                for (final IColony colony : tempColonies.get(pos))
-                {
+                for (final IColony colony : tempColonies.get(pos)) {
                     Log.getLogger()
-                        .warn(
-                        "ID: " + colony.getID() + " name:" + colony.getName() + " citizens:" + colony.getCitizenManager().getCitizens().size() + " building count:" + colony
-                                                                                                                                                                        .getBuildingManager()
-                                                                                                                                                                        .getBuildings()
-                                                                                                                                                                        .size());
+                            .warn(
+                                    "ID: " + colony.getID() + " name:" + colony.getName() + " citizens:" + colony.getCitizenManager().getCitizens().size() + " building count:" + colony
+                                            .getBuildingManager()
+                                            .getBuildings()
+                                            .size());
                 }
                 Log.getLogger().warn("Check and remove all except one of the duplicated colonies above!");
             }

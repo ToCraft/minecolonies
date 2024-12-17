@@ -21,8 +21,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
 /**
  * BOWindow for the tavern
  */
-public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuildingView>
-{
+public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuildingView> {
     /**
      * Id of the hire/fire button in the GUI.
      */
@@ -58,8 +57,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      *
      * @param building View of the home building.
      */
-    public WindowHutLiving(final LivingBuildingView building)
-    {
+    public WindowHutLiving(final LivingBuildingView building) {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
 
         super.registerButton(BUTTON_ASSIGN, this::assignClicked);
@@ -71,30 +69,24 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
     /**
      * On recall clicked.
      */
-    private void recallClicked()
-    {
+    private void recallClicked() {
         new RecallCitizenHutMessage(building).sendToServer();
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         citizen = findPaneOfTypeByID(LIST_CITIZEN, ScrollingList.class);
-        citizen.setDataProvider(new ScrollingList.DataProvider()
-        {
+        citizen.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return home.getResidents().size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final ICitizenDataView citizenDataView = home.getColony().getCitizen(home.getResidents().get(index));
-                if (citizenDataView != null)
-                {
+                if (citizenDataView != null) {
                     rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal((citizenDataView.getJob().isEmpty() ? "" : (Component.translatableEscape(citizenDataView.getJob()).getString() + ": ")) + citizenDataView.getName()));
                 }
             }
@@ -106,8 +98,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
     /**
      * Refresh the view.
      */
-    private void refreshView()
-    {
+    private void refreshView() {
         findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(Component.translatableEscape(LABEL_HOUSE_ASSIGNED_CITIZENS, building.getResidents().size(), building.getMax()));
         citizen.refreshElementPanes();
     }
@@ -115,10 +106,8 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
     /**
      * Action when an assign button is clicked.
      */
-    private void assignClicked()
-    {
-        if (building.getBuildingLevel() == 0)
-        {
+    private void assignClicked() {
+        if (building.getBuildingLevel() == 0) {
             MessageUtils.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0).sendTo(Minecraft.getInstance().player);
             return;
         }

@@ -11,9 +11,9 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +27,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for the replace block GUI.
  */
-public class WindowPostBox extends AbstractWindowRequestTree
-{
+public class WindowPostBox extends AbstractWindowRequestTree {
     /**
      * Id of the deliver available button inside the GUI.
      */
@@ -79,8 +78,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
      *
      * @param buildingView the building view.
      */
-    public WindowPostBox(final AbstractBuildingView buildingView)
-    {
+    public WindowPostBox(final AbstractBuildingView buildingView) {
         super(buildingView.getID(), Constants.MOD_ID + WINDOW_POSTBOX, buildingView.getColony());
         this.buildingView = buildingView;
         this.stackList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
@@ -90,8 +88,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
 
         window.findPaneOfTypeByID(NAME_LABEL, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
-            if (!newFilter.equals(filter))
-            {
+            if (!newFilter.equals(filter)) {
                 filter = newFilter;
                 this.tick = 10;
             }
@@ -101,8 +98,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
     /**
      * Action when a button opening an inventory is clicked.
      */
-    private void inventoryClicked()
-    {
+    private void inventoryClicked() {
         new OpenInventoryMessage(buildingView).sendToServer();
     }
 
@@ -111,21 +107,15 @@ public class WindowPostBox extends AbstractWindowRequestTree
      *
      * @param button the clicked button.
      */
-    private void requestClicked(final Button button)
-    {
+    private void requestClicked(final Button button) {
         final int row = stackList.getListElementIndexByPane(button);
         final ItemStack stack = allItems.get(row);
         int qty = stack.getMaxStackSize();
-        for (final Pane child : button.getParent().getChildren())
-        {
-            if (child.getID().equals(INPUT_QTY))
-            {
-                try
-                {
+        for (final Pane child : button.getParent().getChildren()) {
+            if (child.getID().equals(INPUT_QTY)) {
+                try {
                     qty = Integer.parseInt(((TextField) child).getText());
-                }
-                catch (final NumberFormatException ex)
-                {
+                } catch (final NumberFormatException ex) {
                     //Be quiet about it.
                 }
             }
@@ -134,24 +124,19 @@ public class WindowPostBox extends AbstractWindowRequestTree
         new PostBoxRequestMessage(buildingView, stack.copy(), qty, deliverAvailable).sendToServer();
     }
 
-    private void deliverPartialClicked(@NotNull final Button button)
-    {
+    private void deliverPartialClicked(@NotNull final Button button) {
 
-        if (button.getTextAsString().equals(RED_X))
-        {
+        if (button.getTextAsString().equals(RED_X)) {
             button.setText(Component.literal(APPROVE));
             this.deliverAvailable = true;
-        }
-        else
-        {
+        } else {
             button.setText(Component.literal(RED_X));
             this.deliverAvailable = false;
         }
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         findPaneOfTypeByID(TAG_BUTTON_DELIVER_AVAILABLE, Button.class).setText(Component.literal(RED_X));
 
@@ -161,12 +146,11 @@ public class WindowPostBox extends AbstractWindowRequestTree
     /**
      * Update the item list.
      */
-    private void updateResources()
-    {
+    private void updateResources() {
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
-                                                                || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || (stack.getItem() instanceof EnchantedBookItem && stack.getTagEnchantments().entrySet().stream().anyMatch(f -> f.getKey().getRegisteredName().contains(filter.toLowerCase(Locale.US))));
+                || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                || (stack.getItem() instanceof EnchantedBookItem && stack.getTagEnchantments().entrySet().stream().anyMatch(f -> f.getKey().getRegisteredName().contains(filter.toLowerCase(Locale.US))));
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
         allItems.sort(Comparator.comparingInt(s1 -> StringUtils.getLevenshteinDistance(s1.getHoverName().getString(), filter)));
@@ -179,12 +163,10 @@ public class WindowPostBox extends AbstractWindowRequestTree
      * @param filterPredicate the predicate to filter all blocks for.
      * @return an immutable list of blocks.
      */
-    private Collection<? extends ItemStack> getBlockList(final Predicate<ItemStack> filterPredicate)
-    {
+    private Collection<? extends ItemStack> getBlockList(final Predicate<ItemStack> filterPredicate) {
         final Set<ItemStack> allItems = ItemStackUtils.allItemsPlusInventory(Minecraft.getInstance().player);
 
-        if (filter.isEmpty())
-        {
+        if (filter.isEmpty()) {
             return allItems;
         }
         return allItems.stream().filter(filterPredicate).collect(Collectors.toList());
@@ -193,22 +175,19 @@ public class WindowPostBox extends AbstractWindowRequestTree
     /**
      * Updates the resource list in the GUI with the info we need.
      */
-    private void updateResourceList()
-    {
+    private void updateResourceList() {
         stackList.enable();
         stackList.show();
         final List<ItemStack> tempRes = new ArrayList<>(allItems);
 
         //Creates a dataProvider for the unemployed stackList.
-        stackList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        stackList.setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return tempRes.size();
             }
 
@@ -218,8 +197,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final ItemStack resource = tempRes.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
                 resourceLabel.setText(resource.getHoverName());
@@ -229,11 +207,9 @@ public class WindowPostBox extends AbstractWindowRequestTree
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
-        if (tick > 0 && --tick == 0)
-        {
+        if (tick > 0 && --tick == 0) {
             updateResources();
         }
     }

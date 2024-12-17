@@ -6,10 +6,10 @@ import org.jetbrains.annotations.NotNull;
  * A specific stat.
  */
 @FunctionalInterface
-public interface IStat<N extends Number>
-{
+public interface IStat<N extends Number> {
     /**
      * Apply the input value to the existing value.
+     *
      * @param input the input value.
      * @return the calculated output.
      */

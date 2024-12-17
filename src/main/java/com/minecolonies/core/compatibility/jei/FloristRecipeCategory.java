@@ -28,13 +28,11 @@ import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JE
 /**
  * JEI recipe category showing supported flowers.
  */
-public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeCategory.FloristRecipe>
-{
+public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeCategory.FloristRecipe> {
     /**
      * Constructor
      */
-    public FloristRecipeCategory(@NotNull final IGuiHelper guiHelper)
-    {
+    public FloristRecipeCategory(@NotNull final IGuiHelper guiHelper) {
         super(ModJobs.florist.get().produceJob(null), ModRecipeTypes.FLOWERS,
                 new ItemStack(ModBuildings.florist.get().getBuildingBlock()), guiHelper);
     }
@@ -45,8 +43,7 @@ public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeC
 
     @NotNull
     @Override
-    protected List<Component> generateInfoBlocks(@NotNull final FloristRecipeCategory.FloristRecipe recipe)
-    {
+    protected List<Component> generateInfoBlocks(@NotNull final FloristRecipeCategory.FloristRecipe recipe) {
         return Collections.singletonList(
                 Component.translatable(PARTIAL_JEI_INFO + "onelevelrestriction",
                         recipe.level()));
@@ -55,8 +52,7 @@ public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeC
     @Override
     public void setRecipe(@NotNull final IRecipeLayoutBuilder builder,
                           @NotNull final FloristRecipeCategory.FloristRecipe recipe,
-                          @NotNull final IFocusGroup focuses)
-    {
+                          @NotNull final IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.CATALYST, WIDTH - 18, CITIZEN_Y - 20)
                 .setSlotName("compost")
                 .setBackground(this.slot, -1, -1)
@@ -70,19 +66,15 @@ public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeC
         int y = CITIZEN_Y + CITIZEN_H - rows * this.slot.getHeight() + 1;
         int c = 0;
 
-        for (final List<ItemStack> flowers : recipe.flowers())
-        {
+        for (final List<ItemStack> flowers : recipe.flowers()) {
             builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
                     .setBackground(this.chanceSlot, -1, -1)
                     .addItemStacks(flowers);
-            if (++c >= columns)
-            {
+            if (++c >= columns) {
                 c = 0;
                 x = startX;
                 y += this.slot.getHeight();
-            }
-            else
-            {
+            } else {
                 x += this.slot.getWidth();
             }
         }
@@ -92,8 +84,7 @@ public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeC
     public void draw(@NotNull final FloristRecipeCategory.FloristRecipe recipe,
                      @NotNull final IRecipeSlotsView recipeSlotsView,
                      @NotNull final GuiGraphics stack,
-                     final double mouseX, final double mouseY)
-    {
+                     final double mouseX, final double mouseY) {
         super.draw(recipe, recipeSlotsView, stack, mouseX, mouseY);
 
         final BlockState block = ModBlocks.blockCompostedDirt.defaultBlockState();
@@ -101,12 +92,10 @@ public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeC
     }
 
     @NotNull
-    public static List<FloristRecipeCategory.FloristRecipe> findRecipes()
-    {
+    public static List<FloristRecipeCategory.FloristRecipe> findRecipes() {
         final List<FloristRecipeCategory.FloristRecipe> recipes = new ArrayList<>();
 
-        for (int level = 1; level <= MAX_BUILDING_LEVEL; ++level)
-        {
+        for (int level = 1; level <= MAX_BUILDING_LEVEL; ++level) {
             recipes.add(new FloristRecipe(level, compactify(BuildingFlorist.getPlantablesForBuildingLevel(level))));
         }
 
@@ -116,33 +105,25 @@ public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeC
     /**
      * Produces no more than MAX_LOOT_SLOTS lists of lists of items, to avoid overflowing the GUI with slots.
      */
-    private static List<List<ItemStack>> compactify(@NotNull final Set<ItemStorage> flowers)
-    {
+    private static List<List<ItemStack>> compactify(@NotNull final Set<ItemStorage> flowers) {
         final List<List<ItemStack>> slots = new ArrayList<>();
         final List<ItemStack> flowerList = flowers.stream().map(ItemStorage::getItemStack).toList();
 
-        if (flowerList.size() < MAX_LOOT_SLOTS)
-        {
-            for (final ItemStack item : flowerList)
-            {
+        if (flowerList.size() < MAX_LOOT_SLOTS) {
+            for (final ItemStack item : flowerList) {
                 slots.add(List.of(item));
             }
-        }
-        else
-        {
+        } else {
             int itemsPerList = flowerList.size() / MAX_LOOT_SLOTS;
             int extraItems = flowerList.size() % MAX_LOOT_SLOTS;
             int currentIndex = 0;
 
-            for (int i = 0; i < MAX_LOOT_SLOTS; ++i)
-            {
+            for (int i = 0; i < MAX_LOOT_SLOTS; ++i) {
                 final List<ItemStack> sublist = new ArrayList<>();
-                for (int j = 0; j < itemsPerList; ++j)
-                {
+                for (int j = 0; j < itemsPerList; ++j) {
                     sublist.add(flowerList.get(currentIndex++));
                 }
-                if (extraItems > 0)
-                {
+                if (extraItems > 0) {
                     sublist.add(flowerList.get(currentIndex++));
                     --extraItems;
                 }
@@ -155,10 +136,10 @@ public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeC
 
     /**
      * Represents the flowers available at the specified level.
+     *
      * @param level   the building level.
      * @param flowers the flowers available at that level, grouped into display slots.
      */
-    public record FloristRecipe(int level, @NotNull List<List<ItemStack>> flowers)
-    {
+    public record FloristRecipe(int level, @NotNull List<List<ItemStack>> flowers) {
     }
 }

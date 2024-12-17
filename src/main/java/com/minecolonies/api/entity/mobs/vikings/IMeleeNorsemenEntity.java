@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.mobs.IMeleeMobEntity;
 /**
  * Melee norsemen entity interface.
  */
-public interface IMeleeNorsemenEntity extends INorsemenEntity, IMeleeMobEntity
-{
+public interface IMeleeNorsemenEntity extends INorsemenEntity, IMeleeMobEntity {
 
 }

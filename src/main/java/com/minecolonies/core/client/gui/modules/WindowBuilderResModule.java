@@ -33,15 +33,14 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for the builder hut.
  */
-public class WindowBuilderResModule extends AbstractModuleWindow
-{
+public class WindowBuilderResModule extends AbstractModuleWindow {
     /**
      * Color constants for builder list.
      */
-    public static final int RED       = Color.getByName("red", 0);
+    public static final int RED = Color.getByName("red", 0);
     public static final int DARKGREEN = Color.getByName("darkgreen", 0);
-    public static final int BLACK     = Color.getByName("black", 0);
-    public static final int ORANGE    = Color.getByName("orange", 0);
+    public static final int BLACK = Color.getByName("black", 0);
+    public static final int ORANGE = Color.getByName("orange", 0);
 
     /**
      * List of resources needed.
@@ -62,10 +61,9 @@ public class WindowBuilderResModule extends AbstractModuleWindow
     /**
      * Constructor for window builder hut.
      *
-     * @param building  {@link BuildingBuilder.View}.
+     * @param building {@link BuildingBuilder.View}.
      */
-    public WindowBuilderResModule(final String res, final IBuildingView building, final BuildingResourcesModuleView moduleView)
-    {
+    public WindowBuilderResModule(final String res, final IBuildingView building, final BuildingResourcesModuleView moduleView) {
         super(building, res);
         this.moduleView = moduleView;
         findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatableEscape(moduleView.getDesc().toLowerCase(Locale.US)));
@@ -78,8 +76,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
     /**
      * Retrieve resources from the building to display in GUI.
      */
-    private void pullResourcesFromHut()
-    {
+    private void pullResourcesFromHut() {
         final Inventory inventory = this.mc.player.getInventory();
         final boolean isCreative = this.mc.player.isCreative();
 
@@ -88,18 +85,14 @@ public class WindowBuilderResModule extends AbstractModuleWindow
 
         double supplied = 0;
         double total = 0;
-        for (final BuildingBuilderResource resource : resources)
-        {
+        for (final BuildingBuilderResource resource : resources) {
             final int amountToSet;
-            if (isCreative)
-            {
+            if (isCreative) {
                 amountToSet = resource.getAmount();
-            }
-            else
-            {
+            } else {
                 amountToSet =
-                  InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
-                    stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack()));
+                        InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
+                                stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack()));
             }
             resource.setPlayerAmount(amountToSet);
             supplied += Math.min(resource.getAvailable(), resource.getAmount());
@@ -107,8 +100,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
             total += resource.getAmount();
         }
 
-        if (total > 0)
-        {
+        if (total > 0) {
             findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.progress.res", (int) ((supplied / total) * 100) + "%", moduleView.getProgress() + "%"));
         }
 
@@ -116,23 +108,19 @@ public class WindowBuilderResModule extends AbstractModuleWindow
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
 
         pullResourcesFromHut();
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        resourceList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        resourceList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return resources.size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 updateResourcePane(index, rowPane);
             }
         });
@@ -140,11 +128,9 @@ public class WindowBuilderResModule extends AbstractModuleWindow
         //Make sure we have a fresh view
         new MarkBuildingDirtyMessage(this.buildingView).sendToServer();
 
-        if (moduleView.getWorkOrderId() > -1)
-        {
+        if (moduleView.getWorkOrderId() > -1) {
             final IWorkOrderView workOrder = moduleView.getBuildingView().getColony().getWorkOrder(moduleView.getWorkOrderId());
-            if (workOrder != null)
-            {
+            if (workOrder != null) {
                 final Text pane = findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class);
                 final Component text = Component.literal(workOrder.getDisplayName().getString().replace("\n", " "));
                 pane.setText(text);
@@ -160,16 +146,14 @@ public class WindowBuilderResModule extends AbstractModuleWindow
      * @param index   index in the list of resources.
      * @param rowPane The Pane to use to display the information.
      */
-    private void updateResourcePane(final int index, @NotNull final Pane rowPane)
-    {
+    private void updateResourcePane(final int index, @NotNull final Pane rowPane) {
         final BuildingBuilderResource resource = resources.get(index);
         final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
         final Text resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Text.class);
         final Text neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Text.class);
         final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
 
-        switch (resource.getAvailabilityStatus())
-        {
+        switch (resource.getAvailabilityStatus()) {
             case DONT_HAVE:
                 addButton.disable();
                 resourceLabel.setColors(RED);
@@ -204,12 +188,9 @@ public class WindowBuilderResModule extends AbstractModuleWindow
 
         resourceLabel.setText(Component.literal(resource.getName()));
         final int missing = resource.getMissingFromPlayer();
-        if (missing < 0)
-        {
+        if (missing < 0) {
             resourceMissingLabel.setText(Component.literal(Integer.toString(missing)));
-        }
-        else
-        {
+        } else {
             resourceMissingLabel.clearText();
         }
 
@@ -223,11 +204,9 @@ public class WindowBuilderResModule extends AbstractModuleWindow
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
-        if (tickToInventoryUpdate++ == 20)
-        {
+        if (tickToInventoryUpdate++ == 20) {
             pullResourcesFromHut();
             tickToInventoryUpdate = 0;
         }
@@ -239,19 +218,15 @@ public class WindowBuilderResModule extends AbstractModuleWindow
      *
      * @param button the clicked button.
      */
-    private void transferItems(@NotNull final Button button)
-    {
+    private void transferItems(@NotNull final Button button) {
         final Pane pane = button.getParent();
         button.disable();
         final Text idLabel = pane.findPaneOfTypeByID(RESOURCE_ID, Text.class);
         final int index = Integer.parseInt(idLabel.getTextAsString());
         final BuildingBuilderResource res = resources.get(index);
-        if (res == null)
-        {
+        if (res == null) {
             Log.getLogger().warn("WindowHutBuilder.transferItems: Error - Could not find the resource.");
-        }
-        else
-        {
+        } else {
             // Delay updates to allow conflicts with network data 3s until server data is loaded
             tickToInventoryUpdate = -20 * 3;
 

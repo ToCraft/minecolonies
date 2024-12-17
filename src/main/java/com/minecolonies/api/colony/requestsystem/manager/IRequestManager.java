@@ -26,8 +26,7 @@ import java.util.function.Predicate;
 /**
  * Interface used to describe classes that function as managers for requests inside a colony. Extends INBTSerializable to allow for easy reading and writing from NBT.
  */
-public interface IRequestManager extends INBTSerializable<CompoundTag>, ITickable
-{
+public interface IRequestManager extends INBTSerializable<CompoundTag>, ITickable {
 
     /**
      * The colony this manager manages the requests for.
@@ -76,8 +75,7 @@ public interface IRequestManager extends INBTSerializable<CompoundTag>, ITickabl
      * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
      */
     @NotNull
-    default <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException
-    {
+    default <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException {
         final IToken<?> token = createRequest(requester, object);
         assignRequest(token);
         return token;
@@ -156,7 +154,6 @@ public interface IRequestManager extends INBTSerializable<CompoundTag>, ITickabl
      *
      * @param requester The removed requester.
      * @throws IllegalArgumentException is thrown when no requester with the same token is registered.
-
      */
     void onRequesterRemovedFromColony(@NotNull final IRequester requester) throws IllegalArgumentException;
 

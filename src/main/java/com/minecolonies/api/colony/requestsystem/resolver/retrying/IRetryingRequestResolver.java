@@ -7,8 +7,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.tileentities.ITickable;
 import org.jetbrains.annotations.Nullable;
 
-public interface IRetryingRequestResolver extends IQueuedRequestResolver<IRetryable>, ITickable
-{
+public interface IRetryingRequestResolver extends IQueuedRequestResolver<IRetryable>, ITickable {
     /**
      * Update the associated manager data that links this resolver to a manager.
      *
@@ -42,8 +41,7 @@ public interface IRetryingRequestResolver extends IQueuedRequestResolver<IRetrya
      *
      * @return an indication of reassignment.
      */
-    default boolean isReassigning()
-    {
+    default boolean isReassigning() {
         return getCurrentlyBeingReassignedRequest() != null;
     }
 

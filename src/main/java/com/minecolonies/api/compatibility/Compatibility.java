@@ -26,17 +26,16 @@ import static com.minecolonies.api.util.constant.Constants.HARVESTCRAFTMODID;
 /**
  * This class is to store the methods that call the methods to check for miscellaneous compatibility problems.
  */
-public final class Compatibility
-{
+public final class Compatibility {
 
-    private Compatibility()
-    {
+    private Compatibility() {
         throw new IllegalAccessError("Utility class");
     }
 
-    public static IBeehiveCompat beeHiveCompat = new IBeehiveCompat() {};
-    public static SlimeTreeProxy   tinkersSlimeCompat = new SlimeTreeProxy();
-    public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
+    public static IBeehiveCompat beeHiveCompat = new IBeehiveCompat() {
+    };
+    public static SlimeTreeProxy tinkersSlimeCompat = new SlimeTreeProxy();
+    public static TinkersToolProxy tinkersCompat = new TinkersToolProxy();
     public static DynamicTreeProxy dynamicTreesCompat = new DynamicTreeProxy();
 
     /**
@@ -46,8 +45,7 @@ public final class Compatibility
      * @param tool  the name of the tool.
      * @return boolean whether the stack can mine or not.
      */
-    public static boolean getMiningLevelCompatibility(@Nullable final ItemStack stack, @Nullable final String tool)
-    {
+    public static boolean getMiningLevelCompatibility(@Nullable final ItemStack stack, @Nullable final String tool) {
         return !tinkersCompat.checkTinkersBroken(stack);
     }
 
@@ -57,8 +55,7 @@ public final class Compatibility
      * @param block the block.
      * @return if the block is a slime block.
      */
-    public static boolean isSlimeBlock(@NotNull final Block block)
-    {
+    public static boolean isSlimeBlock(@NotNull final Block block) {
         return tinkersSlimeCompat.checkForTinkersSlimeBlock(block);
     }
 
@@ -68,8 +65,7 @@ public final class Compatibility
      * @param block the block.
      * @return if the block is a slime leaf.
      */
-    public static boolean isSlimeLeaf(@NotNull final Block block)
-    {
+    public static boolean isSlimeLeaf(@NotNull final Block block) {
         return tinkersSlimeCompat.checkForTinkersSlimeLeaves(block);
     }
 
@@ -79,8 +75,7 @@ public final class Compatibility
      * @param block the block.
      * @return if the block is a slime sapling.
      */
-    public static boolean isSlimeSapling(@NotNull final Block block)
-    {
+    public static boolean isSlimeSapling(@NotNull final Block block) {
         return tinkersSlimeCompat.checkForTinkersSlimeSapling(block);
     }
 
@@ -90,8 +85,7 @@ public final class Compatibility
      * @param block the block.
      * @return if the block is slime dirt.
      */
-    public static boolean isSlimeDirtOrGrass(@NotNull final Block block)
-    {
+    public static boolean isSlimeDirtOrGrass(@NotNull final Block block) {
         return tinkersSlimeCompat.checkForTinkersSlimeDirtOrGrass(block);
     }
 
@@ -101,8 +95,7 @@ public final class Compatibility
      * @param leaf the leaf.
      * @return the variant.
      */
-    public static int getLeafVariant(@NotNull final BlockState leaf)
-    {
+    public static int getLeafVariant(@NotNull final BlockState leaf) {
         return tinkersSlimeCompat.getTinkersLeafVariant(leaf);
     }
 
@@ -112,18 +105,20 @@ public final class Compatibility
      * @param stack the stack to check for.
      * @return true if so.
      */
-    public static boolean isTinkersWeapon(@NotNull final ItemStack stack)
-    {
+    public static boolean isTinkersWeapon(@NotNull final ItemStack stack) {
         return tinkersCompat.isTinkersWeapon(stack);
     }
 
     /**
      * Check if a certain item stack is a tinkers tool of the given tool type.
-     * @param stack the stack to check for.
+     *
+     * @param stack    the stack to check for.
      * @param toolType the tool type.
      * @return true if so.
      */
-    public static boolean isTinkersTool(@Nullable final ItemStack stack, final EquipmentTypeEntry toolType) { return tinkersCompat.isTinkersTool(stack, toolType); }
+    public static boolean isTinkersTool(@Nullable final ItemStack stack, final EquipmentTypeEntry toolType) {
+        return tinkersCompat.isTinkersTool(stack, toolType);
+    }
 
     /**
      * Calculate the actual attack damage of the tinkers weapon.
@@ -131,8 +126,7 @@ public final class Compatibility
      * @param stack the stack.
      * @return the attack damage.
      */
-    public static double getAttackDamage(@NotNull final ItemStack stack)
-    {
+    public static double getAttackDamage(@NotNull final ItemStack stack) {
         return tinkersCompat.getAttackDamage(stack);
     }
 
@@ -142,8 +136,7 @@ public final class Compatibility
      * @param stack the stack.
      * @return the tool level
      */
-    public static int getToolLevel(@NotNull final ItemStack stack)
-    {
+    public static int getToolLevel(@NotNull final ItemStack stack) {
         return tinkersCompat.getToolLevel(stack);
     }
 
@@ -152,8 +145,7 @@ public final class Compatibility
      *
      * @return true if so.
      */
-    public static boolean isPamsInstalled()
-    {
+    public static boolean isPamsInstalled() {
         return ModList.get().isLoaded(HARVESTCRAFTMODID);
     }
 
@@ -162,8 +154,7 @@ public final class Compatibility
      *
      * @return the dynamic trees.
      */
-    public static boolean isDynTreePresent()
-    {
+    public static boolean isDynTreePresent() {
         return dynamicTreesCompat.isDynamicTreePresent();
     }
 
@@ -172,8 +163,7 @@ public final class Compatibility
      *
      * @return damageType
      */
-    public static ResourceKey<DamageType> getDynamicTreeDamage()
-    {
+    public static ResourceKey<DamageType> getDynamicTreeDamage() {
         return dynamicTreesCompat.getDynamicTreeDamage();
     }
 
@@ -183,8 +173,7 @@ public final class Compatibility
      * @param block the block to check.
      * @return true if so.
      */
-    public static boolean isDynamicBlock(final Block block)
-    {
+    public static boolean isDynamicBlock(final Block block) {
         return dynamicTreesCompat.checkForDynamicTreeBlock(block);
     }
 
@@ -194,8 +183,7 @@ public final class Compatibility
      * @param block the block to check.
      * @return true if so.
      */
-    public static boolean isDynamicLeaf(final Block block)
-    {
+    public static boolean isDynamicLeaf(final Block block) {
         return dynamicTreesCompat.checkForDynamicLeavesBlock(block);
     }
 
@@ -205,8 +193,7 @@ public final class Compatibility
      * @param block the block to check
      * @return true if it is a shell block.
      */
-    public static boolean isDynamicTrunkShell(final Block block)
-    {
+    public static boolean isDynamicTrunkShell(final Block block) {
         return dynamicTreesCompat.checkForDynamicTrunkShellBlock(block);
     }
 
@@ -220,8 +207,7 @@ public final class Compatibility
      * @param leaf       The leaf to check
      * @return the list of drops
      */
-    public static NonNullList<ItemStack> getDropsForDynamicLeaf(final LevelAccessor world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
-    {
+    public static NonNullList<ItemStack> getDropsForDynamicLeaf(final LevelAccessor world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf) {
         return dynamicTreesCompat.getDropsForLeaf(world, pos, blockState, fortune, leaf);
     }
 
@@ -233,8 +219,7 @@ public final class Compatibility
      * @param sapling  Itemstack of the sapling
      * @return true if successful
      */
-    public static boolean plantDynamicSapling(final Level world, final BlockPos location, final ItemStack sapling)
-    {
+    public static boolean plantDynamicSapling(final Level world, final BlockPos location, final ItemStack sapling) {
         return dynamicTreesCompat.plantDynamicSaplingCompat(world, location, sapling);
     }
 
@@ -247,8 +232,7 @@ public final class Compatibility
      * @param workerPos    The position the fakeplayer breaks the tree from, optional
      * @return Runnable to break the Tree
      */
-    public static Runnable getDynamicTreeBreakAction(final Level world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos)
-    {
+    public static Runnable getDynamicTreeBreakAction(final Level world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos) {
         return dynamicTreesCompat.getTreeBreakActionCompat(world, blockToBreak, toolToUse, workerPos);
     }
 
@@ -258,8 +242,7 @@ public final class Compatibility
      * @param item Item to check
      * @return true if so.
      */
-    public static boolean isDynamicTreeSapling(final Item item)
-    {
+    public static boolean isDynamicTreeSapling(final Item item) {
         return dynamicTreesCompat.checkForDynamicSapling(item);
     }
 
@@ -269,8 +252,7 @@ public final class Compatibility
      * @param stack Itemstack to check
      * @return true if it is a dynamic Sapling
      */
-    public static boolean isDynamicTreeSapling(final ItemStack stack)
-    {
+    public static boolean isDynamicTreeSapling(final ItemStack stack) {
         return dynamicTreesCompat.checkForDynamicSapling(stack.getItem());
     }
 
@@ -282,8 +264,7 @@ public final class Compatibility
      * @param world  the world to check.
      * @return true when same family
      */
-    public static boolean isDynamicFamilyFitting(final BlockPos block1, final BlockPos block2, final LevelAccessor world)
-    {
+    public static boolean isDynamicFamilyFitting(final BlockPos block1, final BlockPos block2, final LevelAccessor world) {
         return dynamicTreesCompat.hasFittingTreeFamilyCompat(block1, block2, world);
     }
 
@@ -295,8 +276,7 @@ public final class Compatibility
      * @param amount comb amount
      * @return list of drops
      */
-    public static List<ItemStack> getCombsFromHive(BlockPos pos, Level world, int amount)
-    {
+    public static List<ItemStack> getCombsFromHive(BlockPos pos, Level world, int amount) {
         return beeHiveCompat.getCombsFromHive(pos, world, amount);
     }
 }

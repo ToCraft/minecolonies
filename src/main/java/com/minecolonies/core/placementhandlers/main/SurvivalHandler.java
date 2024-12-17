@@ -27,7 +27,6 @@ import com.minecolonies.core.network.messages.client.OpenPlantationFieldBuildWin
 import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -48,27 +47,22 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Minecolonies survival blueprint handler.
  */
-public class SurvivalHandler implements ISurvivalBlueprintHandler
-{
+public class SurvivalHandler implements ISurvivalBlueprintHandler {
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         return Constants.MOD_ID;
     }
 
     @Override
-    public Component getDisplayName()
-    {
+    public Component getDisplayName() {
         return Component.translatableEscape("com.minecolonies.coremod.blueprint.placement");
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final RotationMirror rotMir)
-    {
-        if (IMinecoloniesAPI.getInstance().getConfig().getServer().blueprintBuildMode.get())
-        {
+    public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final RotationMirror rotMir) {
+        if (IMinecoloniesAPI.getInstance().getConfig().getServer().blueprintBuildMode.get()) {
             final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(clientLevel, blockPos);
             return colonyView != null;
         }
@@ -78,17 +72,15 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
     @Override
     public void handle(
-      final Blueprint blueprint,
-      final String packName,
-      final String blueprintPath,
-      final boolean clientPack,
-      final Level world,
-      final Player player,
-      final BlockPos blockPos,
-      final RotationMirror rotMir)
-    {
-        if (blueprint == null)
-        {
+            final Blueprint blueprint,
+            final String packName,
+            final String blueprintPath,
+            final boolean clientPack,
+            final Level world,
+            final Player player,
+            final BlockPos blockPos,
+            final RotationMirror rotMir) {
+        if (blueprint == null) {
             // This can happen if the file didnt finish synching with the server from the client, or something went wrong when synching (package dropped, etc).
             MessageUtils.format(NO_CUSTOM_BUILDINGS).sendTo(player);
             SoundUtils.playErrorSound(player, player.blockPosition());
@@ -100,54 +92,43 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, blockPos);
         final boolean isInColony = tempColony != null && tempColony.isCoordInColony(world, blockPos);
-        if (isInColony && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
-        {
+        if (isInColony && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)) {
             MessageUtils.format(BP_NO_PERM).sendTo(player);
             SoundUtils.playErrorSound(player, player.blockPosition());
             return;
         }
 
         boolean successfulTownHallLocation = false;
-        if (anchor.getBlock() instanceof BlockHutTownHall)
-        {
-            if (isInColony || IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos))
-            {
+        if (anchor.getBlock() instanceof BlockHutTownHall) {
+            if (isInColony || IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos)) {
                 successfulTownHallLocation = true;
-            }
-            else
-            {
+            } else {
                 MessageUtils.format(TOWNHALL_TOO_CLOSE).sendTo(player);
                 SoundUtils.playErrorSound(player, player.blockPosition());
                 return;
             }
         }
 
-        if ((!isInColony || !isBlueprintInColony(blueprint, tempColony, blockPos)) && !successfulTownHallLocation)
-        {
+        if ((!isInColony || !isBlueprintInColony(blueprint, tempColony, blockPos)) && !successfulTownHallLocation) {
             MessageUtils.format(BP_OUTSIDE_COLONY).sendTo(player);
             SoundUtils.playErrorSound(player, player.blockPosition());
             return;
         }
 
-        if (anchor.is(ModBlocks.blockPlantationField))
-        {
+        if (anchor.is(ModBlocks.blockPlantationField)) {
             new OpenPlantationFieldBuildWindowMessage(blockPos, packName, blueprintPath, rotMir).sendToPlayer((ServerPlayer) player);
         }
-        if (anchor.getBlock() instanceof AbstractBlockHut<?>)
-        {
-            if (clientPack || !StructurePacks.hasPack(packName) || blueprintPath.startsWith("scans/"))
-            {
+        if (anchor.getBlock() instanceof AbstractBlockHut<?>) {
+            if (clientPack || !StructurePacks.hasPack(packName) || blueprintPath.startsWith("scans/")) {
                 MessageUtils.format(BUILDING_MISSING).sendTo(player);
                 SoundUtils.playErrorSound(player, player.blockPosition());
                 return;
             }
 
             final ItemStack stack = new ItemStack(anchor.getBlock());
-            if (EventHandler.onBlockHutPlaced(world, player, anchor.getBlock(), blockPos))
-            {
+            if (EventHandler.onBlockHutPlaced(world, player, anchor.getBlock(), blockPos)) {
                 final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), anchor.getBlock());
-                if (slot == -1 && !player.isCreative())
-                {
+                if (slot == -1 && !player.isCreative()) {
                     SoundUtils.playErrorSound(player, player.blockPosition());
                     return;
                 }
@@ -155,8 +136,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 final ItemStack inventoryStack = slot == -1 ? stack : player.getInventory().getItem(slot);
 
                 final ColonyId colonyComponent = ColonyId.readFromItemStack(stack);
-                if (colonyComponent.hasColonyId() && tempColony != null && tempColony.getID() != colonyComponent.id())
-                {
+                if (colonyComponent.hasColonyId() && tempColony != null && tempColony.getID() != colonyComponent.id()) {
                     MessageUtils.format(WRONG_COLONY, colonyComponent.id()).sendTo(player);
                     SoundUtils.playErrorSound(player, player.blockPosition());
                     return;
@@ -165,24 +145,20 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 world.destroyBlock(blockPos, true);
                 world.setBlockAndUpdate(blockPos, anchor);
                 ((AbstractBlockHut<?>) anchor.getBlock()).onBlockPlacedByBuildTool(world,
-                  blockPos,
-                  anchor,
-                  player,
-                  null,
-                  rotMir,
-                  packName,
-                  blueprintPath);
-                try
-                {
+                        blockPos,
+                        anchor,
+                        player,
+                        null,
+                        rotMir,
+                        packName,
+                        blueprintPath);
+                try {
                     NeoForge.EVENT_BUS.post(new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(world.dimension(), world, blockPos), world.getBlockState(blockPos.below()), player));
-                }
-                catch (final Exception e)
-                {
+                } catch (final Exception e) {
                     Log.getLogger().error("Error during EntityPlaceEvent", e);
                 }
 
-                if (tempColony == null)
-                {
+                if (tempColony == null) {
                     // Townhall Placement
                     SoundUtils.playSuccessSound(player, player.blockPosition());
                     InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), inventoryStack, 1);
@@ -194,19 +170,16 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 int level = 0;
                 boolean finishedUpgrade = false;
                 final HutBlockData hutComponent = HutBlockData.readFromItemStack(inventoryStack);
-                if (hutComponent != null)
-                {
-                    if (hutComponent.level() != -1)
-                    {
+                if (hutComponent != null) {
+                    if (hutComponent.level() != -1) {
                         level = hutComponent.level();
                     }
-                    if (hutComponent.pastable())
-                    {
+                    if (hutComponent.pastable()) {
                         String newBlueprintPath = blueprintPath;
                         newBlueprintPath = newBlueprintPath.substring(0, newBlueprintPath.length() - 1);
                         newBlueprintPath += level;
                         CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level(), StructurePacks.getBlueprintFuture(packName, newBlueprintPath, world.registryAccess()),
-                          blockPos, rotMir, true, (ServerPlayer) player);
+                                blockPos, rotMir, true, (ServerPlayer) player);
                         finishedUpgrade = true;
                     }
                 }
@@ -214,26 +187,18 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), inventoryStack, 1);
 
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, blockPos);
-                if (building == null)
-                {
-                    if (!(anchor.getBlock() instanceof BlockHutTownHall))
-                    {
+                if (building == null) {
+                    if (!(anchor.getBlock() instanceof BlockHutTownHall)) {
                         SoundUtils.playErrorSound(player, player.blockPosition());
                         Log.getLogger().error("BuildTool: building is null!", new Exception());
                         return;
                     }
-                }
-                else
-                {
-                    if (building.getTileEntity() != null)
-                    {
+                } else {
+                    if (building.getTileEntity() != null) {
                         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, blockPos);
-                        if (colony == null)
-                        {
+                        if (colony == null) {
                             Log.getLogger().info("No colony for " + player.getName().getString());
-                        }
-                        else
-                        {
+                        } else {
                             building.getTileEntity().setColony(colony);
                         }
                     }
@@ -242,42 +207,31 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                     building.setBlueprintPath(blueprintPath);
 
                     building.setBuildingLevel(level);
-                    if (level > 0)
-                    {
+                    if (level > 0) {
                         building.setDeconstructed();
                     }
 
-                    if (!(building instanceof IRSComponent))
-                    {
+                    if (!(building instanceof IRSComponent)) {
                         ConstructionTapeHelper.placeConstructionTape(building.getCorners(), building.getColony());
                     }
 
                     building.setRotationMirror(rotMir);
 
-                    if (finishedUpgrade)
-                    {
+                    if (finishedUpgrade) {
                         building.onUpgradeComplete(building.getBuildingLevel());
                     }
                 }
             }
             SoundUtils.playSuccessSound(player, player.blockPosition());
-        }
-        else
-        {
-            if (blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() instanceof ILeveledBlueprintAnchorBlock)
-            {
+        } else {
+            if (blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() instanceof ILeveledBlueprintAnchorBlock) {
                 int level = Utils.getBlueprintLevel(blueprint.getFileName());
-                if (level == -1)
-                {
+                if (level == -1) {
                     new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, rotMir).sendToPlayer((ServerPlayer) player);
-                }
-                else
-                {
+                } else {
                     new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath.replace(level + ".blueprint", "1.blueprint"), rotMir).sendToPlayer((ServerPlayer) player);
                 }
-            }
-            else
-            {
+            } else {
                 new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, rotMir).sendToPlayer((ServerPlayer) player);
             }
         }
@@ -287,13 +241,13 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
     /**
      * Check if the blueprint is fully inside colony boundaries.
+     *
      * @param blueprint the blueprint to check.
-     * @param colony the colony to check for.
-     * @param blockPos the position to check at.
+     * @param colony    the colony to check for.
+     * @param blockPos  the position to check at.
      * @return true if so.
      */
-    private boolean isBlueprintInColony(final Blueprint blueprint, final IColony colony, final BlockPos blockPos)
-    {
+    private boolean isBlueprintInColony(final Blueprint blueprint, final IColony colony, final BlockPos blockPos) {
         final Level world = colony.getWorld();
         final BlockPos zeroPos = blockPos.subtract(blueprint.getPrimaryBlockOffset());
 
@@ -306,16 +260,13 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         final int minZ = Math.min(pos1.getZ(), pos2.getZ()) + 1;
         final int maxZ = Math.max(pos1.getZ(), pos2.getZ());
 
-        for (int x = minX; x < maxX; x += 16)
-        {
-            for (int z = minZ; z < maxZ; z += 16)
-            {
+        for (int x = minX; x < maxX; x += 16) {
+            for (int z = minZ; z < maxZ; z += 16) {
                 final int chunkX = x >> 4;
                 final int chunkZ = z >> 4;
                 final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
 
-                if (ColonyUtils.getOwningColony(world.getChunk(pos.x, pos.z)) != colony.getID())
-                {
+                if (ColonyUtils.getOwningColony(world.getChunk(pos.x, pos.z)) != colony.getID()) {
                     return false;
                 }
             }

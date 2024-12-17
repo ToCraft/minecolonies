@@ -1,22 +1,21 @@
 package com.minecolonies.core.colony.jobs;
 
-import com.minecolonies.core.entity.citizen.EntityCitizen;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkEnchanter;
-import net.minecraft.nbt.CompoundTag;
+import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TO_DRAIN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WAITING_TICKS;
 
-public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobEnchanter>
-{
+public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobEnchanter> {
     /**
      * Max waiting ticks.
      */
@@ -37,8 +36,7 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
      *
      * @param entity the citizen data.
      */
-    public JobEnchanter(final ICitizenData entity)
-    {
+    public JobEnchanter(final ICitizenData entity) {
         super(entity);
     }
 
@@ -49,34 +47,28 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.ENCHANTER_ID;
     }
 
     @Override
-    public EntityAIWorkEnchanter generateAI()
-    {
+    public EntityAIWorkEnchanter generateAI() {
         return new EntityAIWorkEnchanter(this);
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
-        if (compound.contains(TAG_BUILDING_TO_DRAIN))
-        {
+        if (compound.contains(TAG_BUILDING_TO_DRAIN)) {
             this.posToDrainFrom = BlockPosUtil.read(compound, TAG_BUILDING_TO_DRAIN);
         }
         this.waitingTicks = compound.getInt(TAG_WAITING_TICKS);
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
-        if (posToDrainFrom != null)
-        {
+        if (posToDrainFrom != null) {
             BlockPosUtil.write(compound, TAG_BUILDING_TO_DRAIN, posToDrainFrom);
         }
         compound.putInt(TAG_WAITING_TICKS, this.waitingTicks);
@@ -88,8 +80,7 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
      *
      * @param pos the pos of the building to drain.
      */
-    public void setBuildingToDrainFrom(final BlockPos pos)
-    {
+    public void setBuildingToDrainFrom(final BlockPos pos) {
         this.posToDrainFrom = pos;
     }
 
@@ -98,8 +89,7 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
      *
      * @return the pos.
      */
-    public BlockPos getPosToDrainFrom()
-    {
+    public BlockPos getPosToDrainFrom() {
         return posToDrainFrom;
     }
 
@@ -108,10 +98,8 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
      *
      * @return false if limit reached.
      */
-    public boolean incrementWaitingTicks()
-    {
-        if (++waitingTicks > MAX_WAITING_TICKS)
-        {
+    public boolean incrementWaitingTicks() {
+        if (++waitingTicks > MAX_WAITING_TICKS) {
             waitingTicks = 0;
             return false;
         }
@@ -119,8 +107,7 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
     }
 
     @Override
-    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
-    {
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker) {
         worker.queueSound(SoundEvents.ENCHANTMENT_TABLE_USE, worker.blockPosition().above(), 10, 0, 0.5f, worker.getRandom().nextFloat());
     }
 }

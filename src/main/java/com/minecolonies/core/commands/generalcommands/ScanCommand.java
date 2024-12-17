@@ -60,8 +60,7 @@ import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataPro
 /**
  * Command for opening WindowScanTool or scanning a structure into a file
  */
-public class ScanCommand extends AbstractCommand
-{
+public class ScanCommand extends AbstractCommand {
     /**
      * Descriptive string.
      */
@@ -116,40 +115,32 @@ public class ScanCommand extends AbstractCommand
      * @param saveEntities whether to scan in entities
      */
     public static void saveStructure(
-      final Level world,
-      final Player player,
-      final ScanToolData.Slot slot,
-      final boolean saveEntities)
-    {
-        if (slot.box().anchor().isPresent())
-        {
-            if (!BlockPosUtil.isInbetween(slot.box().anchor().get(), slot.box().pos1(), slot.box().pos2()))
-            {
+            final Level world,
+            final Player player,
+            final ScanToolData.Slot slot,
+            final boolean saveEntities) {
+        if (slot.box().anchor().isPresent()) {
+            if (!BlockPosUtil.isInbetween(slot.box().anchor().get(), slot.box().pos1(), slot.box().pos2())) {
                 player.displayClientMessage(Component.translatable(ANCHOR_POS_OUTSIDE_SCHEMATIC), false);
                 return;
             }
         }
 
         final BoundingBox box = BoundingBox.fromCorners(slot.box().pos1(), slot.box().pos2());
-        if (box.getXSpan() * box.getYSpan() * box.getZSpan() > Structurize.getConfig().getServer().schematicBlockLimit.get())
-        {
+        if (box.getXSpan() * box.getYSpan() * box.getZSpan() > Structurize.getConfig().getServer().schematicBlockLimit.get()) {
             player.displayClientMessage(Component.translatable(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()), false);
             return;
         }
 
         String fileName;
-        if (slot.name().isEmpty())
-        {
+        if (slot.name().isEmpty()) {
             fileName = Component.translatable("item.sceptersteel.scanformat", new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Date.from(Instant.now()))).getString();
-        }
-        else
-        {
+        } else {
             fileName = slot.name();
         }
 
-        if (!fileName.contains(".blueprint"))
-        {
-            fileName+= ".blueprint";
+        if (!fileName.contains(".blueprint")) {
+            fileName += ".blueprint";
         }
 
         final String[] split = fileName.split("/");
@@ -157,89 +148,70 @@ public class ScanCommand extends AbstractCommand
 
         final BlockPos zero = new BlockPos(box.minX(), box.minY(), box.minZ());
         final Blueprint
-          bp = BlueprintUtil.createBlueprint(world, zero, saveEntities, (short) box.getXSpan(), (short) box.getYSpan(), (short) box.getZSpan(), fileName, slot.box().anchor());
+                bp = BlueprintUtil.createBlueprint(world, zero, saveEntities, (short) box.getXSpan(), (short) box.getYSpan(), (short) box.getZSpan(), fileName, slot.box().anchor());
 
-        if (slot.box().anchor().isEmpty() && bp.getPrimaryBlockOffset().equals(new BlockPos(bp.getSizeX() / 2, 0, bp.getSizeZ() / 2)))
-        {
+        if (slot.box().anchor().isEmpty() && bp.getPrimaryBlockOffset().equals(new BlockPos(bp.getSizeX() / 2, 0, bp.getSizeZ() / 2))) {
             final List<BlockInfo> list = bp.getBlockInfoAsList().stream()
-                                           .filter(blockInfo -> blockInfo.hasTileEntityData() && blockInfo.getTileEntityData().contains(TAG_BLUEPRINTDATA))
-                                           .collect(Collectors.toList());
+                    .filter(blockInfo -> blockInfo.hasTileEntityData() && blockInfo.getTileEntityData().contains(TAG_BLUEPRINTDATA))
+                    .collect(Collectors.toList());
 
-            if (list.size() > 1)
-            {
+            if (list.size() > 1) {
                 player.displayClientMessage(Component.translatableEscape("com.ldtteam.structurize.gui.scantool.scanbadanchor", fileName), false);
             }
         }
 
         new SaveScanMessage(BlueprintUtil.writeBlueprintToNBT(bp), fileName.toLowerCase(Locale.US)).sendToPlayer((ServerPlayer) player);
-        if (style.isEmpty())
-        {
+        if (style.isEmpty()) {
             return;
         }
 
         boolean hasJigsaw = false;
-        for (BlockState state : bp.getPalette())
-        {
-            if (state.getBlock() == Blocks.JIGSAW)
-            {
+        for (BlockState state : bp.getPalette()) {
+            if (state.getBlock() == Blocks.JIGSAW) {
                 hasJigsaw = true;
                 break;
             }
         }
 
-        if (!hasJigsaw)
-        {
+        if (!hasJigsaw) {
             return;
         }
 
         final BlockState primary = world.getBlockState(zero.offset(bp.getPrimaryBlockOffset()));
         final boolean isHut;
-        if (primary.getBlock() instanceof AbstractBlockHut<?>)
-        {
+        if (primary.getBlock() instanceof AbstractBlockHut<?>) {
             isHut = true;
             final AbstractTileEntityColonyBuilding building = (AbstractTileEntityColonyBuilding) world.getBlockEntity(zero.offset(bp.getPrimaryBlockOffset()));
             building.addTag(new BlockPos(0, 0, 0), "deactivated");
             building.setPackName(style);
-            building.setBlueprintPath(fileName.replace( style + "/", ""));
-        }
-        else
-        {
+            building.setBlueprintPath(fileName.replace(style + "/", ""));
+        } else {
             isHut = false;
         }
 
         int lowestY = box.maxY();
         final String piecesName = style.replace(" ", "").toLowerCase(Locale.US);
-        for (final BlockPos mutablePos : BlockPos.betweenClosed(zero, zero.offset(box.getXSpan() - 1, box.getYSpan() - 1, box.getZSpan() - 1)))
-        {
+        for (final BlockPos mutablePos : BlockPos.betweenClosed(zero, zero.offset(box.getXSpan() - 1, box.getYSpan() - 1, box.getZSpan() - 1))) {
             BlockState state = world.getBlockState(mutablePos);
-            if (state.getBlock() == Blocks.JIGSAW)
-            {
-                if (mutablePos.getY() < lowestY)
-                {
+            if (state.getBlock() == Blocks.JIGSAW) {
+                if (mutablePos.getY() < lowestY) {
                     lowestY = mutablePos.getY();
                 }
                 JigsawBlockEntity jigsawBlockEntity = (JigsawBlockEntity) world.getBlockEntity(mutablePos);
-                if (jigsawBlockEntity.getName().getPath().isEmpty() || jigsawBlockEntity.getName().getPath().equals("empty"))
-                {
-                    if (jigsawBlockEntity.getFinalState().equals("minecraft:air"))
-                    {
+                if (jigsawBlockEntity.getName().getPath().isEmpty() || jigsawBlockEntity.getName().getPath().equals("empty")) {
+                    if (jigsawBlockEntity.getFinalState().equals("minecraft:air")) {
                         jigsawBlockEntity.setFinalState("minecraft:structure_void");
                     }
-                    if (isHut)
-                    {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName+ "/roads")));
+                    if (isHut) {
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName + "/roads")));
                         jigsawBlockEntity.setName(new ResourceLocation("minecolonies", "building_entrance"));
                         jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies", "building_entrance"));
-                    }
-                    else if (jigsawBlockEntity.getPool().location().getPath().contains("building"))
-                    {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName+ "/buildings")));
+                    } else if (jigsawBlockEntity.getPool().location().getPath().contains("building")) {
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName + "/buildings")));
                         jigsawBlockEntity.setName(new ResourceLocation("minecolonies", "building_entrance"));
                         jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies", "building_entrance"));
-                    }
-                    else
-                    {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName+ "/roads")));
+                    } else {
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName + "/roads")));
                         jigsawBlockEntity.setName(new ResourceLocation("minecolonies", "street"));
                         jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies", "street"));
                     }
@@ -253,49 +225,37 @@ public class ScanCommand extends AbstractCommand
         final BlockPos newZero = new BlockPos(zero.getX(), Math.max(zero.getY(), lowestY - 1), zero.getZ());
         final int yDif = newZero.getY() - zero.getY();
         StructureTemplate structuretemplate;
-        try
-        {
+        try {
             final ResourceLocation location = new ResourceLocation(Constants.MOD_ID, fileName.replace(".blueprint", "").replace(" ", "").toLowerCase(Locale.US));
             structuretemplate = structuretemplatemanager.getOrCreate(location);
             structuretemplate.fillFromWorld(world, newZero, new BlockPos(box.getXSpan(), box.getYSpan() - yDif, box.getZSpan()), false, Blocks.STRUCTURE_VOID);
             new SaveStructureNBTMessage(structuretemplate.save(new CompoundTag()), fileName.replace(".blueprint", ".nbt").toLowerCase(Locale.US)).sendToPlayer((ServerPlayer) player);
-        }
-        catch (final ResourceLocationException resLocEx)
-        {
+        } catch (final ResourceLocationException resLocEx) {
             Log.getLogger().warn("Couldnt save nbt.");
         }
 
-        if (isHut)
-        {
+        if (isHut) {
             final AbstractTileEntityColonyBuilding building = (AbstractTileEntityColonyBuilding) world.getBlockEntity(zero.offset(bp.getPrimaryBlockOffset()));
             building.removeTag(new BlockPos(0, 0, 0), "deactivated");
         }
     }
 
-    private static int execute(final CommandSourceStack source, final BlockPos from, final BlockPos to, final Optional<BlockPos> anchorPos, final GameProfile profile, final String name) throws CommandSyntaxException
-    {
+    private static int execute(final CommandSourceStack source, final BlockPos from, final BlockPos to, final Optional<BlockPos> anchorPos, final GameProfile profile, final String name) throws CommandSyntaxException {
         @Nullable final Level world = source.getLevel();
-        if (source.getEntity() instanceof Player && !source.getPlayerOrException().isCreative())
-        {
+        if (source.getEntity() instanceof Player && !source.getPlayerOrException().isCreative()) {
             source.sendFailure(Component.literal(NO_PERMISSION_MESSAGE));
         }
 
         final Player player;
-        if (profile != null && world.getServer() != null)
-        {
+        if (profile != null && world.getServer() != null) {
             player = world.getServer().getPlayerList().getPlayer(profile.getId());
-            if (player == null)
-            {
+            if (player == null) {
                 source.sendFailure(Component.translatableEscape(PLAYER_NOT_FOUND, profile.getName()));
                 return 0;
             }
-        } 
-        else if (source.getEntity() instanceof Player)
-        {
+        } else if (source.getEntity() instanceof Player) {
             player = source.getPlayerOrException();
-        } 
-        else
-        {
+        } else {
             source.sendFailure(Component.translatableEscape(PLAYER_NOT_FOUND));
             return 0;
         }
@@ -306,31 +266,27 @@ public class ScanCommand extends AbstractCommand
         return 1;
     }
 
-    private static int onExecute(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException
-    {
+    private static int onExecute(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         final BlockPos from = BlockPosArgument.getSpawnablePos(context, POS1);
         final BlockPos to = BlockPosArgument.getSpawnablePos(context, POS2);
         return execute(context.getSource(), from, to, Optional.empty(), null, null);
     }
 
-    private static int onExecuteWithAnchor(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException
-    {
+    private static int onExecuteWithAnchor(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         final BlockPos from = BlockPosArgument.getSpawnablePos(context, POS1);
         final BlockPos to = BlockPosArgument.getSpawnablePos(context, POS2);
         final BlockPos anchorPos = BlockPosArgument.getSpawnablePos(context, ANCHOR_POS);
         return execute(context.getSource(), from, to, Optional.of(anchorPos), null, null);
     }
 
-    private static int onExecuteWithPlayerName(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException
-    {
+    private static int onExecuteWithPlayerName(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         final BlockPos from = BlockPosArgument.getSpawnablePos(context, POS1);
         final BlockPos to = BlockPosArgument.getSpawnablePos(context, POS2);
         GameProfile profile = GameProfileArgument.getGameProfiles(context, PLAYER_NAME).stream().findFirst().orElse(null);
         return execute(context.getSource(), from, to, Optional.empty(), profile, null);
     }
 
-    private static int onExecuteWithPlayerNameAndFileName(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException
-    {
+    private static int onExecuteWithPlayerNameAndFileName(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         final BlockPos from = BlockPosArgument.getSpawnablePos(context, POS1);
         final BlockPos to = BlockPosArgument.getSpawnablePos(context, POS2);
         GameProfile profile = GameProfileArgument.getGameProfiles(context, PLAYER_NAME).stream().findFirst().orElse(null);
@@ -338,8 +294,7 @@ public class ScanCommand extends AbstractCommand
         return execute(context.getSource(), from, to, Optional.empty(), profile, name);
     }
 
-    private static int onExecuteWithPlayerNameAndFileNameAndAnchorPos(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException
-    {
+    private static int onExecuteWithPlayerNameAndFileNameAndAnchorPos(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         final BlockPos from = BlockPosArgument.getSpawnablePos(context, POS1);
         final BlockPos to = BlockPosArgument.getSpawnablePos(context, POS2);
         final BlockPos anchorPos = BlockPosArgument.getSpawnablePos(context, ANCHOR_POS);
@@ -348,8 +303,7 @@ public class ScanCommand extends AbstractCommand
         return execute(context.getSource(), from, to, Optional.of(anchorPos), profile, name);
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public static LiteralArgumentBuilder<CommandSourceStack> build() {
         return newLiteral(NAME)
                 .then(newArgument(POS1, BlockPosArgument.blockPos())
                         .then(newArgument(POS2, BlockPosArgument.blockPos())
@@ -371,9 +325,8 @@ public class ScanCommand extends AbstractCommand
      * @return The command string.
      */
     @NotNull
-    public static String format(@NotNull final ScanToolData.Slot slot)
-    {
-        final String name = slot.name().chars().anyMatch(c -> !StringReader.isAllowedInUnquotedString((char)c))
+    public static String format(@NotNull final ScanToolData.Slot slot) {
+        final String name = slot.name().chars().anyMatch(c -> !StringReader.isAllowedInUnquotedString((char) c))
                 ? StringTag.quoteAndEscape(slot.name()) : slot.name();
 
         final StringBuilder builder = new StringBuilder();
@@ -381,8 +334,7 @@ public class ScanCommand extends AbstractCommand
                 BlockPosUtil.format(slot.box().pos1()),
                 BlockPosUtil.format(slot.box().pos2()),
                 name));
-        if (slot.box().anchor().isPresent() && BlockPosUtil.isInbetween(slot.box().anchor().get(), slot.box().pos1(), slot.box().pos2()))
-        {
+        if (slot.box().anchor().isPresent() && BlockPosUtil.isInbetween(slot.box().anchor().get(), slot.box().pos1(), slot.box().pos2())) {
             builder.append(' ');
             builder.append(BlockPosUtil.format(slot.box().anchor().get()));
         }

@@ -18,37 +18,31 @@ import static com.ldtteam.structurize.api.constants.Constants.UPDATE_FLAG;
 /**
  * Placement handler for replacing infested blocks with their non-infested variants.
  */
-public class InfestedBlocksPlacementHandler implements IPlacementHandler
-{
+public class InfestedBlocksPlacementHandler implements IPlacementHandler {
     @Override
-    public boolean canHandle(final Level world, final BlockPos pos, final BlockState blockState)
-    {
+    public boolean canHandle(final Level world, final BlockPos pos, final BlockState blockState) {
         return blockState.getBlock() instanceof InfestedBlock;
     }
 
     @Override
     public ActionProcessingResult handle(
-      final Level world,
-      final BlockPos pos,
-      final BlockState blockState,
-      @Nullable final CompoundTag tileEntityData,
-      final boolean complete,
-      final BlockPos centerPos,
-      final RotationMirror settings)
-    {
+            final Level world,
+            final BlockPos pos,
+            final BlockState blockState,
+            @Nullable final CompoundTag tileEntityData,
+            final boolean complete,
+            final BlockPos centerPos,
+            final RotationMirror settings) {
         final BlockState expectedBlockState = getExpectedBlockState(blockState, complete);
-        if (expectedBlockState == null)
-        {
+        if (expectedBlockState == null) {
             return ActionProcessingResult.PASS;
         }
 
-        if (world.getBlockState(pos).equals(expectedBlockState))
-        {
+        if (world.getBlockState(pos).equals(expectedBlockState)) {
             return ActionProcessingResult.PASS;
         }
 
-        if (!world.setBlock(pos, expectedBlockState, UPDATE_FLAG))
-        {
+        if (!world.setBlock(pos, expectedBlockState, UPDATE_FLAG)) {
             return ActionProcessingResult.DENY;
         }
 
@@ -63,16 +57,11 @@ public class InfestedBlocksPlacementHandler implements IPlacementHandler
      * @return the new block state.
      */
     @Nullable
-    private static BlockState getExpectedBlockState(final BlockState blockState, final boolean complete)
-    {
-        if (blockState.getBlock() instanceof InfestedBlock infestedBlock)
-        {
-            if (complete)
-            {
+    private static BlockState getExpectedBlockState(final BlockState blockState, final boolean complete) {
+        if (blockState.getBlock() instanceof InfestedBlock infestedBlock) {
+            if (complete) {
                 return blockState;
-            }
-            else
-            {
+            } else {
                 return infestedBlock.hostStateByInfested(blockState);
             }
         }
@@ -81,8 +70,7 @@ public class InfestedBlocksPlacementHandler implements IPlacementHandler
     }
 
     @Override
-    public List<ItemStack> getRequiredItems(final Level world, final BlockPos pos, final BlockState blockState, @Nullable final CompoundTag tileEntityData, final boolean complete)
-    {
+    public List<ItemStack> getRequiredItems(final Level world, final BlockPos pos, final BlockState blockState, @Nullable final CompoundTag tileEntityData, final boolean complete) {
         final BlockState expectedBlockState = getExpectedBlockState(blockState, complete);
         return expectedBlockState != null ? List.of(BlockUtils.getItemStackFromBlockState(expectedBlockState)) : List.of();
     }

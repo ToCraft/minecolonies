@@ -21,8 +21,7 @@ import java.util.Objects;
 /**
  * Abstract class to list all fields (assigned) to a building.
  */
-public abstract class FieldsModule extends AbstractBuildingModule implements IPersistentModule, IBuildingModule
-{
+public abstract class FieldsModule extends AbstractBuildingModule implements IPersistentModule, IBuildingModule {
     /**
      * NBT tag to store assign manually.
      */
@@ -45,20 +44,17 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     private boolean shouldAssignManually = false;
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         compound.putBoolean(TAG_ASSIGN_MANUALLY, shouldAssignManually);
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeBoolean(shouldAssignManually);
         buf.writeInt(getMaxFieldCount());
     }
@@ -83,8 +79,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      * @return a field object.
      */
     @Nullable
-    public IField getCurrentField()
-    {
+    public IField getCurrentField() {
         return currentField;
     }
 
@@ -96,18 +91,14 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      * @return a field to work on.
      */
     @Nullable
-    public IField getFieldToWorkOn()
-    {
-        if (currentField != null)
-        {
+    public IField getFieldToWorkOn() {
+        if (currentField != null) {
             return currentField;
         }
 
         Instant now = Instant.now();
-        for (IField field : getOwnedFields().stream().collect(CollectorUtils.toShuffledList()))
-        {
-            if (!checkedFields.containsKey(field) || now.isAfter(checkedFields.get(field)))
-            {
+        for (IField field : getOwnedFields().stream().collect(CollectorUtils.toShuffledList())) {
+            if (!checkedFields.containsKey(field) || now.isAfter(checkedFields.get(field))) {
                 checkedFields.remove(field);
                 currentField = field;
                 return field;
@@ -122,8 +113,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      * @return a list of field objects.
      */
     @NotNull
-    public final List<IField> getOwnedFields()
-    {
+    public final List<IField> getOwnedFields() {
         return getFields().stream().filter(f -> building.getID().equals(f.getBuildingId())).toList();
     }
 
@@ -138,12 +128,9 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     /**
      * Attempt to automatically claim free fields, if possible and if any fields are available.
      */
-    public void claimFields()
-    {
-        if (!shouldAssignManually)
-        {
-            for (IField field : getFreeFields())
-            {
+    public void claimFields() {
+        if (!shouldAssignManually) {
+            for (IField field : getFreeFields()) {
                 assignField(field);
             }
         }
@@ -154,8 +141,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      *
      * @return a list of field objects.
      */
-    public final List<IField> getFreeFields()
-    {
+    public final List<IField> getFreeFields() {
         return getFields().stream().filter(field -> !field.isTaken()).toList();
     }
 
@@ -164,10 +150,8 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      *
      * @param field the field to add.
      */
-    public void assignField(final IField field)
-    {
-        if (canAssignField(field))
-        {
+    public void assignField(final IField field) {
+        if (canAssignField(field)) {
             field.setBuilding(building.getID());
             markDirty();
         }
@@ -179,14 +163,12 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      * @param field the field which is being added.
      * @return true if so.
      */
-    public final boolean canAssignField(IField field)
-    {
+    public final boolean canAssignField(IField field) {
         return getOwnedFields().size() < getMaxFieldCount() && canAssignFieldOverride(field);
     }
 
     @Override
-    public void markDirty()
-    {
+    public void markDirty() {
         super.markDirty();
         building.getColony().getBuildingManager().markFieldsDirty();
     }
@@ -204,8 +186,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      *
      * @return true if he should.
      */
-    public final boolean assignManually()
-    {
+    public final boolean assignManually() {
         return shouldAssignManually;
     }
 
@@ -214,8 +195,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      *
      * @return true if he has none.
      */
-    public final boolean hasNoFields()
-    {
+    public final boolean hasNoFields() {
         return getOwnedFields().isEmpty();
     }
 
@@ -224,8 +204,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      *
      * @param assignManually true if assignment should be manual.
      */
-    public final void setAssignManually(final boolean assignManually)
-    {
+    public final void setAssignManually(final boolean assignManually) {
         this.shouldAssignManually = assignManually;
     }
 
@@ -234,13 +213,11 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      *
      * @param field the field to be freed.
      */
-    public void freeField(final IField field)
-    {
+    public void freeField(final IField field) {
         field.resetOwningBuilding();
         markDirty();
 
-        if (Objects.equals(currentField, field))
-        {
+        if (Objects.equals(currentField, field)) {
             resetCurrentField();
         }
     }
@@ -248,10 +225,8 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     /**
      * Resets the current field if the worker indicates this field should no longer be worked on.
      */
-    public void resetCurrentField()
-    {
-        if (currentField != null)
-        {
+    public void resetCurrentField() {
+        if (currentField != null) {
             checkedFields.put(currentField, Instant.now().plus(getFieldCheckTimeoutSeconds(), ChronoUnit.SECONDS));
         }
         currentField = null;

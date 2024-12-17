@@ -18,16 +18,13 @@ import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 /**
  * Command to export a colony from a world save, exports region and backup file.
  */
-public class CommandExportColony implements IMCOPCommand
-{
+public class CommandExportColony implements IMCOPCommand {
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         final int colonyId = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         BackUpHelper.backupColonyData(context.getSource().getLevel().registryAccess());
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
+        if (colony == null) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_ID_NOT_FOUND, colonyId), true);
             return 0;
         }
@@ -40,15 +37,13 @@ public class CommandExportColony implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "export";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
+                .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
     }
 }

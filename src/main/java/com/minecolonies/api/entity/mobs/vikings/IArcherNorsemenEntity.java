@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.mobs.IArcherMobEntity;
 /**
  * Archer norsemen entity interface.
  */
-public interface IArcherNorsemenEntity extends INorsemenEntity, IArcherMobEntity
-{
+public interface IArcherNorsemenEntity extends INorsemenEntity, IArcherMobEntity {
 
 }

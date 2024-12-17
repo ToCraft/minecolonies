@@ -9,8 +9,7 @@ import java.util.Objects;
 /**
  * Specific Settings key implementation.
  */
-public class SettingKey<T extends ISetting> implements ISettingKey<T>
-{
+public class SettingKey<T extends ISetting> implements ISettingKey<T> {
     /**
      * Specific settings type.
      */
@@ -23,36 +22,31 @@ public class SettingKey<T extends ISetting> implements ISettingKey<T>
 
     /**
      * Create a new settings key.
+     *
      * @param type the specific ISetting class.
-     * @param id the unique id.
+     * @param id   the unique id.
      */
-    public SettingKey(final Class<T> type, final ResourceLocation id)
-    {
+    public SettingKey(final Class<T> type, final ResourceLocation id) {
         this.type = type;
         this.id = id;
     }
 
     @Override
-    public Class<T> getType()
-    {
+    public Class<T> getType() {
         return type;
     }
 
     @Override
-    public ResourceLocation getUniqueId()
-    {
+    public ResourceLocation getUniqueId() {
         return id;
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         final SettingKey<?> that = (SettingKey<?>) o;
@@ -60,8 +54,7 @@ public class SettingKey<T extends ISetting> implements ISettingKey<T>
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(type, id);
     }
 }

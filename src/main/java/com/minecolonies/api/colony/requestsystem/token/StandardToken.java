@@ -7,8 +7,7 @@ import java.util.UUID;
 /**
  * Internal implementation of the IToken interface. Uses UUID to store the ID of the request.
  */
-public class StandardToken implements IToken<UUID>
-{
+public class StandardToken implements IToken<UUID> {
 
     @NotNull
     private final UUID id;
@@ -16,8 +15,7 @@ public class StandardToken implements IToken<UUID>
     /**
      * Creates a new token with a random id.
      */
-    public StandardToken()
-    {
+    public StandardToken() {
         this(UUID.randomUUID());
     }
 
@@ -26,8 +24,7 @@ public class StandardToken implements IToken<UUID>
      *
      * @param id the UUID to create it from.
      */
-    public StandardToken(@NotNull final UUID id)
-    {
+    public StandardToken(@NotNull final UUID id) {
         this.id = id;
     }
 
@@ -37,26 +34,21 @@ public class StandardToken implements IToken<UUID>
      * @return The identifier of the request that this token represents.
      */
     @Override
-    public UUID getIdentifier()
-    {
+    public UUID getIdentifier() {
         return id;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return id.hashCode();
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof IToken))
-        {
+        if (!(o instanceof IToken)) {
             return false;
         }
 
@@ -66,10 +58,9 @@ public class StandardToken implements IToken<UUID>
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "StandardToken{" +
-                 "id=" + id +
-                 '}';
+                "id=" + id +
+                '}';
     }
 }

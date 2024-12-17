@@ -26,6 +26,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
 import java.util.List;
 import java.util.Random;
 
@@ -34,14 +35,13 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Util class for raider mobs/spawning
  */
-public final class RaiderMobUtils
-{
+public final class RaiderMobUtils {
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, Constants.MOD_ID);
 
     /**
      * Mob attribute, used for custom attack damage
      */
-    public final static DeferredHolder<Attribute, RangedAttribute> MOB_ATTACK_DAMAGE = ATTRIBUTES.register("mc_mob_damage", () -> new RangedAttribute( "mc_mob_damage", 2.0, 1.0, 20));
+    public final static DeferredHolder<Attribute, RangedAttribute> MOB_ATTACK_DAMAGE = ATTRIBUTES.register("mc_mob_damage", () -> new RangedAttribute("mc_mob_damage", 2.0, 1.0, 20));
 
     /**
      * Damage increased by 1 for every 200 raid level difficulty
@@ -53,8 +53,7 @@ public final class RaiderMobUtils
      */
     public static int MAX_RAID_LEVEL_DAMAGE = 3;
 
-    private RaiderMobUtils()
-    {
+    private RaiderMobUtils() {
         throw new IllegalStateException("Tried to initialize: MobSpawnUtils but this is a Utility class.");
     }
 
@@ -64,8 +63,7 @@ public final class RaiderMobUtils
      * @param mob    The mob to set the attributes on.
      * @param colony The colony that the mob is attacking.
      */
-    public static void setMobAttributes(final AbstractEntityRaiderMob mob, final IColony colony)
-    {
+    public static void setMobAttributes(final AbstractEntityRaiderMob mob, final IColony colony) {
         final double difficultyModifier = colony.getRaiderManager().getRaidDifficultyModifier();
         mob.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE * 2);
         mob.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(difficultyModifier < 2.4 ? MOVEMENT_SPEED : MOVEMENT_SPEED * 1.2);
@@ -73,9 +71,9 @@ public final class RaiderMobUtils
 
         // Base damage
         final double attackDamage =
-          ATTACK_DAMAGE +
-            difficultyModifier *
-              Math.min(raidLevel / DAMAGE_PER_X_RAID_LEVEL, MAX_RAID_LEVEL_DAMAGE);
+                ATTACK_DAMAGE +
+                        difficultyModifier *
+                                Math.min(raidLevel / DAMAGE_PER_X_RAID_LEVEL, MAX_RAID_LEVEL_DAMAGE);
 
         // Base health
         final double baseHealth = getHealthBasedOnRaidLevel(raidLevel) * difficultyModifier;
@@ -89,8 +87,7 @@ public final class RaiderMobUtils
      * @param raidLevel the raid level.
      * @return returns the health in the form of a double
      */
-    public static double getHealthBasedOnRaidLevel(final int raidLevel)
-    {
+    public static double getHealthBasedOnRaidLevel(final int raidLevel) {
         return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel * BARBARIAN_HEALTH_MULTIPLIER));
     }
 
@@ -105,27 +102,22 @@ public final class RaiderMobUtils
      * @param eventID        the event id.
      */
     public static void spawn(
-      final EntityType<?> entityToSpawn,
-      final int numberOfSpawns,
-      final BlockPos spawnLocation,
-      final Level world,
-      final IColony colony,
-      final int eventID)
-    {
-        if (spawnLocation != null && entityToSpawn != null && world != null && numberOfSpawns > 0)
-        {
+            final EntityType<?> entityToSpawn,
+            final int numberOfSpawns,
+            final BlockPos spawnLocation,
+            final Level world,
+            final IColony colony,
+            final int eventID) {
+        if (spawnLocation != null && entityToSpawn != null && world != null && numberOfSpawns > 0) {
             int spawnDeviationX = 0;
             int spawnDeviationZ = 0;
 
-            for (int i = 0; i < numberOfSpawns; i++)
-            {
+            for (int i = 0; i < numberOfSpawns; i++) {
                 final AbstractEntityRaiderMob entity = (AbstractEntityRaiderMob) entityToSpawn.create(world);
 
-                if (entity != null)
-                {
+                if (entity != null) {
                     BlockPos spawnpos = BlockPosUtil.findAround(world, spawnLocation.offset(spawnDeviationX, 0, spawnDeviationZ), 5, 5, BlockPosUtil.SOLID_AIR_POS_SELECTOR);
-                    if (spawnpos == null)
-                    {
+                    if (spawnpos == null) {
                         spawnpos = spawnLocation.above();
                     }
 
@@ -136,8 +128,7 @@ public final class RaiderMobUtils
                     entity.registerWithColony();
                     spawnDeviationZ += 1;
 
-                    if (spawnDeviationZ > 5)
-                    {
+                    if (spawnDeviationZ > 5) {
                         spawnDeviationZ = 0;
                         spawnDeviationX += 1;
                     }
@@ -151,46 +142,30 @@ public final class RaiderMobUtils
      *
      * @param mob the equipment to set up.
      */
-    public static void setEquipment(final AbstractEntityRaiderMob mob)
-    {
-        if (mob instanceof IMeleeBarbarianEntity || mob instanceof IMeleeNorsemenEntity || mob instanceof INorsemenChiefEntity)
-        {
+    public static void setEquipment(final AbstractEntityRaiderMob mob) {
+        if (mob instanceof IMeleeBarbarianEntity || mob instanceof IMeleeNorsemenEntity || mob instanceof INorsemenChiefEntity) {
             mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
-        }
-        else if (mob instanceof IPharaoEntity)
-        {
+        } else if (mob instanceof IPharaoEntity) {
             mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.pharaoscepter));
-        }
-        else if (mob instanceof IArcherMobEntity)
-        {
+        } else if (mob instanceof IArcherMobEntity) {
             mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
-        }
-        else if (mob instanceof ISpearmanMobEntity)
-        {
+        } else if (mob instanceof ISpearmanMobEntity) {
             mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.spear));
-        }
-        else if (mob instanceof IChiefBarbarianEntity)
-        {
+        } else if (mob instanceof IChiefBarbarianEntity) {
             mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.chiefSword));
             mob.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
             mob.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
             mob.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
             mob.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
-        }
-        else if (mob instanceof IPirateEntity)
-        {
+        } else if (mob instanceof IPirateEntity) {
             mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.scimitar));
-            if (mob instanceof ICaptainPirateEntity)
-            {
-                if (new Random().nextBoolean())
-                {
+            if (mob instanceof ICaptainPirateEntity) {
+                if (new Random().nextBoolean()) {
                     mob.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.pirateHelmet_1));
                     mob.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ModItems.pirateChest_1));
                     mob.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ModItems.pirateLegs_1));
                     mob.setItemSlot(EquipmentSlot.FEET, new ItemStack(ModItems.pirateBoots_1));
-                }
-                else
-                {
+                } else {
                     mob.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.pirateHelmet_2));
                     mob.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ModItems.pirateChest_2));
                     mob.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ModItems.pirateLegs_2));
@@ -207,14 +182,13 @@ public final class RaiderMobUtils
      * @param distanceFromEntity The distance to check for
      * @return the barbarians (if any) that is nearest
      */
-    public static List<AbstractEntityRaiderMob> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
-    {
+    public static List<AbstractEntityRaiderMob> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity) {
         return CompatibilityUtils.getWorldFromEntity(entity).getEntitiesOfClass(
-          AbstractEntityRaiderMob.class,
-          entity.getBoundingBox().expandTowards(
-            distanceFromEntity,
-            3.0D,
-            distanceFromEntity),
-          Entity::isAlive);
+                AbstractEntityRaiderMob.class,
+                entity.getBoundingBox().expandTowards(
+                        distanceFromEntity,
+                        3.0D,
+                        distanceFromEntity),
+                Entity::isAlive);
     }
 }

@@ -9,8 +9,7 @@ import java.util.List;
 /**
  * Quest objective interface for all objectives.
  */
-public interface IQuestObjectiveTemplate
-{
+public interface IQuestObjectiveTemplate {
     /**
      * Initialization of an objective.
      *
@@ -25,14 +24,16 @@ public interface IQuestObjectiveTemplate
      *
      * @param colonyQuest related colony quest.
      */
-    default void onCancellation(final IQuestInstance colonyQuest) {}
+    default void onCancellation(final IQuestInstance colonyQuest) {
+    }
 
     /**
      * On world load trigger.
      *
      * @param colonyQuest the quest.
      */
-    default void onWorldLoad(IQuestInstance colonyQuest) {}
+    default void onWorldLoad(IQuestInstance colonyQuest) {
+    }
 
     /**
      * Get a {@link Component} instance with the text containing the progress of this objective.
@@ -49,8 +50,7 @@ public interface IQuestObjectiveTemplate
      * @return the data, default null.
      */
     @Nullable
-    default IObjectiveInstance createObjectiveInstance()
-    {
+    default IObjectiveInstance createObjectiveInstance() {
         return null;
     }
 
@@ -63,6 +63,7 @@ public interface IQuestObjectiveTemplate
 
     /**
      * Get the quest target.
+     *
      * @return the target id.
      */
     int getTarget();

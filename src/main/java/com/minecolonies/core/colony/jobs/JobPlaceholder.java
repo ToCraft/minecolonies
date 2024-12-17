@@ -7,15 +7,13 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Class of the placeholder job. Used if a certain building doesn't have a job yet.
  */
-public class JobPlaceholder extends AbstractJob<AbstractAISkeleton<JobPlaceholder>, JobPlaceholder>
-{
+public class JobPlaceholder extends AbstractJob<AbstractAISkeleton<JobPlaceholder>, JobPlaceholder> {
     /**
      * Instantiates the placeholder job.
      *
      * @param entity the entity.
      */
-    public JobPlaceholder(final ICitizenData entity)
-    {
+    public JobPlaceholder(final ICitizenData entity) {
         super(entity);
     }
 
@@ -26,8 +24,7 @@ public class JobPlaceholder extends AbstractJob<AbstractAISkeleton<JobPlaceholde
      */
     @Nullable
     @Override
-    public AbstractAISkeleton<JobPlaceholder> generateAI()
-    {
+    public AbstractAISkeleton<JobPlaceholder> generateAI() {
         return null;
     }
 }

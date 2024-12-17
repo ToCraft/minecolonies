@@ -19,8 +19,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_REQUEST;
 /**
  * The class of the citizen hut.
  */
-public class WarehouseRequestQueueModule extends AbstractBuildingModule implements IPersistentModule
-{
+public class WarehouseRequestQueueModule extends AbstractBuildingModule implements IPersistentModule {
     /**
      * List of all beds.
      */
@@ -28,23 +27,18 @@ public class WarehouseRequestQueueModule extends AbstractBuildingModule implemen
     private final List<IToken<?>> requestList = new ArrayList<>();
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         final ListTag requestTagList = compound.getList(TAG_REQUEST, Tag.TAG_COMPOUND);
-        for (int i = 0; i < requestTagList.size(); ++i)
-        {
+        for (int i = 0; i < requestTagList.size(); ++i) {
             requestList.add(StandardFactoryController.getInstance().deserializeTag(provider, requestTagList.getCompound(i)));
         }
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
-        if (!requestList.isEmpty())
-        {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
+        if (!requestList.isEmpty()) {
             @NotNull final ListTag requestTagList = new ListTag();
-            for (@NotNull final IToken<?> token : requestList)
-            {
+            for (@NotNull final IToken<?> token : requestList) {
                 requestTagList.add(StandardFactoryController.getInstance().serializeTag(provider, token));
             }
             compound.put(TAG_REQUEST, requestTagList);
@@ -52,32 +46,30 @@ public class WarehouseRequestQueueModule extends AbstractBuildingModule implemen
     }
 
     @Override
-    public void serializeToView(final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeToView(final RegistryFriendlyByteBuf buf) {
         super.serializeToView(buf);
         buf.writeInt(requestList.size());
-        for (final IToken<?> reqId : requestList)
-        {
+        for (final IToken<?> reqId : requestList) {
             StandardFactoryController.getInstance().serialize(buf, reqId);
         }
     }
 
     /**
      * Add request to warehouse queue.
+     *
      * @param requestToken request to add.
      */
-    public void addRequest(IToken<?> requestToken)
-    {
+    public void addRequest(IToken<?> requestToken) {
         requestList.add(requestToken);
         markDirty();
     }
 
     /**
      * Get a mutable version of the request list.
+     *
      * @return the mutable request list.
      */
-    public List<IToken<?>> getMutableRequestList()
-    {
+    public List<IToken<?>> getMutableRequestList() {
         return requestList;
     }
 }

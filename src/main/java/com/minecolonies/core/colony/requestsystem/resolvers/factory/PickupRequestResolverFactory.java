@@ -16,42 +16,38 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Factory generating resolvers for pickup requests.
  */
-public class PickupRequestResolverFactory implements IRequestResolverFactory<PickupRequestResolver>
-{
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN    = "Token";
+public class PickupRequestResolverFactory implements IRequestResolverFactory<PickupRequestResolver> {
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_TOKEN = "Token";
     private static final String NBT_LOCATION = "Location";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
     @Override
-    public TypeToken<? extends PickupRequestResolver> getFactoryOutputType()
-    {
+    public TypeToken<? extends PickupRequestResolver> getFactoryOutputType() {
         return TypeToken.of(PickupRequestResolver.class);
     }
 
     @NotNull
     @Override
-    public TypeToken<? extends ILocation> getFactoryInputType()
-    {
+    public TypeToken<? extends ILocation> getFactoryInputType() {
         return TypeConstants.ILOCATION;
     }
 
     @NotNull
     @Override
     public PickupRequestResolver getNewInstance(
-      @NotNull final IFactoryController factoryController,
-      @NotNull final ILocation iLocation,
-      @NotNull final Object... context)
-      throws IllegalArgumentException
-    {
+            @NotNull final IFactoryController factoryController,
+            @NotNull final ILocation iLocation,
+            @NotNull final Object... context)
+            throws IllegalArgumentException {
         return new PickupRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final PickupRequestResolver pickupRequestResolver)
-    {
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final PickupRequestResolver pickupRequestResolver) {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_TOKEN, controller.serializeTag(provider, pickupRequestResolver.getId()));
         compound.put(NBT_LOCATION, controller.serializeTag(provider, pickupRequestResolver.getLocation()));
@@ -60,8 +56,7 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
 
     @NotNull
     @Override
-    public PickupRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
-    {
+    public PickupRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) {
         final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserializeTag(provider, nbt.getCompound(NBT_LOCATION));
 
@@ -69,15 +64,13 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
     }
 
     @Override
-    public void serialize(IFactoryController controller, PickupRequestResolver input, RegistryFriendlyByteBuf packetBuffer)
-    {
+    public void serialize(IFactoryController controller, PickupRequestResolver input, RegistryFriendlyByteBuf packetBuffer) {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @Override
-    public PickupRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
-    {
+    public PickupRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 
@@ -85,8 +78,7 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
     }
 
     @Override
-    public short getSerializationId()
-    {
+    public short getSerializationId() {
         return SerializationIdentifierConstants.PICKUP_REQUEST_RESOLVER_ID;
     }
 }

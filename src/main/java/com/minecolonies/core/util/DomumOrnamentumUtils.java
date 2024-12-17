@@ -13,8 +13,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Utility methods for interacting with Domum Ornamentum
  */
-public class DomumOrnamentumUtils
-{
+public class DomumOrnamentumUtils {
     /**
      * Extracts the Domum Ornamentum block type from the stack.
      *
@@ -22,10 +21,9 @@ public class DomumOrnamentumUtils
      * @return the {@link IMateriallyTexturedBlock}, or null if the stack doesn't have one.
      */
     @Nullable
-    public static IMateriallyTexturedBlock getBlock(@NotNull final ItemStack stack)
-    {
+    public static IMateriallyTexturedBlock getBlock(@NotNull final ItemStack stack) {
         return stack.getItem() instanceof BlockItem bi &&
-                 bi.getBlock() instanceof IMateriallyTexturedBlock doBlock ? doBlock : null;
+                bi.getBlock() instanceof IMateriallyTexturedBlock doBlock ? doBlock : null;
     }
 
     /**
@@ -35,14 +33,10 @@ public class DomumOrnamentumUtils
      * @return the first acceptable DO stack, or empty if this isn't a request for a DO block.
      */
     @NotNull
-    public static ItemStack getRequestedStack(@NotNull final IRequest<?> request)
-    {
-        if (request.getRequest() instanceof IConcreteDeliverable deliverable)
-        {
-            for (final ItemStack stack : deliverable.getRequestedItems())
-            {
-                if (getBlock(stack) != null)
-                {
+    public static ItemStack getRequestedStack(@NotNull final IRequest<?> request) {
+        if (request.getRequest() instanceof IConcreteDeliverable deliverable) {
+            for (final ItemStack stack : deliverable.getRequestedItems()) {
+                if (getBlock(stack) != null) {
                     return stack;
                 }
             }
@@ -56,13 +50,11 @@ public class DomumOrnamentumUtils
      * @param block
      * @return
      */
-    public static boolean isDoBlock(final Block block)
-    {
+    public static boolean isDoBlock(final Block block) {
         return block instanceof IDOBlock;
     }
 
-    private DomumOrnamentumUtils()
-    {
+    private DomumOrnamentumUtils() {
         // there are no instances here, only Zuul
     }
 }

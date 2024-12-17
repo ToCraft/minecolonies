@@ -20,12 +20,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Add or Update a AbstractBuilding.View to a ColonyView on the client.
  */
-public class OpenBuildingUIMessage extends AbstractClientPlayMessage
-{
+public class OpenBuildingUIMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_building_ui", OpenBuildingUIMessage::new);
 
-    private int          colonyId;
-    private BlockPos     buildingId;
+    private int colonyId;
+    private BlockPos buildingId;
 
     /**
      * Dimension of the colony.
@@ -35,8 +34,7 @@ public class OpenBuildingUIMessage extends AbstractClientPlayMessage
     /**
      * Empty constructor used when registering the
      */
-    public OpenBuildingUIMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public OpenBuildingUIMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(type);
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
@@ -48,8 +46,7 @@ public class OpenBuildingUIMessage extends AbstractClientPlayMessage
      *
      * @param building AbstractBuilding to add or update a view.
      */
-    public OpenBuildingUIMessage(@NotNull final IBuilding building)
-    {
+    public OpenBuildingUIMessage(@NotNull final IBuilding building) {
         super(TYPE);
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -57,18 +54,15 @@ public class OpenBuildingUIMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    public void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(colonyId);
         buf.writeBlockPos(buildingId);
         buf.writeUtf(dimension.location().toString());
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
-        if (IColonyManager.getInstance().getColonyView(colonyId, dimension) instanceof ColonyView colonyView && colonyView.getBuilding(buildingId) instanceof AbstractBuildingView buildingView)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
+        if (IColonyManager.getInstance().getColonyView(colonyId, dimension) instanceof ColonyView colonyView && colonyView.getBuilding(buildingId) instanceof AbstractBuildingView buildingView) {
             buildingView.openGui(false);
         }
     }

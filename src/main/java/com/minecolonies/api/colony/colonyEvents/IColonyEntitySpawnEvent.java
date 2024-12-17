@@ -9,15 +9,13 @@ import java.util.List;
 /**
  * A colony event which spawns and uses entities
  */
-public interface IColonyEntitySpawnEvent extends IColonySpawnEvent
-{
+public interface IColonyEntitySpawnEvent extends IColonySpawnEvent {
     /**
      * The list of entities related to this event
      *
      * @return the list.
      */
-    default List<Entity> getEntities()
-    {
+    default List<Entity> getEntities() {
         return new ArrayList<>();
     }
 
@@ -26,19 +24,22 @@ public interface IColonyEntitySpawnEvent extends IColonySpawnEvent
      *
      * @param entity the entity to register.
      */
-    default void registerEntity(final Entity entity) {}
+    default void registerEntity(final Entity entity) {
+    }
 
     /**
      * called to unregister an entity with this event
      *
      * @param entity the entity to unregister.
      */
-    default void unregisterEntity(final Entity entity) {}
+    default void unregisterEntity(final Entity entity) {
+    }
 
     /**
      * Trigger on entity death.
      *
      * @param entity the killed entity.
      */
-    default void onEntityDeath(final LivingEntity entity) {}
+    default void onEntityDeath(final LivingEntity entity) {
+    }
 }

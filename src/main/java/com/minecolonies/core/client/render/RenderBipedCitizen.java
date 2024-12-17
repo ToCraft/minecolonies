@@ -27,18 +27,16 @@ import org.joml.Matrix4f;
 /**
  * Renderer for the citizens.
  */
-public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, CitizenModel<AbstractEntityCitizen>>
-{
-    private static final double  SHADOW_SIZE   = 0.5F;
-    public static        boolean isItGhostTime = false;
+public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, CitizenModel<AbstractEntityCitizen>> {
+    private static final double SHADOW_SIZE = 0.5F;
+    public static boolean isItGhostTime = false;
 
     /**
      * Renders model, see {@link MobRenderer}.
      *
      * @param context the context for this Renderer.
      */
-    public RenderBipedCitizen(final EntityRendererProvider.Context context)
-    {
+    public RenderBipedCitizen(final EntityRendererProvider.Context context) {
         super(context, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)), (float) SHADOW_SIZE);
         this.addLayer(new CitizenArmorLayer(this, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)), context.getModelManager(), context.getModelSet()));
         super.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
@@ -47,13 +45,12 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     @Override
     public void render(
-      @NotNull final AbstractEntityCitizen citizen,
-      final float limbSwing,
-      final float partialTicks,
-      @NotNull final PoseStack matrixStack,
-      @NotNull final MultiBufferSource renderTypeBuffer,
-      final int light)
-    {
+            @NotNull final AbstractEntityCitizen citizen,
+            final float limbSwing,
+            final float partialTicks,
+            @NotNull final PoseStack matrixStack,
+            @NotNull final MultiBufferSource renderTypeBuffer,
+            final int light) {
 
         setupMainModelFrom(citizen);
 
@@ -62,8 +59,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         citizenModel.rightArmPose = RenderUtils.getArmPose(citizen, InteractionHand.MAIN_HAND);
         citizenModel.leftArmPose = RenderUtils.getArmPose(citizen, InteractionHand.OFF_HAND);
 
-        if (isItGhostTime)
-        {
+        if (isItGhostTime) {
             RenderSystem.enableBlend();
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.3F);
 
@@ -72,25 +68,20 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             RenderSystem.disableBlend();
-        }
-        else
-        {
+        } else {
             super.render(citizen, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
         }
     }
 
-    private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
-    {
+    private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen) {
         final IModelType modelType = IModelTypeRegistry.getInstance().getModelType(citizen.getModelType());
         model = citizen.isFemale() ? modelType.getFemaleModel() : modelType.getMaleModel();
-        if (model == null)
-        {
+        if (model == null) {
             //no if base, or the next condition, get player model!
             model = citizen.isFemale() ? modelType.getFemaleModel() : modelType.getMaleModel();
         }
 
-        if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTexture() != null)
-        {
+        if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTexture() != null) {
             model = IModelTypeRegistry.getInstance().getModelType(ModModelTypes.CUSTOM_ID).getMaleModel();
         }
 
@@ -101,20 +92,17 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     @Override
     protected void renderNameTag(
-      @NotNull final AbstractEntityCitizen entityIn,
-      @NotNull final Component str,
-      @NotNull final PoseStack matrixStack,
-      @NotNull final MultiBufferSource buffer,
-      final int packedLight,
-      final float partialTick)
-    {
+            @NotNull final AbstractEntityCitizen entityIn,
+            @NotNull final Component str,
+            @NotNull final PoseStack matrixStack,
+            @NotNull final MultiBufferSource buffer,
+            final int packedLight,
+            final float partialTick) {
         super.renderNameTag(entityIn, str, matrixStack, buffer, packedLight, partialTick);
 
-        if (entityIn.getCitizenDataView() != null && entityIn.getCitizenDataView().hasVisibleInteractions())
-        {
+        if (entityIn.getCitizenDataView() != null && entityIn.getCitizenDataView().hasVisibleInteractions()) {
             double distance = this.entityRenderDispatcher.distanceToSqr(entityIn.getX(), entityIn.getY(), entityIn.getZ());
-            if (distance <= 4096.0D)
-            {
+            if (distance <= 4096.0D) {
                 Vec3 vec3 = entityIn.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, entityIn.getViewYRot(partialTick));
 
                 matrixStack.pushPose();
@@ -137,10 +125,8 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityCitizen entity)
-    {
-        if (entity.getCitizenDataView() != null && entity.getCitizenDataView().getCustomTexture() != null)
-        {
+    public ResourceLocation getTextureLocation(final AbstractEntityCitizen entity) {
+        if (entity.getCitizenDataView() != null && entity.getCitizenDataView().getCustomTexture() != null) {
             return entity.getCitizenDataView().getCustomTexture();
         }
         return entity.getTexture();

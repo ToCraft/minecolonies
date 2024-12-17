@@ -14,9 +14,7 @@ import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -34,16 +32,14 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
-public class BuildingNetherWorker extends AbstractBuilding
-{
+public class BuildingNetherWorker extends AbstractBuilding {
 
     /**
      * Settings
      */
-    public static final ISettingKey<BoolSetting>  CLOSE_PORTAL = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "closeportal"));
+    public static final ISettingKey<BoolSetting> CLOSE_PORTAL = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "closeportal"));
 
     /**
-     * 
      * Constant name for the Netherworker building
      */
     private static final String NETHER_WORKER = "netherworker";
@@ -54,7 +50,7 @@ public class BuildingNetherWorker extends AbstractBuilding
     private static final String TAG_CURRENT_TRIPS = "current_trips";
 
     /**
-     * Which day in the period is it? 
+     * Which day in the period is it?
      */
     private static final String TAG_CURRENT_DAY = "current_day";
 
@@ -89,8 +85,7 @@ public class BuildingNetherWorker extends AbstractBuilding
      */
     private long snapTime;
 
-    public BuildingNetherWorker(@NotNull IColony colony, BlockPos pos)
-    {
+    public BuildingNetherWorker(@NotNull IColony colony, BlockPos pos) {
         super(colony, pos);
 
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.axe.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
@@ -116,59 +111,48 @@ public class BuildingNetherWorker extends AbstractBuilding
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return NETHER_WORKER;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
     /**
-     * Should the portal be closed on return? 
+     * Should the portal be closed on return?
      */
-    public boolean shallClosePortalOnReturn()
-    {
+    public boolean shallClosePortalOnReturn() {
         return getSetting(CLOSE_PORTAL).getValue();
     }
 
     @Override
-    public void onWakeUp()
-    {
+    public void onWakeUp() {
         super.onWakeUp();
         snapTime = colony.getWorld().getDayTime();
-        if(this.currentPeriodDay < getPeriodDays())
-        {
+        if (this.currentPeriodDay < getPeriodDays()) {
             this.currentPeriodDay++;
-        }
-        else
-        {
+        } else {
             this.currentPeriodDay = 0;
             this.currentTrips = 0;
         }
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
-        if(compound.contains(TAG_CURRENT_TRIPS))
-        {
+        if (compound.contains(TAG_CURRENT_TRIPS)) {
             this.currentTrips = compound.getInt(TAG_CURRENT_TRIPS);
         }
 
-        if(compound.contains(TAG_CURRENT_DAY))
-        {
+        if (compound.contains(TAG_CURRENT_DAY)) {
             this.currentPeriodDay = compound.getInt(TAG_CURRENT_DAY);
         }
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
 
         compound.putInt(TAG_CURRENT_TRIPS, this.currentTrips);
@@ -178,29 +162,23 @@ public class BuildingNetherWorker extends AbstractBuilding
     }
 
     @Override
-    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory, final JobEntry jobEntry)
-    {
-        if (stack.isEmpty())
-        {
+    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory, final JobEntry jobEntry) {
+        if (stack.isEmpty()) {
             return 0;
         }
 
-        if (inventory && getFirstModuleOccurance(MinimumStockModule.class).isStocked(stack))
-        {
+        if (inventory && getFirstModuleOccurance(MinimumStockModule.class).isStocked(stack)) {
             return stack.getCount();
         }
 
         // Check for materials needed to go to the Nether: 
         IRecipeStorage rs = getFirstModuleOccurance(BuildingNetherWorker.CraftingModule.class).getFirstRecipe(ItemStack::isEmpty);
-        if(rs != null)
-        {
+        if (rs != null) {
             final ItemStorage kept = new ItemStorage(stack);
             boolean containsItem = rs.getInput().contains(kept);
             int keptCount = localAlreadyKept.stream().filter(storage -> storage.equals(kept)).mapToInt(ItemStorage::getAmount).sum();
-            if(containsItem  && (keptCount < STACKSIZE || !inventory))
-            {
-                if (localAlreadyKept.contains(kept))
-                {
+            if (containsItem && (keptCount < STACKSIZE || !inventory)) {
+                if (localAlreadyKept.contains(kept)) {
                     kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());
                 }
                 localAlreadyKept.add(kept);
@@ -213,16 +191,14 @@ public class BuildingNetherWorker extends AbstractBuilding
 
     /**
      * Check to see if it's valid to do a trip by checking how many done in this current period
+     *
      * @return true if the worker can go to the nether
      */
-    public boolean isReadyForTrip()
-    {
-        if(snapTime == 0)
-        {
+    public boolean isReadyForTrip() {
+        if (snapTime == 0) {
             snapTime = colony.getWorld().getDayTime();
         }
-        if(Math.abs(colony.getWorld().getDayTime() - snapTime) >= 24000)
-        {
+        if (Math.abs(colony.getWorld().getDayTime() - snapTime) >= 24000) {
             //Make sure we're incrementing if day/night cycle isn't running. 
             this.currentPeriodDay++;
         }
@@ -232,20 +208,19 @@ public class BuildingNetherWorker extends AbstractBuilding
     /**
      * Let the building know we're doing a trip
      */
-    public void recordTrip()
-    {
+    public void recordTrip() {
         this.currentTrips++;
     }
 
     /**
-     * Get the tagged location that the worker should walk to in the portal. 
+     * Get the tagged location that the worker should walk to in the portal.
      * This should be a 'air block' in the portal that can directly be checked to see if the portal is open
+     *
      * @return the block above the tag, null if not available
      */
-    public BlockPos getPortalLocation()
-    {
+    public BlockPos getPortalLocation() {
         BlockPos portalLocation = getFirstLocationFromTag("portal");
-        if(portalLocation != null) {
+        if (portalLocation != null) {
             return portalLocation.above();
         }
         return null;
@@ -253,53 +228,48 @@ public class BuildingNetherWorker extends AbstractBuilding
 
     /**
      * Get the tagged location where the worker can hide while "away" in the nether
-     * 
+     *
      * @return the tagged location, null if not available.
      */
-    public BlockPos getVaultLocation()
-    {
+    public BlockPos getVaultLocation() {
         return getFirstLocationFromTag("vault");
     }
 
     /**
      * Get the max per period, potentially modified by research
+     *
      * @return
      */
-    public static int getMaxPerPeriod()
-    {
+    public static int getMaxPerPeriod() {
         return MAX_PER_PERIOD;
     }
 
     /**
      * Get how many days are in a period, potentially modified by research.
+     *
      * @return
      */
-    public static int getPeriodDays()
-    {
+    public static int getPeriodDays() {
         return PERIOD_DAYS;
     }
 
     @Override
-    public void onPlacement()
-    {
+    public void onPlacement() {
         super.onPlacement();
         final Level world = colony.getWorld();
-        if(WorldUtil.isNetherType(world))
-        {
+        if (WorldUtil.isNetherType(world)) {
             final Block block = world.getBlockState(this.getPosition()).getBlock();
             block.destroy(world, getPosition(), world.getBlockState(getPosition()));
         }
     }
 
-    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
-    {
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public CraftingModule(final JobEntry jobEntry)
-        {
+        public CraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
     }

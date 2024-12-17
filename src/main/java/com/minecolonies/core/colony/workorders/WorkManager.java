@@ -8,16 +8,16 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.util.AdvancementUtils;
-import com.minecolonies.api.util.ColonyUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -32,35 +32,33 @@ import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COL
 /**
  * Handles work orders for a colony.
  */
-public class WorkManager implements IWorkManager
-{
+public class WorkManager implements IWorkManager {
     /**
      * Workorder NBT tags.
      */
     private static final String TAG_WORK_ORDERS = "workOrders";
-    private static final String TAG_NEW_SYSTEM  = "newsystem";
+    private static final String TAG_NEW_SYSTEM = "newsystem";
 
     //  Once a second
     //private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
     /**
      * The Colony the workManager takes part of.
      */
-    private final        Colony                   colony;
+    private final Colony colony;
     @NotNull
-    private final        Map<Integer, IWorkOrder> workOrders      = new LinkedHashMap<>();
-    private              int                      topWorkOrderId  = 0;
+    private final Map<Integer, IWorkOrder> workOrders = new LinkedHashMap<>();
+    private int topWorkOrderId = 0;
     /**
      * Checks if there has been changes.
      */
-    private              boolean                  dirty           = false;
+    private boolean dirty = false;
 
     /**
      * Constructor, saves reference to the colony.
      *
      * @param c Colony the work manager is for.
      */
-    public WorkManager(final Colony c)
-    {
+    public WorkManager(final Colony c) {
         colony = c;
     }
 
@@ -70,8 +68,7 @@ public class WorkManager implements IWorkManager
      * @param order {@link IWorkOrder} to remove.
      */
     @Override
-    public void removeWorkOrder(@NotNull final IWorkOrder order)
-    {
+    public void removeWorkOrder(@NotNull final IWorkOrder order) {
         removeWorkOrder(order.getID());
     }
 
@@ -81,11 +78,9 @@ public class WorkManager implements IWorkManager
      * @param orderId ID of the order to remove
      */
     @Override
-    public void removeWorkOrder(final int orderId)
-    {
+    public void removeWorkOrder(final int orderId) {
         final IWorkOrder workOrder = workOrders.get(orderId);
-        if (workOrder != null)
-        {
+        if (workOrder != null) {
             dirty = true;
             workOrders.remove(orderId);
             colony.removeWorkOrderInView(orderId);
@@ -104,11 +99,9 @@ public class WorkManager implements IWorkManager
      */
     @Override
     @Nullable
-    public <W extends IWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
-    {
+    public <W extends IWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type) {
         final IWorkOrder workOrder = getWorkOrder(id);
-        if (type.isInstance(workOrder))
-        {
+        if (type.isInstance(workOrder)) {
             return type.cast(workOrder);
         }
 
@@ -122,8 +115,7 @@ public class WorkManager implements IWorkManager
      * @return the work order of the specified id, or null.
      */
     @Override
-    public IWorkOrder getWorkOrder(final int id)
-    {
+    public IWorkOrder getWorkOrder(final int id) {
         return workOrders.get(id);
     }
 
@@ -136,12 +128,9 @@ public class WorkManager implements IWorkManager
      */
     @Override
     @Nullable
-    public <W extends IWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type)
-    {
-        for (@NotNull final IWorkOrder o : workOrders.values())
-        {
-            if (!o.isClaimed() && type.isInstance(o))
-            {
+    public <W extends IWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type) {
+        for (@NotNull final IWorkOrder o : workOrders.values()) {
+            if (!o.isClaimed() && type.isInstance(o)) {
                 return type.cast(o);
             }
         }
@@ -157,8 +146,7 @@ public class WorkManager implements IWorkManager
      * @return a list of all work orders of the given type.
      */
     @Override
-    public <W extends IWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type)
-    {
+    public <W extends IWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type) {
         return workOrders.values().stream().filter(type::isInstance).map(type::cast).collect(Collectors.toList());
     }
 
@@ -169,8 +157,7 @@ public class WorkManager implements IWorkManager
      */
     @Override
     @NotNull
-    public Map<Integer, IWorkOrder> getWorkOrders()
-    {
+    public Map<Integer, IWorkOrder> getWorkOrders() {
         return workOrders;
     }
 
@@ -180,8 +167,7 @@ public class WorkManager implements IWorkManager
      * @param citizen Citizen to unclaim work for.
      */
     @Override
-    public void clearWorkForCitizen(@NotNull final ICitizenData citizen)
-    {
+    public void clearWorkForCitizen(@NotNull final ICitizenData citizen) {
         dirty = true;
         workOrders.values().stream().filter(o -> o != null && o.isClaimedBy(citizen)).forEach(IWorkOrder::clearClaimedBy);
     }
@@ -192,12 +178,10 @@ public class WorkManager implements IWorkManager
      * @param compound Compound to save to.
      */
     @Override
-    public void write(@NotNull final CompoundTag compound)
-    {
+    public void write(@NotNull final CompoundTag compound) {
         //  Work Orders
         @NotNull final ListTag list = new ListTag();
-        for (@NotNull final IWorkOrder o : workOrders.values())
-        {
+        for (@NotNull final IWorkOrder o : workOrders.values()) {
             @NotNull final CompoundTag orderCompound = new CompoundTag();
             o.write(orderCompound);
             list.add(orderCompound);
@@ -212,31 +196,26 @@ public class WorkManager implements IWorkManager
      * @param compound Compound to read from.
      */
     @Override
-    public void read(@NotNull final CompoundTag compound)
-    {
+    public void read(@NotNull final CompoundTag compound) {
         workOrders.clear();
 
-        if (!compound.contains(TAG_NEW_SYSTEM))
-        {
+        if (!compound.contains(TAG_NEW_SYSTEM)) {
             // On the new system, we drop all current workorders to avoid any issues.
             return;
         }
 
         //  Work Orders
         final ListTag list = compound.getList(TAG_WORK_ORDERS, Tag.TAG_COMPOUND);
-        for (int i = 0; i < list.size(); ++i)
-        {
+        for (int i = 0; i < list.size(); ++i) {
             final CompoundTag orderCompound = list.getCompound(i);
             @Nullable final IWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound, this);
-            if (o != null)
-            {
+            if (o != null) {
                 addWorkOrder(o, true);
 
                 //  If this Work Order is claimed, and the Citizen who claimed it no longer exists
                 //  then clear the Claimed status
                 //  This is just a failsafe cleanup; this should not happen under normal circumstances
-                if (o.isClaimed() && colony.getBuildingManager().getBuilding(o.getClaimedBy()) == null)
-                {
+                if (o.isClaimed() && colony.getBuildingManager().getBuilding(o.getClaimedBy()) == null) {
                     o.clearClaimedBy();
                 }
 
@@ -252,50 +231,39 @@ public class WorkManager implements IWorkManager
      * @param readingFromNbt if being read from NBT.
      */
     @Override
-    public void addWorkOrder(@NotNull final IWorkOrder order, final boolean readingFromNbt)
-    {
+    public void addWorkOrder(@NotNull final IWorkOrder order, final boolean readingFromNbt) {
         dirty = true;
 
-        if (!(order instanceof WorkOrderMiner))
-        {
-            for (final IWorkOrder or : workOrders.values())
-            {
-                if (or.getLocation().equals(order.getLocation()) && or.getStructurePath().equals(order.getStructurePath()) && or.getStructurePack().equals(order.getStructurePack()))
-                {
+        if (!(order instanceof WorkOrderMiner)) {
+            for (final IWorkOrder or : workOrders.values()) {
+                if (or.getLocation().equals(order.getLocation()) && or.getStructurePath().equals(order.getStructurePath()) && or.getStructurePack().equals(order.getStructurePack())) {
                     Log.getLogger().warn("Avoiding adding duplicate workOrder");
                     removeWorkOrder(or);
                     break;
                 }
             }
-            if (!readingFromNbt && !isWorkOrderWithinColony(order))
-            {
+            if (!readingFromNbt && !isWorkOrderWithinColony(order)) {
                 MessageUtils.format(OUT_OF_COLONY, order.getDisplayName(), order.getLocation().getX(), order.getLocation().getZ()).sendTo(colony).forAllPlayers();
                 return;
             }
         }
 
-        if (order.getID() == 0)
-        {
+        if (order.getID() == 0) {
             topWorkOrderId++;
             order.setID(topWorkOrderId);
         }
 
         final int level = order.getTargetLevel();
-        if (!readingFromNbt)
-        {
-            if (order instanceof WorkOrderBuilding buildingOrder)
-            {
+        if (!readingFromNbt) {
+            if (order instanceof WorkOrderBuilding buildingOrder) {
                 final IBuilding building = colony.getBuildingManager().getBuilding(buildingOrder.getLocation());
-                if (building != null)
-                {
+                if (building != null) {
                     AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
                             player -> AdvancementTriggers.CREATE_BUILD_REQUEST.get().trigger(player, building.getBuildingType().getBuildingBlock().getBlueprintName(), level));
                 }
-            }
-            else if (order instanceof WorkOrderDecoration)
-            {
+            } else if (order instanceof WorkOrderDecoration) {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
-                  player -> AdvancementTriggers.CREATE_BUILD_REQUEST.get().trigger(player, order.getFileName().replace(String.valueOf(level), ""), level));
+                        player -> AdvancementTriggers.CREATE_BUILD_REQUEST.get().trigger(player, order.getFileName().replace(String.valueOf(level), ""), level));
             }
         }
 
@@ -309,15 +277,14 @@ public class WorkManager implements IWorkManager
      * @param order the workorder to check.
      * @return true if so.
      */
-    private boolean isWorkOrderWithinColony(final IWorkOrder order)
-    {
+    private boolean isWorkOrderWithinColony(final IWorkOrder order) {
         final Level world = colony.getWorld();
         final Blueprint blueprint = StructurePacks.getBlueprint(order.getStructurePack(), order.getStructurePath(), world.registryAccess());
         final Tuple<BlockPos, BlockPos> corners
-          = ColonyUtils.calculateCorners(order.getLocation(),
-          world,
-          blueprint,
-          order.getRotationMirror());
+                = ColonyUtils.calculateCorners(order.getLocation(),
+                world,
+                blueprint,
+                order.getRotationMirror());
 
         Set<ChunkPos> chunks = new HashSet<>();
         final int minX = Math.min(corners.getA().getX(), corners.getB().getX()) + 1;
@@ -326,18 +293,14 @@ public class WorkManager implements IWorkManager
         final int minZ = Math.min(corners.getA().getZ(), corners.getB().getZ()) + 1;
         final int maxZ = Math.max(corners.getA().getZ(), corners.getB().getZ());
 
-        for (int x = minX; x < maxX; x += 16)
-        {
-            for (int z = minZ; z < maxZ; z += 16)
-            {
+        for (int x = minX; x < maxX; x += 16) {
+            for (int z = minZ; z < maxZ; z += 16) {
                 final int chunkX = x >> 4;
                 final int chunkZ = z >> 4;
                 final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                if (!chunks.contains(pos))
-                {
+                if (!chunks.contains(pos)) {
                     chunks.add(pos);
-                    if (ColonyUtils.getOwningColony(world.getChunk(pos.x, pos.z)) != colony.getID())
-                    {
+                    if (ColonyUtils.getOwningColony(world.getChunk(pos.x, pos.z)) != colony.getID()) {
                         return false;
                     }
                 }
@@ -352,19 +315,14 @@ public class WorkManager implements IWorkManager
      * @param colony the colony being ticked.
      */
     @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
+    public void onColonyTick(@NotNull final IColony colony) {
         @NotNull final Iterator<IWorkOrder> iter = workOrders.values().iterator();
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             final IWorkOrder o = iter.next();
-            if (!o.isValid(this.colony))
-            {
+            if (!o.isValid(this.colony)) {
                 iter.remove();
                 dirty = true;
-            }
-            else if (o.isDirty())
-            {
+            } else if (o.isDirty()) {
                 dirty = true;
                 o.resetChange();
             }
@@ -380,12 +338,11 @@ public class WorkManager implements IWorkManager
      * @return the list.
      */
     @Override
-    public <W extends IWorkOrder> List<W> getOrderedList(Class<W> type, BlockPos builder)
-    {
+    public <W extends IWorkOrder> List<W> getOrderedList(Class<W> type, BlockPos builder) {
         return getOrderedList(type::isInstance, builder)
-          .stream()
-          .map(m -> (W) m)
-          .collect(Collectors.toList());
+                .stream()
+                .map(m -> (W) m)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -396,13 +353,12 @@ public class WorkManager implements IWorkManager
      * @return the list.
      */
     @Override
-    public List<IWorkOrder> getOrderedList(@NotNull Predicate<IWorkOrder> predicate, final BlockPos builder)
-    {
+    public List<IWorkOrder> getOrderedList(@NotNull Predicate<IWorkOrder> predicate, final BlockPos builder) {
         return workOrders.values().stream()
-          .filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)))
-          .filter(predicate)
-          .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
-          .collect(Collectors.toList());
+                .filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)))
+                .filter(predicate)
+                .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -411,8 +367,7 @@ public class WorkManager implements IWorkManager
      * @return true if so.
      */
     @Override
-    public boolean isDirty()
-    {
+    public boolean isDirty() {
         return dirty;
     }
 
@@ -422,14 +377,12 @@ public class WorkManager implements IWorkManager
      * @param dirty true if so. False to reset.
      */
     @Override
-    public void setDirty(final boolean dirty)
-    {
+    public void setDirty(final boolean dirty) {
         this.dirty = dirty;
     }
 
     @Override
-    public IColony getColony()
-    {
+    public IColony getColony() {
         return colony;
     }
 }

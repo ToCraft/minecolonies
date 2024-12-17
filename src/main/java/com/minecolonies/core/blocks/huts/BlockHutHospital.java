@@ -8,24 +8,20 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the hospital. No different from {@link AbstractBlockHut}
  */
-public class BlockHutHospital extends AbstractBlockHut<BlockHutHospital>
-{
-    public BlockHutHospital()
-    {
+public class BlockHutHospital extends AbstractBlockHut<BlockHutHospital> {
+    public BlockHutHospital() {
         //No different from Abstract parent
         super();
     }
 
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhuthospital";
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.hospital.get();
     }
 }

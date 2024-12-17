@@ -3,8 +3,7 @@ package com.minecolonies.api.util.constant;
 /**
  * Barbarian constants class.
  */
-public final class RaiderConstants
-{
+public final class RaiderConstants {
     /**
      * The amount of EXP to drop on entity death.
      */
@@ -22,11 +21,11 @@ public final class RaiderConstants
     /**
      * Values used for sword effect.
      */
-    public static final int    TIME_TO_COUNTDOWN           = 240;
-    public static final int    COUNTDOWN_SECOND_MULTIPLIER = 4;
-    public static final int    SPEED_EFFECT_DISTANCE       = 7;
-    public static final int    SPEED_EFFECT_DURATION       = 60;
-    public static final int    SPEED_EFFECT_MULTIPLIER     = 1;
+    public static final int TIME_TO_COUNTDOWN = 240;
+    public static final int COUNTDOWN_SECOND_MULTIPLIER = 4;
+    public static final int SPEED_EFFECT_DISTANCE = 7;
+    public static final int SPEED_EFFECT_DURATION = 60;
+    public static final int SPEED_EFFECT_MULTIPLIER = 1;
 
     /**
      * Amount of ticks to despawn the barbarian.
@@ -56,35 +55,34 @@ public final class RaiderConstants
     /**
      * Values used for AI Task's Priorities.
      */
-    public static final int PRIORITY_ZERO  = 0;
-    public static final int PRIORITY_ONE   = 1;
-    public static final int PRIORITY_TWO   = 2;
+    public static final int PRIORITY_ZERO = 0;
+    public static final int PRIORITY_ONE = 1;
+    public static final int PRIORITY_TWO = 2;
     public static final int PRIORITY_THREE = 3;
-    public static final int PRIORITY_FOUR  = 4;
-    public static final int PRIORITY_FIVE  = 5;
-    public static final int PRIORITY_SIX   = 6;
+    public static final int PRIORITY_FOUR = 4;
+    public static final int PRIORITY_FIVE = 5;
+    public static final int PRIORITY_SIX = 6;
 
     /**
      * Other various values used for AI Tasks.
      */
-    public static final double AI_MOVE_SPEED      = 2.0D;
-    public static final float  MAX_WATCH_DISTANCE = 8.0F;
+    public static final double AI_MOVE_SPEED = 2.0D;
+    public static final float MAX_WATCH_DISTANCE = 8.0F;
 
     /**
      * Values used for mob attributes.
      */
-    public static final double FOLLOW_RANGE                = 35.0D;
-    public static final double MOVEMENT_SPEED              = 0.25D;
-    public static final double ARMOR                       = 1D;
-    public static final double CHIEF_BONUS_ARMOR           = 2D;
-    public static final double BARBARIAN_BASE_HEALTH       = 10;
+    public static final double FOLLOW_RANGE = 35.0D;
+    public static final double MOVEMENT_SPEED = 0.25D;
+    public static final double ARMOR = 1D;
+    public static final double CHIEF_BONUS_ARMOR = 2D;
+    public static final double BARBARIAN_BASE_HEALTH = 10;
     public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.025;
 
     /**
      * Private constructor to hide implicit one.
      */
-    private RaiderConstants()
-    {
+    private RaiderConstants() {
         /*
          * Intentionally left empty.
          */

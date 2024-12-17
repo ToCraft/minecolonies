@@ -9,8 +9,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 
 import java.util.Collection;
 
-public interface IRequestHandler
-{
+public interface IRequestHandler {
     IRequestManager getManager();
 
     <Request extends IRequestable> IRequest<Request> createRequest(IRequester requester, Request request);
@@ -145,6 +144,7 @@ public interface IRequestHandler
 
     /**
      * Remove a specific requester and all assigned requests from the manager.
+     *
      * @param requester the requester.
      */
     void removeRequester(IRequester requester);

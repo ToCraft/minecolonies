@@ -5,9 +5,9 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -24,8 +24,7 @@ import static com.minecolonies.core.entity.ai.minimal.EntityAICitizenAvoidEntity
 /**
  * AI task to avoid an Entity class.
  */
-public class EntityAICitizenAvoidEntity implements IStateAI
-{
+public class EntityAICitizenAvoidEntity implements IStateAI {
     /**
      * Defines how close the entity has to be to the mob to run away.
      */
@@ -46,13 +45,13 @@ public class EntityAICitizenAvoidEntity implements IStateAI
     /**
      * The entity we are attached to.
      */
-    private final EntityCitizen           citizen;
-    private final double                  farSpeed;
-    private final double                  nearSpeed;
-    private final float                   distanceFromEntity;
+    private final EntityCitizen citizen;
+    private final double farSpeed;
+    private final double nearSpeed;
+    private final float distanceFromEntity;
     private final Class<? extends Entity> targetEntityClass;
     @Nullable
-    private       Entity                  closestLivingEntity;
+    private Entity closestLivingEntity;
 
     /**
      * Time spent fleeing.
@@ -64,8 +63,7 @@ public class EntityAICitizenAvoidEntity implements IStateAI
      */
     private PathResult moveAwayPath;
 
-    public enum FleeStates implements IState
-    {
+    public enum FleeStates implements IState {
         SAFE,
         RUNNING
     }
@@ -90,9 +88,8 @@ public class EntityAICitizenAvoidEntity implements IStateAI
      * @param nearSpeed          how fast we should move when we are close.
      */
     public EntityAICitizenAvoidEntity(
-      @NotNull final EntityCitizen entity, @NotNull final Class<? extends Entity> targetEntityClass,
-      final float distanceFromEntity, final double farSpeed, final double nearSpeed)
-    {
+            @NotNull final EntityCitizen entity, @NotNull final Class<? extends Entity> targetEntityClass,
+            final float distanceFromEntity, final double farSpeed, final double nearSpeed) {
         super();
         this.citizen = entity;
         this.startingPos = entity.blockPosition();
@@ -114,18 +111,15 @@ public class EntityAICitizenAvoidEntity implements IStateAI
      *
      * @return true if we should flee
      */
-    public IState isEntityClose()
-    {
+    public IState isEntityClose() {
         safeTime++;
 
-        if (safeTime > CHECKS_BEFORE_SAFE)
-        {
+        if (safeTime > CHECKS_BEFORE_SAFE) {
             return CitizenAIState.IDLE;
         }
 
         final Entity currentClosest = getClosestToAvoid();
-        if (currentClosest != null)
-        {
+        if (currentClosest != null) {
             closestLivingEntity = currentClosest;
             safeTime = 0;
             startingPos = citizen.blockPosition();
@@ -141,24 +135,20 @@ public class EntityAICitizenAvoidEntity implements IStateAI
      *
      * @return Entity to avoid.
      */
-    private Entity getClosestToAvoid()
-    {
-        if (targetEntityClass == Player.class)
-        {
+    private Entity getClosestToAvoid() {
+        if (targetEntityClass == Player.class) {
             return CompatibilityUtils.getWorldFromCitizen(citizen).getNearestPlayer(citizen, (double) distanceFromEntity);
-        }
-        else
-        {
+        } else {
             final Optional<Entity> entityOptional = CompatibilityUtils.getWorldFromCitizen(citizen).getEntities(
-                citizen,
-                citizen.getBoundingBox().inflate(
-                  (double) distanceFromEntity,
-                  3.0D,
-                  (double) distanceFromEntity),
-                target -> target.isAlive() && citizen.getSensing().hasLineOfSight(target))
-                                                      .stream()
-                                                      .filter(targetEntityClass::isInstance)
-                                                      .findFirst();
+                            citizen,
+                            citizen.getBoundingBox().inflate(
+                                    (double) distanceFromEntity,
+                                    3.0D,
+                                    (double) distanceFromEntity),
+                            target -> target.isAlive() && citizen.getSensing().hasLineOfSight(target))
+                    .stream()
+                    .filter(targetEntityClass::isInstance)
+                    .findFirst();
 
             return entityOptional.orElse(null);
         }
@@ -169,13 +159,11 @@ public class EntityAICitizenAvoidEntity implements IStateAI
      *
      * @return whether the citizen started moving away.
      */
-    private boolean performMoveAway()
-    {
-        if ((moveAwayPath == null || !moveAwayPath.isInProgress()) && citizen.getNavigation().isDone())
-        {
+    private boolean performMoveAway() {
+        if ((moveAwayPath == null || !moveAwayPath.isInProgress()) && citizen.getNavigation().isDone()) {
             moveAwayPath =
-              citizen.getNavigation()
-                .moveAwayFromXYZ(citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed, true);
+                    citizen.getNavigation()
+                            .moveAwayFromXYZ(citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed, true);
             return true;
         }
         return false;
@@ -187,14 +175,10 @@ public class EntityAICitizenAvoidEntity implements IStateAI
      * @param citizen the citizen doing the action.
      * @return the distance to run away.
      */
-    private float getMoveAwayDist(final AbstractEntityCitizen citizen)
-    {
-        if (citizen.getHealth() >= citizen.getMaxHealth() - 4)
-        {
+    private float getMoveAwayDist(final AbstractEntityCitizen citizen) {
+        if (citizen.getHealth() >= citizen.getMaxHealth() - 4) {
             return MIN_MOVE_AWAY_DIST;
-        }
-        else if (citizen.getHealth() >= citizen.getMaxHealth() / 2)
-        {
+        } else if (citizen.getHealth() >= citizen.getMaxHealth() / 2) {
             return MED_MOVE_AWAY_DIST;
         }
         return MAX_MOVE_AWAY_DIST;
@@ -205,15 +189,12 @@ public class EntityAICitizenAvoidEntity implements IStateAI
      *
      * @return false if the citizen is fleeing.
      */
-    private boolean updateMoving()
-    {
+    private boolean updateMoving() {
         citizen.playMoveAwaySound();
 
         @Nullable final Entity newClosest = getClosestToAvoid();
-        if (newClosest != null)
-        {
-            if (newClosest.getId() != closestLivingEntity.getId())
-            {
+        if (newClosest != null) {
+            if (newClosest.getId() != closestLivingEntity.getId()) {
                 // Calling for help for the new enemy
                 citizen.callForHelp(newClosest, MAX_GUARD_CALL_RANGE);
                 closestLivingEntity = newClosest;
@@ -221,19 +202,13 @@ public class EntityAICitizenAvoidEntity implements IStateAI
             performMoveAway();
         }
 
-        if (moveAwayPath == null || !moveAwayPath.isInProgress())
-        {
+        if (moveAwayPath == null || !moveAwayPath.isInProgress()) {
             safeTime = 0;
             return true;
-        }
-        else
-        {
-            if (citizen.distanceTo(closestLivingEntity) < TOO_CLOSE_TO_MOB)
-            {
+        } else {
+            if (citizen.distanceTo(closestLivingEntity) < TOO_CLOSE_TO_MOB) {
                 citizen.getNavigation().setSpeedModifier(nearSpeed);
-            }
-            else
-            {
+            } else {
                 citizen.getNavigation().setSpeedModifier(farSpeed);
             }
         }
@@ -243,11 +218,9 @@ public class EntityAICitizenAvoidEntity implements IStateAI
     /**
      * Resets the task.
      */
-    public void reset()
-    {
+    public void reset() {
         safeTime = 0;
-        if (startingPos != null)
-        {
+        if (startingPos != null) {
             citizen.getNavigation().tryMoveToBlockPos(startingPos, 1);
         }
         closestLivingEntity = null;

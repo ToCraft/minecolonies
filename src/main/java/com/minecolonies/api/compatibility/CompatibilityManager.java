@@ -58,8 +58,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 /**
  * CompatibilityManager handling certain list and maps of itemStacks of certain types.
  */
-public class CompatibilityManager implements ICompatibilityManager
-{
+public class CompatibilityManager implements ICompatibilityManager {
     /**
      * Maximum depth sub items are explored at
      */
@@ -153,15 +152,13 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Instantiates the compatibilityManager.
      */
-    public CompatibilityManager()
-    {
+    public CompatibilityManager() {
         /*
          * Intentionally left empty.
          */
     }
 
-    private void clear()
-    {
+    private void clear() {
         saplings.clear();
         oreBlocks.clear();
         smeltableOres.clear();
@@ -186,8 +183,7 @@ public class CompatibilityManager implements ICompatibilityManager
      * @param recipeManager The vanilla recipe manager.
      */
     @Override
-    public void discover(@NotNull final RecipeManager recipeManager, final Level level)
-    {
+    public void discover(@NotNull final RecipeManager recipeManager, final Level level) {
         clear();
         discoverAllItems(level);
 
@@ -200,8 +196,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void serialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void serialize(@NotNull final RegistryFriendlyByteBuf buf) {
         serializeItemStorageList(buf, saplings);
         serializeBlockList(buf, oreBlocks);
         serializeItemStorageList(buf, smeltableOres);
@@ -218,8 +213,7 @@ public class CompatibilityManager implements ICompatibilityManager
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf, final ClientLevel level)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf, final ClientLevel level) {
         clear();
         discoverAllItems(level);
 
@@ -252,49 +246,43 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     private static void serializeItemStorageList(
-      @NotNull final RegistryFriendlyByteBuf buf,
-      @NotNull final Collection<ItemStorage> list)
-    {
+            @NotNull final RegistryFriendlyByteBuf buf,
+            @NotNull final Collection<ItemStorage> list) {
         buf.writeCollection(list, (buffer, storage) -> StandardFactoryController.getInstance().serialize((RegistryFriendlyByteBuf) buffer, storage));
     }
 
     @NotNull
-    private static List<ItemStorage> deserializeItemStorageList(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    private static List<ItemStorage> deserializeItemStorageList(@NotNull final RegistryFriendlyByteBuf buf) {
         return buf.readList((buffer) -> StandardFactoryController.getInstance().deserialize((RegistryFriendlyByteBuf) buffer));
     }
 
     private static void serializeBlockList(
-      @NotNull final RegistryFriendlyByteBuf buf,
-      @NotNull final Collection<Block> list)
-    {
+            @NotNull final RegistryFriendlyByteBuf buf,
+            @NotNull final Collection<Block> list) {
         buf.writeCollection(list.stream().map(ItemStack::new).toList(), (b, stack) -> Utils.serializeCodecMess((RegistryFriendlyByteBuf) b, stack));
     }
 
     @NotNull
-    private static List<Block> deserializeBlockList(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    private static List<Block> deserializeBlockList(@NotNull final RegistryFriendlyByteBuf buf) {
         final List<ItemStack> stacks = buf.readList(b -> Utils.deserializeCodecMess((RegistryFriendlyByteBuf) b));
         return stacks.stream()
-          .flatMap(stack -> stack.getItem() instanceof BlockItem blockItem
-                              ? Stream.of(blockItem.getBlock()) : Stream.empty())
-          .toList();
+                .flatMap(stack -> stack.getItem() instanceof BlockItem blockItem
+                        ? Stream.of(blockItem.getBlock()) : Stream.empty())
+                .toList();
     }
 
     private static void serializeRegistryIds(
-      @NotNull final RegistryFriendlyByteBuf buf,
-      @NotNull final Registry<?> registry,
-      @NotNull final Collection<ResourceLocation> ids)
-    {
+            @NotNull final RegistryFriendlyByteBuf buf,
+            @NotNull final Registry<?> registry,
+            @NotNull final Collection<ResourceLocation> ids) {
         buf.writeCollection(ids, (b, id) -> b.writeResourceLocation(id));
     }
 
     @NotNull
     private static <T> List<ResourceLocation>
     deserializeRegistryIds(
-      @NotNull final RegistryFriendlyByteBuf buf,
-      @NotNull final Registry<T> registry)
-    {
+            @NotNull final RegistryFriendlyByteBuf buf,
+            @NotNull final Registry<T> registry) {
         return buf.readList(b -> b.readResourceLocation());
     }
 
@@ -302,17 +290,15 @@ public class CompatibilityManager implements ICompatibilityManager
             RecipeHolder.STREAM_CODEC.apply(ByteBufCodecs.list());
 
     private static void serializeCompostRecipes(
-      @NotNull final RegistryFriendlyByteBuf buf,
-      @NotNull final Map<Item, RecipeHolder<CompostRecipe>> compostRecipes)
-    {
+            @NotNull final RegistryFriendlyByteBuf buf,
+            @NotNull final Map<Item, RecipeHolder<CompostRecipe>> compostRecipes) {
         final List<RecipeHolder<CompostRecipe>> recipes = compostRecipes.values().stream().distinct().toList();
         //RECIPE_LIST_STREAM_CODEC.encode(buf, recipes);
         buf.writeCollection(recipes, (b, holder) -> RecipeHolder.STREAM_CODEC.encode((RegistryFriendlyByteBuf) b, holder));
     }
 
     @NotNull
-    private static List<RecipeHolder<CompostRecipe>> deserializeCompostRecipes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    private static List<RecipeHolder<CompostRecipe>> deserializeCompostRecipes(@NotNull final RegistryFriendlyByteBuf buf) {
         //return RECIPE_LIST_STREAM_CODEC.decode(buf).stream().map(r -> (RecipeHolder<CompostRecipe>) r).toList();
         return buf.readList(b -> (RecipeHolder<CompostRecipe>) RecipeHolder.STREAM_CODEC.decode((RegistryFriendlyByteBuf) b));
     }
@@ -323,90 +309,72 @@ public class CompatibilityManager implements ICompatibilityManager
      * @return the list of itemStacks.
      */
     @Override
-    public List<ItemStack> getListOfAllItems()
-    {
-        if (allItems.isEmpty())
-        {
+    public List<ItemStack> getListOfAllItems() {
+        if (allItems.isEmpty()) {
             Log.getLogger().error("getListOfAllItems when empty");
         }
         return allItems;
     }
 
     @Override
-    public Set<ItemStorage> getSetOfAllItems()
-    {
-        if (creativeModeTabMap.isEmpty())
-        {
+    public Set<ItemStorage> getSetOfAllItems() {
+        if (creativeModeTabMap.isEmpty()) {
             Log.getLogger().error("getSetOfAllItems when empty");
         }
         return creativeModeTabMap.keySet();
     }
 
     @Override
-    public boolean isPlantable(final ItemStack itemStack)
-    {
+    public boolean isPlantable(final ItemStack itemStack) {
         return !itemStack.isEmpty() && itemStack.getItem() instanceof BlockItem && itemStack.is(ModTags.floristFlowers);
     }
 
     @Override
-    public boolean isLuckyBlock(final Block block)
-    {
+    public boolean isLuckyBlock(final Block block) {
         return block.defaultBlockState().is(ModTags.oreChanceBlocks);
     }
 
     @Nullable
     @Override
-    public ItemStack getSaplingForLeaf(final Block block)
-    {
-        if (leavesToSaplingMap.containsKey(block))
-        {
+    public ItemStack getSaplingForLeaf(final Block block) {
+        if (leavesToSaplingMap.containsKey(block)) {
             return leavesToSaplingMap.get(block).getItemStack();
         }
         return null;
     }
 
     @Override
-    public Set<ItemStorage> getCopyOfSaplings()
-    {
-        if (saplings.isEmpty())
-        {
+    public Set<ItemStorage> getCopyOfSaplings() {
+        if (saplings.isEmpty()) {
             Log.getLogger().error("getCopyOfSaplings when empty");
         }
         return new HashSet<>(saplings);
     }
 
     @Override
-    public Set<ItemStorage> getFuel()
-    {
-        if (fuel.isEmpty())
-        {
+    public Set<ItemStorage> getFuel() {
+        if (fuel.isEmpty()) {
             Log.getLogger().error("getFuel when empty");
         }
         return fuel;
     }
 
     @Override
-    public Set<ItemStorage> getFood()
-    {
-        if (food.isEmpty())
-        {
+    public Set<ItemStorage> getFood() {
+        if (food.isEmpty()) {
             Log.getLogger().error("getFood when empty");
         }
         return food;
     }
 
     @Override
-    public Set<ItemStorage> getEdibles(final int minNutrition)
-    {
-        if (edibles.isEmpty())
-        {
+    public Set<ItemStorage> getEdibles(final int minNutrition) {
+        if (edibles.isEmpty()) {
             Log.getLogger().error("getEdibles when empty");
         }
         final Set<ItemStorage> filteredEdibles = new HashSet<>();
-        for (final ItemStorage storage : edibles)
-        {
-            if ((storage.getItemStack().getFoodProperties(null) != null && storage.getItemStack().getFoodProperties(null).nutrition() >= minNutrition))
-            {
+        for (final ItemStorage storage : edibles) {
+            if ((storage.getItemStack().getFoodProperties(null) != null && storage.getItemStack().getFoodProperties(null).nutrition() >= minNutrition)) {
                 filteredEdibles.add(storage);
             }
         }
@@ -414,86 +382,70 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public Set<ItemStorage> getSmeltableOres()
-    {
-        if (smeltableOres.isEmpty())
-        {
+    public Set<ItemStorage> getSmeltableOres() {
+        if (smeltableOres.isEmpty()) {
             Log.getLogger().error("getSmeltableOres when empty");
         }
         return smeltableOres;
     }
 
     @Override
-    public Map<Item, RecipeHolder<CompostRecipe>> getCopyOfCompostRecipes()
-    {
-        if (compostRecipes.isEmpty())
-        {
+    public Map<Item, RecipeHolder<CompostRecipe>> getCopyOfCompostRecipes() {
+        if (compostRecipes.isEmpty()) {
             Log.getLogger().error("getCopyOfCompostRecipes when empty");
         }
         return ImmutableMap.copyOf(compostRecipes);
     }
 
     @Override
-    public Set<ItemStorage> getCompostInputs()
-    {
-        if (compostRecipes.isEmpty())
-        {
+    public Set<ItemStorage> getCompostInputs() {
+        if (compostRecipes.isEmpty()) {
             Log.getLogger().error("getCompostInputs when empty");
         }
         return compostRecipes.keySet().stream()
-          .map(item -> new ItemStorage(new ItemStack(item)))
-          .collect(Collectors.toSet());
+                .map(item -> new ItemStorage(new ItemStack(item)))
+                .collect(Collectors.toSet());
     }
 
     @Override
-    public Set<ItemStorage> getCopyOfPlantables()
-    {
-        if (plantables.isEmpty())
-        {
+    public Set<ItemStorage> getCopyOfPlantables() {
+        if (plantables.isEmpty()) {
             Log.getLogger().error("getCopyOfPlantables when empty");
         }
         return new HashSet<>(plantables);
     }
 
     @Override
-    public Set<ItemStorage> getImmutableFlowers()
-    {
-        if (beekeeperflowers.isEmpty())
-        {
+    public Set<ItemStorage> getImmutableFlowers() {
+        if (beekeeperflowers.isEmpty()) {
             Log.getLogger().error("getImmutableFlowers when empty");
         }
         return beekeeperflowers;
     }
 
     @Override
-    public String getRandomDisease()
-    {
+    public String getRandomDisease() {
         return diseaseList.get(random.nextInt(diseaseList.size()));
     }
 
     @Override
-    public Disease getDisease(final String disease)
-    {
+    public Disease getDisease(final String disease) {
         return diseases.get(disease);
     }
 
     @Override
-    public List<Disease> getDiseases()
-    {
+    public List<Disease> getDiseases() {
         return new ArrayList<>(diseases.values());
     }
 
     @Override
-    public List<Tuple<Item, Integer>> getRecruitmentCostsWeights()
-    {
+    public List<Tuple<Item, Integer>> getRecruitmentCostsWeights() {
         return Collections.unmodifiableList(recruitmentCostsWeights);
     }
 
     @Override
-    public boolean isOre(final BlockState block)
-    {
-        if (oreBlocks.isEmpty())
-        {
+    public boolean isOre(final BlockState block) {
+        if (oreBlocks.isEmpty()) {
             Log.getLogger().error("isOre when empty");
         }
 
@@ -501,10 +453,8 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public boolean isOre(@NotNull final ItemStack stack)
-    {
-        if (isMineableOre(stack) || stack.is(ModTags.raw_ore) || stack.is(ModTags.breakable_ore))
-        {
+    public boolean isOre(@NotNull final ItemStack stack) {
+        if (isMineableOre(stack) || stack.is(ModTags.raw_ore) || stack.is(ModTags.breakable_ore)) {
             ItemStack smeltingResult = MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack);
             return stack.is(ModTags.breakable_ore) || !smeltingResult.isEmpty();
         }
@@ -513,59 +463,50 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public boolean isMineableOre(@NotNull final ItemStack stack)
-    {
+    public boolean isMineableOre(@NotNull final ItemStack stack) {
         return !isEmpty(stack) && stack.is(Tags.Items.ORES);
     }
 
     @Override
-    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         @NotNull final ListTag saplingsLeavesTagList =
-          leavesToSaplingMap.entrySet()
-            .stream()
-            .filter(entry -> entry.getKey() != null && !entry.getValue().getItemStack().isEmpty())
-            .map(entry -> writeLeafSaplingEntryToNBT(provider, entry.getKey().defaultBlockState(), entry.getValue()))
-            .collect(NBTUtils.toListNBT());
+                leavesToSaplingMap.entrySet()
+                        .stream()
+                        .filter(entry -> entry.getKey() != null && !entry.getValue().getItemStack().isEmpty())
+                        .map(entry -> writeLeafSaplingEntryToNBT(provider, entry.getKey().defaultBlockState(), entry.getValue()))
+                        .collect(NBTUtils.toListNBT());
         compound.put(TAG_SAP_LEAF, saplingsLeavesTagList);
     }
 
     @Override
-    public void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Tag.TAG_COMPOUND))
-          .map(nbt -> CompatibilityManager.readLeafSaplingEntryFromNBT(provider, nbt))
-          .filter(key -> !key.getA().isAir() && !leavesToSaplingMap.containsKey(key.getA().getBlock()) && !leavesToSaplingMap.containsValue(key.getB()))
-          .forEach(key -> leavesToSaplingMap.put(key.getA().getBlock(), key.getB()));
+                .map(nbt -> CompatibilityManager.readLeafSaplingEntryFromNBT(provider, nbt))
+                .filter(key -> !key.getA().isAir() && !leavesToSaplingMap.containsKey(key.getA().getBlock()) && !leavesToSaplingMap.containsValue(key.getB()))
+                .forEach(key -> leavesToSaplingMap.put(key.getA().getBlock(), key.getB()));
     }
 
     @Override
-    public void connectLeafToSapling(final Block leaf, final ItemStack stack)
-    {
-        if (!leavesToSaplingMap.containsKey(leaf))
-        {
+    public void connectLeafToSapling(final Block leaf, final ItemStack stack) {
+        if (!leavesToSaplingMap.containsKey(leaf)) {
             leavesToSaplingMap.put(leaf, new ItemStorage(stack, false, true));
         }
     }
 
     @Override
-    public CreativeModeTab getCreativeTab(final ItemStorage checkItem)
-    {
+    public CreativeModeTab getCreativeTab(final ItemStorage checkItem) {
         return creativeModeTabMap.get(checkItem);
     }
 
     @Override
-    public int getCreativeTabKey(final ItemStorage checkItem)
-    {
+    public int getCreativeTabKey(final ItemStorage checkItem) {
         final CreativeModeTab creativeTab = creativeModeTabMap.get(checkItem);
         return creativeTab == null ? DEFAULT_TAB_KEY : creativeModeTabMap.get(checkItem).column();
     }
 
     @Override
-    public ImmutableSet<ResourceLocation> getAllMonsters()
-    {
-        if (monsters.isEmpty())
-        {
+    public ImmutableSet<ResourceLocation> getAllMonsters() {
+        if (monsters.isEmpty()) {
             Log.getLogger().error("getAllMonsters when empty");
         }
         return monsters;
@@ -576,18 +517,13 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Calculate all monsters.
      */
-    private void discoverMobs()
-    {
+    private void discoverMobs() {
         Set<ResourceLocation> monsterSet = new HashSet<>();
 
-        for (final Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>> entry : BuiltInRegistries.ENTITY_TYPE.entrySet())
-        {
-            if (entry.getValue().getCategory() == MobCategory.MONSTER)
-            {
+        for (final Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>> entry : BuiltInRegistries.ENTITY_TYPE.entrySet()) {
+            if (entry.getValue().getCategory() == MobCategory.MONSTER) {
                 monsterSet.add(entry.getKey().location());
-            }
-            else if (entry.getValue().is(ModTags.hostile))
-            {
+            } else if (entry.getValue().is(ModTags.hostile)) {
                 monsterSet.add(entry.getKey().location());
             }
         }
@@ -598,10 +534,8 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Create complete list of all existing items, client side only.
      */
-    private void discoverAllItems(final Level level)
-    {
-        if (!food.isEmpty())
-        {
+    private void discoverAllItems(final Level level) {
+        if (!food.isEmpty()) {
             return;
         }
 
@@ -615,10 +549,8 @@ public class CompatibilityManager implements ICompatibilityManager
         CraftingUtils.forEachCreativeTabItems(tempDisplayParams, (tab, stacks) ->
         {
             final Object2IntLinkedOpenHashMap<Item> mapping = new Object2IntLinkedOpenHashMap<>();
-            for (final ItemStack item : stacks)
-            {
-                if (!tempDuplicates.add(new ItemStorage(item)) || mapping.addTo(item.getItem(), 1) > MAX_DEPTH)
-                {
+            for (final ItemStack item : stacks) {
+                if (!tempDuplicates.add(new ItemStorage(item)) || mapping.addTo(item.getItem(), 1) > MAX_DEPTH) {
                     continue;
                 }
 
@@ -652,10 +584,8 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Discover all flowers for the beekeeper.
      */
-    private void discoverBeekeeperFlowers(final ItemStack item, final Set<ItemStorage> tempFlowers)
-    {
-        if (item.is(ItemTags.FLOWERS))
-        {
+    private void discoverBeekeeperFlowers(final ItemStack item, final Set<ItemStorage> tempFlowers) {
+        if (item.is(ItemTags.FLOWERS)) {
             tempFlowers.add(new ItemStorage(item));
         }
     }
@@ -663,16 +593,12 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Discover ores for the Smelter and Miners.
      */
-    private void discoverOres(final ItemStack stack)
-    {
-        if (stack.is(Tags.Items.ORES) || stack.is(ModTags.breakable_ore) || stack.is(ModTags.raw_ore))
-        {
-            if (stack.getItem() instanceof BlockItem)
-            {
+    private void discoverOres(final ItemStack stack) {
+        if (stack.is(Tags.Items.ORES) || stack.is(ModTags.breakable_ore) || stack.is(ModTags.raw_ore)) {
+            if (stack.getItem() instanceof BlockItem) {
                 oreBlocks.add(((BlockItem) stack.getItem()).getBlock());
             }
-            if (!MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty())
-            {
+            if (!MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty()) {
                 smeltableOres.add(new ItemStorage(stack));
             }
         }
@@ -681,10 +607,8 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Discover saplings from the vanilla Saplings tag, used for the Forester
      */
-    private void discoverSaplings(final ItemStack stack)
-    {
-        if (stack.is(ItemTags.SAPLINGS) || stack.is(Tags.Items.MUSHROOMS) || stack.is(ModTags.fungi))
-        {
+    private void discoverSaplings(final ItemStack stack) {
+        if (stack.is(ItemTags.SAPLINGS) || stack.is(Tags.Items.MUSHROOMS) || stack.is(ModTags.fungi)) {
             saplings.add(new ItemStorage(stack, false, true));
         }
     }
@@ -693,8 +617,7 @@ public class CompatibilityManager implements ICompatibilityManager
      * "Discover" associated saplings for fungi; there currently isn't a great way to do this automatically,
      * so it's just hard-coded for now.  (TODO: datapack this in 1.20.4?)
      */
-    private void discoverFungi()
-    {
+    private void discoverFungi() {
         // regular saplings and overworld mushrooms are discovered by loot drops, so will populate this table on
         // their own (though only after the first tree is cut); nether "leaves" don't drop saplings by default
         // though, so we instead use this table to force that.
@@ -707,24 +630,19 @@ public class CompatibilityManager implements ICompatibilityManager
      *
      * @param recipeManager recipe manager
      */
-    private void discoverCompostRecipes(@NotNull final RecipeManager recipeManager)
-    {
-        if (compostRecipes.isEmpty())
-        {
+    private void discoverCompostRecipes(@NotNull final RecipeManager recipeManager) {
+        if (compostRecipes.isEmpty()) {
             discoverCompostRecipes(recipeManager.getAllRecipesFor(ModRecipeSerializer.CompostRecipeType.get()));
             Log.getLogger().info("Finished discovering compostables " + compostRecipes.size());
         }
     }
 
-    private void discoverCompostRecipes(@NotNull final List<RecipeHolder<CompostRecipe>> recipes)
-    {
-        for (final RecipeHolder<CompostRecipe> recipe : recipes)
-        {
-            for (final ItemStack stack : recipe.value().getInput().getItems())
-            {
+    private void discoverCompostRecipes(@NotNull final List<RecipeHolder<CompostRecipe>> recipes) {
+        for (final RecipeHolder<CompostRecipe> recipe : recipes) {
+            for (final ItemStack stack : recipe.value().getInput().getItems()) {
                 // there can be duplicates due to overlapping tags.  weakest one wins.
                 compostRecipes.merge(stack.getItem(), recipe,
-                  (r1, r2) -> r1.value().getStrength() < r2.value().getStrength() ? r1 : r2);
+                        (r1, r2) -> r1.value().getStrength() < r2.value().getStrength() ? r1 : r2);
             }
         }
     }
@@ -732,12 +650,9 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Create complete list of plantable items, from the "minecolonies:florist_flowers" tag, for the Florist.
      */
-    private void discoverPlantables(final ItemStack stack)
-    {
-        if (stack.is(ModTags.floristFlowers))
-        {
-            if (stack.getItem() instanceof BlockItem)
-            {
+    private void discoverPlantables(final ItemStack stack) {
+        if (stack.is(ModTags.floristFlowers)) {
+            if (stack.getItem() instanceof BlockItem) {
                 plantables.add(new ItemStorage(stack));
             }
         }
@@ -746,10 +661,8 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Create complete list of fuel items.
      */
-    private void discoverFuel(final ItemStack stack)
-    {
-        if (FurnaceBlockEntity.isFuel(stack))
-        {
+    private void discoverFuel(final ItemStack stack) {
+        if (FurnaceBlockEntity.isFuel(stack)) {
             fuel.add(new ItemStorage(stack));
         }
     }
@@ -757,13 +670,10 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Create complete list of food items.
      */
-    private void discoverFood(final ItemStack stack)
-    {
-        if (ISFOOD.test(stack) || ISCOOKABLE.test(stack))
-        {
+    private void discoverFood(final ItemStack stack) {
+        if (ISFOOD.test(stack) || ISCOOKABLE.test(stack)) {
             food.add(new ItemStorage(stack));
-            if (FoodUtils.EDIBLE.test(stack))
-            {
+            if (FoodUtils.EDIBLE.test(stack)) {
                 edibles.add(new ItemStorage(stack));
             }
         }
@@ -772,33 +682,25 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Parses recruitment costs from config
      */
-    private void discoverRecruitCosts()
-    {
-        if (recruitmentCostsWeights.isEmpty())
-        {
-            for (final String itemString : MinecoloniesAPIProxy.getInstance().getConfig().getServer().configListRecruitmentItems.get())
-            {
+    private void discoverRecruitCosts() {
+        if (recruitmentCostsWeights.isEmpty()) {
+            for (final String itemString : MinecoloniesAPIProxy.getInstance().getConfig().getServer().configListRecruitmentItems.get()) {
                 final String[] split = itemString.split(";");
-                if (split.length < 2)
-                {
+                if (split.length < 2) {
                     Log.getLogger().warn("Wrong configured recruitment cost: " + itemString);
                     continue;
                 }
 
                 final Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(split[0]));
-                if (item == null || item == Items.AIR)
-                {
+                if (item == null || item == Items.AIR) {
                     Log.getLogger().warn("Invalid recruitment item: " + item);
                     continue;
                 }
 
-                try
-                {
+                try {
                     final int rarity = Integer.parseInt(split[split.length - 1]);
                     recruitmentCostsWeights.add(new Tuple<>(item, rarity));
-                }
-                catch (final NumberFormatException ex)
-                {
+                } catch (final NumberFormatException ex) {
                     Log.getLogger().warn("Invalid recruitment weight for: " + item);
                 }
             }
@@ -809,32 +711,25 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Go through the disease config and setup all possible diseases.
      */
-    private void discoverDiseases()
-    {
-        if (diseases.isEmpty())
-        {
-            for (final String disease : MinecoloniesAPIProxy.getInstance().getConfig().getServer().diseases.get())
-            {
+    private void discoverDiseases() {
+        if (diseases.isEmpty()) {
+            for (final String disease : MinecoloniesAPIProxy.getInstance().getConfig().getServer().diseases.get()) {
                 final String[] split = disease.split(",");
-                if (split.length < 3)
-                {
+                if (split.length < 3) {
                     Log.getLogger().warn("Wrongly configured disease: " + disease);
                     continue;
                 }
 
-                try
-                {
+                try {
                     final String name = split[0];
                     final int rarity = Integer.parseInt(split[1]);
 
                     final List<ItemStack> cure = new ArrayList<>();
 
-                    for (int i = 2; i < split.length; i++)
-                    {
+                    for (int i = 2; i < split.length; i++) {
                         final String[] theItem = split[i].split(":");
                         final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(theItem[0], theItem[1]));
-                        if (item == null || item == Items.AIR)
-                        {
+                        if (item == null || item == Items.AIR) {
                             Log.getLogger().warn("Invalid cure item: " + disease);
                             continue;
                         }
@@ -843,13 +738,10 @@ public class CompatibilityManager implements ICompatibilityManager
                         cure.add(stack);
                     }
                     diseases.put(name, new Disease(name, rarity, cure));
-                    for (int i = 0; i < rarity; i++)
-                    {
+                    for (int i = 0; i < rarity; i++) {
                         diseaseList.add(name);
                     }
-                }
-                catch (final NumberFormatException e)
-                {
+                } catch (final NumberFormatException e) {
                     Log.getLogger().warn("Wrongly configured disease: " + disease);
                 }
             }
@@ -857,34 +749,28 @@ public class CompatibilityManager implements ICompatibilityManager
         Log.getLogger().info("Finished discovering diseases");
     }
 
-    private static CompoundTag writeLeafSaplingEntryToNBT(@NotNull final HolderLookup.Provider provider, final BlockState state, final ItemStorage storage)
-    {
+    private static CompoundTag writeLeafSaplingEntryToNBT(@NotNull final HolderLookup.Provider provider, final BlockState state, final ItemStorage storage) {
         final CompoundTag compound = NbtUtils.writeBlockState(state);
         compound.put(NbtTagConstants.STACK, storage.getItemStack().saveOptional(provider));
         return compound;
     }
 
-    private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         return new Tuple<>(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), compound), new ItemStorage(ItemStack.parseOptional(provider, compound.getCompound(NbtTagConstants.STACK)), false, true));
     }
 
     /**
      * Inits compats
      */
-    private void discoverModCompat()
-    {
-        if (ModList.get().isLoaded("resourcefulbees"))
-        {
+    private void discoverModCompat() {
+        if (ModList.get().isLoaded("resourcefulbees")) {
             Compatibility.beeHiveCompat = new ResourcefulBeesCompat();
         }
-        if (ModList.get().isLoaded("tconstruct"))
-        {
+        if (ModList.get().isLoaded("tconstruct")) {
             Compatibility.tinkersCompat = new TinkersToolHelper();
             Compatibility.tinkersSlimeCompat = new SlimeTreeCheck();
         }
-        if (ModList.get().isLoaded("dynamictrees"))
-        {
+        if (ModList.get().isLoaded("dynamictrees")) {
             Compatibility.dynamicTreesCompat = new DynamicTreeCompat();
         }
     }

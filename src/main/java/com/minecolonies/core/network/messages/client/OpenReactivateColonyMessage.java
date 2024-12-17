@@ -12,30 +12,27 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Message to open the colony founding covenant.
  */
-public class OpenReactivateColonyMessage extends AbstractClientPlayMessage
-{
+public class OpenReactivateColonyMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_reactivate_colony", OpenReactivateColonyMessage::new);
 
     /**
      * Colony pos at which we are trying to place.
      */
     private String closestName;
-    private int      closestDistance;
+    private int closestDistance;
     private BlockPos townHallPos;
 
     /**
      * Default constructor
      **/
-    public OpenReactivateColonyMessage(RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public OpenReactivateColonyMessage(RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(type);
         this.closestName = buf.readUtf(32767);
         this.closestDistance = buf.readInt();
         this.townHallPos = buf.readBlockPos();
     }
 
-    public OpenReactivateColonyMessage(final String closestName, final int closestDistance, final BlockPos townHallPos)
-    {
+    public OpenReactivateColonyMessage(final String closestName, final int closestDistance, final BlockPos townHallPos) {
         super(TYPE);
         this.closestName = closestName;
         this.closestDistance = closestDistance;
@@ -43,14 +40,12 @@ public class OpenReactivateColonyMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         new WindowTownHallColonyReactivate(townHallPos, closestName, closestDistance).open();
     }
 
     @Override
-    public void toBytes(RegistryFriendlyByteBuf buf)
-    {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         buf.writeUtf(closestName);
         buf.writeInt(closestDistance);
         buf.writeBlockPos(townHallPos);

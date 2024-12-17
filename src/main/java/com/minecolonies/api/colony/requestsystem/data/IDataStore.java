@@ -5,8 +5,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 /**
  * Core class that describes the datastores that are part of the RS.
  */
-public interface IDataStore
-{
+public interface IDataStore {
     /**
      * Method to get the {@link IToken} used to identify this {@link IDataStore}.
      *

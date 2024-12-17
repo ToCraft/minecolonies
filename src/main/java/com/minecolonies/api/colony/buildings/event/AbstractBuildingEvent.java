@@ -6,8 +6,7 @@ import com.minecolonies.api.colony.event.AbstractColonyEvent;
 /**
  * Abstract event for building related things.
  */
-public abstract class AbstractBuildingEvent extends AbstractColonyEvent
-{
+public abstract class AbstractBuildingEvent extends AbstractColonyEvent {
     /**
      * The building related to the event.
      */
@@ -18,8 +17,7 @@ public abstract class AbstractBuildingEvent extends AbstractColonyEvent
      *
      * @param building the building related to the event.
      */
-    protected AbstractBuildingEvent(final IBuilding building)
-    {
+    protected AbstractBuildingEvent(final IBuilding building) {
         super(building.getColony());
         this.building = building;
     }
@@ -29,8 +27,7 @@ public abstract class AbstractBuildingEvent extends AbstractColonyEvent
      *
      * @return the building instance.
      */
-    public IBuilding getBuilding()
-    {
+    public IBuilding getBuilding() {
         return building;
     }
 }

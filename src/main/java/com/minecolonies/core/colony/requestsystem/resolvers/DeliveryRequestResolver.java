@@ -13,21 +13,17 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Resolves deliveries
  */
-public class DeliveryRequestResolver extends DeliverymenRequestResolver<Delivery>
-{
+public class DeliveryRequestResolver extends DeliverymenRequestResolver<Delivery> {
     public DeliveryRequestResolver(
-      @NotNull final ILocation location,
-      @NotNull final IToken<?> token)
-    {
+            @NotNull final ILocation location,
+            @NotNull final IToken<?> token) {
         super(location, token);
     }
 
     @Override
-    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
-    {
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck) {
         final IWareHouse wareHouse = manager.getColony().getBuildingManager().getBuilding(getLocation().getInDimensionLocation(), IWareHouse.class);
-        if (wareHouse == null)
-        {
+        if (wareHouse == null) {
             return false;
         }
 
@@ -35,8 +31,7 @@ public class DeliveryRequestResolver extends DeliverymenRequestResolver<Delivery
     }
 
     @Override
-    public TypeToken<? extends Delivery> getRequestType()
-    {
+    public TypeToken<? extends Delivery> getRequestType() {
         return TypeConstants.DELIVERY;
     }
 

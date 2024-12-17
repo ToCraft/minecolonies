@@ -12,8 +12,7 @@ import java.util.Set;
 /**
  * Utility class with methods regarding reflection.
  */
-public final class ReflectionUtils
-{
+public final class ReflectionUtils {
     /**
      * Caching the reflection calls.
      */
@@ -22,8 +21,7 @@ public final class ReflectionUtils
     /**
      * Private constructor to hide the implicit public one.
      */
-    private ReflectionUtils()
-    {
+    private ReflectionUtils() {
     }
 
     /**
@@ -33,11 +31,9 @@ public final class ReflectionUtils
      * @param <T>   The type to get the super types for.
      * @return A set with the super types of the given type.
      */
-    public static <T> Set<TypeToken<?>> getSuperClasses(final TypeToken<T> token)
-    {
+    public static <T> Set<TypeToken<?>> getSuperClasses(final TypeToken<T> token) {
         final Set<TypeToken<?>> cachedSet = cache.get(token);
-        if (cachedSet != null)
-        {
+        if (cachedSet != null) {
             return cachedSet;
         }
 
@@ -55,8 +51,7 @@ public final class ReflectionUtils
     }
 
     public static void setFMLLoggingLevelOnConsoleToDebug(final AppenderControl control)
-      throws NoSuchFieldException, IllegalAccessException
-    {
+            throws NoSuchFieldException, IllegalAccessException {
         final Field levelField = control.getClass().getField("level");
         levelField.setAccessible(true);
         levelField.set(control, Integer.MAX_VALUE);

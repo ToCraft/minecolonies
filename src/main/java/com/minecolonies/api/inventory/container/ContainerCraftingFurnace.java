@@ -27,8 +27,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * Crafting container for the recipe teaching of furnace recipes.
  */
-public class ContainerCraftingFurnace extends AbstractContainerMenu
-{
+public class ContainerCraftingFurnace extends AbstractContainerMenu {
     /**
      * The furnace inventory.
      */
@@ -57,8 +56,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerCraftingFurnace fromFriendlyByteBuf(final int windowId, final Inventory inv, final RegistryFriendlyByteBuf packetBuffer)
-    {
+    public static ContainerCraftingFurnace fromFriendlyByteBuf(final int windowId, final Inventory inv, final RegistryFriendlyByteBuf packetBuffer) {
         final BlockPos tePos = packetBuffer.readBlockPos();
         final int moduleId = packetBuffer.readInt();
         return new ContainerCraftingFurnace(windowId, inv, tePos, moduleId);
@@ -71,62 +69,47 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      * @param inv      the player inventory.
      * @param pos      te world pos
      */
-    public ContainerCraftingFurnace(final int windowId, final Inventory inv, final BlockPos pos, final int moduleId)
-    {
+    public ContainerCraftingFurnace(final int windowId, final Inventory inv, final BlockPos pos, final int moduleId) {
         super(ModContainers.craftingFurnace.get(), windowId);
         this.moduleId = moduleId;
-        this.furnaceInventory = new IItemHandlerModifiable()
-        {
+        this.furnaceInventory = new IItemHandlerModifiable() {
             ItemStack input = ItemStack.EMPTY;
             ItemStack output = ItemStack.EMPTY;
 
             @Override
-            public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
-            {
+            public void setStackInSlot(final int slot, @Nonnull final ItemStack stack) {
                 final ItemStack copy = stack.copy();
                 copy.setCount(1);
-                if (slot == 0)
-                {
+                if (slot == 0) {
                     input = copy;
-                }
-                else
-                {
+                } else {
                     output = copy;
                 }
             }
 
             @Override
-            public int getSlots()
-            {
+            public int getSlots() {
                 return 3;
             }
 
             @Nonnull
             @Override
-            public ItemStack getStackInSlot(final int slot)
-            {
-                if (slot == 0)
-                {
+            public ItemStack getStackInSlot(final int slot) {
+                if (slot == 0) {
                     return input;
-                }
-                else
-                {
+                } else {
                     return output;
                 }
             }
 
             @Nonnull
             @Override
-            public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
-            {
+            public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate) {
                 final ItemStack copy = stack.copy();
                 copy.setCount(1);
-                if (slot == 0)
-                {
+                if (slot == 0) {
                     input = copy;
-                }
-                else
-                {
+                } else {
                     output = copy;
                 }
                 return stack;
@@ -134,56 +117,45 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
 
             @Nonnull
             @Override
-            public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
-            {
+            public ItemStack extractItem(final int slot, final int amount, final boolean simulate) {
                 return ItemStack.EMPTY;
             }
 
             @Override
-            public int getSlotLimit(final int slot)
-            {
+            public int getSlotLimit(final int slot) {
                 return 1;
             }
 
             @Override
-            public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
-            {
-                if (slot == 0)
-                {
+            public boolean isItemValid(final int slot, @Nonnull final ItemStack stack) {
+                if (slot == 0) {
                     return !IMinecoloniesAPI.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty();
-                }
-                else
-                {
+                } else {
                     return false;
                 }
             }
         };
         this.playerInventory = inv;
         this.buildingPos = pos;
-        this.addSlot(new SlotItemHandler(furnaceInventory, 0, 56, 17)
-        {
+        this.addSlot(new SlotItemHandler(furnaceInventory, 0, 56, 17) {
             @Override
-            public int getMaxStackSize()
-            {
+            public int getMaxStackSize() {
                 return 1;
             }
 
             @NotNull
             @Override
-            public ItemStack remove(final int par1)
-            {
+            public ItemStack remove(final int par1) {
                 return ItemStack.EMPTY;
             }
 
             @Override
-            public boolean mayPlace(final ItemStack par1ItemStack)
-            {
+            public boolean mayPlace(final ItemStack par1ItemStack) {
                 return true;
             }
 
             @Override
-            public boolean mayPickup(final Player par1PlayerEntity)
-            {
+            public boolean mayPickup(final Player par1PlayerEntity) {
                 return false;
             }
         });
@@ -193,45 +165,37 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
         int i;
-        for (i = 0; i < INVENTORY_ROWS; i++)
-        {
-            for (int j = 0; j < INVENTORY_COLUMNS; j++)
-            {
+        for (i = 0; i < INVENTORY_ROWS; i++) {
+            for (int j = 0; j < INVENTORY_COLUMNS; j++) {
                 addSlot(new Slot(
-                  playerInventory,
-                  j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                  PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                  PLAYER_INVENTORY_INITIAL_Y_OFFSET_CRAFTING + i * PLAYER_INVENTORY_OFFSET_EACH
+                        playerInventory,
+                        j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET_CRAFTING + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
 
-        for (i = 0; i < INVENTORY_COLUMNS; i++)
-        {
+        for (i = 0; i < INVENTORY_COLUMNS; i++) {
             addSlot(new Slot(
-              playerInventory, i,
-              PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-              PLAYER_INVENTORY_HOTBAR_OFFSET_CRAFTING
+                    playerInventory, i,
+                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                    PLAYER_INVENTORY_HOTBAR_OFFSET_CRAFTING
             ));
         }
     }
 
     @Override
-    public void clicked(final int slotId, final int clickedButton, final ClickType mode, final Player playerIn)
-    {
-        if (slotId >= 0 && slotId < FURNACE_SLOTS)
-        {
+    public void clicked(final int slotId, final int clickedButton, final ClickType mode, final Player playerIn) {
+        if (slotId >= 0 && slotId < FURNACE_SLOTS) {
             // 1 is shift-click
             if (mode == ClickType.PICKUP
-                  || mode == ClickType.PICKUP_ALL
-                  || mode == ClickType.SWAP)
-            {
+                    || mode == ClickType.PICKUP_ALL
+                    || mode == ClickType.SWAP) {
                 final Slot slot = this.slots.get(slotId);
                 handleSlotClick(slot, this.getCarried());
             }
-        }
-        else
-        {
+        } else {
             super.clicked(slotId, clickedButton, mode, playerInventory.player);
         }
 
@@ -243,8 +207,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      *
      * @param stack The input stack.
      */
-    public void setFurnaceInput(final ItemStack stack)
-    {
+    public void setFurnaceInput(final ItemStack stack) {
         handleSlotClick(getSlot(0), stack);
         updateFurnaceOutput();
     }
@@ -256,16 +219,12 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      * @param stack the used stack.
      * @return the result.
      */
-    private ItemStack handleSlotClick(final Slot slot, final ItemStack stack)
-    {
-        if (stack.getCount() > 0)
-        {
+    private ItemStack handleSlotClick(final Slot slot, final ItemStack stack) {
+        if (stack.getCount() > 0) {
             final ItemStack copy = stack.copy();
             copy.setCount(1);
             slot.set(copy);
-        }
-        else if (slot.getItem().getCount() > 0)
-        {
+        } else if (slot.getItem().getCount() > 0) {
             slot.set(ItemStack.EMPTY);
         }
 
@@ -275,10 +234,8 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
     /**
      * Update the furnace output slot when called server-side.
      */
-    private void updateFurnaceOutput()
-    {
-        if (!playerInventory.player.level().isClientSide)
-        {
+    private void updateFurnaceOutput() {
+        if (!playerInventory.player.level().isClientSide) {
             final ServerPlayer player = (ServerPlayer) playerInventory.player;
             final ItemStack result = IMinecoloniesAPI.getInstance().getFurnaceRecipes().getSmeltingResult(furnaceInventory.getStackInSlot(0));
 
@@ -288,57 +245,42 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
     }
 
     @Override
-    public boolean stillValid(@NotNull final Player playerIn)
-    {
+    public boolean stillValid(@NotNull final Player playerIn) {
         return true;
     }
 
     @NotNull
     @Override
-    public ItemStack quickMoveStack(final Player playerIn, final int index)
-    {
-        if (index <= FURNACE_SLOTS)
-        {
+    public ItemStack quickMoveStack(final Player playerIn, final int index) {
+        if (index <= FURNACE_SLOTS) {
             return ItemStack.EMPTY;
         }
 
         ItemStack itemstack = ItemStackUtils.EMPTY;
         final Slot slot = this.slots.get(index);
-        if (slot != null && slot.hasItem())
-        {
+        if (slot != null && slot.hasItem()) {
             final ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
-            if (index == 0)
-            {
-                if (!this.moveItemStackTo(itemstack1, FURNACE_SLOTS, TOTAL_SLOTS_FURNACE, true))
-                {
+            if (index == 0) {
+                if (!this.moveItemStackTo(itemstack1, FURNACE_SLOTS, TOTAL_SLOTS_FURNACE, true)) {
                     return ItemStackUtils.EMPTY;
                 }
                 slot.onQuickCraft(itemstack1, itemstack);
-            }
-            else if (index < HOTBAR_START)
-            {
-                if (!this.moveItemStackTo(itemstack1, HOTBAR_START, TOTAL_SLOTS_FURNACE, false))
-                {
+            } else if (index < HOTBAR_START) {
+                if (!this.moveItemStackTo(itemstack1, HOTBAR_START, TOTAL_SLOTS_FURNACE, false)) {
                     return ItemStackUtils.EMPTY;
                 }
-            }
-            else if ((index < TOTAL_SLOTS_FURNACE
-                        && !this.moveItemStackTo(itemstack1, FURNACE_SLOTS, HOTBAR_START, false))
-                       || !this.moveItemStackTo(itemstack1, FURNACE_SLOTS, TOTAL_SLOTS_FURNACE, false))
-            {
+            } else if ((index < TOTAL_SLOTS_FURNACE
+                    && !this.moveItemStackTo(itemstack1, FURNACE_SLOTS, HOTBAR_START, false))
+                    || !this.moveItemStackTo(itemstack1, FURNACE_SLOTS, TOTAL_SLOTS_FURNACE, false)) {
                 return ItemStack.EMPTY;
             }
-            if (itemstack1.getCount() == 0)
-            {
+            if (itemstack1.getCount() == 0) {
                 slot.set(ItemStackUtils.EMPTY);
-            }
-            else
-            {
+            } else {
                 slot.setChanged();
             }
-            if (itemstack1.getCount() == itemstack.getCount())
-            {
+            if (itemstack1.getCount() == itemstack.getCount()) {
                 return ItemStackUtils.EMPTY;
             }
         }
@@ -346,8 +288,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
     }
 
     @Override
-    public boolean canTakeItemForPickAll(final ItemStack stack, final Slot slotIn)
-    {
+    public boolean canTakeItemForPickAll(final ItemStack stack, final Slot slotIn) {
         return !(slotIn instanceof FurnaceResultSlot) && super.canTakeItemForPickAll(stack, slotIn);
     }
 
@@ -356,8 +297,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      *
      * @return the player.
      */
-    public Player getPlayer()
-    {
+    public Player getPlayer() {
         return playerInventory.player;
     }
 
@@ -366,8 +306,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      *
      * @return the world obj.
      */
-    public Level getWorldObj()
-    {
+    public Level getWorldObj() {
         return playerInventory.player.level();
     }
 
@@ -376,17 +315,16 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      *
      * @return the position.
      */
-    public BlockPos getPos()
-    {
+    public BlockPos getPos() {
         return buildingPos;
     }
 
     /**
      * Get the module if of the container.
+     *
      * @return the module id.
      */
-    public int getModuleId()
-    {
+    public int getModuleId() {
         return this.moduleId;
     }
 }

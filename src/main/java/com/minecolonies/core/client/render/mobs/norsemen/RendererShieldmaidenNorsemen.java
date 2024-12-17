@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for the shieldmaiden.
  */
-public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen<AbstractEntityNorsemen, ModelShieldmaiden>
-{
+public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen<AbstractEntityNorsemen, ModelShieldmaiden> {
     /**
      * Texture of the entity.
      */
@@ -23,17 +22,14 @@ public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen<Abstr
      *
      * @param context the renderManager
      */
-    public RendererShieldmaidenNorsemen(final EntityRendererProvider.Context context)
-    {
+    public RendererShieldmaidenNorsemen(final EntityRendererProvider.Context context) {
         super(context, new ModelShieldmaiden(context.bakeLayer(ClientRegistryHandler.SHIELD_MAIDEN)), 0.5F);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityNorsemen entity)
-    {
-        if (entity.getTextureId() == 1)
-        {
+    public ResourceLocation getTextureLocation(final AbstractEntityNorsemen entity) {
+        if (entity.getTextureId() == 1) {
             return TEXTURE2;
         }
         return TEXTURE1;

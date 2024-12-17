@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages changing the team color of the colony.
  */
-public class TeamColonyColorChangeMessage extends AbstractColonyServerMessage
-{
+public class TeamColonyColorChangeMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "team_colony_color_change", TeamColonyColorChangeMessage::new);
 
     /**
@@ -32,8 +31,7 @@ public class TeamColonyColorChangeMessage extends AbstractColonyServerMessage
      * @param colorOrdinal the color to set.
      * @param building     view of the building to read data from
      */
-    public TeamColonyColorChangeMessage(final int colorOrdinal, @NotNull final IBuildingView building)
-    {
+    public TeamColonyColorChangeMessage(final int colorOrdinal, @NotNull final IBuildingView building) {
         super(TYPE, building.getColony());
         this.colorOrdinal = colorOrdinal;
     }
@@ -43,8 +41,7 @@ public class TeamColonyColorChangeMessage extends AbstractColonyServerMessage
      *
      * @param buf the used byteBuffer.
      */
-    protected TeamColonyColorChangeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected TeamColonyColorChangeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
 
         colorOrdinal = buf.readInt();
@@ -56,22 +53,17 @@ public class TeamColonyColorChangeMessage extends AbstractColonyServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(colorOrdinal);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         colony.setColonyColor(ChatFormatting.values()[colorOrdinal]);
-        try
-        {
+        try {
             NeoForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.TEAM_COLOR));
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             Log.getLogger().error("Error during ColonyInformationChangedEvent", e);
         }
     }

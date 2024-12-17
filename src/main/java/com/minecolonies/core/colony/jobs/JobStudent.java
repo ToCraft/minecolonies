@@ -1,23 +1,21 @@
 package com.minecolonies.core.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.entity.ai.workers.education.EntityAIStudy;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The student job class.
  */
-public class JobStudent extends AbstractJob<EntityAIStudy, JobStudent>
-{
+public class JobStudent extends AbstractJob<EntityAIStudy, JobStudent> {
     /**
      * Create a cook job.
      *
      * @param entity the student.
      */
-    public JobStudent(final ICitizenData entity)
-    {
+    public JobStudent(final ICitizenData entity) {
         super(entity);
     }
 
@@ -28,14 +26,12 @@ public class JobStudent extends AbstractJob<EntityAIStudy, JobStudent>
      */
     @NotNull
     @Override
-    public EntityAIStudy generateAI()
-    {
+    public EntityAIStudy generateAI() {
         return new EntityAIStudy(this);
     }
 
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.STUDENT_ID;
     }
 }

@@ -11,8 +11,7 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import java.util.List;
 
-public interface ITownHallView extends IBuildingView
-{
+public interface ITownHallView extends IBuildingView {
     /**
      * Get a list of permission events.
      *
@@ -22,7 +21,7 @@ public interface ITownHallView extends IBuildingView
 
     /**
      * Gets a list if colony events.
-     * 
+     *
      * @return a copy of the list of events.
      */
     List<IColonyEventDescription> getColonyEvents();
@@ -36,17 +35,17 @@ public interface ITownHallView extends IBuildingView
 
     /**
      * Getter for the mapdata.
+     *
      * @return the original list.
      */
     List<MapEntry> getMapDataList();
 
-    public record MapEntry(MapId mapId, MapItemSavedData mapData)
-    {
+    public record MapEntry(MapId mapId, MapItemSavedData mapData) {
         public static final StreamCodec<RegistryFriendlyByteBuf, MapEntry> STREAM_CODEC =
-            StreamCodec.composite(MapId.STREAM_CODEC,
-                MapEntry::mapId,
-                StreamCodec.of((buf, data) -> buf.writeNbt(data.save(new CompoundTag(), buf.registryAccess())), buf -> MapItemSavedData.load(buf.readNbt(), buf.registryAccess())),
-                MapEntry::mapData,
-                MapEntry::new);
+                StreamCodec.composite(MapId.STREAM_CODEC,
+                        MapEntry::mapId,
+                        StreamCodec.of((buf, data) -> buf.writeNbt(data.save(new CompoundTag(), buf.registryAccess())), buf -> MapItemSavedData.load(buf.readNbt(), buf.registryAccess())),
+                        MapEntry::mapData,
+                        MapEntry::new);
     }
 }

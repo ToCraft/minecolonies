@@ -10,16 +10,14 @@ import slimeknights.tconstruct.world.block.SlimeLeavesBlock;*/
 /**
  * This class is to store a check to see if a tree is a slime tree.
  */
-public final class SlimeTreeCheck extends SlimeTreeProxy
-{
+public final class SlimeTreeCheck extends SlimeTreeProxy {
     /**
      * Check if block is slime block.
      *
      * @param block the block.
      * @return if the block is a slime block.
      */
-    public static boolean isSlimeBlock(@NotNull final Block block)
-    {
+    public static boolean isSlimeBlock(@NotNull final Block block) {
         return new SlimeTreeCheck().checkForTinkersSlimeBlock(block);
     }
 
@@ -89,8 +87,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime leaf.
      */
-    public static boolean isSlimeLeaf(@NotNull final Block block)
-    {
+    public static boolean isSlimeLeaf(@NotNull final Block block) {
         return new SlimeTreeCheck().checkForTinkersSlimeLeaves(block);
     }
 
@@ -100,8 +97,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime sapling.
      */
-    public static boolean isSlimeSapling(@NotNull final Block block)
-    {
+    public static boolean isSlimeSapling(@NotNull final Block block) {
         return new SlimeTreeCheck().checkForTinkersSlimeSapling(block);
     }
 
@@ -111,8 +107,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime sapling.
      */
-    public static boolean isSlimeDirtOrGrass(@NotNull final Block block)
-    {
+    public static boolean isSlimeDirtOrGrass(@NotNull final Block block) {
         return new SlimeTreeCheck().checkForTinkersSlimeDirtOrGrass(block);
     }
 
@@ -122,8 +117,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param leaf the leaf.
      * @return the variant.
      */
-    public static int getLeafVariant(@NotNull final BlockState leaf)
-    {
+    public static int getLeafVariant(@NotNull final BlockState leaf) {
         return new SlimeTreeCheck().getTinkersLeafVariant(leaf);
     }
 }

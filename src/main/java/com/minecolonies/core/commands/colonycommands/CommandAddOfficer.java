@@ -18,18 +18,15 @@ import net.minecraft.network.chat.Component;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.core.commands.CommandArgumentNames.PLAYERNAME_ARG;
 
-public class CommandAddOfficer implements IMCColonyOfficerCommand
-{
+public class CommandAddOfficer implements IMCColonyOfficerCommand {
     /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
-        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseAddOfficerCommand.get())
-        {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
+        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseAddOfficerCommand.get()) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
             return 0;
         }
@@ -37,24 +34,19 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
 
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
+        if (colony == null) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         GameProfile profile;
-        try
-        {
+        try {
             profile = GameProfileArgument.getGameProfiles(context, PLAYERNAME_ARG).stream().findFirst().orElse(null);
-        }
-        catch (CommandSyntaxException e)
-        {
+        } catch (CommandSyntaxException e) {
             return 0;
         }
 
-        if (context.getSource().getServer().getPlayerList().getPlayer(profile.getId()) == null)
-        {
+        if (context.getSource().getServer().getPlayerList().getPlayer(profile.getId()) == null) {
             // could not find player with given name.
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile.getName()), true);
             return 0;
@@ -70,16 +62,14 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "addOfficer";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
-                         .then(IMCCommand.newArgument(PLAYERNAME_ARG, GameProfileArgument.gameProfile()).executes(this::checkPreConditionAndExecute)));
+                .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                        .then(IMCCommand.newArgument(PLAYERNAME_ARG, GameProfileArgument.gameProfile()).executes(this::checkPreConditionAndExecute)));
     }
 }

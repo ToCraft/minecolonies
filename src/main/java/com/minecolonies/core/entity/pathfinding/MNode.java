@@ -10,8 +10,7 @@ import static com.minecolonies.api.util.constant.PathingConstants.SHIFT_Y_BY;
 /**
  * Nodes used in pathfinding.
  */
-public class MNode implements Comparable<MNode>
-{
+public class MNode implements Comparable<MNode> {
     /**
      * Values used in the generation of the hash of the node.
      */
@@ -85,8 +84,7 @@ public class MNode implements Comparable<MNode>
      * @param cost      node cost.
      * @param heuristic heuristic estimate.
      */
-    public MNode(@Nullable final MNode parent, @NotNull final int posX, final int posY, final int posZ, final double cost, final double heuristic)
-    {
+    public MNode(@Nullable final MNode parent, @NotNull final int posX, final int posY, final int posZ, final double cost, final double heuristic) {
         this.parent = parent;
         this.x = posX;
         this.y = posY;
@@ -97,12 +95,11 @@ public class MNode implements Comparable<MNode>
 
     /**
      * Create an MNode from a bytebuf.
+     *
      * @param byteBuf the buffer to load it from.
      */
-    public MNode(final RegistryFriendlyByteBuf byteBuf)
-    {
-        if (byteBuf.readBoolean())
-        {
+    public MNode(final RegistryFriendlyByteBuf byteBuf) {
+        if (byteBuf.readBoolean()) {
             this.parent = new MNode(null, byteBuf.readVarInt(), byteBuf.readVarInt(), byteBuf.readVarInt(), 0, 0);
         }
         this.x = byteBuf.readVarInt();
@@ -115,13 +112,12 @@ public class MNode implements Comparable<MNode>
 
     /**
      * Serialize the Node to buf.
+     *
      * @param byteBuf
      */
-    public void serializeToBuf(final RegistryFriendlyByteBuf byteBuf)
-    {
+    public void serializeToBuf(final RegistryFriendlyByteBuf byteBuf) {
         byteBuf.writeBoolean(this.parent != null);
-        if (this.parent != null)
-        {
+        if (this.parent != null) {
             // For debug display only position is used
             byteBuf.writeVarInt(this.parent.x);
             byteBuf.writeVarInt(this.parent.y);
@@ -136,26 +132,21 @@ public class MNode implements Comparable<MNode>
     }
 
     @Override
-    public int compareTo(@NotNull final MNode o)
-    {
+    public int compareTo(@NotNull final MNode o) {
         //  Comparing doubles and returning value as int; can't simply cast the result
-        if ((cost + heuristic) < (o.cost + o.heuristic))
-        {
+        if ((cost + heuristic) < (o.cost + o.heuristic)) {
             return -1;
         }
 
-        if ((cost + heuristic) > (o.cost + o.heuristic))
-        {
+        if ((cost + heuristic) > (o.cost + o.heuristic)) {
             return 1;
         }
 
-        if (heuristic < o.heuristic)
-        {
+        if (heuristic < o.heuristic) {
             return -1;
         }
 
-        if (heuristic > o.heuristic)
-        {
+        if (heuristic > o.heuristic) {
             return 1;
         }
 
@@ -164,20 +155,17 @@ public class MNode implements Comparable<MNode>
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return x ^ ((z << HASH_A) | (z >> HASH_B)) ^ (y << HASH_C);
     }
 
     @Override
-    public boolean equals(@Nullable final Object o)
-    {
-        if (o != null && o.getClass() == this.getClass())
-        {
+    public boolean equals(@Nullable final Object o) {
+        if (o != null && o.getClass() == this.getClass()) {
             @Nullable final MNode other = (MNode) o;
             return x == other.x
-                     && y == other.y
-                     && z == other.z;
+                    && y == other.y
+                    && z == other.z;
         }
 
         return false;
@@ -188,8 +176,7 @@ public class MNode implements Comparable<MNode>
      *
      * @return true if so.
      */
-    public boolean isVisited()
-    {
+    public boolean isVisited() {
         return visitedCount != 0;
     }
 
@@ -198,8 +185,7 @@ public class MNode implements Comparable<MNode>
      *
      * @return
      */
-    public int getVisitedCount()
-    {
+    public int getVisitedCount() {
         return visitedCount;
     }
 
@@ -208,8 +194,7 @@ public class MNode implements Comparable<MNode>
      *
      * @return true if so.
      */
-    public boolean isLadder()
-    {
+    public boolean isLadder() {
         return ladder;
     }
 
@@ -218,16 +203,14 @@ public class MNode implements Comparable<MNode>
      *
      * @return true if so.
      */
-    public boolean isSwimming()
-    {
+    public boolean isSwimming() {
         return swimming;
     }
 
     /**
      * Sets the node as closed.
      */
-    public void increaseVisited()
-    {
+    public void increaseVisited() {
         visitedCount++;
     }
 
@@ -236,8 +219,7 @@ public class MNode implements Comparable<MNode>
      *
      * @return the score.
      */
-    public double getScore()
-    {
+    public double getScore() {
         return cost + heuristic;
     }
 
@@ -246,8 +228,7 @@ public class MNode implements Comparable<MNode>
      *
      * @return the cost.
      */
-    public double getCost()
-    {
+    public double getCost() {
         return cost;
     }
 
@@ -256,24 +237,21 @@ public class MNode implements Comparable<MNode>
      *
      * @param cost the cost.
      */
-    public void setCost(final double cost)
-    {
+    public void setCost(final double cost) {
         this.cost = cost;
     }
 
     /**
      * Sets the node as a ladder node.
      */
-    public void setLadder()
-    {
+    public void setLadder() {
         ladder = true;
     }
 
     /**
      * Sets the node as a swimming node.
      */
-    public void setSwimming()
-    {
+    public void setSwimming() {
         swimming = true;
     }
 
@@ -282,8 +260,7 @@ public class MNode implements Comparable<MNode>
      *
      * @return the heuristic.
      */
-    public double getHeuristic()
-    {
+    public double getHeuristic() {
         return heuristic;
     }
 
@@ -292,8 +269,7 @@ public class MNode implements Comparable<MNode>
      *
      * @param heuristic the heuristic.
      */
-    public void setHeuristic(final double heuristic)
-    {
+    public void setHeuristic(final double heuristic) {
         this.heuristic = heuristic;
     }
 
@@ -304,8 +280,7 @@ public class MNode implements Comparable<MNode>
      *
      * @return the amount.
      */
-    public int getDebugAddedIndex()
-    {
+    public int getDebugAddedIndex() {
         return counterAdded;
     }
 
@@ -314,8 +289,7 @@ public class MNode implements Comparable<MNode>
      *
      * @param counterAdded amount to set.
      */
-    public void setCounterAdded(final int counterAdded)
-    {
+    public void setCounterAdded(final int counterAdded) {
         this.counterAdded = counterAdded;
     }
 
@@ -324,8 +298,7 @@ public class MNode implements Comparable<MNode>
      *
      * @param isOnRails if on rails.
      */
-    public void setOnRails(final boolean isOnRails)
-    {
+    public void setOnRails(final boolean isOnRails) {
         this.isOnRails = isOnRails;
     }
 
@@ -334,17 +307,16 @@ public class MNode implements Comparable<MNode>
      *
      * @return true if so.
      */
-    public boolean isOnRails()
-    {
+    public boolean isOnRails() {
         return isOnRails;
     }
 
     /**
      * Marks the node as reached by the worker
+     *
      * @param reached if reached or reset.
      */
-    public void setReachedByWorker(final boolean reached)
-    {
+    public void setReachedByWorker(final boolean reached) {
         isReachedByWorker = reached;
     }
 
@@ -353,16 +325,14 @@ public class MNode implements Comparable<MNode>
      *
      * @return reached
      */
-    public boolean isReachedByWorker()
-    {
+    public boolean isReachedByWorker() {
         return isReachedByWorker;
     }
 
     /**
      * Marks the node as reached by the worker
      */
-    public void setCornerNode(boolean isCornerNode)
-    {
+    public void setCornerNode(boolean isCornerNode) {
         this.isCornerNode = isCornerNode;
     }
 
@@ -371,8 +341,7 @@ public class MNode implements Comparable<MNode>
      *
      * @return reached
      */
-    public boolean isCornerNode()
-    {
+    public boolean isCornerNode() {
         return isCornerNode;
     }
 
@@ -381,8 +350,7 @@ public class MNode implements Comparable<MNode>
      *
      * @return
      */
-    public int getCounterAdded()
-    {
+    public int getCounterAdded() {
         return counterAdded;
     }
 
@@ -392,16 +360,14 @@ public class MNode implements Comparable<MNode>
      *
      * @return key for node in map
      */
-    public static int computeNodeKey(final int x, final int y, final int z)
-    {
+    public static int computeNodeKey(final int x, final int y, final int z) {
         return ((x & 0xFFF) << SHIFT_X_BY)
-                 | ((y & 0xFF) << SHIFT_Y_BY)
-                 | (z & 0xFFF);
+                | ((y & 0xFF) << SHIFT_Y_BY)
+                | (z & 0xFFF);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Node: [" + x + "," + y + "," + z + "] visited:" + visitedCount + " cost:" + cost + " heuristic:" + heuristic;
     }
 }

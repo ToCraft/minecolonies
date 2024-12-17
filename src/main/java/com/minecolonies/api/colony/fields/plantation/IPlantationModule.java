@@ -18,8 +18,7 @@ import java.util.List;
 /**
  * Interface for planter modules that determines how the AI should work specific fields.
  */
-public interface IPlantationModule extends IFieldModule
-{
+public interface IPlantationModule extends IFieldModule {
     /**
      * Get the field tag property.
      *
@@ -152,8 +151,7 @@ public interface IPlantationModule extends IFieldModule
     /**
      * Enum containing the reset state of the result state.
      */
-    enum PlanterAIModuleResultResetState
-    {
+    enum PlanterAIModuleResultResetState {
         /**
          * Do not reset the position/field.
          */
@@ -171,8 +169,7 @@ public interface IPlantationModule extends IFieldModule
     /**
      * The different actions this module is able to perform.
      */
-    enum ActionToPerform
-    {
+    enum ActionToPerform {
         NONE(false),
         PLANT(true),
         BONEMEAL(true),
@@ -187,8 +184,7 @@ public interface IPlantationModule extends IFieldModule
         /**
          * Default constructor.
          */
-        ActionToPerform(final boolean increasesActionCount)
-        {
+        ActionToPerform(final boolean increasesActionCount) {
             this.increasesActionCount = increasesActionCount;
         }
 
@@ -197,8 +193,7 @@ public interface IPlantationModule extends IFieldModule
          *
          * @return true if so.
          */
-        public boolean increasesActionCount()
-        {
+        public boolean increasesActionCount() {
             return increasesActionCount;
         }
     }
@@ -206,8 +201,7 @@ public interface IPlantationModule extends IFieldModule
     /**
      * Class containing possible states that the planter AI can be in.
      */
-    class PlantationModuleResult
-    {
+    class PlantationModuleResult {
         /**
          * Simplest action, indicating no work was needed on the given position.
          */
@@ -249,12 +243,11 @@ public interface IPlantationModule extends IFieldModule
          * @param resetState      the reset state.
          */
         private PlantationModuleResult(
-          final IPlantationModule module,
-          final BlockPos workingPosition,
-          final ActionToPerform action,
-          final @Nullable BlockPos actionPosition,
-          final PlanterAIModuleResultResetState resetState)
-        {
+                final IPlantationModule module,
+                final BlockPos workingPosition,
+                final ActionToPerform action,
+                final @Nullable BlockPos actionPosition,
+                final PlanterAIModuleResultResetState resetState) {
             this.module = module;
             this.workingPosition = workingPosition;
             this.action = action;
@@ -267,8 +260,7 @@ public interface IPlantationModule extends IFieldModule
          *
          * @return the plantation module.
          */
-        public IPlantationModule getModule()
-        {
+        public IPlantationModule getModule() {
             return module;
         }
 
@@ -277,8 +269,7 @@ public interface IPlantationModule extends IFieldModule
          *
          * @return the working position.
          */
-        public BlockPos getWorkingPosition()
-        {
+        public BlockPos getWorkingPosition() {
             return workingPosition;
         }
 
@@ -287,8 +278,7 @@ public interface IPlantationModule extends IFieldModule
          *
          * @return the action type.
          */
-        public ActionToPerform getAction()
-        {
+        public ActionToPerform getAction() {
             return action;
         }
 
@@ -297,8 +287,7 @@ public interface IPlantationModule extends IFieldModule
          *
          * @return the position to actually perform the action on.
          */
-        public @Nullable BlockPos getActionPosition()
-        {
+        public @Nullable BlockPos getActionPosition() {
             return actionPosition;
         }
 
@@ -307,8 +296,7 @@ public interface IPlantationModule extends IFieldModule
          *
          * @return true if so.
          */
-        public boolean shouldResetWorkingPosition()
-        {
+        public boolean shouldResetWorkingPosition() {
             return resetState == PlanterAIModuleResultResetState.POSITION || resetState == PlanterAIModuleResultResetState.FIELD;
         }
 
@@ -317,16 +305,14 @@ public interface IPlantationModule extends IFieldModule
          *
          * @return true if so.
          */
-        public boolean shouldResetCurrentField()
-        {
+        public boolean shouldResetCurrentField() {
             return resetState == PlanterAIModuleResultResetState.FIELD;
         }
 
         /**
          * Builder class for the {@link PlantationModuleResult}.
          */
-        public static class Builder
-        {
+        public static class Builder {
             /**
              * The action for the planter to perform.
              */
@@ -346,8 +332,7 @@ public interface IPlantationModule extends IFieldModule
             /**
              * Default constructor.
              */
-            public Builder()
-            {
+            public Builder() {
                 action = ActionToPerform.NONE;
                 resetState = PlanterAIModuleResultResetState.NONE;
             }
@@ -357,8 +342,7 @@ public interface IPlantationModule extends IFieldModule
              *
              * @return the builder instance for chaining.
              */
-            public Builder pickNewField()
-            {
+            public Builder pickNewField() {
                 resetState = PlanterAIModuleResultResetState.FIELD;
                 return this;
             }
@@ -368,8 +352,7 @@ public interface IPlantationModule extends IFieldModule
              *
              * @return the builder instance for chaining.
              */
-            public Builder pickNewPosition()
-            {
+            public Builder pickNewPosition() {
                 resetState = PlanterAIModuleResultResetState.POSITION;
                 return this;
             }
@@ -380,8 +363,7 @@ public interface IPlantationModule extends IFieldModule
              * @param position the position where to plant on.
              * @return the builder instance for chaining.
              */
-            public Builder plant(BlockPos position)
-            {
+            public Builder plant(BlockPos position) {
                 action = ActionToPerform.PLANT;
                 actionPosition = position;
                 return this;
@@ -393,8 +375,7 @@ public interface IPlantationModule extends IFieldModule
              * @param position the position where to use bonemeal on.
              * @return the builder instance for chaining.
              */
-            public Builder bonemeal(BlockPos position)
-            {
+            public Builder bonemeal(BlockPos position) {
                 action = ActionToPerform.BONEMEAL;
                 actionPosition = position;
                 return this;
@@ -406,8 +387,7 @@ public interface IPlantationModule extends IFieldModule
              * @param position the position where to harvest the plant from.
              * @return the builder instance for chaining.
              */
-            public Builder harvest(BlockPos position)
-            {
+            public Builder harvest(BlockPos position) {
                 action = ActionToPerform.HARVEST;
                 actionPosition = position;
                 return this;
@@ -419,8 +399,7 @@ public interface IPlantationModule extends IFieldModule
              * @param position the position to clear.
              * @return the builder instance for chaining.
              */
-            public Builder clear(BlockPos position)
-            {
+            public Builder clear(BlockPos position) {
                 action = ActionToPerform.CLEAR;
                 actionPosition = position;
                 return this;
@@ -431,8 +410,7 @@ public interface IPlantationModule extends IFieldModule
              *
              * @return the result instance.
              */
-            public PlantationModuleResult build(IPlantationModule module, BlockPos workingPosition)
-            {
+            public PlantationModuleResult build(IPlantationModule module, BlockPos workingPosition) {
                 return new PlantationModuleResult(module, workingPosition, action, actionPosition, resetState);
             }
         }

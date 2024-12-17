@@ -27,8 +27,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Task list module.
  */
-public class WindowHutRequestTaskModule extends AbstractModuleWindow
-{
+public class WindowHutRequestTaskModule extends AbstractModuleWindow {
     /**
      * Id of the the task list inside the GUI.
      */
@@ -36,81 +35,66 @@ public class WindowHutRequestTaskModule extends AbstractModuleWindow
 
     /**
      * The constructor of the window.
+     *
      * @param view the building view.
      * @param name the layout file.
      */
-    public WindowHutRequestTaskModule(final IBuildingView view, final String name)
-    {
+    public WindowHutRequestTaskModule(final IBuildingView view, final String name) {
         super(view, name);
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
-        final List<IToken<?>> tasks =  buildingView.getModuleViewByType(RequestTaskModuleView.class).getTasks();
-        findPaneOfTypeByID(LIST_TASKS, ScrollingList.class).setDataProvider(new ScrollingList.DataProvider()
-        {
+        final List<IToken<?>> tasks = buildingView.getModuleViewByType(RequestTaskModuleView.class).getTasks();
+        findPaneOfTypeByID(LIST_TASKS, ScrollingList.class).setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 tasks.removeIf(token -> buildingView.getColony().getRequestManager().getRequestForToken(token) == null);
                 return tasks.size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final IRequest<?> request = buildingView.getColony().getRequestManager().getRequestForToken(tasks.get(index));
 
                 IRequest<?> parent = buildingView.getColony().getRequestManager().getRequestForToken(request.getParent());
 
-                while (parent != null && parent.getRequester().getLocation().equals(request.getRequester().getLocation()))
-                {
+                while (parent != null && parent.getRequester().getLocation().equals(request.getRequester().getLocation())) {
                     final IRequest<?> tempParent = buildingView.getColony().getRequestManager().getRequestForToken(parent.getParent());
-                    if (tempParent != null)
-                    {
+                    if (tempParent != null) {
                         parent = tempParent;
-                    }
-                    else
-                    {
+                    } else {
                         break;
                     }
                 }
 
-                if (parent == null)
-                {
+                if (parent == null) {
                     rowPane.findPaneOfTypeByID(REQUESTER, Text.class).setText(request.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), request));
-                }
-                else
-                {
+                } else {
                     rowPane.findPaneOfTypeByID(REQUESTER, Text.class)
-                      .setText(Component.literal(request.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), request).getString() + " -> " + parent.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), parent).getString()));
+                            .setText(Component.literal(request.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), request).getString() + " -> " + parent.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), parent).getString()));
                     PaneBuilders.tooltipBuilder().hoverPane(rowPane.findPaneOfTypeByID(REQUESTER, Text.class))
-                      .build().setText(Component.literal(request.getRequester().getLocation().getInDimensionLocation().toShortString() + " -> " + parent.getRequester().getLocation().getInDimensionLocation().toShortString()));
+                            .build().setText(Component.literal(request.getRequester().getLocation().getInDimensionLocation().toShortString() + " -> " + parent.getRequester().getLocation().getInDimensionLocation().toShortString()));
 
                 }
 
                 // Add an extra thing with an Interface about having a stack to display, if we have this, then also add a method for a shorter string.
-                if (request instanceof IStackBasedTask)
-                {
+                if (request instanceof IStackBasedTask) {
                     final ItemIcon icon = rowPane.findPaneOfTypeByID("detailIcon", ItemIcon.class);
                     final ItemStack copyStack = ((IStackBasedTask) request).getTaskStack().copy();
                     copyStack.setCount(((IStackBasedTask) request).getDisplayCount());
                     icon.setItem(copyStack);
                     icon.setVisible(true);
                     rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(((IStackBasedTask) request).getDisplayPrefix().withStyle(request.getState() == RequestState.IN_PROGRESS ? ChatFormatting.DARK_GREEN : ChatFormatting.BLACK));
-                }
-                else
-                {
+                } else {
                     rowPane.findPaneOfTypeByID("detailIcon", ItemIcon.class).setVisible(false);
                     rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getShortDisplayString().getString().replace("§f", "")).withStyle(request.getState() == RequestState.IN_PROGRESS ? ChatFormatting.DARK_GREEN : ChatFormatting.BLACK));
                 }
 
-                if (request.getRequest() instanceof IDeliverymanRequestable)
-                {
+                if (request.getRequest() instanceof IDeliverymanRequestable) {
                     rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class).setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY)
-                                                                                       .append(String.valueOf(((IDeliverymanRequestable) request.getRequest()).getPriority())));
+                            .append(String.valueOf(((IDeliverymanRequestable) request.getRequest()).getPriority())));
                 }
 
                 final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);

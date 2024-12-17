@@ -7,14 +7,14 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.event.ColonyCreatedEvent;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.core.network.messages.client.colony.OpenBuildingUIMessage;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.network.messages.client.colony.OpenBuildingUIMessage;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -31,8 +31,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Message for trying to create a new colony.
  */
-public class CreateColonyMessage extends AbstractServerPlayMessage
-{
+public class CreateColonyMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "create_colony", CreateColonyMessage::new);
 
     /**
@@ -60,8 +59,7 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
      */
     private final String pathName;
 
-    public CreateColonyMessage(final BlockPos townHall, final boolean claim, final String colonyName, final String packName, final String pathName)
-    {
+    public CreateColonyMessage(final BlockPos townHall, final boolean claim, final String colonyName, final String packName, final String pathName) {
         super(TYPE);
         this.townHall = townHall;
         this.claim = claim;
@@ -71,8 +69,7 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(townHall);
         buf.writeBoolean(claim);
         buf.writeUtf(colonyName);
@@ -80,8 +77,7 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
         buf.writeUtf(pathName);
     }
 
-    protected CreateColonyMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected CreateColonyMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         townHall = buf.readBlockPos();
         claim = buf.readBoolean();
@@ -91,8 +87,7 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender) {
         final ServerLevel world = sender.serverLevel();
 
         final IColony colony = IColonyManager.getInstance().getClosestColony(world, townHall);
@@ -100,25 +95,21 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
         String pack = packName;
         final BlockEntity tileEntity = world.getBlockEntity(townHall);
 
-        if (!(tileEntity instanceof final TileEntityColonyBuilding hut))
-        {
+        if (!(tileEntity instanceof final TileEntityColonyBuilding hut)) {
             MessageUtils.format(WARNING_TOWN_HALL_NO_TILE_ENTITY)
-              .withPriority(MessagePriority.DANGER)
-              .sendTo(sender);
+                    .withPriority(MessagePriority.DANGER)
+                    .sendTo(sender);
             return;
         }
 
-        if (hut.getStructurePack() != null && claim)
-        {
+        if (hut.getStructurePack() != null && claim) {
             pack = hut.getStructurePack().getName();
         }
 
         final boolean reactivate = hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(DEACTIVATED);
-        if (reactivate)
-        {
+        if (reactivate) {
             hut.reactivate();
-            if (hut.getStructurePack() != null)
-            {
+            if (hut.getStructurePack() != null) {
                 pack = hut.getStructurePack().getName();
             }
         }
@@ -127,57 +118,45 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
         hut.setBlueprintPath(pathName);
 
         final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, world.getSharedSpawnPos()));
-        if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
-        {
-            if (!world.isClientSide)
-            {
+        if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()) {
+            if (!world.isClientSide) {
                 MessageUtils.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get() - spawnDistance).sendTo(sender);
             }
             return;
-        }
-        else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
-        {
-            if (!world.isClientSide)
-            {
+        } else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()) {
+            if (!world.isClientSide) {
                 MessageUtils.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, spawnDistance - MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()).sendTo(sender);
             }
             return;
         }
 
-        if (colony != null && !IColonyManager.getInstance().isFarEnoughFromColonies(world, townHall))
-        {
+        if (colony != null && !IColonyManager.getInstance().isFarEnoughFromColonies(world, townHall)) {
             MessageUtils.format(MESSAGE_COLONY_CREATE_DENIED_TOO_CLOSE, colony.getName()).sendTo(sender);
             return;
         }
 
         final IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(world, sender);
 
-        if (ownedColony == null)
-        {
+        if (ownedColony == null) {
             final IColony createdColony = IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, pack);
             final IBuilding building = createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
 
-            if (reactivate)
-            {
+            if (reactivate) {
                 MessageUtils.format(MESSAGE_COLONY_REACTIVATED, colonyName)
-                  .withPriority(MessagePriority.IMPORTANT)
-                  .sendTo(sender);
-            }
-            else
-            {
+                        .withPriority(MessagePriority.IMPORTANT)
+                        .sendTo(sender);
+            } else {
                 MessageUtils.format(MESSAGE_COLONY_FOUNDED)
-                  .withPriority(MessagePriority.IMPORTANT)
-                  .sendTo(sender);
+                        .withPriority(MessagePriority.IMPORTANT)
+                        .sendTo(sender);
             }
 
-            new OpenBuildingUIMessage(building).sendToPlayer(sender);;
+            new OpenBuildingUIMessage(building).sendToPlayer(sender);
+            ;
 
-            try
-            {
+            try {
                 NeoForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
-            }
-            catch (final Exception e)
-            {
+            } catch (final Exception e) {
                 Log.getLogger().error("Error during ColonyCreatedEvent", e);
             }
             return;
@@ -186,7 +165,7 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
         ownedColony.getPackageManager().sendColonyViewPackets();
         ownedColony.getPackageManager().sendPermissionsPackets();
         MessageUtils.format(WARNING_COLONY_FOUNDING_FAILED)
-          .withPriority(MessagePriority.DANGER)
-          .sendTo(sender);
+                .withPriority(MessagePriority.DANGER)
+                .sendTo(sender);
     }
 }

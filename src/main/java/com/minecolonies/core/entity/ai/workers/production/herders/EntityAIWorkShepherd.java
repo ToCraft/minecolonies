@@ -8,8 +8,8 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.core.colony.jobs.JobShepherd;
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Sheep;
@@ -31,8 +31,7 @@ import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
  */
-public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, BuildingShepherd>
-{
+public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, BuildingShepherd> {
     /**
      * Constants used for sheep dying calculations.
      */
@@ -43,41 +42,35 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      *
      * @param job the job to fulfill
      */
-    public EntityAIWorkShepherd(@NotNull final JobShepherd job)
-    {
+    public EntityAIWorkShepherd(@NotNull final JobShepherd job) {
         super(job);
         super.registerTargets(
-          new AITarget(SHEPHERD_SHEAR, this::shearSheep, TICKS_SECOND)
+                new AITarget(SHEPHERD_SHEAR, this::shearSheep, TICKS_SECOND)
         );
     }
 
     @NotNull
     @Override
-    public List<EquipmentTypeEntry> getExtraToolsNeeded()
-    {
+    public List<EquipmentTypeEntry> getExtraToolsNeeded() {
         final List<EquipmentTypeEntry> toolsNeeded = super.getExtraToolsNeeded();
-        if (building.getSetting(BuildingShepherd.SHEARING).getValue())
-        {
+        if (building.getSetting(BuildingShepherd.SHEARING).getValue()) {
             toolsNeeded.add(ModEquipmentTypes.shears.get());
         }
         return toolsNeeded;
     }
 
     @Override
-    public Class<BuildingShepherd> getExpectedBuildingClass()
-    {
+    public Class<BuildingShepherd> getExpectedBuildingClass() {
         return BuildingShepherd.class;
     }
 
     @Override
-    public IAIState decideWhatToDo()
-    {
+    public IAIState decideWhatToDo() {
         final IAIState result = super.decideWhatToDo();
 
         final Sheep shearingSheep = findShearableSheep();
 
-        if (building.getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearingSheep != null)
-        {
+        if (building.getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearingSheep != null) {
             return SHEPHERD_SHEAR;
         }
 
@@ -87,8 +80,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     }
 
     @Override
-    public double getButcheringAttackDamage()
-    {
+    public double getButcheringAttackDamage() {
         return Math.max(1.0, getSecondarySkillLevel() / 10.0);
     }
 
@@ -96,10 +88,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      * @return a shearable {@link Sheep} or null.
      */
     @Nullable
-    private Sheep findShearableSheep()
-    {
+    private Sheep findShearableSheep() {
         return searchForAnimals(a -> a instanceof Sheep sheepie && !sheepie.isSheared() && !sheepie.isBaby())
-                 .stream().map(a -> (Sheep) a).findAny().orElse(null);
+                .stream().map(a -> (Sheep) a).findAny().orElse(null);
     }
 
     /**
@@ -107,25 +98,20 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      *
      * @return The next {@link IAIState}
      */
-    private IAIState shearSheep()
-    {
+    private IAIState shearSheep() {
 
         final Sheep sheep = findShearableSheep();
 
-        if (sheep == null)
-        {
+        if (sheep == null) {
             return DECIDE;
         }
 
-        if (!equipTool(InteractionHand.MAIN_HAND, ModEquipmentTypes.shears.get()))
-        {
+        if (!equipTool(InteractionHand.MAIN_HAND, ModEquipmentTypes.shears.get())) {
             return PREPARING;
         }
 
-        if (worker.getMainHandItem() != null)
-        {
-            if (walkingToAnimal(sheep))
-            {
+        if (worker.getMainHandItem() != null) {
+            if (walkingToAnimal(sheep)) {
                 return getState();
             }
 
@@ -135,13 +121,11 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             worker.swing(InteractionHand.MAIN_HAND);
 
             final List<ItemStack> items = new ArrayList<>();
-            if (!this.world.isClientSide)
-            {
+            if (!this.world.isClientSide) {
                 sheep.setSheared(true);
                 int qty = 1 + worker.getRandom().nextInt(enchantmentLevel + 1);
 
-                for (int j = 0; j < qty; ++j)
-                {
+                for (int j = 0; j < qty; ++j) {
                     items.add(new ItemStack(ITEM_BY_DYE.get(sheep.getColor())));
                 }
             }
@@ -155,8 +139,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             incrementActionsDoneAndDecSaturation();
 
-            for (final ItemStack item : items)
-            {
+            for (final ItemStack item : items) {
                 building.getModule(STATS_MODULE).incrementBy(ITEM_OBTAINED + ";" + item.getItem().getDescriptionId(), item.getCount());
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, (worker.getInventoryCitizen()));
             }
@@ -170,15 +153,12 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      *
      * @param sheep the {@link Sheep} to possibly dye.
      */
-    private void dyeSheepChance(final Sheep sheep)
-    {
-        if (building != null && building.getSetting(BuildingShepherd.DYEING).getValue())
-        {
+    private void dyeSheepChance(final Sheep sheep) {
+        if (building != null && building.getSetting(BuildingShepherd.DYEING).getValue()) {
             final int chanceToDye = building.getBuildingLevel();
             final int rand = worker.getRandom().nextInt(HUNDRED_PERCENT_CHANCE);
 
-            if (rand <= chanceToDye)
-            {
+            if (rand <= chanceToDye) {
                 final DyeColor[] colors = DyeColor.values();
                 final int dyeIndex = worker.getRandom().nextInt(colors.length);
                 sheep.setColor(colors[dyeIndex]);

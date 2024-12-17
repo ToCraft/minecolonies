@@ -26,8 +26,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_CI
 /**
  * Used to handle citizen recalls to their hut.
  */
-public class RecallCitizenHutMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class RecallCitizenHutMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "recall_citizen_hut", RecallCitizenHutMessage::new);
 
     /**
@@ -35,34 +34,28 @@ public class RecallCitizenHutMessage extends AbstractBuildingServerMessage<IBuil
      *
      * @param building {@link AbstractBuildingView}
      */
-    public RecallCitizenHutMessage(@NotNull final AbstractBuildingView building)
-    {
+    public RecallCitizenHutMessage(@NotNull final AbstractBuildingView building) {
         super(TYPE, building);
     }
 
-    protected RecallCitizenHutMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected RecallCitizenHutMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final  IBuilding building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
         final BlockPos location = building.getPosition();
         final Level world = colony.getWorld();
-        for (final ICitizenData citizenData : building.getAllAssignedCitizen())
-        {
+        for (final ICitizenData citizenData : building.getAllAssignedCitizen()) {
             Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
-            if (!optionalEntityCitizen.isPresent())
-            {
+            if (!optionalEntityCitizen.isPresent()) {
                 Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
                 citizenData.setNextRespawnPosition(EntityUtils.getSpawnPoint(world, location));
                 citizenData.updateEntityIfNecessary();
                 optionalEntityCitizen = citizenData.getEntity();
             }
 
-            if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), world, location))
-            {
+            if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), world, location)) {
                 MessageUtils.format(WARNING_CITIZEN_RECALL_FAILED).sendTo(player);
             }
         }

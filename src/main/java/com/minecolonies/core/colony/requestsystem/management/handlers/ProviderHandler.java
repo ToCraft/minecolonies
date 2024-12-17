@@ -14,16 +14,16 @@ import java.util.Collection;
 /**
  * Class used to handle the inner workings of the request system with regards to providers.
  */
-public class ProviderHandler implements IProviderHandler
-{
+public class ProviderHandler implements IProviderHandler {
 
     private final IStandardRequestManager manager;
 
-    public ProviderHandler(final IStandardRequestManager manager) {this.manager = manager;}
+    public ProviderHandler(final IStandardRequestManager manager) {
+        this.manager = manager;
+    }
 
     @Override
-    public IRequestManager getManager()
-    {
+    public IRequestManager getManager() {
         return manager;
     }
 
@@ -35,11 +35,9 @@ public class ProviderHandler implements IProviderHandler
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
     @Override
-    public Collection<IToken<?>> getRegisteredResolvers(final IRequestResolverProvider provider)
-    {
+    public Collection<IToken<?>> getRegisteredResolvers(final IRequestResolverProvider provider) {
         final Collection<IToken<?>> result = manager.getProviderResolverAssignmentDataStore().getAssignments().get(provider.getId());
-        if (result == null)
-        {
+        if (result == null) {
             return ImmutableList.of();
         }
 
@@ -53,8 +51,7 @@ public class ProviderHandler implements IProviderHandler
      * @throws IllegalArgumentException is thrown when a provider is already registered.
      */
     @Override
-    public void registerProvider(final IRequestResolverProvider provider)
-    {
+    public void registerProvider(final IRequestResolverProvider provider) {
         final ImmutableList.Builder<IToken<?>> resolverListBuilder = new ImmutableList.Builder<>();
         resolverListBuilder.addAll(manager.getResolverHandler().registerResolvers(provider.getResolvers()));
 
@@ -63,8 +60,7 @@ public class ProviderHandler implements IProviderHandler
     }
 
     @Override
-    public void removeProvider(final IToken<?> token)
-    {
+    public void removeProvider(final IToken<?> token) {
         removeProviderInternal(token);
     }
 
@@ -75,8 +71,7 @@ public class ProviderHandler implements IProviderHandler
      * @throws IllegalArgumentException is thrown when the token is not registered to a provider, or when the data stored in the manager is in conflict.
      */
     @VisibleForTesting
-    void removeProviderInternal(final IToken<?> token)
-    {
+    void removeProviderInternal(final IToken<?> token) {
         manager.log(String.format("Removing provider: %s", token));
 
         //Get the resolvers that are being removed.
@@ -96,14 +91,11 @@ public class ProviderHandler implements IProviderHandler
      * @param assignedResolvers The assigned resolvers that belong to the provider that is being removed.
      */
     @VisibleForTesting
-    void processResolversForRemoval(final Collection<IToken<?>> assignedResolvers)
-    {
+    void processResolversForRemoval(final Collection<IToken<?>> assignedResolvers) {
         //Check if we have resolvers that need to be processed.
-        if (assignedResolvers != null && !assignedResolvers.isEmpty())
-        {
+        if (assignedResolvers != null && !assignedResolvers.isEmpty()) {
             //For each resolver process them.
-            for (final IToken<?> resolverToken : assignedResolvers)
-            {
+            for (final IToken<?> resolverToken : assignedResolvers) {
                 manager.getResolverHandler().processResolverForRemoval(assignedResolvers, resolverToken);
             }
         }
@@ -117,12 +109,10 @@ public class ProviderHandler implements IProviderHandler
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
     @Override
-    public Collection<IToken<?>> getRegisteredResolvers(@NotNull final IToken<?> token)
-    {
+    public Collection<IToken<?>> getRegisteredResolvers(@NotNull final IToken<?> token) {
         Collection<IToken<?>> result = manager.getProviderResolverAssignmentDataStore().getAssignments().get(token);
 
-        if (result == null)
-        {
+        if (result == null) {
             return ImmutableList.of();
         }
 
@@ -130,8 +120,7 @@ public class ProviderHandler implements IProviderHandler
     }
 
     @Override
-    public void removeProvider(@NotNull final IRequestResolverProvider provider)
-    {
+    public void removeProvider(@NotNull final IRequestResolverProvider provider) {
         removeProviderInternal(provider.getId());
     }
 }

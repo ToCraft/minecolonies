@@ -3,8 +3,7 @@ package com.minecolonies.core.colony;
 /**
  * class that holds data related to happiness modifier for the citizen with a Farmer job.
  */
-public class FieldDataModifier
-{
+public class FieldDataModifier {
     /**
      * Indicated if the field can be farmed or not.
      */
@@ -20,11 +19,9 @@ public class FieldDataModifier
      *
      * @param value boolean to indicate if the field can be farmed
      */
-    public void isCanFarm(final boolean value)
-    {
+    public void isCanFarm(final boolean value) {
         canFarm = value;
-        if (value)
-        {
+        if (value) {
             numberDaysInactive = 0;
         }
     }
@@ -34,16 +31,14 @@ public class FieldDataModifier
      *
      * @return returns a boolean indicating if a field can be farmed
      */
-    public boolean isCanFarm()
-    {
+    public boolean isCanFarm() {
         return canFarm;
     }
 
     /**
      * Call in increase the number of days the field has be inactive. Meaning the farmer can't farm the field.
      */
-    public void increaseInactiveDays()
-    {
+    public void increaseInactiveDays() {
         numberDaysInactive++;
     }
 
@@ -52,8 +47,7 @@ public class FieldDataModifier
      *
      * @return int that return the number of days the fields has be inactive
      */
-    public int getInactiveDays()
-    {
+    public int getInactiveDays() {
         return numberDaysInactive;
     }
 
@@ -62,8 +56,7 @@ public class FieldDataModifier
      *
      * @param days value to set the number of inactive days for field too.
      */
-    public void setInactiveDays(final int days)
-    {
+    public void setInactiveDays(final int days) {
         numberDaysInactive = days;
     }
 }

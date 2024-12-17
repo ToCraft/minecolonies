@@ -7,22 +7,18 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 
-public abstract class AbstractBlockMinecoloniesHorizontal<B extends AbstractBlockMinecoloniesHorizontal<B>> extends HorizontalDirectionalBlock implements IBlockMinecolonies<B>
-{
-    public AbstractBlockMinecoloniesHorizontal(final Properties properties)
-    {
+public abstract class AbstractBlockMinecoloniesHorizontal<B extends AbstractBlockMinecoloniesHorizontal<B>> extends HorizontalDirectionalBlock implements IBlockMinecolonies<B> {
+    public AbstractBlockMinecoloniesHorizontal(final Properties properties) {
         super(properties);
     }
 
     @Override
-    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
-    {
+    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties) {
         Registry.register(registry, getRegistryName(), new BlockItem(this, properties));
     }
 
     @Override
-    public B registerBlock(final Registry<Block> registry)
-    {
+    public B registerBlock(final Registry<Block> registry) {
         Registry.register(registry, getRegistryName(), this);
         return (B) this;
     }

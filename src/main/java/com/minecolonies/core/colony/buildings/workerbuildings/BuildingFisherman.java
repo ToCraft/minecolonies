@@ -13,12 +13,11 @@ import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LE
 /**
  * The fishermans building.
  */
-public class BuildingFisherman extends AbstractBuilding
-{
+public class BuildingFisherman extends AbstractBuilding {
     /**
      * The maximum upgrade of the building.
      */
-    private static final int    MAX_BUILDING_LEVEL = 5;
+    private static final int MAX_BUILDING_LEVEL = 5;
     /**
      * The job description.
      */
@@ -30,8 +29,7 @@ public class BuildingFisherman extends AbstractBuilding
      * @param c the colony.
      * @param l the position.
      */
-    public BuildingFisherman(final IColony c, final BlockPos l)
-    {
+    public BuildingFisherman(final IColony c, final BlockPos l) {
         super(c, l);
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.fishing_rod.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
     }
@@ -43,8 +41,7 @@ public class BuildingFisherman extends AbstractBuilding
      */
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return FISHERMAN;
     }
 
@@ -54,8 +51,7 @@ public class BuildingFisherman extends AbstractBuilding
      * @return the integer.
      */
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 }

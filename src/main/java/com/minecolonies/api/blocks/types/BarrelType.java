@@ -4,8 +4,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 
-public enum BarrelType implements StringRepresentable
-{
+public enum BarrelType implements StringRepresentable {
     ZERO(0, "0perc", MapColor.WOOD),
     TWENTY(1, "20perc", MapColor.WOOD),
     FORTY(2, "40perc", MapColor.WOOD),
@@ -16,14 +15,14 @@ public enum BarrelType implements StringRepresentable
     DONE(7, "done", MapColor.WOOD);
 
     private static final BarrelType[] META_LOOKUP = new BarrelType[values().length];
-    static
-    {
-        for (final BarrelType enumtype : values())
-        {
+
+    static {
+        for (final BarrelType enumtype : values()) {
             META_LOOKUP[enumtype.getMetadata()] = enumtype;
         }
     }
-    private final int    meta;
+
+    private final int meta;
     private final String name;
     private final String unlocalizedName;
 
@@ -35,8 +34,7 @@ public enum BarrelType implements StringRepresentable
      * @param nameIn the name
      * @param mapColorIn the color
      */
-    BarrelType(final int metaIn, final String nameIn, final MapColor mapColorIn)
-    {
+    BarrelType(final int metaIn, final String nameIn, final MapColor mapColorIn) {
         this(metaIn, nameIn, nameIn, mapColorIn);
     }
 
@@ -47,8 +45,7 @@ public enum BarrelType implements StringRepresentable
      * @param unlocalizedNameIn the unlocalized name
      * @param mapColorIn the color
      */
-    BarrelType(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MapColor mapColorIn)
-    {
+    BarrelType(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MapColor mapColorIn) {
         this.meta = metaIn;
         this.name = nameIn;
         this.unlocalizedName = unlocalizedNameIn;
@@ -61,11 +58,9 @@ public enum BarrelType implements StringRepresentable
      * @param meta the metadata
      * @return the type
      */
-    public static BarrelType byMetadata(final int meta)
-    {
+    public static BarrelType byMetadata(final int meta) {
         int tempMeta = meta;
-        if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
-        {
+        if (tempMeta < 0 || tempMeta >= META_LOOKUP.length) {
             tempMeta = 0;
         }
 
@@ -76,8 +71,7 @@ public enum BarrelType implements StringRepresentable
      * Returns the metadata
      * @return the metadata of the type
      */
-    public int getMetadata()
-    {
+    public int getMetadata() {
         return this.meta;
     }
 
@@ -85,8 +79,7 @@ public enum BarrelType implements StringRepresentable
      * Returns the color that represents the entry on the map
      * @return the color
      */
-    public MapColor getMaterialColor()
-    {
+    public MapColor getMaterialColor() {
         return this.mapColor;
     }
 
@@ -95,8 +88,7 @@ public enum BarrelType implements StringRepresentable
      * @return the name of the type
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.name;
     }
 
@@ -105,8 +97,7 @@ public enum BarrelType implements StringRepresentable
      * @return the name of the type
      */
     @NotNull
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
@@ -114,15 +105,13 @@ public enum BarrelType implements StringRepresentable
      * Returns the unlocalized name
      * @return the unlocalized name of the type
      */
-    public String getTranslationKey()
-    {
+    public String getTranslationKey() {
         return this.unlocalizedName;
     }
 
     @NotNull
     @Override
-    public String getSerializedName()
-    {
+    public String getSerializedName() {
         return this.name;
     }
 }

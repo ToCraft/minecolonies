@@ -3,19 +3,14 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
@@ -27,8 +22,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Class of the cook building.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingCook extends AbstractBuilding
-{
+public class BuildingCook extends AbstractBuilding {
     /**
      * The cook string.
      */
@@ -65,18 +59,15 @@ public class BuildingCook extends AbstractBuilding
      * @param c the colony.
      * @param l the location
      */
-    public BuildingCook(final IColony c, final BlockPos l)
-    {
+    public BuildingCook(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     /**
      * Reads the tag positions
      */
-    public void initTagPositions()
-    {
-        if (initTags)
-        {
+    public void initTagPositions() {
+        if (initTags) {
             return;
         }
 
@@ -85,15 +76,13 @@ public class BuildingCook extends AbstractBuilding
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
+    public void onUpgradeComplete(final int newLevel) {
         super.onUpgradeComplete(newLevel);
         initTags = false;
     }
 
     @Override
-    protected boolean keepFood()
-    {
+    protected boolean keepFood() {
         return false;
     }
 
@@ -102,19 +91,16 @@ public class BuildingCook extends AbstractBuilding
      *
      * @return eating position to sit at
      */
-    public BlockPos getNextSittingPosition()
-    {
+    public BlockPos getNextSittingPosition() {
         initTagPositions();
 
-        if (sitPositions.isEmpty())
-        {
+        if (sitPositions.isEmpty()) {
             return null;
         }
 
         lastSitting++;
 
-        if (lastSitting >= sitPositions.size())
-        {
+        if (lastSitting >= sitPositions.size()) {
             lastSitting = 0;
         }
 
@@ -123,37 +109,30 @@ public class BuildingCook extends AbstractBuilding
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return COOK_DESC;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory, final JobEntry jobEntry)
-    {
-        if (stack.isEmpty())
-        {
+    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory, final JobEntry jobEntry) {
+        if (stack.isEmpty()) {
             return 0;
         }
 
-        if (inventory && getFirstModuleOccurance(MinimumStockModule.class).isStocked(stack))
-        {
+        if (inventory && getFirstModuleOccurance(MinimumStockModule.class).isStocked(stack)) {
             return stack.getCount();
         }
 
         final Predicate<ItemStack> allowedFuel = theStack -> getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).isItemInList(new ItemStorage(theStack));
         if (allowedFuel.test(stack) && (localAlreadyKept.stream().filter(storage -> allowedFuel.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE
-              || !inventory))
-        {
+                || !inventory)) {
             final ItemStorage kept = new ItemStorage(stack);
-            if (localAlreadyKept.contains(kept))
-            {
+            if (localAlreadyKept.contains(kept)) {
                 kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());
             }
             localAlreadyKept.add(kept);

@@ -39,17 +39,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_LARGE;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PLANTGROUND;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_PLANTATION;
-import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_PLANTATION_RESEARCH_REQUIRED;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT;
 
 /**
  * Class of the plantation building. Worker will grow sugarcane/bamboo/cactus + craft paper and books.
  */
-public class BuildingPlantation extends AbstractBuilding
-{
+public class BuildingPlantation extends AbstractBuilding {
     /**
      * Description string of the building.
      */
@@ -69,22 +68,19 @@ public class BuildingPlantation extends AbstractBuilding
      * @param c the colony.
      * @param l the location
      */
-    public BuildingPlantation(final IColony c, final BlockPos l)
-    {
+    public BuildingPlantation(final IColony c, final BlockPos l) {
         super(c, l);
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.axe.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.shears.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
     }
 
     @Override
-    public void onPlacement()
-    {
+    public void onPlacement() {
         super.onPlacement();
         updateFields();
     }
 
-    private void updateFields()
-    {
+    private void updateFields() {
         updateField(FieldRegistries.plantationSugarCaneField.get());
         updateField(FieldRegistries.plantationCactusField.get());
         updateField(FieldRegistries.plantationBambooField.get());
@@ -95,26 +91,20 @@ public class BuildingPlantation extends AbstractBuilding
      * Legacy code, can be removed when plantations will no longer have to support fields
      * directly from the hut building.
      */
-    private void updateField(FieldRegistries.FieldEntry type)
-    {
+    private void updateField(FieldRegistries.FieldEntry type) {
         final PlantationField plantationField = PlantationField.create(type, getPosition());
         final List<BlockPos> workingPositions =
-          plantationField.getModule().getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(plantationField.getModule().getWorkTag()));
-        if (workingPositions.isEmpty())
-        {
+                plantationField.getModule().getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(plantationField.getModule().getWorkTag()));
+        if (workingPositions.isEmpty()) {
             colony.getBuildingManager().removeField(field -> field.equals(plantationField));
             return;
         }
 
-        if (colony.getBuildingManager().addField(plantationField))
-        {
+        if (colony.getBuildingManager().addField(plantationField)) {
             plantationField.setWorkingPositions(workingPositions);
-        }
-        else
-        {
+        } else {
             final Optional<IField> existingField = colony.getBuildingManager().getField(field -> field.equals(plantationField));
-            if (existingField.isPresent() && existingField.get() instanceof PlantationField existingPlantationField)
-            {
+            if (existingField.isPresent() && existingField.get() instanceof PlantationField existingPlantationField) {
                 existingPlantationField.setWorkingPositions(workingPositions);
             }
         }
@@ -129,32 +119,25 @@ public class BuildingPlantation extends AbstractBuilding
      * This will register the fields on colony load, only when the building still contains old NBT data.
      */
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
-        if (compound.contains(TAG_PLANTGROUND))
-        {
+        if (compound.contains(TAG_PLANTGROUND)) {
             triggerFieldMigration = true;
         }
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
+    public void onUpgradeComplete(final int newLevel) {
         super.onUpgradeComplete(newLevel);
         updateFields();
     }
 
     @Override
-    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
-    {
+    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount() {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = super.getRequiredItemsAndAmount();
-        for (FieldsModule module : getModulesByType(FieldsModule.class))
-        {
-            for (final IField field : module.getOwnedFields())
-            {
-                if (field instanceof PlantationField plantationField)
-                {
+        for (FieldsModule module : getModulesByType(FieldsModule.class)) {
+            for (final IField field : module.getOwnedFields()) {
+                if (field instanceof PlantationField plantationField) {
                     final IPlantationModule plantationModule = plantationField.getFirstModuleOccurance(IPlantationModule.class);
                     toKeep.put(stack -> ItemStack.isSameItem(new ItemStack(plantationModule.getItem()), stack), new Tuple<>(plantationModule.getPlantsToRequest(), true));
                 }
@@ -172,22 +155,16 @@ public class BuildingPlantation extends AbstractBuilding
      * @return true if so.
      */
     @Override
-    public boolean canEat(final ItemStack stack)
-    {
-        if (!super.canEat(stack))
-        {
+    public boolean canEat(final ItemStack stack) {
+        if (!super.canEat(stack)) {
             return false;
         }
 
-        for (FieldsModule module : getModulesByType(FieldsModule.class))
-        {
-            for (final IField field : module.getOwnedFields())
-            {
-                if (field instanceof PlantationField plantationField)
-                {
+        for (FieldsModule module : getModulesByType(FieldsModule.class)) {
+            for (final IField field : module.getOwnedFields()) {
+                if (field instanceof PlantationField plantationField) {
                     final IPlantationModule plantationModule = plantationField.getFirstModuleOccurance(IPlantationModule.class);
-                    if (ItemStackUtils.compareItemStacksIgnoreStackSize(new ItemStack(plantationModule.getItem()), stack))
-                    {
+                    if (ItemStackUtils.compareItemStacksIgnoreStackSize(new ItemStack(plantationModule.getItem()), stack)) {
                         return false;
                     }
                 }
@@ -203,11 +180,9 @@ public class BuildingPlantation extends AbstractBuilding
      * directly from the hut building.
      */
     @Override
-    public void setTileEntity(final AbstractTileEntityColonyBuilding te)
-    {
+    public void setTileEntity(final AbstractTileEntityColonyBuilding te) {
         super.setTileEntity(te);
-        if (triggerFieldMigration)
-        {
+        if (triggerFieldMigration) {
             updateFields();
             triggerFieldMigration = false;
         }
@@ -215,19 +190,16 @@ public class BuildingPlantation extends AbstractBuilding
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return PLANTATION;
     }
 
     /**
      * Field module implementation for the plantation.
      */
-    public static class PlantationFieldsModule extends FieldsModule
-    {
+    public static class PlantationFieldsModule extends FieldsModule {
         @Override
-        public void serializeToView(final @NotNull RegistryFriendlyByteBuf buf)
-        {
+        public void serializeToView(final @NotNull RegistryFriendlyByteBuf buf) {
             super.serializeToView(buf);
             buf.writeInt(getMaxConcurrentPlants());
         }
@@ -237,41 +209,35 @@ public class BuildingPlantation extends AbstractBuilding
          *
          * @return the maximum amount of concurrent plants.
          */
-        public int getMaxConcurrentPlants()
-        {
+        public int getMaxConcurrentPlants() {
             return (int) Math.ceil(building.getBuildingLevel() / 2D);
         }
 
         @Override
-        protected int getMaxFieldCount()
-        {
+        protected int getMaxFieldCount() {
             int allowedPlants = (int) Math.ceil(building.getBuildingLevel() / 2D);
             return building.getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANTATION_LARGE) > 0
-                     ? allowedPlants + 1
-                     : allowedPlants;
+                    ? allowedPlants + 1
+                    : allowedPlants;
         }
 
         @Override
-        public Class<?> getExpectedFieldType()
-        {
+        public Class<?> getExpectedFieldType() {
             return PlantationField.class;
         }
 
         @Override
-        public @NotNull List<IField> getFields()
-        {
+        public @NotNull List<IField> getFields() {
             return building.getColony().getBuildingManager().getFields(field -> field.hasModule(IPlantationModule.class));
         }
 
         @Override
-        public boolean canAssignFieldOverride(IField field)
-        {
+        public boolean canAssignFieldOverride(IField field) {
             return getCurrentPlantsPlusField(field) <= getMaxConcurrentPlants() && hasRequiredResearchForField(field);
         }
 
         @Override
-        protected int getFieldCheckTimeoutSeconds()
-        {
+        protected int getFieldCheckTimeoutSeconds() {
             return 60;
         }
 
@@ -281,11 +247,10 @@ public class BuildingPlantation extends AbstractBuilding
          * @param extraField the extra field to calculate.
          * @return the amount of worked plants.
          */
-        private int getCurrentPlantsPlusField(final IField extraField)
-        {
+        private int getCurrentPlantsPlusField(final IField extraField) {
             final Set<IPlantationModule> plants = getOwnedFields().stream()
-                                                    .map(field -> field.getFirstModuleOccurance(IPlantationModule.class))
-                                                    .collect(Collectors.toSet());
+                    .map(field -> field.getFirstModuleOccurance(IPlantationModule.class))
+                    .collect(Collectors.toSet());
             plants.add(extraField.getFirstModuleOccurance(IPlantationModule.class));
             return plants.size();
         }
@@ -296,13 +261,10 @@ public class BuildingPlantation extends AbstractBuilding
          * @param field the field in question.
          * @return true if the research is handled.
          */
-        private boolean hasRequiredResearchForField(final IField field)
-        {
-            if (field instanceof PlantationField plantationField)
-            {
+        private boolean hasRequiredResearchForField(final IField field) {
+            if (field instanceof PlantationField plantationField) {
                 final IPlantationModule plantationModule = plantationField.getFirstModuleOccurance(IPlantationModule.class);
-                if (plantationModule.getRequiredResearchEffect() != null)
-                {
+                if (plantationModule.getRequiredResearchEffect() != null) {
                     return building.getColony().getResearchManager().getResearchEffects().getEffectStrength(plantationModule.getRequiredResearchEffect()) > 0;
                 }
                 return true;
@@ -314,48 +276,40 @@ public class BuildingPlantation extends AbstractBuilding
     /**
      * Field module view implementation for the plantation.
      */
-    public static class PlantationFieldsModuleView extends FieldsModuleView
-    {
+    public static class PlantationFieldsModuleView extends FieldsModuleView {
         /**
          * The maximum amount of concurrent plants the planter can work on.
          */
         private int maxConcurrentPlants = 0;
 
         @Override
-        public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
-        {
+        public void deserialize(final @NotNull RegistryFriendlyByteBuf buf) {
             super.deserialize(buf);
             maxConcurrentPlants = buf.readInt();
         }
 
         @Override
-        protected boolean canAssignFieldOverride(final IField field)
-        {
+        protected boolean canAssignFieldOverride(final IField field) {
             return getCurrentPlantsPlusField(field) <= maxConcurrentPlants && hasRequiredResearchForField(field);
         }
 
         @Override
-        protected List<IField> getFieldsInColony()
-        {
+        protected List<IField> getFieldsInColony() {
             return getColony().getFields(field -> field.hasModule(IPlantationModule.class));
         }
 
         @Override
-        public @Nullable MutableComponent getFieldWarningTooltip(final IField field)
-        {
+        public @Nullable MutableComponent getFieldWarningTooltip(final IField field) {
             MutableComponent result = super.getFieldWarningTooltip(field);
-            if (result != null)
-            {
+            if (result != null) {
                 return result;
             }
 
-            if (getCurrentPlantsPlusField(field) > maxConcurrentPlants)
-            {
+            if (getCurrentPlantsPlusField(field) > maxConcurrentPlants) {
                 return Component.translatableEscape(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
             }
 
-            if (!hasRequiredResearchForField(field))
-            {
+            if (!hasRequiredResearchForField(field)) {
                 return Component.translatableEscape(FIELD_LIST_PLANTATION_RESEARCH_REQUIRED);
             }
             return null;
@@ -367,11 +321,10 @@ public class BuildingPlantation extends AbstractBuilding
          * @param extraField the extra field to calculate.
          * @return the amount of worked plants.
          */
-        private int getCurrentPlantsPlusField(final IField extraField)
-        {
+        private int getCurrentPlantsPlusField(final IField extraField) {
             final Set<IPlantationModule> plants = getOwnedFields().stream()
-                                                    .map(field -> field.getFirstModuleOccurance(IPlantationModule.class))
-                                                    .collect(Collectors.toSet());
+                    .map(field -> field.getFirstModuleOccurance(IPlantationModule.class))
+                    .collect(Collectors.toSet());
             plants.add(extraField.getFirstModuleOccurance(IPlantationModule.class));
             return plants.size();
         }
@@ -382,13 +335,10 @@ public class BuildingPlantation extends AbstractBuilding
          * @param field the field in question.
          * @return true if the research is handled.
          */
-        private boolean hasRequiredResearchForField(final IField field)
-        {
-            if (field instanceof PlantationField plantationField)
-            {
+        private boolean hasRequiredResearchForField(final IField field) {
+            if (field instanceof PlantationField plantationField) {
                 final IPlantationModule plantationModule = plantationField.getFirstModuleOccurance(IPlantationModule.class);
-                if (plantationModule.getRequiredResearchEffect() != null)
-                {
+                if (plantationModule.getRequiredResearchEffect() != null) {
                     return getColony().getResearchManager().getResearchEffects().getEffectStrength(plantationModule.getRequiredResearchEffect()) > 0;
                 }
                 return true;
@@ -401,18 +351,16 @@ public class BuildingPlantation extends AbstractBuilding
          *
          * @return the amount of worked plants.
          */
-        public int getCurrentPlants()
-        {
+        public int getCurrentPlants() {
             return getOwnedFields().stream()
-                     .map(field -> field.getFirstModuleOccurance(IPlantationModule.class))
-                     .collect(Collectors.toSet())
-                     .size();
+                    .map(field -> field.getFirstModuleOccurance(IPlantationModule.class))
+                    .collect(Collectors.toSet())
+                    .size();
         }
 
         @Override
         @OnlyIn(Dist.CLIENT)
-        public BOWindow getWindow()
-        {
+        public BOWindow getWindow() {
             return new PlantationFieldsModuleWindow(buildingView, this);
         }
 
@@ -421,29 +369,24 @@ public class BuildingPlantation extends AbstractBuilding
          *
          * @return the maximum amount of concurrent plants.
          */
-        public int getMaxConcurrentPlants()
-        {
+        public int getMaxConcurrentPlants() {
             return maxConcurrentPlants;
         }
     }
 
-    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
-    {
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public CraftingModule(final JobEntry jobEntry)
-        {
+        public CraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         @Override
-        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-        {
-            if (!super.isRecipeCompatible(recipe))
-            {
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) {
+            if (!super.isRecipeCompatible(recipe)) {
                 return false;
             }
             final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_PLANTATION);
@@ -451,27 +394,25 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        public @NotNull List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull final Level world)
-        {
+        public @NotNull List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull final Level world) {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
-            for (FieldRegistries.FieldEntry type : FieldRegistries.getFieldRegistry())
-            {
+            for (FieldRegistries.FieldEntry type : FieldRegistries.getFieldRegistry()) {
                 type.getFieldModuleProducers().stream()
-                  .map(m -> m.apply(null))
-                  .filter(IPlantationModule.class::isInstance)
-                  .map(m -> (IPlantationModule) m)
-                  .findFirst()
-                  .ifPresent(module -> recipes.add(new GenericRecipe(null,
-                    new ItemStack(module.getItem()),
-                    Collections.emptyList(),
-                    List.of(module.getRequiredItemsForOperation()),
-                    1,
-                    Blocks.AIR,
-                    null,
-                    module.getRequiredTool(),
-                    Collections.emptyList(),
-                    -1)));
+                        .map(m -> m.apply(null))
+                        .filter(IPlantationModule.class::isInstance)
+                        .map(m -> (IPlantationModule) m)
+                        .findFirst()
+                        .ifPresent(module -> recipes.add(new GenericRecipe(null,
+                                new ItemStack(module.getItem()),
+                                Collections.emptyList(),
+                                List.of(module.getRequiredItemsForOperation()),
+                                1,
+                                Blocks.AIR,
+                                null,
+                                module.getRequiredTool(),
+                                Collections.emptyList(),
+                                -1)));
             }
 
             return recipes;
@@ -479,8 +420,7 @@ public class BuildingPlantation extends AbstractBuilding
 
         @NotNull
         @Override
-        public OptionalPredicate<ItemStack> getIngredientValidator()
-        {
+        public OptionalPredicate<ItemStack> getIngredientValidator() {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_PLANTATION).combine(super.getIngredientValidator());
         }
     }

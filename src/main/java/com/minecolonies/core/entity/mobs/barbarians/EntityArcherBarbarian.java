@@ -8,8 +8,7 @@ import net.minecraft.world.level.Level;
 /**
  * Class for the Archer Barbarian entity.
  */
-public class EntityArcherBarbarian extends AbstractEntityBarbarian implements IArcherBarbarianEntity
-{
+public class EntityArcherBarbarian extends AbstractEntityBarbarian implements IArcherBarbarianEntity {
 
     /**
      * Constructor of the entity.
@@ -17,8 +16,7 @@ public class EntityArcherBarbarian extends AbstractEntityBarbarian implements IA
      * @param worldIn world to construct it in.
      * @param type    the entity type.
      */
-    public EntityArcherBarbarian(final EntityType<? extends EntityArcherBarbarian> type, final Level worldIn)
-    {
+    public EntityArcherBarbarian(final EntityType<? extends EntityArcherBarbarian> type, final Level worldIn) {
         super(type, worldIn);
     }
 }

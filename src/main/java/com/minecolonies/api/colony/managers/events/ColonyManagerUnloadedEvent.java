@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Colony manager unloaded event.
  */
-public class ColonyManagerUnloadedEvent extends Event
-{
+public class ColonyManagerUnloadedEvent extends Event {
     /**
      * The colony manager instance.
      */
@@ -18,8 +17,7 @@ public class ColonyManagerUnloadedEvent extends Event
     /**
      * Event for colony manager loaded.
      */
-    public ColonyManagerUnloadedEvent(final @NotNull IColonyManager colonyManager)
-    {
+    public ColonyManagerUnloadedEvent(final @NotNull IColonyManager colonyManager) {
         this.colonyManager = colonyManager;
     }
 
@@ -28,8 +26,7 @@ public class ColonyManagerUnloadedEvent extends Event
      *
      * @return the colony manager.
      */
-    public @NotNull IColonyManager getColonyManager()
-    {
+    public @NotNull IColonyManager getColonyManager() {
         return colonyManager;
     }
 }

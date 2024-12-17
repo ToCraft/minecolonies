@@ -13,8 +13,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.CHIEF_BONUS_ARM
 /**
  * Class for the Chief Barbarian entity.
  */
-public class EntityChiefBarbarian extends AbstractEntityBarbarian implements IChiefBarbarianEntity
-{
+public class EntityChiefBarbarian extends AbstractEntityBarbarian implements IChiefBarbarianEntity {
 
     /**
      * Constructor of the entity.
@@ -22,14 +21,12 @@ public class EntityChiefBarbarian extends AbstractEntityBarbarian implements ICh
      * @param worldIn world to construct it in.
      * @param type    the entity type.
      */
-    public EntityChiefBarbarian(final EntityType<? extends EntityChiefBarbarian> type, final Level worldIn)
-    {
+    public EntityChiefBarbarian(final EntityType<? extends EntityChiefBarbarian> type, final Level worldIn) {
         super(type, worldIn);
     }
 
     @Override
-    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
-    {
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage) {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
         final double chiefArmor = difficulty * CHIEF_BONUS_ARMOR;
         this.getAttribute(Attributes.ARMOR).setBaseValue(chiefArmor);

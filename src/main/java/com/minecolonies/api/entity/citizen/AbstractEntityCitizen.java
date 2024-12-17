@@ -18,11 +18,7 @@ import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.IItemHandlerCapProvider;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import com.mojang.datafixers.util.Pair;
@@ -65,8 +61,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
  * The abstract citizen entity.
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
-public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements MenuProvider, IItemHandlerCapProvider
-{
+public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements MenuProvider, IItemHandlerCapProvider {
     public static final int ENTITY_AI_TICKRATE = 5;
 
     /**
@@ -74,19 +69,19 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     private static final double CITIZEN_SWIM_BONUS = 2.0;
 
-    public static final EntityDataAccessor<Integer>  DATA_LEVEL           = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Integer>  DATA_TEXTURE         = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Integer>  DATA_IS_FEMALE       = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Integer>  DATA_COLONY_ID       = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Integer>  DATA_CITIZEN_ID      = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<String>   DATA_MODEL           = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
-    public static final EntityDataAccessor<String>   DATA_RENDER_METADATA = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
-    public static final EntityDataAccessor<Boolean>  DATA_IS_ASLEEP       = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<Boolean>  DATA_IS_CHILD        = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<BlockPos> DATA_BED_POS         = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.BLOCK_POS);
-    public static final EntityDataAccessor<String>   DATA_STYLE           = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
-    public static final EntityDataAccessor<String>   DATA_TEXTURE_SUFFIX  = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
-    public static final EntityDataAccessor<String>   DATA_JOB             = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<Integer> DATA_LEVEL = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> DATA_TEXTURE = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> DATA_IS_FEMALE = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> DATA_COLONY_ID = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> DATA_CITIZEN_ID = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<String> DATA_MODEL = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String> DATA_RENDER_METADATA = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<Boolean> DATA_IS_ASLEEP = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> DATA_IS_CHILD = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<BlockPos> DATA_BED_POS = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.BLOCK_POS);
+    public static final EntityDataAccessor<String> DATA_STYLE = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String> DATA_TEXTURE_SUFFIX = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String> DATA_JOB = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
 
     /**
      * The default model.
@@ -139,9 +134,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * The AI for citizens, controlling different global states
      */
     protected ITickRateStateMachine<IState> entityStateController = new TickRateStateMachine<>(EntityState.INIT,
-      e -> Log.getLogger()
-        .warn("Citizen " + getDisplayName().getString() + " id:" + (getCitizenData() != null ? getCitizenData().getId() : -1) + "from colony: "
-                + getCitizenColonyHandler().getColonyId() + " state controller exception", e), ENTITY_AI_TICKRATE);
+            e -> Log.getLogger()
+                    .warn("Citizen " + getDisplayName().getString() + " id:" + (getCitizenData() != null ? getCitizenData().getId() : -1) + "from colony: "
+                            + getCitizenColonyHandler().getColonyId() + " state controller exception", e), ENTITY_AI_TICKRATE);
 
     /**
      * Constructor for a new citizen typed entity.
@@ -149,8 +144,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @param type  the Entity type.
      * @param world the world.
      */
-    public AbstractEntityCitizen(final EntityType<? extends PathfinderMob> type, final Level world)
-    {
+    public AbstractEntityCitizen(final EntityType<? extends PathfinderMob> type, final Level world) {
         super(type, world);
     }
 
@@ -159,21 +153,18 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return the attribute modifier map.
      */
-    public static AttributeSupplier.Builder getDefaultAttributes()
-    {
+    public static AttributeSupplier.Builder getDefaultAttributes() {
         return LivingEntity.createLivingAttributes()
-          .add(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
-          .add(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
-          .add(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
+                .add(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
+                .add(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
+                .add(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
     }
 
-    public GoalSelector getTasks()
-    {
+    public GoalSelector getTasks() {
         return goalSelector;
     }
 
-    public int getTicksExisted()
-    {
+    public int getTicksExisted() {
         return tickCount;
     }
 
@@ -181,8 +172,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Disable vanilla's item picking stuff as we're doing it ourselves
      */
     @Override
-    public boolean canPickUpLoot()
-    {
+    public boolean canPickUpLoot() {
         return false;
     }
 
@@ -190,8 +180,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Disable vanilla steering logic for villagers
      */
     @Override
-    public boolean isControlledByLocalInstance()
-    {
+    public boolean isControlledByLocalInstance() {
         return this.isEffectiveAi();
     }
 
@@ -203,28 +192,20 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @param damage
      * @return
      */
-    public float calculateDamageAfterAbsorbs(DamageSource source, float damage)
-    {
+    public float calculateDamageAfterAbsorbs(DamageSource source, float damage) {
         float newDamage = this.getDamageAfterArmorAbsorb(source, damage);
         return this.getDamageAfterMagicAbsorb(source, newDamage);
     }
 
     @NotNull
     @Override
-    public InteractionResult interactAt(final Player player, final Vec3 vec, final InteractionHand hand)
-    {
-        if (!player.level().isClientSide())
-        {
-            if (this.getPose() == Pose.SLEEPING)
-            {
+    public InteractionResult interactAt(final Player player, final Vec3 vec, final InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            if (this.getPose() == Pose.SLEEPING) {
                 SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.blockPosition(), EventType.OFF_TO_BED, this.getCitizenData(), 100);
-            }
-            else if (getCitizenData() != null && getCitizenData().isIdleAtJob())
-            {
+            } else if (getCitizenData() != null && getCitizenData().isIdleAtJob()) {
                 SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.blockPosition(), EventType.MISSING_EQUIPMENT, this.getCitizenData(), 100);
-            }
-            else
-            {
+            } else {
                 SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.blockPosition(), EventType.INTERACTION, this.getCitizenData(), 100);
             }
         }
@@ -236,24 +217,20 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Returns false if the newer Entity AI code should be run.
      */
     @Override
-    public boolean isNoAi()
-    {
+    public boolean isNoAi() {
         return false;
     }
 
     /**
      * Sets the textures of all citizens and distinguishes between male and female.
      */
-    public void setTexture()
-    {
-        if (!CompatibilityUtils.getWorldFromCitizen(this).isClientSide)
-        {
+    public void setTexture() {
+        if (!CompatibilityUtils.getWorldFromCitizen(this).isClientSide) {
             return;
         }
 
         final IModelType modelType = IModelTypeRegistry.getInstance().getModelType(getModelType());
-        if (modelType == null)
-        {
+        if (modelType == null) {
             Log.getLogger().error("Null model type for: " + getModelType() + " of: " + this);
             textureDirty = false;
             return;
@@ -276,13 +253,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @return location of the texture.
      */
     @NotNull
-    public ResourceLocation getTexture()
-    {
+    public ResourceLocation getTexture() {
         if (texture == null
-              || textureDirty
-              || !texture.getPath().contains(getEntityData().get(DATA_STYLE))
-              || !texture.getPath().contains(getEntityData().get(DATA_TEXTURE_SUFFIX)))
-        {
+                || textureDirty
+                || !texture.getPath().contains(getEntityData().get(DATA_STYLE))
+                || !texture.getPath().contains(getEntityData().get(DATA_TEXTURE_SUFFIX))) {
             setTexture();
         }
         return texture;
@@ -291,8 +266,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * Set the texture dirty.
      */
-    public void setTextureDirty()
-    {
+    public void setTextureDirty() {
         this.textureDirty = true;
     }
 
@@ -301,14 +275,12 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return the model.
      */
-    public ResourceLocation getModelType()
-    {
+    public ResourceLocation getModelType() {
         return modelId;
     }
 
     @Override
-    protected void defineSynchedData(final SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_TEXTURE_SUFFIX, "_b");
         builder.define(DATA_TEXTURE, 0);
@@ -328,8 +300,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return true if female.
      */
-    public boolean isFemale()
-    {
+    public boolean isFemale() {
         return female;
     }
 
@@ -338,17 +309,14 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @param female true if female, false if male.
      */
-    public void setFemale(final boolean female)
-    {
+    public void setFemale(final boolean female) {
         this.female = female;
     }
 
     @NotNull
     @Override
-    public AbstractAdvancedPathNavigate getNavigation()
-    {
-        if (this.pathNavigate == null)
-        {
+    public AbstractAdvancedPathNavigate getNavigation() {
+        if (this.pathNavigate == null) {
             this.pathNavigate = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigation = pathNavigate;
             this.pathNavigate.setCanFloat(true);
@@ -364,10 +332,8 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Don't push if we're ignoring being pushed
      */
     @Override
-    public void pushEntities()
-    {
-        if (collisionCounter > COLL_THRESHOLD)
-        {
+    public void pushEntities() {
+        if (collisionCounter > COLL_THRESHOLD) {
             return;
         }
 
@@ -380,67 +346,53 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @param entityIn entity to collide with
      */
     @Override
-    public void push(@NotNull final Entity entityIn)
-    {
-        if ((collisionCounter += 2) > COLL_THRESHOLD)
-        {
-            if (collisionCounter > COLL_THRESHOLD * 2)
-            {
+    public void push(@NotNull final Entity entityIn) {
+        if ((collisionCounter += 2) > COLL_THRESHOLD) {
+            if (collisionCounter > COLL_THRESHOLD * 2) {
                 collisionCounter = 0;
             }
 
             return;
         }
 
-        if (this.getVehicle() instanceof MinecoloniesMinecart)
-        {
+        if (this.getVehicle() instanceof MinecoloniesMinecart) {
             return;
         }
         super.push(entityIn);
     }
 
     @Override
-    public void onPlayerCollide(final Player player)
-    {
-        if (getCitizenData() == null)
-        {
+    public void onPlayerCollide(final Player player) {
+        if (getCitizenData() == null) {
             super.onPlayerCollide(player);
             return;
         }
 
         final IJob<?> job = getCitizenData().getJob();
-        if (job == null || !job.isGuard())
-        {
+        if (job == null || !job.isGuard()) {
             super.onPlayerCollide(player);
-        }
-        else
-        {
+        } else {
             // guards push the player out of their way
             push(player);
         }
     }
 
     @Override
-    public boolean isPushable()
-    {
-        if (this.getVehicle() instanceof MinecoloniesMinecart)
-        {
+    public boolean isPushable() {
+        if (this.getVehicle() instanceof MinecoloniesMinecart) {
             return false;
         }
         return super.isPushable();
     }
 
     @Override
-    public void aiStep()
-    {
+    public void aiStep() {
         super.aiStep();
-        if (tickCount % ENTITY_AI_TICKRATE == 0)
-        {
+        if (tickCount % ENTITY_AI_TICKRATE == 0) {
             entityStateController.tick();
         }
         updateSwingTime();
-        if (collisionCounter > 0)
-        {
+        if (collisionCounter > 0) {
             collisionCounter--;
         }
     }
@@ -451,8 +403,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @param yaw   the rotation yaw.
      * @param pitch the rotation pitch.
      */
-    public void setOwnRotation(final float yaw, final float pitch)
-    {
+    public void setOwnRotation(final float yaw, final float pitch) {
         this.setRot(yaw, pitch);
     }
 
@@ -461,8 +412,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @param model the model.
      */
-    public void setModelId(final ResourceLocation model)
-    {
+    public void setModelId(final ResourceLocation model) {
         this.modelId = model;
     }
 
@@ -471,10 +421,8 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @param renderMetadata the metadata to set.
      */
-    public void setRenderMetadata(final String renderMetadata)
-    {
-        if (renderMetadata.equals(getRenderMetadata()))
-        {
+    public void setRenderMetadata(final String renderMetadata) {
+        if (renderMetadata.equals(getRenderMetadata())) {
             return;
         }
         this.renderMetadata = renderMetadata;
@@ -486,8 +434,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return the texture id.
      */
-    public int getTextureId()
-    {
+    public int getTextureId() {
         return this.textureId;
     }
 
@@ -496,8 +443,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @param textureId the id of the texture.
      */
-    public void setTextureId(final int textureId)
-    {
+    public void setTextureId(final int textureId) {
         this.textureId = textureId;
         entityData.set(DATA_TEXTURE, textureId);
     }
@@ -507,8 +453,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return the meta data.
      */
-    public String getRenderMetadata()
-    {
+    public String getRenderMetadata() {
         return renderMetadata;
     }
 
@@ -517,19 +462,16 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return random object.
      */
-    public RandomSource getRandom()
-    {
+    public RandomSource getRandom() {
         return random;
     }
 
-    public int getOffsetTicks()
-    {
+    public int getOffsetTicks() {
         return this.tickCount + OFFSET_TICK_MULTIPLIER * this.getId();
     }
 
     @Override
-    public boolean isBlocking()
-    {
+    public boolean isBlocking() {
         return getUseItem().getItem() instanceof ShieldItem;
     }
 
@@ -538,8 +480,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return the count of how often.
      */
-    public int getRecentlyHit()
-    {
+    public int getRecentlyHit() {
         return lastHurtByPlayerTime;
     }
 
@@ -548,8 +489,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return true if so.
      */
-    public boolean checkCanDropLoot()
-    {
+    public boolean checkCanDropLoot() {
         return shouldDropExperience();
     }
 
@@ -676,10 +616,8 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract void callForHelp(final Entity attacker, final int guardHelpRange);
 
     @Override
-    public void detectEquipmentUpdates()
-    {
-        if (this.isEquipmentDirty && tickCount % 20 == randomVariance)
-        {
+    public void detectEquipmentUpdates() {
+        if (this.isEquipmentDirty && tickCount % 20 == randomVariance) {
             this.isEquipmentDirty = false;
             List<Pair<EquipmentSlot, ItemStack>> list = Lists.newArrayListWithCapacity(6);
 
@@ -694,13 +632,10 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     @Override
-    public void setItemSlot(final EquipmentSlot slot, @NotNull final ItemStack newItem)
-    {
-        if (!level().isClientSide)
-        {
+    public void setItemSlot(final EquipmentSlot slot, @NotNull final ItemStack newItem) {
+        if (!level().isClientSide) {
             final ItemStack previous = getItemBySlot(slot);
-            if (!ItemStackUtils.compareItemStacksIgnoreStackSize(previous, newItem, false, true))
-            {
+            if (!ItemStackUtils.compareItemStacksIgnoreStackSize(previous, newItem, false, true)) {
                 markEquipmentDirty();
             }
         }
@@ -709,10 +644,10 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
 
     /**
      * On armor removal.
+     *
      * @param stack the removed armor.
      */
-    public void onArmorRemove(final ItemStack stack, final EquipmentSlot equipmentSlot)
-    {
+    public void onArmorRemove(final ItemStack stack, final EquipmentSlot equipmentSlot) {
         AttributeMap attributemap = this.getAttributes();
         stack.forEachModifier(equipmentSlot, (attributeHolder, modifier) -> {
             AttributeInstance attributeinstance = attributemap.getInstance(attributeHolder);
@@ -726,10 +661,10 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
 
     /**
      * On armor equip.
+     *
      * @param stack the added armor.
      */
-    public void onArmorAdd(final ItemStack stack, final EquipmentSlot equipmentSlot)
-    {
+    public void onArmorAdd(final ItemStack stack, final EquipmentSlot equipmentSlot) {
         stack.forEachModifier(equipmentSlot, (attributeHolder, modifier) -> {
             AttributeInstance attributeinstance = this.getAttributes().getInstance(attributeHolder);
             if (attributeinstance != null) {
@@ -746,8 +681,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * Mark the equipment as dirty.
      */
-    public void markEquipmentDirty()
-    {
+    public void markEquipmentDirty() {
         this.isEquipmentDirty = true;
     }
 
@@ -756,8 +690,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return
      */
-    public boolean isPushedByFluid()
-    {
+    public boolean isPushedByFluid() {
         return false;
     }
 
@@ -766,30 +699,25 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return
      */
-    public ITickRateStateMachine<IState> getEntityStateController()
-    {
+    public ITickRateStateMachine<IState> getEntityStateController() {
         return entityStateController;
     }
 
     @Override
-    public boolean isSleeping()
-    {
+    public boolean isSleeping() {
         return getCitizenSleepHandler().isAsleep();
     }
 
     @Override
     @Nullable
-    public IItemHandler getItemHandlerCap(final Direction facing)
-    {
+    public IItemHandler getItemHandlerCap(final Direction facing) {
         final ICitizenData data = getCitizenData();
         return data == null ? null : data.getInventory();
     }
 
     @Override
-    public int getTeamColor()
-    {
-        if (getCitizenColonyHandler().getColony() == null)
-        {
+    public int getTeamColor() {
+        if (getCitizenColonyHandler().getColony() == null) {
             return super.getTeamColor();
         }
         return getCitizenColonyHandler().getColony().getTeamColonyColor().getColor();
@@ -797,14 +725,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
 
     @Override
     @NotNull
-    public Component getDisplayName()
-    {
-        if (getCitizenColonyHandler().getColony() == null)
-        {
+    public Component getDisplayName() {
+        if (getCitizenColonyHandler().getColony() == null) {
             return super.getDisplayName();
         }
-        if (getName() instanceof MutableComponent mutableComponent)
-        {
+        if (getName() instanceof MutableComponent mutableComponent) {
             return mutableComponent.withStyle(getCitizenColonyHandler().getColony().getTeamColonyColor()).withStyle((style) -> style.withHoverEvent(this.createHoverEvent()).withInsertion(this.getStringUUID()));
         }
         return super.getDisplayName();

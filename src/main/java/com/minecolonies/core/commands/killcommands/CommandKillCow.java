@@ -7,8 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 
-public class CommandKillCow implements IMCOPCommand
-{
+public class CommandKillCow implements IMCOPCommand {
     int entitiesKilled = 0;
 
     /**
@@ -17,8 +16,7 @@ public class CommandKillCow implements IMCOPCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         entitiesKilled = 0;
 
         context.getSource().getLevel().getEntities(EntityType.COW, entity -> true).forEach(entity ->
@@ -34,8 +32,7 @@ public class CommandKillCow implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "cow";
     }
 }

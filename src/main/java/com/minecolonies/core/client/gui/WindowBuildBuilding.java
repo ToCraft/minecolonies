@@ -22,7 +22,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -30,15 +29,15 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.core.network.messages.server.colony.building.BuildPickUpMessage;
 import com.minecolonies.core.network.messages.server.colony.building.BuildRequestMessage;
 import com.minecolonies.core.network.messages.server.colony.building.BuildingSetStyleMessage;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,8 +53,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for selecting the style and confirming the resources.
  */
-public class WindowBuildBuilding extends AbstractWindowSkeleton
-{
+public class WindowBuildBuilding extends AbstractWindowSkeleton {
     /**
      * Link to the xml file of the window.
      */
@@ -69,8 +67,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         final BlockState worldState = handler.getWorld().getBlockState(worldPos);
 
         return worldState.getBlock() instanceof IBuilderUndestroyable
-                 || worldState.getBlock() == Blocks.BEDROCK
-                 || (info.getBlockInfo().getState().getBlock() instanceof AbstractBlockHut && handler.getWorldPos().equals(worldPos));
+                || worldState.getBlock() == Blocks.BEDROCK
+                || (info.getBlockInfo().getState().getBlock() instanceof AbstractBlockHut && handler.getWorldPos().equals(worldPos));
     };
 
     /**
@@ -121,8 +119,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      * @param c        the colony view.
      * @param building the building.
      */
-    public WindowBuildBuilding(final IColonyView c, final IBuildingView building)
-    {
+    public WindowBuildBuilding(final IColonyView c, final IBuildingView building) {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.building = building;
 
@@ -136,24 +133,18 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         final IBuildingView parentBuilding = c.getBuilding(building.getParent());
 
-        if (building.getBuildingLevel() == 0)
-        {
+        if (building.getBuildingLevel() == 0) {
             buttonBuild.setText(Component.translatableEscape("com.minecolonies.coremod.gui.workerhuts.build"));
             findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
             findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
             findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
-        }
-        else if (!canBeUpgraded())
-        {
+        } else if (!canBeUpgraded()) {
             buttonBuild.hide();
-        }
-        else
-        {
+        } else {
             buttonBuild.setText(Component.translatableEscape(ACTION_UPGRADE));
         }
 
-        if (building.isDeconstructed())
-        {
+        if (building.isDeconstructed()) {
             findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setText(Component.translatableEscape(ACTION_BUILD));
             findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
         }
@@ -161,10 +152,10 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
     /**
      * Check if this one can be upgraded.
+     *
      * @return true if so.
      */
-    public boolean canBeUpgraded()
-    {
+    public boolean canBeUpgraded() {
         final IBuildingView parentBuilding = building.getColony().getBuilding(building.getParent());
         return building.getBuildingLevel() < building.getBuildingMaxLevel() && (parentBuilding == null || building.getBuildingLevel() < parentBuilding.getBuildingLevel() || parentBuilding.getBuildingLevel() >= parentBuilding.getBuildingMaxLevel());
     }
@@ -172,8 +163,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * When the pickup building button was clicked.
      */
-    private void pickUpBuilding()
-    {
+    private void pickUpBuilding() {
         new BuildPickUpMessage(building).sendToServer();
         close();
     }
@@ -181,8 +171,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * When the deconstruct building button has been clicked.
      */
-    private void deconstructBuildingClicked()
-    {
+    private void deconstructBuildingClicked() {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
         new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, builder).sendToServer();
         cancelClicked();
@@ -191,25 +180,20 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * On cancel button.
      */
-    private void cancelClicked()
-    {
+    private void cancelClicked() {
         building.openGui(false);
     }
 
     /**
      * On confirm button.
      */
-    private void confirmClicked()
-    {
+    private void confirmClicked() {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
         new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())).sendToServer();
-        if (building.getBuildingLevel() == building.getBuildingMaxLevel())
-        {
+        if (building.getBuildingLevel() == building.getBuildingMaxLevel()) {
             new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder).sendToServer();
-        }
-        else
-        {
+        } else {
             new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, builder).sendToServer();
         }
         cancelClicked();
@@ -218,8 +202,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * Action when repair button is clicked.
      */
-    private void repairClicked()
-    {
+    private void repairClicked() {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
         new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder).sendToServer();
         cancelClicked();
@@ -228,16 +211,15 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * Update the builders list but try to keep the same one.
      */
-    private void updateBuilders()
-    {
+    private void updateBuilders() {
         builders.clear();
         builders.add(new Tuple<>(Component.translatableEscape(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
-                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
-                                             && build.getBuildingType() != ModBuildings.miner.get())
-                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
-                          .sorted(Comparator.comparing(item -> item.getB().distSqr(building.getPosition())))
-                          .collect(Collectors.toList()));
+                .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
+                        && build.getBuildingType() != ModBuildings.miner.get())
+                .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
+                .sorted(Comparator.comparing(item -> item.getB().distSqr(building.getPosition())))
+                .collect(Collectors.toList()));
 
         initBuilderNavigation();
     }
@@ -245,27 +227,20 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * Update the styles list but try to keep the same one.
      */
-    private void updateStyles()
-    {
-        if (!building.getParent().equals(BlockPos.ZERO) && building.getColony().getBuilding(building.getParent()) != null)
-        {
+    private void updateStyles() {
+        if (!building.getParent().equals(BlockPos.ZERO) && building.getColony().getBuilding(building.getParent()) != null) {
             styles = new ArrayList<>();
             styles.add(building.getColony().getBuilding(building.getParent()).getStructurePack());
-            if (!styles.isEmpty())
-            {
+            if (!styles.isEmpty()) {
                 stylesDropDownList.setSelectedIndex(0);
             }
-        }
-        else
-        {
+        } else {
             styles = new ArrayList<>();
             styles.add(building.getStructurePack());
 
-            if (!styles.isEmpty())
-            {
+            if (!styles.isEmpty()) {
                 int newIndex = styles.indexOf(building.getStructurePack());
-                if (newIndex == -1)
-                {
+                if (newIndex == -1) {
                     newIndex = 0;
                 }
                 stylesDropDownList.setSelectedIndex(newIndex);
@@ -280,33 +255,28 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * Clears and resets/updates all resources.
      */
-    private void updateResources()
-    {
+    private void updateResources() {
         tick = 20;
 
-        if (stylesDropDownList.getSelectedIndex() == -1)
-        {
+        if (stylesDropDownList.getSelectedIndex() == -1) {
             return;
         }
 
         final Level world = Minecraft.getInstance().level;
         int nextLevel = building.getBuildingLevel();
-        if (canBeUpgraded())
-        {
+        if (canBeUpgraded()) {
             nextLevel = building.getBuildingLevel() + 1;
         }
 
         String name = building.getStructurePath().replace(".blueprint", "");
-        if (name.isEmpty())
-        {
+        if (name.isEmpty()) {
             return;
         }
 
         name = name.substring(0, name.length() - 1) + nextLevel + ".blueprint";
         ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(styles.get(stylesDropDownList.getSelectedIndex()), name, world.registryAccess()), (blueprint -> {
             resources.clear();
-            if (blueprint == null)
-            {
+            if (blueprint == null) {
                 findPaneOfTypeByID(BUTTON_BUILD, Button.class).hide();
                 findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
                 findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
@@ -318,14 +288,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             StructurePhasePlacementResult result;
             BlockPos progressPos = NULL_POS;
 
-            do
-            {
+            do {
                 result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                  () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.and((info, pos, handler) -> false)), true);
+                        () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.and((info, pos, handler) -> false)), true);
 
                 progressPos = result.getIteratorPos();
-                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
-                {
+                for (final ItemStack stack : result.getBlockResult().getRequiredItems()) {
                     addNeededResource(stack, stack.getCount());
                 }
             }
@@ -344,22 +312,17 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      * @param res    the resource.
      * @param amount the amount.
      */
-    public void addNeededResource(@Nullable final ItemStack res, final int amount)
-    {
-        if (ItemStackUtils.isEmpty(res) || amount == 0)
-        {
+    public void addNeededResource(@Nullable final ItemStack res, final int amount) {
+        if (ItemStackUtils.isEmpty(res) || amount == 0) {
             return;
         }
         final int hashCode = res.getComponentsPatch().hashCode();
         final String key = res.getDescriptionId() + "-" + hashCode;
         ItemStorage resource = resources.get(key);
-        if (resource == null)
-        {
+        if (resource == null) {
             resource = new ItemStorage(res);
             resource.setAmount(amount);
-        }
-        else
-        {
+        } else {
             resource.setAmount(resource.getAmount() + amount);
         }
         resources.put(key, resource);
@@ -368,25 +331,20 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * Initialise the previous/next and drop down list for style.
      */
-    private void initStyleNavigation()
-    {
+    private void initStyleNavigation() {
         registerButton(BUTTON_PREVIOUS_STYLE_ID, this::previousStyle);
         registerButton(BUTTON_NEXT_STYLE_ID, this::nextStyle);
         stylesDropDownList = findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class);
         stylesDropDownList.setHandler(this::onStyleDropDownChanged);
-        stylesDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
+        stylesDropDownList.setDataProvider(new DropDownList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return styles.size();
             }
 
             @Override
-            public MutableComponent getLabel(final int index)
-            {
-                if (index >= 0 && index < styles.size())
-                {
+            public MutableComponent getLabel(final int index) {
+                if (index >= 0 && index < styles.size()) {
                     return Component.literal(styles.get(index));
                 }
                 return Component.empty();
@@ -397,22 +355,17 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * Initialise the builder setup..
      */
-    private void initBuilderNavigation()
-    {
+    private void initBuilderNavigation() {
         buildersDropDownList = findPaneOfTypeByID(DROPDOWN_BUILDER_ID, DropDownList.class);
-        buildersDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
+        buildersDropDownList.setDataProvider(new DropDownList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return builders.size();
             }
 
             @Override
-            public MutableComponent getLabel(final int index)
-            {
-                if (index >= 0 && index < builders.size())
-                {
+            public MutableComponent getLabel(final int index) {
+                if (index >= 0 && index < builders.size()) {
                     return Component.literal(builders.get(index).getA());
                 }
                 return Component.empty();
@@ -426,24 +379,21 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      *
      * @param list the dropdown list which change
      */
-    private void onStyleDropDownChanged(final DropDownList list)
-    {
+    private void onStyleDropDownChanged(final DropDownList list) {
         updateResources();
     }
 
     /**
      * Change to the next style.
      */
-    private void nextStyle()
-    {
+    private void nextStyle() {
         stylesDropDownList.selectNext();
     }
 
     /**
      * Change to the previous style.
      */
-    private void previousStyle()
-    {
+    private void previousStyle() {
         stylesDropDownList.selectPrevious();
     }
 
@@ -451,40 +401,34 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      * Called when the GUI has been opened. Will fill the fields and lists.
      */
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         updateStyles();
         updateBuilders();
         updateResources();
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
-        if (resources.isEmpty() && tick > 0 && --tick == 0)
-        {
+        if (resources.isEmpty() && tick > 0 && --tick == 0) {
             updateResources();
         }
     }
 
-    public void updateResourceList()
-    {
+    public void updateResourceList() {
         final ScrollingList recourseList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         recourseList.enable();
         recourseList.show();
         final List<ItemStorage> tempRes = new ArrayList<>(resources.values());
 
         //Creates a dataProvider for the unemployed recourseList.
-        recourseList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        recourseList.setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return tempRes.size();
             }
 
@@ -494,8 +438,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final ItemStorage resource = tempRes.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
                 final Text quantityLabel = rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class);

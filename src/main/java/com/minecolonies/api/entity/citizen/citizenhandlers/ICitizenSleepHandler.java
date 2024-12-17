@@ -2,8 +2,7 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import net.minecraft.core.BlockPos;
 
-public interface ICitizenSleepHandler
-{
+public interface ICitizenSleepHandler {
     /**
      * Is the citizen a sleep?
      *

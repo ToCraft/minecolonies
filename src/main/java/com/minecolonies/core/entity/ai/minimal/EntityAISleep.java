@@ -37,8 +37,7 @@ import static com.minecolonies.core.entity.ai.minimal.EntityAISleep.SleepState.*
 /**
  * AI to send Entity to sleep.
  */
-public class EntityAISleep implements IStateAI
-{
+public class EntityAISleep implements IStateAI {
     /**
      * Interval between sleeping particles
      */
@@ -69,8 +68,7 @@ public class EntityAISleep implements IStateAI
      */
     private int bedTicks = 0;
 
-    public enum SleepState implements IState
-    {
+    public enum SleepState implements IState {
         WALKING_HOME,
         FIND_BED,
         SLEEPING;
@@ -81,8 +79,7 @@ public class EntityAISleep implements IStateAI
      *
      * @param citizen the citizen which should sleep.
      */
-    public EntityAISleep(final EntityCitizen citizen)
-    {
+    public EntityAISleep(final EntityCitizen citizen) {
         this.citizen = citizen;
         // 100 blocks - 30 seconds - straight line
         citizen.getCitizenAI().addTransition(new TickingTransition<>(CitizenAIState.SLEEP, () -> true, this::checkSleep, 20));
@@ -97,8 +94,7 @@ public class EntityAISleep implements IStateAI
      *
      * @return
      */
-    private IState checkSleep()
-    {
+    private IState checkSleep() {
         initAI();
         return WALKING_HOME;
     }
@@ -108,19 +104,14 @@ public class EntityAISleep implements IStateAI
      *
      * @return
      */
-    private IState walkHome()
-    {
+    private IState walkHome() {
         final IBuilding homeBuilding = citizen.getCitizenData().getHomeBuilding();
-        if (homeBuilding == null)
-        {
+        if (homeBuilding == null) {
             @Nullable final BlockPos homePosition = citizen.getCitizenData().getHomePosition();
-            if (homePosition.distSqr(BlockPos.containing(Math.floor(citizen.getX()), citizen.getY(), Math.floor(citizen.getZ()))) <= RANGE_TO_BE_HOME)
-            {
+            if (homePosition.distSqr(BlockPos.containing(Math.floor(citizen.getX()), citizen.getY(), Math.floor(citizen.getZ()))) <= RANGE_TO_BE_HOME) {
                 return FIND_BED;
             }
-        }
-        else if (homeBuilding.isInBuilding(citizen.blockPosition()))
-        {
+        } else if (homeBuilding.isInBuilding(citizen.blockPosition())) {
             return FIND_BED;
         }
 
@@ -134,10 +125,8 @@ public class EntityAISleep implements IStateAI
      *
      * @return true if continue to sleep
      */
-    private boolean findBed()
-    {
-        if (!citizen.getCitizenSleepHandler().isAsleep() || bedTicks < MAX_BED_TICKS)
-        {
+    private boolean findBed() {
+        if (!citizen.getCitizenSleepHandler().isAsleep() || bedTicks < MAX_BED_TICKS) {
             findBedAndTryToSleep();
             return false;
         }
@@ -147,48 +136,38 @@ public class EntityAISleep implements IStateAI
     /**
      * On init set his status to sleeping.
      */
-    public void initAI()
-    {
+    public void initAI() {
         usedBed = null;
     }
 
-    private void findBedAndTryToSleep()
-    {
+    private void findBedAndTryToSleep() {
         // Finding bed
-        if (usedBed == null && citizen.getCitizenData() != null)
-        {
+        if (usedBed == null && citizen.getCitizenData() != null) {
             this.usedBed = citizen.getCitizenData().getBedPos();
-            if (citizen.getCitizenData().getBedPos().equals(BlockPos.ZERO))
-            {
+            if (citizen.getCitizenData().getBedPos().equals(BlockPos.ZERO)) {
                 this.usedBed = null;
             }
         }
 
         final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
-        if (colony != null && citizen.getCitizenData().getHomeBuilding() instanceof AbstractBuilding hut)
-        {
+        if (colony != null && citizen.getCitizenData().getHomeBuilding() instanceof AbstractBuilding hut) {
             final BlockPos homePos = citizen.getCitizenData().getHomePosition();
-            if (usedBed == null)
-            {
+            if (usedBed == null) {
                 List<BlockPos> bedList = new ArrayList<>();
-                if (hut.hasModule(BuildingModules.BED))
-                {
+                if (hut.hasModule(BuildingModules.BED)) {
                     bedList.addAll(hut.getModule(BuildingModules.BED).getRegisteredBlocks());
                 }
 
-                for (final BlockPos pos : bedList)
-                {
-                    if (WorldUtil.isEntityBlockLoaded(citizen.level(), pos))
-                    {
+                for (final BlockPos pos : bedList) {
+                    if (WorldUtil.isEntityBlockLoaded(citizen.level(), pos)) {
                         final Level world = citizen.level();
                         final BlockState state = world.getBlockState(pos);
                         final BlockState above = world.getBlockState(pos.above());
                         if (state.is(BlockTags.BEDS)
-                              && !state.getValue(BedBlock.OCCUPIED)
-                              && state.getValue(BedBlock.PART).equals(BedPart.HEAD)
-                              && !isBedOccupied(hut, pos)
-                              && (above.is(BlockTags.BEDS) || above.getBlock() instanceof PanelBlock || above.getBlock() instanceof TrapDoorBlock || !above.isSolid()))
-                        {
+                                && !state.getValue(BedBlock.OCCUPIED)
+                                && state.getValue(BedBlock.PART).equals(BedPart.HEAD)
+                                && !isBedOccupied(hut, pos)
+                                && (above.is(BlockTags.BEDS) || above.getBlock() instanceof PanelBlock || above.getBlock() instanceof TrapDoorBlock || !above.isSolid())) {
                             usedBed = pos;
                             setBedOccupied(true);
                             return;
@@ -199,11 +178,9 @@ public class EntityAISleep implements IStateAI
                 usedBed = homePos;
             }
 
-            if (citizen.isWorkerAtSiteWithMove(usedBed, 3))
-            {
+            if (citizen.isWorkerAtSiteWithMove(usedBed, 3)) {
                 bedTicks++;
-                if (!citizen.getCitizenSleepHandler().trySleep(usedBed))
-                {
+                if (!citizen.getCitizenSleepHandler().trySleep(usedBed)) {
                     citizen.getCitizenData().setBedPos(BlockPos.ZERO);
                     usedBed = null;
                 }
@@ -215,12 +192,9 @@ public class EntityAISleep implements IStateAI
     /**
      * Make sleeping
      */
-    private IState sleep()
-    {
-        if (usedBed != null)
-        {
-            if (usedBed.distSqr(citizen.blockPosition()) > 3 * 3)
-            {
+    private IState sleep() {
+        if (usedBed != null) {
+            if (usedBed.distSqr(citizen.blockPosition()) > 3 * 3) {
                 return WALKING_HOME;
             }
             citizen.setPose(Pose.SLEEPING);
@@ -234,17 +208,14 @@ public class EntityAISleep implements IStateAI
     /**
      * While going home play a goHome sound for the specific worker by chance.
      */
-    private void goHome()
-    {
+    private void goHome() {
         final BlockPos pos = citizen.getCitizenData().getHomePosition();
-        if (pos != null && !citizen.isWorkerAtSiteWithMove(pos, 2) && citizen.getPose() == Pose.SLEEPING)
-        {
+        if (pos != null && !citizen.isWorkerAtSiteWithMove(pos, 2) && citizen.getPose() == Pose.SLEEPING) {
             citizen.setPose(Pose.STANDING);
         }
 
         final int chance = citizen.getRandom().nextInt(CHANCE);
-        if (chance <= 1 && citizen.getCitizenColonyHandler().getWorkBuilding() != null && citizen.getCitizenJobHandler().getColonyJob() != null)
-        {
+        if (chance <= 1 && citizen.getCitizenColonyHandler().getWorkBuilding() != null && citizen.getCitizenJobHandler().getColonyJob() != null) {
             SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.blockPosition(), EventType.OFF_TO_BED, citizen.getCitizenData());
             //add further workers as soon as available.
         }
@@ -255,16 +226,14 @@ public class EntityAISleep implements IStateAI
      *
      * @param occupied whether the bed should be occupied.
      */
-    private void setBedOccupied(boolean occupied)
-    {
+    private void setBedOccupied(boolean occupied) {
         final BlockState headState = citizen.level().getBlockState(usedBed);
         citizen.level().setBlock(usedBed, headState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
 
         final BlockPos feetPos = usedBed.relative(headState.getValue(BedBlock.FACING).getOpposite());
         final BlockState feetState = citizen.level().getBlockState(feetPos);
 
-        if (feetState.is(BlockTags.BEDS))
-        {
+        if (feetState.is(BlockTags.BEDS)) {
             citizen.level().setBlock(feetPos, feetState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
         }
     }
@@ -276,14 +245,10 @@ public class EntityAISleep implements IStateAI
      * @param bed the bed to check.
      * @return whether any of the citizens living in this hut are sleeping in the given bed.
      */
-    private boolean isBedOccupied(IBuilding hut, BlockPos bed)
-    {
-        for (ICitizenData citizen : hut.getAllAssignedCitizen())
-        {
-            if (this.citizen.getCivilianID() != citizen.getId())
-            {
-                if (citizen.getBedPos().equals(bed))
-                {
+    private boolean isBedOccupied(IBuilding hut, BlockPos bed) {
+        for (ICitizenData citizen : hut.getAllAssignedCitizen()) {
+            if (this.citizen.getCivilianID() != citizen.getId()) {
+                if (citizen.getBedPos().equals(bed)) {
                     return true;
                 }
             }

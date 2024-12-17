@@ -10,22 +10,18 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The field manager class responsible for creating field instances from NBT data, etc.
  */
-public final class FieldDataManager
-{
-    private static final String TAG_FIELD_NAME     = "name";
+public final class FieldDataManager {
+    private static final String TAG_FIELD_NAME = "name";
     private static final String TAG_FIELD_POSITION = "position";
-    private static final String TAG_FIELD_DATA     = "data";
+    private static final String TAG_FIELD_DATA = "data";
 
-    private FieldDataManager()
-    {
+    private FieldDataManager() {
     }
 
     /**
@@ -34,14 +30,12 @@ public final class FieldDataManager
      * @param compound the input compound data.
      * @return the created field instance.
      */
-    public static IField compoundToField(@NotNull final HolderLookup.Provider provider, final @NotNull CompoundTag compound)
-    {
+    public static IField compoundToField(@NotNull final HolderLookup.Provider provider, final @NotNull CompoundTag compound) {
         ResourceLocation fieldName = ResourceLocation.parse(compound.getString(TAG_FIELD_NAME));
         BlockPos position = BlockPosUtil.read(compound, TAG_FIELD_POSITION);
 
         IField field = resourceLocationToField(fieldName, position);
-        if (field != null)
-        {
+        if (field != null) {
             field.deserializeNBT(provider, compound.getCompound(TAG_FIELD_DATA));
         }
         return field;
@@ -54,12 +48,10 @@ public final class FieldDataManager
      * @param position  the position of the field.
      * @return the field instance.
      */
-    public static IField resourceLocationToField(final @NotNull ResourceLocation fieldName, final @NotNull BlockPos position)
-    {
+    public static IField resourceLocationToField(final @NotNull ResourceLocation fieldName, final @NotNull BlockPos position) {
         final FieldRegistries.FieldEntry fieldEntry = FieldRegistries.getFieldRegistry().get(fieldName);
 
-        if (fieldEntry == null)
-        {
+        if (fieldEntry == null) {
             Log.getLogger().error("Unknown field type '{}'.", fieldName);
             return null;
         }
@@ -73,8 +65,7 @@ public final class FieldDataManager
      * @param buf the buffer, still containing the field registry type and position.
      * @return the field instance.
      */
-    public static IField bufferToField(final @NotNull RegistryFriendlyByteBuf buf)
-    {
+    public static IField bufferToField(final @NotNull RegistryFriendlyByteBuf buf) {
         final FieldRegistries.FieldEntry fieldType = buf.readById(FieldRegistries.getFieldRegistry()::byIdOrThrow);
         final BlockPos position = buf.readBlockPos();
         final IField field = fieldType.produceField(position);
@@ -88,8 +79,7 @@ public final class FieldDataManager
      * @param field the field instance.
      * @return the network buffer.
      */
-    public static RegistryFriendlyByteBuf fieldToBuffer(final @NotNull IField field, @NotNull final RegistryAccess provider)
-    {
+    public static RegistryFriendlyByteBuf fieldToBuffer(final @NotNull IField field, @NotNull final RegistryAccess provider) {
         final RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), provider);
         buf.writeById(FieldRegistries.getFieldRegistry()::getIdOrThrow, field.getFieldType());
         buf.writeBlockPos(field.getPosition());
@@ -103,8 +93,7 @@ public final class FieldDataManager
      * @param field the field instance.
      * @return the NBT compound.
      */
-    public static CompoundTag fieldToCompound(@NotNull final HolderLookup.Provider provider, final @NotNull IField field)
-    {
+    public static CompoundTag fieldToCompound(@NotNull final HolderLookup.Provider provider, final @NotNull IField field) {
         final CompoundTag compound = new CompoundTag();
         compound.putString(TAG_FIELD_NAME, field.getFieldType().getRegistryName().toString());
         BlockPosUtil.write(compound, TAG_FIELD_POSITION, field.getPosition());

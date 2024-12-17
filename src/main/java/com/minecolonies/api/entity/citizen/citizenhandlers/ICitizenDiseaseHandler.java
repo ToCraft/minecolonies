@@ -6,8 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 /**
  * Citizen disease handler interface.
  */
-public interface ICitizenDiseaseHandler
-{
+public interface ICitizenDiseaseHandler {
     /**
      * To tick the handler.
      */
@@ -53,12 +52,14 @@ public interface ICitizenDiseaseHandler
 
     /**
      * True when the citizen needs to go to a hospital because its hurt
+     *
      * @return
      */
     boolean isHurt();
 
     /**
      * Whether the citizen sleeps at a hospital
+     *
      * @return
      */
     boolean sleepsAtHospital();
@@ -70,6 +71,7 @@ public interface ICitizenDiseaseHandler
 
     /**
      * Set a disease on the citizen.
+     *
      * @param disease to set.
      */
     void setDisease(String disease);

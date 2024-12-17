@@ -8,8 +8,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Constants used by the Undertaker AIs.
  */
-public class UndertakerConstants
-{
+public class UndertakerConstants {
     /**
      * The EXP Earned per dig.
      */

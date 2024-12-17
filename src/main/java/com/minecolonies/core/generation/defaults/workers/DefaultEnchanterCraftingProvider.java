@@ -36,22 +36,19 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 /**
  * Datagen for Enchanter
  */
-public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTableProvider
-{
+public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTableProvider {
     private final String ENCHANTER = ModJobs.ENCHANTER_ID.getPath();
     private static final int MAX_BUILDING_LEVEL = 5;
 
     private final List<LootTable.Builder> levels = new ArrayList<>();
     private HolderLookup.Provider provider;
 
-    public DefaultEnchanterCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultEnchanterCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @Override
-    protected CompletableFuture<HolderLookup.Provider> generate(@NotNull final HolderLookup.Provider provider)
-    {
+    protected CompletableFuture<HolderLookup.Provider> generate(@NotNull final HolderLookup.Provider provider) {
         this.provider = provider;
 
         // building level 1
@@ -369,8 +366,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
     }
 
     @NotNull
-    private LootPoolSingletonContainer.Builder<?> enchantedBook(final ResourceKey<Enchantment> key, final int level)
-    {
+    private LootPoolSingletonContainer.Builder<?> enchantedBook(final ResourceKey<Enchantment> key, final int level) {
         final Holder<Enchantment> enchantment = provider.holderOrThrow(key);
         final ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
         stack.enchant(enchantment, level);
@@ -379,19 +375,16 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "EnchanterCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
         final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(
                 new ItemStack(ModItems.ancientTome), true, true));
 
-        for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
-        {
+        for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel) {
             recipe(ENCHANTER, MODULE_CUSTOM, "tome" + buildingLevel)
                     .minBuildingLevel(buildingLevel)
                     .maxBuildingLevel(buildingLevel)
@@ -440,12 +433,10 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
 
     @NotNull
     @Override
-    protected List<LootTableProvider.SubProviderEntry> registerTables()
-    {
+    protected List<LootTableProvider.SubProviderEntry> registerTables() {
         return List.of(new LootTableProvider.SubProviderEntry(provider -> builder ->
         {
-            for (int i = 0; i < levels.size(); i++)
-            {
+            for (int i = 0; i < levels.size(); i++) {
                 final int buildingLevel = i + 1;
                 builder.accept(table(new ResourceLocation(MOD_ID, "recipes/" + ENCHANTER + buildingLevel)), levels.get(i));
             }

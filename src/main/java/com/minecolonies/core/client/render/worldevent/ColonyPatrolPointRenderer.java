@@ -14,8 +14,7 @@ import java.util.concurrent.Future;
 
 import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
 
-public class ColonyPatrolPointRenderer
-{
+public class ColonyPatrolPointRenderer {
     /**
      * Cached wayPointBlueprint.
      */
@@ -25,46 +24,36 @@ public class ColonyPatrolPointRenderer
 
     /**
      * Renders the guard scepter objects into the world.
-     * 
+     *
      * @param ctx rendering context
      */
-    static void render(final WorldEventContext ctx)
-    {
-        if (ctx.mainHandItem.getItem() != ModItems.scepterGuard)
-        {
+    static void render(final WorldEventContext ctx) {
+        if (ctx.mainHandItem.getItem() != ModItems.scepterGuard) {
             return;
         }
 
         final IBuildingView guardTowerView = BuildingId.readBuildingViewFromItemStack(ctx.mainHandItem);
-        if (guardTowerView == null)
-        {
+        if (guardTowerView == null) {
             return;
         }
 
-        if (pendingTemplate == null && partolPointTemplate == null)
-        {
+        if (pendingTemplate == null && partolPointTemplate == null) {
             pendingTemplate = StructurePacks.getBlueprintFuture(STORAGE_STYLE, "infrastructure/misc/patrolpoint.blueprint", ctx.clientLevel.registryAccess());
             return;
-        }
-        else if (pendingTemplate != null && pendingTemplate.isDone())
-        {
-            try
-            {
+        } else if (pendingTemplate != null && pendingTemplate.isDone()) {
+            try {
                 final BlueprintPreviewData tempPreviewData = new BlueprintPreviewData();
                 tempPreviewData.setBlueprint(pendingTemplate.get());
                 tempPreviewData.setPos(BlockPos.ZERO);
                 partolPointTemplate = tempPreviewData;
                 pendingTemplate = null;
-            }
-            catch (InterruptedException | ExecutionException e)
-            {
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
             return;
         }
 
-        if (guardTowerView instanceof AbstractBuildingGuards.View guardTower)
-        {
+        if (guardTowerView instanceof AbstractBuildingGuards.View guardTower) {
             ctx.renderBlueprint(partolPointTemplate, guardTower.getPatrolTargets());
         }
     }

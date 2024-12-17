@@ -18,32 +18,29 @@ import java.util.stream.Collectors;
 /**
  * Minimum stack request type.
  */
-public class MinimumStack extends Stack
-{
+public class MinimumStack extends Stack {
     /**
      * Set of type tokens belonging to this class.
      */
     private final static Set<TypeToken<?>>
-      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(MinimumStack.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+            TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(MinimumStack.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
     /**
      * Create a Stack deliverable.
      *
      * @param stack the required stack.
      */
-    public MinimumStack(@NotNull final ItemStack stack)
-    {
+    public MinimumStack(@NotNull final ItemStack stack) {
         this(stack, true);
     }
 
     /**
      * Create a Stack deliverable.
      *
-     * @param stack the required stack.
+     * @param stack           the required stack.
      * @param matchDurability whether or not to match Durability
      */
-    public MinimumStack(@NotNull final ItemStack stack, boolean matchDurability)
-    {
+    public MinimumStack(@NotNull final ItemStack stack, boolean matchDurability) {
         this(stack, matchDurability, true, ItemStackUtils.EMPTY, Math.min(stack.getCount(), stack.getMaxStackSize()), Math.min(stack.getCount(), stack.getMaxStackSize()));
     }
 
@@ -55,8 +52,7 @@ public class MinimumStack extends Stack
      * @param count    the count.
      * @param minCount the min count.
      */
-    public MinimumStack(@NotNull final ItemStack stack, final int count, final int minCount)
-    {
+    public MinimumStack(@NotNull final ItemStack stack, final int count, final int minCount) {
         this(stack, count, minCount, true);
     }
 
@@ -65,20 +61,19 @@ public class MinimumStack extends Stack
      *
      * @param itemStorage the storage to use.
      */
-    public MinimumStack(@NotNull final ItemStorage itemStorage)
-    {
+    public MinimumStack(@NotNull final ItemStorage itemStorage) {
         this(itemStorage.getItemStack(), !itemStorage.ignoreDamageValue(), !itemStorage.ignoreNBT(), ItemStackUtils.EMPTY, itemStorage.getAmount(), itemStorage.getAmount());
     }
 
     /**
      * Create a Stack deliverable with variable nbt.
-     * @param stack the stack to deliver.
-     * @param count the count.
+     *
+     * @param stack    the stack to deliver.
+     * @param count    the count.
      * @param minCount the min count.
      * @param matchNBT if nbt has to match.
      */
-    public MinimumStack(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)
-    {
+    public MinimumStack(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT) {
         this(stack, true, matchNBT, ItemStackUtils.EMPTY, count, minCount);
     }
 
@@ -86,36 +81,34 @@ public class MinimumStack extends Stack
      * Create a Stack deliverable.
      *
      * @param stack       the required stack.
-     * @param matchDamage   if damage has to be matched.
+     * @param matchDamage if damage has to be matched.
      * @param matchNBT    if NBT has to be matched.
      * @param result      the result stack.
      * @param count       the count.
      * @param minCount    the min count.
      */
     public MinimumStack(
-      @NotNull final ItemStack stack,
-      final boolean matchDamage,
-      final boolean matchNBT,
-      @NotNull final ItemStack result,
-      final int count,
-      final int minCount)
-    {
+            @NotNull final ItemStack stack,
+            final boolean matchDamage,
+            final boolean matchNBT,
+            @NotNull final ItemStack result,
+            final int count,
+            final int minCount) {
         this(stack, matchDamage, matchNBT, ItemStackUtils.EMPTY, count, minCount, true);
     }
 
     /**
      * Create a Stack deliverable.
      *
-     * @param stack       the required stack.
-     * @param matchDamage   if damage has to be matched.
-     * @param matchNBT    if NBT has to be matched.
-     * @param result      the result stack.
-     * @param count       the count.
-     * @param minCount    the min count.
+     * @param stack                   the required stack.
+     * @param matchDamage             if damage has to be matched.
+     * @param matchNBT                if NBT has to be matched.
+     * @param result                  the result stack.
+     * @param count                   the count.
+     * @param minCount                the min count.
      * @param canBeResolvedByBuilding if can be resolved by building.
      */
-    public MinimumStack(final ItemStack stack, final boolean matchDamage, final boolean matchNBT, final ItemStack result, final int count, final int minCount, final boolean canBeResolvedByBuilding)
-    {
+    public MinimumStack(final ItemStack stack, final boolean matchDamage, final boolean matchNBT, final ItemStack result, final int count, final int minCount, final boolean canBeResolvedByBuilding) {
         super(stack, matchDamage, matchNBT, result, count, minCount, canBeResolvedByBuilding);
     }
 
@@ -126,8 +119,7 @@ public class MinimumStack extends Stack
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static MinimumStack deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
-    {
+    public static MinimumStack deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound) {
         final Stack stack = Stack.deserialize(provider, controller, compound);
         return new MinimumStack(stack.getStack(), stack.matchDamage(), stack.matchNBT(), stack.getResult(), stack.getCount(), stack.getMinimumCount(), stack.canBeResolvedByBuilding());
     }
@@ -139,29 +131,24 @@ public class MinimumStack extends Stack
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static MinimumStack deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
-    {
+    public static MinimumStack deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer) {
         final Stack stack = Stack.deserialize(controller, buffer);
         return new MinimumStack(stack.getStack(), stack.matchDamage(), stack.matchNBT(), stack.getResult(), stack.getCount(), stack.getMinimumCount(), stack.canBeResolvedByBuilding());
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof MinimumStack))
-        {
+        if (!(o instanceof MinimumStack)) {
             return false;
         }
         return super.equals(o);
     }
 
     @Override
-    public Set<TypeToken<?>> getSuperClasses()
-    {
+    public Set<TypeToken<?>> getSuperClasses() {
         return TYPE_TOKENS;
     }
 }

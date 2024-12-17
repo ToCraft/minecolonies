@@ -19,8 +19,7 @@ import java.util.Objects;
 /**
  * Message sent to the server when the client saves a new snapshot by clicking on a warehouse.
  */
-public class ResourceScrollSaveWarehouseSnapshotMessage extends AbstractServerPlayMessage
-{
+public class ResourceScrollSaveWarehouseSnapshotMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "resource_scroll_save_warehouse_snapshot", ResourceScrollSaveWarehouseSnapshotMessage::new);
 
     /**
@@ -43,24 +42,21 @@ public class ResourceScrollSaveWarehouseSnapshotMessage extends AbstractServerPl
     /**
      * Empty constructor used when registering the message.
      */
-    public ResourceScrollSaveWarehouseSnapshotMessage(final BlockPos builderPos)
-    {
+    public ResourceScrollSaveWarehouseSnapshotMessage(final BlockPos builderPos) {
         this(builderPos, Map.of(), "");
     }
 
     /**
      * Empty constructor used when registering the message.
      */
-    public ResourceScrollSaveWarehouseSnapshotMessage(final BlockPos builderPos, @NotNull final Map<String, Integer> snapshot, @NotNull final String workOrderHash)
-    {
+    public ResourceScrollSaveWarehouseSnapshotMessage(final BlockPos builderPos, @NotNull final Map<String, Integer> snapshot, @NotNull final String workOrderHash) {
         super(TYPE);
         this.builderPos = builderPos;
         this.snapshot = snapshot;
         this.workOrderHash = workOrderHash;
     }
 
-    protected ResourceScrollSaveWarehouseSnapshotMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ResourceScrollSaveWarehouseSnapshotMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         builderPos = buf.readBoolean() ? buf.readBlockPos() : null;
         snapshot = buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readInt);
@@ -68,11 +64,9 @@ public class ResourceScrollSaveWarehouseSnapshotMessage extends AbstractServerPl
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeBoolean(builderPos != null);
-        if (builderPos != null)
-        {
+        if (builderPos != null) {
             buf.writeBlockPos(builderPos);
         }
         buf.writeMap(snapshot, FriendlyByteBuf::writeUtf, FriendlyByteBuf::writeInt);
@@ -80,11 +74,10 @@ public class ResourceScrollSaveWarehouseSnapshotMessage extends AbstractServerPl
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player) {
         player.getInventory().items.stream()
-          .filter(stack -> stack.getItem() instanceof ItemResourceScroll)
-          .filter(stack -> Objects.equals(builderPos, BuildingId.readFromItemStack(stack).id()))
-          .forEach(stack -> new WarehouseSnapshot(snapshot, workOrderHash).writeToItemStack(stack));
+                .filter(stack -> stack.getItem() instanceof ItemResourceScroll)
+                .filter(stack -> Objects.equals(builderPos, BuildingId.readFromItemStack(stack).id()))
+                .forEach(stack -> new WarehouseSnapshot(snapshot, workOrderHash).writeToItemStack(stack));
     }
 }

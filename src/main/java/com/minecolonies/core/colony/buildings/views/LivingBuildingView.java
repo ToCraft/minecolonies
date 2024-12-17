@@ -12,16 +12,14 @@ import java.util.List;
 /**
  * Living building view.
  */
-public abstract class LivingBuildingView extends AbstractBuildingView
-{
+public abstract class LivingBuildingView extends AbstractBuildingView {
     /**
      * Creates an instance of the citizen hut window.
      *
      * @param c the colonyView.
      * @param l the position the hut is at.
      */
-    public LivingBuildingView(final IColonyView c, final BlockPos l)
-    {
+    public LivingBuildingView(final IColonyView c, final BlockPos l) {
         super(c, l);
     }
 
@@ -31,8 +29,7 @@ public abstract class LivingBuildingView extends AbstractBuildingView
      * @return an unmodifiable list.
      */
     @NotNull
-    public List<Integer> getResidents()
-    {
+    public List<Integer> getResidents() {
         return getModuleViewByType(LivingBuildingModuleView.class).getAssignedCitizens();
     }
 
@@ -41,8 +38,7 @@ public abstract class LivingBuildingView extends AbstractBuildingView
      *
      * @param index the index to remove it from.
      */
-    public void removeResident(final int id)
-    {
+    public void removeResident(final int id) {
         getModuleViewByType(LivingBuildingModuleView.class).remove(id);
     }
 
@@ -51,35 +47,34 @@ public abstract class LivingBuildingView extends AbstractBuildingView
      *
      * @param id the id of the citizen.
      */
-    public void addResident(final int id)
-    {
+    public void addResident(final int id) {
         getModuleViewByType(LivingBuildingModuleView.class).add(id);
     }
 
     /**
      * Get the max citizens.
+     *
      * @return the max.
      */
-    public int getMax()
-    {
+    public int getMax() {
         return getModuleViewByType(LivingBuildingModuleView.class).getMax();
     }
 
     /**
      * Get the  hiring mode.
+     *
      * @return the mode.
      */
-    public HiringMode getHiringMode()
-    {
+    public HiringMode getHiringMode() {
         return getModuleViewByType(LivingBuildingModuleView.class).getHiringMode();
     }
 
     /**
      * Adjust the hiring mode.
+     *
      * @param value the value to set it to.
      */
-    public void setHiringMode(final HiringMode value)
-    {
+    public void setHiringMode(final HiringMode value) {
         getModuleViewByType(LivingBuildingModuleView.class).setHiringMode(value);
         new BuildingHiringModeMessage(this, value, getModuleViewByType(LivingBuildingModuleView.class).getProducer().getRuntimeID()).sendToServer();
     }

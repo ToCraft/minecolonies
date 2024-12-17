@@ -30,58 +30,47 @@ import static com.minecolonies.api.util.constant.RSConstants.CONST_BUILDING_RESO
 /**
  * Resolver that checks if a deliverable request is already in the building it is being requested from.
  */
-public class BuildingRequestResolver extends AbstractBuildingDependentRequestResolver<IDeliverable>
-{
-    public BuildingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
-    {
+public class BuildingRequestResolver extends AbstractBuildingDependentRequestResolver<IDeliverable> {
+    public BuildingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token) {
         super(location, token);
     }
 
     @Override
-    public int getPriority()
-    {
+    public int getPriority() {
         return CONST_BUILDING_RESOLVER_PRIORITY;
     }
 
     @Override
-    public TypeToken<? extends IDeliverable> getRequestType()
-    {
+    public TypeToken<? extends IDeliverable> getRequestType() {
         return TypeConstants.DELIVERABLE;
     }
 
     @Override
-    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
-    {
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) {
 
     }
 
     @Override
-    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
-    {
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) {
 
     }
 
     @Override
-    public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
-    {
-        if (building instanceof BuildingWareHouse)
-        {
+    public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building) {
+        if (building instanceof BuildingWareHouse) {
             return false;
         }
 
-        if (!request.getRequest().canBeResolvedByBuilding())
-        {
+        if (!request.getRequest().canBeResolvedByBuilding()) {
             return false;
         }
 
         final Predicate<ItemStack> pred = itemStack -> {
-            if (ItemStackUtils.isEmpty(itemStack) || !request.getRequest().matches(itemStack))
-            {
+            if (ItemStackUtils.isEmpty(itemStack) || !request.getRequest().matches(itemStack)) {
                 return false;
             }
 
-            if (!request.hasParent())
-            {
+            if (!request.hasParent()) {
                 return true;
             }
 
@@ -96,34 +85,28 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Nullable
     @Override
     public List<IToken<?>> attemptResolveForBuilding(
-      @NotNull final IRequestManager manager,
-      @NotNull final IRequest<? extends IDeliverable> request,
-      @NotNull final AbstractBuilding building)
-    {
+            @NotNull final IRequestManager manager,
+            @NotNull final IRequest<? extends IDeliverable> request,
+            @NotNull final AbstractBuilding building) {
         final int totalRequested = request.getRequest().getCount();
         int totalAvailable = InventoryUtils.getCountFromBuilding(building, itemStack -> request.getRequest().matches(itemStack));
-        for (final Map.Entry<ItemStorage, Integer> reserved : building.reservedStacksExcluding(request).entrySet())
-        {
-            if (request.getRequest().matches(reserved.getKey().getItemStack()))
-            {
+        for (final Map.Entry<ItemStorage, Integer> reserved : building.reservedStacksExcluding(request).entrySet()) {
+            if (request.getRequest().matches(reserved.getKey().getItemStack())) {
                 totalAvailable = Math.max(0, totalAvailable - reserved.getValue());
                 break;
             }
         }
 
-        if (totalAvailable <= 0)
-        {
+        if (totalAvailable <= 0) {
             //Most likely the reserved amount consumed everything. Backtrack.
             return null;
         }
 
-        if (totalAvailable >= totalRequested)
-        {
+        if (totalAvailable >= totalRequested) {
             return Lists.newArrayList();
         }
 
-        if (totalAvailable >= request.getRequest().getMinimumCount())
-        {
+        if (totalAvailable >= request.getRequest().getMinimumCount()) {
             return Lists.newArrayList();
         }
 
@@ -133,21 +116,17 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     }
 
     @Override
-    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
-    {
+    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building) {
         final Set<IItemHandlerCapProvider> tileEntities = getCapabilityProviders(manager, building);
 
         final int total = request.getRequest().getCount();
         int current = 0;
         final List<ItemStack> deliveries = new ArrayList<>();
 
-        for (final IItemHandlerCapProvider tile : tileEntities)
-        {
+        for (final IItemHandlerCapProvider tile : tileEntities) {
             final List<ItemStack> inv = InventoryUtils.filterProvider(tile, itemStack -> request.getRequest().matches(itemStack));
-            for (final ItemStack stack : inv)
-            {
-                if (!stack.isEmpty() && current < total)
-                {
+            for (final ItemStack stack : inv) {
+                if (!stack.isEmpty() && current < total) {
                     deliveries.add(stack);
                     current += stack.getCount();
                 }
@@ -161,28 +140,23 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
-    {
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest) {
         return null;
     }
 
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
 
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
 
     }
 
     @Override
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        if (!manager.getColony().getWorld().isClientSide)
-        {
+    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token) {
+        if (!manager.getColony().getWorld().isClientSide) {
             return Optional.ofNullable(manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation()));
         }
 
@@ -191,9 +165,8 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
     @NotNull
     private Set<IItemHandlerCapProvider> getCapabilityProviders(
-      @NotNull final IRequestManager manager,
-      @NotNull final AbstractBuilding building)
-    {
+            @NotNull final IRequestManager manager,
+            @NotNull final AbstractBuilding building) {
         final Set<IItemHandlerCapProvider> tileEntities = Sets.newHashSet();
         tileEntities.add(building.getTileEntity());
         tileEntities.removeIf(Objects::isNull);

@@ -25,8 +25,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Enchanter window class.
  */
-public class EnchanterStationModuleWindow extends AbstractModuleWindow
-{
+public class EnchanterStationModuleWindow extends AbstractModuleWindow {
     /**
      * The resource string.
      */
@@ -67,49 +66,40 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
      *
      * @param building class extending
      */
-    public EnchanterStationModuleWindow(final IBuildingView building, final EnchanterStationsModuleView module)
-    {
+    public EnchanterStationModuleWindow(final IBuildingView building, final EnchanterStationsModuleView module) {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
         super.registerButton(BUTTON_SWITCH, this::switchClicked);
         this.module = module;
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         selectedBuildings = module.getBuildingsToGatherFrom();
         allBuildings = buildingView.getColony().getBuildings().stream()
-                         .filter(b -> b instanceof AbstractBuildingView && !b.getModuleViews(WorkerBuildingModuleView.class).isEmpty() && b.getBuildingType() != ModBuildings.enchanter.get())
-                         .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(buildingView.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(buildingView.getPosition(),
-                           b2.getPosition())))
-                         .collect(Collectors.toList());
+                .filter(b -> b instanceof AbstractBuildingView && !b.getModuleViews(WorkerBuildingModuleView.class).isEmpty() && b.getBuildingType() != ModBuildings.enchanter.get())
+                .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(buildingView.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(buildingView.getPosition(),
+                        b2.getPosition())))
+                .collect(Collectors.toList());
         workerList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);
-        workerList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        workerList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return allBuildings.size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 IBuildingView bView = allBuildings.get(index);
                 String text = "";
-                if (bView instanceof AbstractBuildingView)
-                {
+                if (bView instanceof AbstractBuildingView) {
                     text += bView.getCustomName().isEmpty() ? Component.translatableEscape(bView.getBuildingType().getTranslationKey()).getString() : bView.getCustomName();
                     text += " " + BlockPosUtil.getDistance2D(buildingView.getPosition(), bView.getPosition()) + "m";
                     rowPane.findPaneOfTypeByID(WORKER_NAME, Text.class).setText(Component.literal(text));
                     final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
-                    if (selectedBuildings.contains(bView.getID()))
-                    {
+                    if (selectedBuildings.contains(bView.getID())) {
                         switchButton.setText(Component.translatableEscape(ON));
-                    }
-                    else
-                    {
+                    } else {
                         switchButton.setText(Component.translatableEscape(OFF));
                     }
                 }
@@ -122,18 +112,14 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
      *
      * @param button clicked button.
      */
-    private void switchClicked(@NotNull final Button button)
-    {
+    private void switchClicked(@NotNull final Button button) {
         final int row = workerList.getListElementIndexByPane(button);
         String buttonText = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
 
-        if (buttonText.equals(OFF))
-        {
+        if (buttonText.equals(OFF)) {
             button.setText(Component.translatableEscape(ON));
             module.addWorker(allBuildings.get(row).getID());
-        }
-        else
-        {
+        } else {
             button.setText(Component.translatableEscape(OFF));
             module.removeWorker(allBuildings.get(row).getID());
         }

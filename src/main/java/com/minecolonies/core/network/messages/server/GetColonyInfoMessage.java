@@ -28,8 +28,7 @@ import static com.minecolonies.core.MineColonies.getConfig;
 /**
  * Message for asking the server for some colony info before creation.
  */
-public class GetColonyInfoMessage extends AbstractServerPlayMessage
-{
+public class GetColonyInfoMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "get_colony_info", GetColonyInfoMessage::new);
 
     /**
@@ -37,70 +36,52 @@ public class GetColonyInfoMessage extends AbstractServerPlayMessage
      */
     BlockPos pos;
 
-    public GetColonyInfoMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public GetColonyInfoMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(type);
         pos = buf.readBlockPos();
     }
 
-    public GetColonyInfoMessage(final BlockPos pos)
-    {
+    public GetColonyInfoMessage(final BlockPos pos) {
         super(TYPE);
         this.pos = pos;
     }
 
     @Override
-    public void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    public void toBytes(final RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(pos);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender)
-    {
-        if (sender == null)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender) {
+        if (sender == null) {
             return;
         }
         final Level world = sender.level();
 
-        if (IColonyManager.getInstance().getColonyByPosFromWorld(world, pos) instanceof Colony)
-        {
+        if (IColonyManager.getInstance().getColonyByPosFromWorld(world, pos) instanceof Colony) {
             MessageUtils.format(HUT_BLOCK_MISSING_BUILDING).sendTo(sender);
             return;
         }
 
-        if (IColonyManager.getInstance().getIColonyByOwner(world, sender) instanceof Colony colony)
-        {
+        if (IColonyManager.getInstance().getIColonyByOwner(world, sender) instanceof Colony colony) {
             new OpenDeleteAbandonColonyMessage(pos, colony.getName(), colony.getCenter(), colony.getID()).sendToPlayer(sender);
             return;
         }
 
         final IColony nextColony = IColonyManager.getInstance().getClosestColony(world, pos);
-        if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
-        {
+        if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos)) {
             final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, world.getSharedSpawnPos()));
-            if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
-            {
+            if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()) {
                 new OpenCantFoundColonyWarningMessage(Component.translatable("com.minecolonies.core.founding.tooclosetospawn", (int) (MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get() - spawnDistance)), pos, true).sendToPlayer(sender);
-            }
-            else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
-            {
+            } else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()) {
                 new OpenCantFoundColonyWarningMessage(Component.translatable("com.minecolonies.core.founding.toofarfromspawn", (int) (spawnDistance - MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())), pos, true).sendToPlayer(sender);
-            }
-            else if (world.getBlockEntity(pos) instanceof TileEntityColonyBuilding townhall && townhall.getPositionedTags().containsKey(BlockPos.ZERO) && townhall.getPositionedTags().get(BlockPos.ZERO).contains(DEACTIVATED))
-            {
-               new OpenReactivateColonyMessage(nextColony == null ? "" : nextColony.getName(), nextColony == null ? Integer.MAX_VALUE : (int) BlockPosUtil.getDistance(nextColony.getCenter(), pos) - (getConfig().getServer().initialColonySize.get() << 4), pos).sendToPlayer(sender);
-            }
-            else
-            {
+            } else if (world.getBlockEntity(pos) instanceof TileEntityColonyBuilding townhall && townhall.getPositionedTags().containsKey(BlockPos.ZERO) && townhall.getPositionedTags().get(BlockPos.ZERO).contains(DEACTIVATED)) {
+                new OpenReactivateColonyMessage(nextColony == null ? "" : nextColony.getName(), nextColony == null ? Integer.MAX_VALUE : (int) BlockPosUtil.getDistance(nextColony.getCenter(), pos) - (getConfig().getServer().initialColonySize.get() << 4), pos).sendToPlayer(sender);
+            } else {
                 new OpenColonyFoundingCovenantMessage(nextColony == null ? "" : nextColony.getName(), nextColony == null ? Integer.MAX_VALUE : (int) BlockPosUtil.getDistance(nextColony.getCenter(), pos) - (getConfig().getServer().initialColonySize.get() << 4), pos).sendToPlayer(sender);
             }
-        }
-        else
-        {
-            if (nextColony == null)
-            {
+        } else {
+            if (nextColony == null) {
                 return;
             }
 

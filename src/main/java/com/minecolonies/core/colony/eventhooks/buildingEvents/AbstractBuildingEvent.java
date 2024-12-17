@@ -2,21 +2,18 @@ package com.minecolonies.core.colony.eventhooks.buildingEvents;
 
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.util.BlockPosUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_NAME;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_POS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The abstract event handling building/upgrading huts.
  */
-public abstract class AbstractBuildingEvent implements IBuildingEventDescription
-{
+public abstract class AbstractBuildingEvent implements IBuildingEventDescription {
 
     private BlockPos eventPos;
     private String buildingName;
@@ -25,39 +22,34 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     /**
      * Creates a new building event.
      */
-    public AbstractBuildingEvent()
-    {
+    public AbstractBuildingEvent() {
     }
 
     /**
      * Creates a new building event.
-     * 
+     *
      * @param eventPos      the position of the hut block of the building.
      * @param buildingName  the name of the building.
      * @param buildingLevel the level of the building after this event.
      */
-    public AbstractBuildingEvent(BlockPos eventPos, String buildingName, int buildingLevel)
-    {
+    public AbstractBuildingEvent(BlockPos eventPos, String buildingName, int buildingLevel) {
         this.eventPos = eventPos;
         this.buildingName = buildingName;
         level = buildingLevel;
     }
 
     @Override
-    public BlockPos getEventPos()
-    {
+    public BlockPos getEventPos() {
         return eventPos;
     }
 
     @Override
-    public void setEventPos(BlockPos pos)
-    {
+    public void setEventPos(BlockPos pos) {
         eventPos = pos;
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag compound = new CompoundTag();
         BlockPosUtil.write(compound, TAG_EVENT_POS, eventPos);
         compound.putString(TAG_BUILDING_NAME, buildingName);
@@ -66,56 +58,48 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
         buildingName = compound.getString(TAG_BUILDING_NAME);
         level = compound.getInt(TAG_BUILDING_LEVEL);
     }
 
     @Override
-    public void serialize(RegistryFriendlyByteBuf buf)
-    {
+    public void serialize(RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(eventPos);
         buf.writeUtf(buildingName);
         buf.writeInt(level);
     }
 
     @Override
-    public void deserialize(RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(RegistryFriendlyByteBuf buf) {
         eventPos = buf.readBlockPos();
         buildingName = buf.readUtf();
         level = buf.readInt();
     }
 
     @Override
-    public String getBuildingName()
-    {
+    public String getBuildingName() {
         return buildingName;
     }
 
     @Override
-    public void setBuildingName(String buildingName)
-    {
+    public void setBuildingName(String buildingName) {
         this.buildingName = buildingName;
     }
 
     @Override
-    public int getLevel()
-    {
+    public int getLevel() {
         return level;
     }
 
     @Override
-    public void setLevel(int lvl)
-    {
+    public void setLevel(int lvl) {
         level = lvl;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return toDisplayString();
     }
 }

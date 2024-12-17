@@ -9,8 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Renderer used for mummies.
  */
-public class RendererMummy extends AbstractRendererEgyptian<AbstractEntityEgyptian, ModelMummy>
-{
+public class RendererMummy extends AbstractRendererEgyptian<AbstractEntityEgyptian, ModelMummy> {
     /**
      * Texture of the entity.
      */
@@ -21,14 +20,12 @@ public class RendererMummy extends AbstractRendererEgyptian<AbstractEntityEgypti
      *
      * @param context the renderManager
      */
-    public RendererMummy(final EntityRendererProvider.Context context)
-    {
+    public RendererMummy(final EntityRendererProvider.Context context) {
         super(context, new ModelMummy(context.bakeLayer(ClientRegistryHandler.MUMMY)), 0.5F);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityEgyptian entity)
-    {
+    public ResourceLocation getTextureLocation(final AbstractEntityEgyptian entity) {
         return TEXTURE;
     }
 }

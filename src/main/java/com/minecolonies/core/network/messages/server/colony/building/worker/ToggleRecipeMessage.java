@@ -15,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to toggle recipes (enable/disable).
  */
-public class ToggleRecipeMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class ToggleRecipeMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "toggle_recipe", ToggleRecipeMessage::new);
 
     /**
@@ -31,37 +30,33 @@ public class ToggleRecipeMessage extends AbstractBuildingServerMessage<IBuilding
 
     /**
      * Creates message for player to enable/disable a recipe.
-     *  @param building view of the building to read data from
+     *
+     * @param building view of the building to read data from
      * @param location the recipeLocation.
-     * @param id the unique id of the crafting module.
+     * @param id       the unique id of the crafting module.
      */
-    public ToggleRecipeMessage(@NotNull final IBuildingView building, final int location, final int id)
-    {
+    public ToggleRecipeMessage(@NotNull final IBuildingView building, final int location, final int id) {
         super(TYPE, building);
         this.recipeLocation = location;
         this.id = id;
     }
 
-    protected ToggleRecipeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ToggleRecipeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.recipeLocation = buf.readInt();
         this.id = buf.readInt();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(this.recipeLocation);
         buf.writeInt(this.id);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (building.getModule(id)!= null)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (building.getModule(id) != null) {
             final AbstractCraftingBuildingModule module = (AbstractCraftingBuildingModule) building.getModule(id);
             module.toggle(recipeLocation);
         }

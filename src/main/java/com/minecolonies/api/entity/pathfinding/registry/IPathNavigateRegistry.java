@@ -7,11 +7,9 @@ import net.minecraft.world.entity.Mob;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public interface IPathNavigateRegistry
-{
+public interface IPathNavigateRegistry {
 
-    static IPathNavigateRegistry getInstance()
-    {
+    static IPathNavigateRegistry getInstance() {
         return IMinecoloniesAPI.getInstance().getPathNavigateRegistry();
     }
 

@@ -15,14 +15,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -30,8 +27,7 @@ import java.util.List;
 
 import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkComposter.COMPOSTABLE_LIST;
 
-public class BuildingComposter extends AbstractBuilding
-{
+public class BuildingComposter extends AbstractBuilding {
     /**
      * Settings key for the composting mode.
      */
@@ -73,8 +69,7 @@ public class BuildingComposter extends AbstractBuilding
      * @param c the colony
      * @param l the position
      */
-    public BuildingComposter(@NotNull final IColony c, final BlockPos l)
-    {
+    public BuildingComposter(@NotNull final IColony c, final BlockPos l) {
         super(c, l);
         keepX.put((stack) -> this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).isItemInList(new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
     }
@@ -84,52 +79,43 @@ public class BuildingComposter extends AbstractBuilding
      *
      * @return copy of the list
      */
-    public List<BlockPos> getBarrels()
-    {
+    public List<BlockPos> getBarrels() {
         return ImmutableList.copyOf(barrels);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return COMPOSTER;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
-    {
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world) {
         super.registerBlockPosition(block, pos, world);
-        if (block == ModBlocks.blockBarrel && !barrels.contains(pos))
-        {
+        if (block == ModBlocks.blockBarrel && !barrels.contains(pos)) {
             barrels.add(pos);
         }
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         final ListTag compostBinTagList = compound.getList(TAG_BARRELS, Tag.TAG_INT_ARRAY);
-        for (int i = 0; i < compostBinTagList.size(); ++i)
-        {
+        for (int i = 0; i < compostBinTagList.size(); ++i) {
             barrels.add(NBTUtils.readBlockPos(compostBinTagList.get(i)));
         }
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
         @NotNull final ListTag compostBinTagList = new ListTag();
-        for (@NotNull final BlockPos entry : barrels)
-        {
+        for (@NotNull final BlockPos entry : barrels) {
             compostBinTagList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_BARRELS, compostBinTagList);

@@ -12,11 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -25,8 +21,7 @@ import java.util.function.Supplier;
  * IBuildingView}. Also links a given {@link IBuilding} to a given {@link AbstractBlockHut}.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public class BuildingEntry
-{
+public class BuildingEntry {
     private final AbstractBlockHut<?> buildingBlock;
 
     private final BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
@@ -37,13 +32,12 @@ public class BuildingEntry
     /**
      * A builder class for {@link BuildingEntry}.
      */
-    public static final class Builder
-    {
-        private AbstractBlockHut<?>                                        buildingBlock;
-        private BiFunction<IColony, BlockPos, IBuilding>                   buildingProducer;
+    public static final class Builder {
+        private AbstractBlockHut<?> buildingBlock;
+        private BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
         private Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
-        private List<ModuleProducer>                                       buildingModuleProducers = new ArrayList<>();
-        private ResourceLocation                                           registryName;
+        private List<ModuleProducer> buildingModuleProducers = new ArrayList<>();
+        private ResourceLocation registryName;
 
         /**
          * Sets the block that represents this building.
@@ -51,8 +45,7 @@ public class BuildingEntry
          * @param buildingBlock The block.
          * @return The builder.
          */
-        public Builder setBuildingBlock(final AbstractBlockHut<?> buildingBlock)
-        {
+        public Builder setBuildingBlock(final AbstractBlockHut<?> buildingBlock) {
             this.buildingBlock = buildingBlock;
             return this;
         }
@@ -63,8 +56,7 @@ public class BuildingEntry
          * @param buildingProducer The callback used to create the {@link IBuilding}.
          * @return The builder.
          */
-        public Builder setBuildingProducer(final BiFunction<IColony, BlockPos, IBuilding> buildingProducer)
-        {
+        public Builder setBuildingProducer(final BiFunction<IColony, BlockPos, IBuilding> buildingProducer) {
             this.buildingProducer = buildingProducer;
             return this;
         }
@@ -75,8 +67,7 @@ public class BuildingEntry
          * @param buildingViewProducer The callback used to create the {@link IBuildingView}.
          * @return The builder.
          */
-        public Builder setBuildingViewProducer(final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer)
-        {
+        public Builder setBuildingViewProducer(final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer) {
             this.buildingViewProducer = buildingViewProducer;
             return this;
         }
@@ -87,8 +78,7 @@ public class BuildingEntry
          * @param registryName The name for the registry entry.
          * @return The builder.
          */
-        public Builder setRegistryName(final ResourceLocation registryName)
-        {
+        public Builder setRegistryName(final ResourceLocation registryName) {
             this.registryName = registryName;
             return this;
         }
@@ -99,8 +89,7 @@ public class BuildingEntry
          * @return The entry.
          */
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder explicitly allowed to create an instance.
-        public BuildingEntry createBuildingEntry()
-        {
+        public BuildingEntry createBuildingEntry() {
             Objects.requireNonNull(buildingBlock);
             Objects.requireNonNull(buildingProducer);
             Objects.requireNonNull(buildingViewProducer);
@@ -111,34 +100,29 @@ public class BuildingEntry
 
         /**
          * Add a building module producer.
+         *
          * @return the builder again.
          */
-        public Builder addBuildingModuleProducer(final ModuleProducer moduleSet)
-        {
+        public Builder addBuildingModuleProducer(final ModuleProducer moduleSet) {
             buildingModuleProducers.add(moduleSet);
             return this;
         }
     }
 
-    public String getTranslationKey()
-    {
+    public String getTranslationKey() {
         return "com." + registryName.getNamespace() + ".building." + registryName.getPath();
     }
 
     private final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
 
-    public AbstractBlockHut<?> getBuildingBlock()
-    {
+    public AbstractBlockHut<?> getBuildingBlock() {
         return buildingBlock;
     }
 
-    public IBuilding produceBuilding(final BlockPos position, final IColony colony)
-    {
+    public IBuilding produceBuilding(final BlockPos position, final IColony colony) {
         final IBuilding building = buildingProducer.apply(colony, position);
-        for (final ModuleProducer<IBuildingModule, IBuildingModuleView> moduleTuple : buildingModuleProducers)
-        {
-            if (moduleTuple.moduleProducer != null)
-            {
+        for (final ModuleProducer<IBuildingModule, IBuildingModuleView> moduleTuple : buildingModuleProducers) {
+            if (moduleTuple.moduleProducer != null) {
                 building.registerModule(moduleTuple.moduleProducer.get().setBuilding(building).setProducer(moduleTuple));
             }
         }
@@ -146,14 +130,11 @@ public class BuildingEntry
         return building;
     }
 
-    public IBuildingView produceBuildingView(final BlockPos position, final IColonyView colony)
-    {
+    public IBuildingView produceBuildingView(final BlockPos position, final IColonyView colony) {
         final IBuildingView buildingView = buildingViewProducer.get().apply(colony, position);
         buildingView.setBuildingType(this);
-        for (final ModuleProducer<IBuildingModule,IBuildingModuleView> moduleSet : buildingModuleProducers)
-        {
-            if (moduleSet.viewProducer != null)
-            {
+        for (final ModuleProducer<IBuildingModule, IBuildingModuleView> moduleSet : buildingModuleProducers) {
+            if (moduleSet.viewProducer != null) {
                 buildingView.registerModule(moduleSet.viewProducer.get().get().setProducer(moduleSet));
             }
         }
@@ -161,15 +142,16 @@ public class BuildingEntry
         return buildingView;
     }
 
-    public List<ModuleProducer> getModuleProducers() { return buildingModuleProducers;}
+    public List<ModuleProducer> getModuleProducers() {
+        return buildingModuleProducers;
+    }
 
     private BuildingEntry(
-      final ResourceLocation registryName,
-      final AbstractBlockHut<?> buildingBlock,
-      final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
-      final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer,
-      List<ModuleProducer> buildingModuleProducers)
-    {
+            final ResourceLocation registryName,
+            final AbstractBlockHut<?> buildingBlock,
+            final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
+            final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer,
+            List<ModuleProducer> buildingModuleProducers) {
         super();
         this.registryName = registryName;
         this.buildingBlock = buildingBlock;
@@ -180,18 +162,17 @@ public class BuildingEntry
 
     /**
      * Get the assigned registry name.
+     *
      * @return
      */
-    public ResourceLocation getRegistryName()
-    {
+    public ResourceLocation getRegistryName() {
         return registryName;
     }
 
     /**
      * Set of servermodule and its view with ID, module or view might be null
      */
-    public static class ModuleProducer<MODULECLASS extends IBuildingModule, VIEWCLASS extends IBuildingModuleView>
-    {
+    public static class ModuleProducer<MODULECLASS extends IBuildingModule, VIEWCLASS extends IBuildingModuleView> {
         /**
          * Map of all modules, by serialization key
          */
@@ -203,25 +184,23 @@ public class BuildingEntry
         private static int runtimeIdGenerator = 0;
 
         public ModuleProducer(
-          final String key, final Supplier<IBuildingModule> moduleProducer,
-          final Supplier<Supplier<IBuildingModuleView>> viewProducer)
-        {
+                final String key, final Supplier<IBuildingModule> moduleProducer,
+                final Supplier<Supplier<IBuildingModuleView>> viewProducer) {
             this.key = key;
             this.id = ++runtimeIdGenerator;
             this.viewProducer = viewProducer;
             this.moduleProducer = moduleProducer;
 
-            ModuleProducer previous = ALL_MODULES.put(key,this);
-            if (previous != null)
-            {
-                throw new RuntimeException("Tried to register existing module: "+key+" again!");
+            ModuleProducer previous = ALL_MODULES.put(key, this);
+            if (previous != null) {
+                throw new RuntimeException("Tried to register existing module: " + key + " again!");
             }
         }
 
         /**
          * Internal temporary ID, used for sync, not guaranteed to persist between updates
          */
-        private final int                                     id;
+        private final int id;
 
         /**
          * Saving and loading ID, should never change
@@ -236,49 +215,44 @@ public class BuildingEntry
         /**
          * Server module producers
          */
-        private final Supplier<IBuildingModule>               moduleProducer;
+        private final Supplier<IBuildingModule> moduleProducer;
 
         /**
          * Internal temporary ID, used for sync, not guaranteed to persist between updates
          */
-        public int getRuntimeID()
-        {
+        public int getRuntimeID() {
             return id;
         }
 
         /**
          * Get if a view exists
+         *
          * @return
          */
-        public boolean hasView()
-        {
+        public boolean hasView() {
             return viewProducer != null;
         }
 
         /**
          * Get if a server module exists
+         *
          * @return
          */
-        public boolean hasServerModule()
-        {
+        public boolean hasServerModule() {
             return moduleProducer != null;
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return id;
         }
 
         @Override
-        public boolean equals(final Object o)
-        {
-            if (this == o)
-            {
+        public boolean equals(final Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
-            {
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
             final ModuleProducer that = (ModuleProducer) o;
@@ -293,11 +267,9 @@ public class BuildingEntry
      * @return
      */
     @Nullable
-    public static IBuildingModule produceModuleWithoutBuilding(final String key)
-    {
+    public static IBuildingModule produceModuleWithoutBuilding(final String key) {
         final var producer = ModuleProducer.ALL_MODULES.get(key);
-        if (producer.hasServerModule())
-        {
+        if (producer.hasServerModule()) {
             final IBuildingModule module = producer.moduleProducer.get();
             module.setProducer(producer);
             return module;
@@ -313,11 +285,9 @@ public class BuildingEntry
      * @return
      */
     @Nullable
-    public static IBuildingModuleView produceViewWithoutBuilding(final String key)
-    {
+    public static IBuildingModuleView produceViewWithoutBuilding(final String key) {
         final var producer = ModuleProducer.ALL_MODULES.get(key);
-        if (producer.hasView())
-        {
+        if (producer.hasView()) {
             return producer.viewProducer.get().get();
         }
 
@@ -329,8 +299,7 @@ public class BuildingEntry
      *
      * @return
      */
-    public static Map<String, ModuleProducer> getALlModuleProducers()
-    {
+    public static Map<String, ModuleProducer> getALlModuleProducers() {
         return ImmutableMap.copyOf(ModuleProducer.ALL_MODULES);
     }
 
@@ -340,8 +309,7 @@ public class BuildingEntry
      * @param key
      * @return
      */
-    public static ModuleProducer getProducer(String key)
-    {
+    public static ModuleProducer getProducer(String key) {
         return ModuleProducer.ALL_MODULES.get(key);
     }
 
@@ -351,12 +319,9 @@ public class BuildingEntry
      * @param runtimeID
      * @return
      */
-    public static ModuleProducer getProducer(int runtimeID)
-    {
-        for (final ModuleProducer producer : ModuleProducer.ALL_MODULES.values())
-        {
-            if (producer.getRuntimeID() == runtimeID)
-            {
+    public static ModuleProducer getProducer(int runtimeID) {
+        for (final ModuleProducer producer : ModuleProducer.ALL_MODULES.values()) {
+            if (producer.getRuntimeID() == runtimeID) {
                 return producer;
             }
         }

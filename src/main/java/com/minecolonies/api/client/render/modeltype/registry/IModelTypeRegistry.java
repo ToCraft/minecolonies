@@ -8,15 +8,13 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The registry interface for model types.
  */
-public interface IModelTypeRegistry
-{
+public interface IModelTypeRegistry {
     /**
      * Gets the current instance of the model type registry.
      *
      * @return The model type registry instance.
      */
-    static IModelTypeRegistry getInstance()
-    {
+    static IModelTypeRegistry getInstance() {
         return IMinecoloniesAPI.getInstance().getModelTypeRegistry();
     }
 

@@ -5,8 +5,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
 import net.neoforged.neoforge.common.ModConfigSpec.Builder;
 
-public class CommonConfiguration extends AbstractConfiguration
-{
+public class CommonConfiguration extends AbstractConfiguration {
     public final BooleanValue generateSupplyLoot;
     public final BooleanValue rsEnableDebugLogging;
 
@@ -15,8 +14,7 @@ public class CommonConfiguration extends AbstractConfiguration
      *
      * @param builder config builder
      */
-    public CommonConfiguration(final Builder builder)
-    {
+    public CommonConfiguration(final Builder builder) {
         super(builder, Constants.MOD_ID);
 
         createCategory("gameplay");

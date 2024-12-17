@@ -8,16 +8,15 @@ package com.minecolonies.core.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.RenderType;
 import org.jetbrains.annotations.NotNull;
 
-public class ScarecrowModel extends Model
-{
+public class ScarecrowModel extends Model {
     //fields
     ModelPart head;
     ModelPart post;
@@ -31,8 +30,7 @@ public class ScarecrowModel extends Model
     ModelPart rightLeg;
     ModelPart leftLeg;
 
-    public ScarecrowModel(final ModelPart part)
-    {
+    public ScarecrowModel(final ModelPart part) {
         super(RenderType::entitySolid);
         head = part.getChild("head");
         post = part.getChild("post");
@@ -47,66 +45,64 @@ public class ScarecrowModel extends Model
         leftLeg = part.getChild("left_leg");
     }
 
-    public static LayerDefinition createMesh()
-    {
+    public static LayerDefinition createMesh() {
         MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
         PartDefinition partDefinition = meshdefinition.getRoot();
 
         PartDefinition headDefinition = partDefinition.addOrReplaceChild("head",
-          CubeListBuilder.create().texOffs(0, 0).texOffs(0, 0).addBox(-8.2F, -35.6F, -4.2F, 8, 8, 8).mirror()
-          , PartPose.offsetAndRotation(7F, 24F, -1F, 0F, 0.1858931F, -0.1092638F));
+                CubeListBuilder.create().texOffs(0, 0).texOffs(0, 0).addBox(-8.2F, -35.6F, -4.2F, 8, 8, 8).mirror()
+                , PartPose.offsetAndRotation(7F, 24F, -1F, 0F, 0.1858931F, -0.1092638F));
 
         PartDefinition postDefinition = partDefinition.addOrReplaceChild("post",
-          CubeListBuilder.create().texOffs(0, 32).addBox(-1F, -16F, -1F, 2, 16, 2).mirror()
-          , PartPose.offset(0F, 24F, 0F));
+                CubeListBuilder.create().texOffs(0, 32).addBox(-1F, -16F, -1F, 2, 16, 2).mirror()
+                , PartPose.offset(0F, 24F, 0F));
 
         PartDefinition leftArmPegDefinition = partDefinition.addOrReplaceChild("leftArmPeg",
-          CubeListBuilder.create().texOffs(9, 33).addBox(23.5F, 1F, -1F, 2, 2, 2).mirror()
-          , PartPose.offsetAndRotation(7F, 24F, 0F,  0F, 0F, -1.351339F));
+                CubeListBuilder.create().texOffs(9, 33).addBox(23.5F, 1F, -1F, 2, 2, 2).mirror()
+                , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, -1.351339F));
 
         PartDefinition rightArmPegDefinition = partDefinition.addOrReplaceChild("rightArmPeg",
-          CubeListBuilder.create().texOffs(9, 33).addBox(-28F, 15.8F, -1F, 2, 2, 2).mirror()
-          , PartPose.offsetAndRotation(7F, 24F, 0F,  0F, 0F, 1.351339F));
+                CubeListBuilder.create().texOffs(9, 33).addBox(-28F, 15.8F, -1F, 2, 2, 2).mirror()
+                , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, 1.351339F));
 
         PartDefinition torsoDefinition = partDefinition.addOrReplaceChild("torso",
-          CubeListBuilder.create().texOffs(16, 16).addBox(-10.3F, -27.6F, -2F, 8, 12, 4).mirror()
-          , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, -0.0349066F));
+                CubeListBuilder.create().texOffs(16, 16).addBox(-10.3F, -27.6F, -2F, 8, 12, 4).mirror()
+                , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, -0.0349066F));
 
         PartDefinition rightLegPegDefinition = partDefinition.addOrReplaceChild("rightLegPeg",
-          CubeListBuilder.create().texOffs(9, 33).addBox(-11F, -4F, -1F, 2, 2, 2).mirror()
-          , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, 0.0872665F));
+                CubeListBuilder.create().texOffs(9, 33).addBox(-11F, -4F, -1F, 2, 2, 2).mirror()
+                , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, 0.0872665F));
 
         PartDefinition leftLegPegDefinition = partDefinition.addOrReplaceChild("leftLegPeg",
-          CubeListBuilder.create().texOffs(9, 33).addBox(-4.5F, -5F, -1F, 2, 2, 2).mirror()
-          , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, -0.0872665F));
+                CubeListBuilder.create().texOffs(9, 33).addBox(-4.5F, -5F, -1F, 2, 2, 2).mirror()
+                , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, -0.0872665F));
 
         PartDefinition leftArmDefinition = partDefinition.addOrReplaceChild("left_arm",
-          CubeListBuilder.create().texOffs(40, 16).addBox(22.5F, -10F, -1.99F, 4, 12, 4).mirror()
-          , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, -1.351339F));
+                CubeListBuilder.create().texOffs(40, 16).addBox(22.5F, -10F, -1.99F, 4, 12, 4).mirror()
+                , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, -1.351339F));
 
         PartDefinition rightArmDefinition = partDefinition.addOrReplaceChild("right_arm",
-          CubeListBuilder.create().texOffs(40, 16).addBox(-29F, 4.8F, -1.99F, 4, 12, 4).mirror()
-          , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, 1.351339F));
+                CubeListBuilder.create().texOffs(40, 16).addBox(-29F, 4.8F, -1.99F, 4, 12, 4).mirror()
+                , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, 1.351339F));
 
         PartDefinition rightLegDefinition = partDefinition.addOrReplaceChild("right_leg",
-          CubeListBuilder.create().texOffs(0, 16).addBox(-12F, -15F, -1.99F, 4, 12, 4).mirror()
-          , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, 0.0872665F));
+                CubeListBuilder.create().texOffs(0, 16).addBox(-12F, -15F, -1.99F, 4, 12, 4).mirror()
+                , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, 0.0872665F));
 
         PartDefinition leftLegDefinition = partDefinition.addOrReplaceChild("left_leg",
-          CubeListBuilder.create().texOffs(0, 16).addBox(-5.5F, -16F, -1.98F, 4, 12, 4).mirror()
-          , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, -0.0872665F));
+                CubeListBuilder.create().texOffs(0, 16).addBox(-5.5F, -16F, -1.98F, 4, 12, 4).mirror()
+                , PartPose.offsetAndRotation(7F, 24F, 0F, 0F, 0F, -0.0872665F));
 
-        return LayerDefinition.create(meshdefinition,  128,  64 );
+        return LayerDefinition.create(meshdefinition, 128, 64);
     }
 
     @Override
     public void renderToBuffer(
-      final @NotNull PoseStack stack,
-      final @NotNull VertexConsumer iVertexBuilder,
-      final int p_225598_3_,
-      final int p_225598_4_,
-      final int p_350308_)
-    {
+            final @NotNull PoseStack stack,
+            final @NotNull VertexConsumer iVertexBuilder,
+            final int p_225598_3_,
+            final int p_225598_4_,
+            final int p_350308_) {
         head.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
         post.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
         leftArmPeg.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);

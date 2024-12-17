@@ -17,8 +17,7 @@ import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_STONE_SME
 /**
  * Class of the stone smeltery building.
  */
-public class BuildingStoneSmeltery extends AbstractBuilding
-{
+public class BuildingStoneSmeltery extends AbstractBuilding {
     /**
      * Description string of the building.
      */
@@ -30,47 +29,40 @@ public class BuildingStoneSmeltery extends AbstractBuilding
      * @param c the colony.
      * @param l the location
      */
-    public BuildingStoneSmeltery(final IColony c, final BlockPos l)
-    {
+    public BuildingStoneSmeltery(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return STONE_SMELTERY;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
-    {
+    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public SmeltingModule(final JobEntry jobEntry)
-        {
+        public SmeltingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         @NotNull
         @Override
-        public OptionalPredicate<ItemStack> getIngredientValidator()
-        {
+        public OptionalPredicate<ItemStack> getIngredientValidator() {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONE_SMELTERY)
                     .combine(super.getIngredientValidator());
         }
 
         @Override
-        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-        {
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) {
             if (!super.isRecipeCompatible(recipe)) return false;
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_STONE_SMELTERY).orElse(false);
         }

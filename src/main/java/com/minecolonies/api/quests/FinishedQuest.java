@@ -6,6 +6,5 @@ package com.minecolonies.api.quests;
  * @param template      the quest template.
  * @param finishedCount how often this quest got completed.
  */
-public record FinishedQuest(IQuestTemplate template, int finishedCount)
-{
+public record FinishedQuest(IQuestTemplate template, int finishedCount) {
 }

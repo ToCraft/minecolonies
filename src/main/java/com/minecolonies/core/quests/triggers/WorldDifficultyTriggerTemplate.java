@@ -11,8 +11,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.DIFFICULTY_KEY;
 /**
  * World difficulty quest trigger.
  */
-public class WorldDifficultyTriggerTemplate implements IQuestTriggerTemplate
-{
+public class WorldDifficultyTriggerTemplate implements IQuestTriggerTemplate {
     /**
      * World difficulty.
      */
@@ -21,23 +20,21 @@ public class WorldDifficultyTriggerTemplate implements IQuestTriggerTemplate
     /**
      * Create a new instance of this trigger.
      */
-    public WorldDifficultyTriggerTemplate(final Difficulty difficulty)
-    {
+    public WorldDifficultyTriggerTemplate(final Difficulty difficulty) {
         this.difficulty = difficulty;
     }
 
     /**
      * Create a new trigger directly from json.
+     *
      * @param jsonObj the json associated to this trigger.
      */
-    public static WorldDifficultyTriggerTemplate createDifficultyTrigger(final JsonObject jsonObj)
-    {
+    public static WorldDifficultyTriggerTemplate createDifficultyTrigger(final JsonObject jsonObj) {
         return new WorldDifficultyTriggerTemplate(Difficulty.valueOf(jsonObj.get(DIFFICULTY_KEY).getAsString()));
     }
 
     @Override
-    public ITriggerReturnData canTriggerQuest(final IColony colony)
-    {
+    public ITriggerReturnData canTriggerQuest(final IColony colony) {
         return new BooleanTriggerReturnData(colony.getWorld().getDifficulty() == difficulty);
     }
 }

@@ -6,8 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Colony information changed event.
  */
-public class ColonyInformationChangedEvent extends AbstractColonyEvent
-{
+public class ColonyInformationChangedEvent extends AbstractColonyEvent {
     /**
      * What type of information changed on the colony.
      */
@@ -19,8 +18,7 @@ public class ColonyInformationChangedEvent extends AbstractColonyEvent
      * @param colony the colony related to the event.
      * @param type   what type of information changed on the colony.
      */
-    public ColonyInformationChangedEvent(final @NotNull IColony colony, final Type type)
-    {
+    public ColonyInformationChangedEvent(final @NotNull IColony colony, final Type type) {
         super(colony);
         this.type = type;
     }
@@ -30,16 +28,14 @@ public class ColonyInformationChangedEvent extends AbstractColonyEvent
      *
      * @return the enum value.
      */
-    public Type getType()
-    {
+    public Type getType() {
         return type;
     }
 
     /**
      * What information of the colony changed.
      */
-    public enum Type
-    {
+    public enum Type {
         NAME,
         TEAM_COLOR,
         FLAG

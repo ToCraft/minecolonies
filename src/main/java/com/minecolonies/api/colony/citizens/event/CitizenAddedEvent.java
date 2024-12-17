@@ -5,8 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 /**
  * Event for when a citizen was added to the colony.
  */
-public class CitizenAddedEvent extends AbstractCitizenEvent
-{
+public class CitizenAddedEvent extends AbstractCitizenEvent {
     /**
      * The way the citizen came into the colony.
      */
@@ -18,8 +17,7 @@ public class CitizenAddedEvent extends AbstractCitizenEvent
      * @param citizen the citizen related to the event.
      * @param source  the way the citizen came into the colony.
      */
-    public CitizenAddedEvent(final ICitizenData citizen, final Source source)
-    {
+    public CitizenAddedEvent(final ICitizenData citizen, final Source source) {
         super(citizen);
         this.source = source;
     }
@@ -29,16 +27,14 @@ public class CitizenAddedEvent extends AbstractCitizenEvent
      *
      * @return the enum value.
      */
-    public Source getSource()
-    {
+    public Source getSource() {
         return source;
     }
 
     /**
      * How the citizen came into the colony.
      */
-    public enum Source
-    {
+    public enum Source {
         /**
          * The citizen spawned as part of the {@link com.minecolonies.api.configuration.ServerConfiguration#initialCitizenAmount}.
          */

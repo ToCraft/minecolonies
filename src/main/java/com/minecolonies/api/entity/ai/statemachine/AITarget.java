@@ -12,8 +12,7 @@ import java.util.function.Supplier;
  * A simple target the AI tries to accomplish. It has a state matcher, so it only gets executed on matching state. It has a tester function to make more checks to tell if execution
  * is wanted. And it can change state.
  */
-public class AITarget<S extends IState> extends TickingTransition<S>
-{
+public class AITarget<S extends IState> extends TickingTransition<S> {
     /**
      * Construct a target.
      *
@@ -23,11 +22,10 @@ public class AITarget<S extends IState> extends TickingTransition<S>
      * @param tickRate  the tick rate.
      */
     public AITarget(
-      @NotNull final S state,
-      @NotNull final BooleanSupplier predicate,
-      @NotNull final Supplier<S> action,
-      final int tickRate)
-    {
+            @NotNull final S state,
+            @NotNull final BooleanSupplier predicate,
+            @NotNull final Supplier<S> action,
+            final int tickRate) {
         super(state, predicate, action, tickRate);
     }
 
@@ -39,10 +37,9 @@ public class AITarget<S extends IState> extends TickingTransition<S>
      * @param tickRate  the tick rate.
      */
     protected AITarget(
-      @NotNull final BooleanSupplier predicate,
-      @NotNull final Supplier<S> action,
-      final int tickRate)
-    {
+            @NotNull final BooleanSupplier predicate,
+            @NotNull final Supplier<S> action,
+            final int tickRate) {
         super(predicate, action, tickRate);
     }
 
@@ -53,8 +50,7 @@ public class AITarget<S extends IState> extends TickingTransition<S>
      * @param state          the state to switch to
      * @param tickRate       the tick rate.
      */
-    public AITarget(@NotNull final S predicateState, @Nullable final S state, final int tickRate)
-    {
+    public AITarget(@NotNull final S predicateState, @Nullable final S state, final int tickRate) {
         this(predicateState, () -> state, tickRate);
     }
 
@@ -65,8 +61,7 @@ public class AITarget<S extends IState> extends TickingTransition<S>
      * @param action   the action to apply
      * @param tickRate the tick rate.
      */
-    public AITarget(@NotNull final S state, @NotNull final Supplier<S> action, final int tickRate)
-    {
+    public AITarget(@NotNull final S state, @NotNull final Supplier<S> action, final int tickRate) {
         this(state, () -> true, action, tickRate);
     }
 }

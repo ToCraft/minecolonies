@@ -16,9 +16,9 @@ import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.core.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,67 +29,56 @@ import static com.minecolonies.api.util.constant.RSConstants.CONST_CRAFTING_RESO
 /**
  * A crafting resolver which takes care of 3x3 crafts which are crafted by a crafter worker.
  */
-public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequestResolver
-{
+public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequestResolver {
     /**
      * Initializing constructor.
      *
      * @param location the location of the resolver.
      * @param token    its id.
      */
-    public PublicWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token, final JobEntry entry)
-    {
+    public PublicWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token, final JobEntry entry) {
         super(location, token, entry, true);
     }
 
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
-    {
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest) {
         //Noop. The production resolver already took care of that.
         return null;
     }
 
     @Override
-    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
-    {
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) {
     }
 
     @Override
-    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
-    {
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) {
 
     }
 
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
         /*
          * Nothing to be done.
          */
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
         //NOOP
     }
 
     @NotNull
     @Override
-    public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
-        if (requester instanceof IBuildingView)
-        {
+        if (requester instanceof IBuildingView) {
             final WorkerBuildingModuleView moduleView = ((IBuildingView) requester).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry());
-            if (moduleView != null)
-            {
+            if (moduleView != null) {
                 return Component.translatableEscape(moduleView.getJobEntry().getTranslationKey());
             }
         }
-        if (requester instanceof IBuilding)
-        {
+        if (requester instanceof IBuilding) {
             final WorkerBuildingModule module = ((IBuilding) requester).getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry());
             return Component.translatableEscape(module.getJobEntry().getTranslationKey());
         }
@@ -97,20 +86,17 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     }
 
     @Override
-    public int getPriority()
-    {
+    public int getPriority() {
         return CONST_CRAFTING_RESOLVER_PRIORITY;
     }
 
     @Override
-    public boolean canBuildingCraftRecipe(@NotNull final AbstractBuilding building, final IRecipeStorage recipeStorage)
-    {
+    public boolean canBuildingCraftRecipe(@NotNull final AbstractBuilding building, final IRecipeStorage recipeStorage) {
         return recipeStorage != null;
     }
 
     @Override
-    protected IRequestable createNewRequestableForStack(final ItemStack stack, final int count, final int minCount, final IToken<?> recipeStorage)
-    {
+    protected IRequestable createNewRequestableForStack(final ItemStack stack, final int count, final int minCount, final IToken<?> recipeStorage) {
         return new PublicCrafting(stack, count, recipeStorage);
     }
 }

@@ -7,8 +7,7 @@ import java.util.UUID;
 /**
  * Constants regarding citizens.
  */
-public final class CitizenConstants
-{
+public final class CitizenConstants {
     /**
      * The default limit of citizens, if no research is done yet.
      */
@@ -62,11 +61,11 @@ public final class CitizenConstants
     /**
      * The delta yaw value for looking at things.
      */
-    public static final float  FACING_DELTA_YAW           = 10F;
+    public static final float FACING_DELTA_YAW = 10F;
     /**
      * The range in which we can hear a block break sound.
      */
-    public static final double BLOCK_BREAK_SOUND_RANGE    = 16.0D;
+    public static final double BLOCK_BREAK_SOUND_RANGE = 16.0D;
     /**
      * The range in which someone will see the particles from a block breaking.
      */
@@ -74,64 +73,64 @@ public final class CitizenConstants
     /**
      * Quantity to be moved to rotate without actually moving.
      */
-    public static final double MOVE_MINIMAL               = 0.001D;
+    public static final double MOVE_MINIMAL = 0.001D;
     /**
      * Base max health of the citizen.
      */
-    public static final double BASE_MAX_HEALTH            = 20D;
+    public static final double BASE_MAX_HEALTH = 20D;
     /**
      * Base pathfinding range of the citizen.
      */
-    public static final int    BASE_PATHFINDING_RANGE     = 100;
+    public static final int BASE_PATHFINDING_RANGE = 100;
     /**
      * Height of the citizen.
      */
-    public static final double CITIZEN_HEIGHT             = 1.8D;
+    public static final double CITIZEN_HEIGHT = 1.8D;
     /**
      * Width of the citizen.
      */
-    public static final double CITIZEN_WIDTH              = 0.6D;
+    public static final double CITIZEN_WIDTH = 0.6D;
     /**
      * The speed the citizen has to rotate.
      */
-    public static final double ROTATION_MOVEMENT          = 30;
+    public static final double ROTATION_MOVEMENT = 30;
     /**
      * 20 ticks or also: once a second.
      */
-    public static final int    TICKS_20                   = 20;
+    public static final int TICKS_20 = 20;
 
     /**
      * This times the citizen id is the personal offset of the citizen.
      */
-    public static final int    OFFSET_TICK_MULTIPLIER     = 7;
+    public static final int OFFSET_TICK_MULTIPLIER = 7;
     /**
      * Range required for the citizen to be home.
      */
-    public static final double RANGE_TO_BE_HOME           = 16;
+    public static final double RANGE_TO_BE_HOME = 16;
     /**
      * The max amount of lines the latest log allows.
      */
-    public static final int    MAX_LINES_OF_LATEST_LOG    = 4;
+    public static final int MAX_LINES_OF_LATEST_LOG = 4;
     /**
      * Distance from mobs the entity should hold.
      */
-    public static final double DISTANCE_OF_ENTITY_AVOID   = 5.0D;
+    public static final double DISTANCE_OF_ENTITY_AVOID = 5.0D;
     /**
      * Initital speed while running away from entities.
      */
-    public static final double INITIAL_RUN_SPEED_AVOID    = 1.1D;
+    public static final double INITIAL_RUN_SPEED_AVOID = 1.1D;
     /**
      * Later run speed while running away from entities.
      */
-    public static final double LATER_RUN_SPEED_AVOID      = 0.8D;
+    public static final double LATER_RUN_SPEED_AVOID = 0.8D;
     /**
      * The max squaredistance a citizen can call a guard to help, 300 blocks
      */
-    public static final int    MAX_GUARD_CALL_RANGE       = 90000;
+    public static final int MAX_GUARD_CALL_RANGE = 90000;
     /**
      * Big multiplier in extreme saturation situations.
      */
-    public static final double BIG_SATURATION_FACTOR      = 0.05;
+    public static final double BIG_SATURATION_FACTOR = 0.05;
     /**
      * Decrease by this * buildingLevel each new night.
      */

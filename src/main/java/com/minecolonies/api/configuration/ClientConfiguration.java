@@ -9,8 +9,7 @@ import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
 /**
  * Mod client configuration. Loaded clientside, not synced.
  */
-public class ClientConfiguration extends AbstractConfiguration
-{
+public class ClientConfiguration extends AbstractConfiguration {
     public final BooleanValue citizenVoices;
     public final BooleanValue neighborbuildingrendering;
     public final IntValue neighborbuildingrange;
@@ -22,8 +21,7 @@ public class ClientConfiguration extends AbstractConfiguration
      *
      * @param builder config builder
      */
-    public ClientConfiguration(final Builder builder)
-    {
+    public ClientConfiguration(final Builder builder) {
         super(builder, Constants.MOD_ID);
 
         createCategory("gameplay");

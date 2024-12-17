@@ -5,8 +5,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 /**
  * Combat AI States
  */
-public enum CombatAIStates implements IAIState
-{
+public enum CombatAIStates implements IAIState {
     ATTACKING(false),
     NO_TARGET(true);
 
@@ -20,8 +19,7 @@ public enum CombatAIStates implements IAIState
      *
      * @param okayToEat if okay.
      */
-    CombatAIStates(final boolean okayToEat)
-    {
+    CombatAIStates(final boolean okayToEat) {
         this.isOkayToEat = okayToEat;
     }
 
@@ -30,8 +28,7 @@ public enum CombatAIStates implements IAIState
      *
      * @return true if so.
      */
-    public boolean isOkayToEat()
-    {
+    public boolean isOkayToEat() {
         return isOkayToEat;
     }
 }

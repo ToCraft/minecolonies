@@ -12,8 +12,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Message to open the colony founding covenant.
  */
-public class OpenDeleteAbandonColonyMessage  extends AbstractClientPlayMessage
-{
+public class OpenDeleteAbandonColonyMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_delete_abandon_colony", OpenDeleteAbandonColonyMessage::new);
 
     /**
@@ -39,8 +38,7 @@ public class OpenDeleteAbandonColonyMessage  extends AbstractClientPlayMessage
     /**
      * Default constructor
      **/
-    public OpenDeleteAbandonColonyMessage(RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public OpenDeleteAbandonColonyMessage(RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(type);
         this.currentTownHallPos = buf.readBlockPos();
         this.oldColonyName = buf.readUtf(32767);
@@ -48,8 +46,7 @@ public class OpenDeleteAbandonColonyMessage  extends AbstractClientPlayMessage
         this.oldColonyId = buf.readInt();
     }
 
-    public OpenDeleteAbandonColonyMessage(final BlockPos currentTownHallPos, final String oldColonyName, final BlockPos oldColonyPos, final int oldColonyId)
-    {
+    public OpenDeleteAbandonColonyMessage(final BlockPos currentTownHallPos, final String oldColonyName, final BlockPos oldColonyPos, final int oldColonyId) {
         super(TYPE);
         this.currentTownHallPos = currentTownHallPos;
         this.oldColonyName = oldColonyName;
@@ -58,14 +55,12 @@ public class OpenDeleteAbandonColonyMessage  extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         new WindowTownHallDeleteAbandonColony(currentTownHallPos, oldColonyName, oldColonyPos, oldColonyId).open();
     }
 
     @Override
-    public void toBytes(RegistryFriendlyByteBuf buf)
-    {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(currentTownHallPos);
         buf.writeUtf(oldColonyName);
         buf.writeBlockPos(oldColonyPos);

@@ -13,8 +13,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.CITIZEN_FAM_RES
 /**
  * BOWindow for the citizen.
  */
-public class FamilyWindowCitizen extends AbstractWindowCitizen
-{
+public class FamilyWindowCitizen extends AbstractWindowCitizen {
     /**
      * Assigned citizen.
      */
@@ -31,8 +30,7 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
      *
      * @param citizen citizen to bind the window to.
      */
-    public FamilyWindowCitizen(final ICitizenDataView citizen)
-    {
+    public FamilyWindowCitizen(final ICitizenDataView citizen) {
         super(citizen, Constants.MOD_ID + CITIZEN_FAM_RESOURCE_SUFFIX);
         this.citizen = citizen;
         siblingList = findPaneOfTypeByID("siblings", ScrollingList.class);
@@ -40,8 +38,7 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
 
         final String firstParent = citizen.getParents().getA();
@@ -54,24 +51,19 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
         final ICitizenDataView partnerView = colony.getCitizen(partner);
         final Text partnerText = findPaneOfTypeByID("partner", Text.class);
 
-        if (partnerView == null)
-        {
+        if (partnerView == null) {
             partnerText.setText(Component.literal("-"));
-        }
-        else
-        {
+        } else {
             partnerText.setText(Component.literal(partnerView.getName()));
         }
 
-        childrenList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        childrenList.setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return citizen.getChildren().size();
             }
 
@@ -81,21 +73,18 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal(colony.getCitizen(citizen.getChildren().get(index)).getName()));
             }
         });
 
-        siblingList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        siblingList.setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return citizen.getSiblings().size();
             }
 
@@ -105,8 +94,7 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal(colony.getCitizen(citizen.getSiblings().get(index)).getName()));
             }
         });

@@ -9,20 +9,17 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.research.effects.ModResearchEffects.GLOBAL_EFFECT_ID;
 
-public class ModResearchEffectInitializer
-{
+public class ModResearchEffectInitializer {
     public final static DeferredRegister<ResearchEffectEntry> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.RESEARCH_EFFECT_TYPES, Constants.MOD_ID);
 
-    private ModResearchEffectInitializer()
-    {
+    private ModResearchEffectInitializer() {
         throw new IllegalStateException("Tried to initialize: ModResearchEffectInitializer but this is a Utility class.");
     }
 
-    static
-    {
+    static {
         ModResearchEffects.globalResearchEffect = DEFERRED_REGISTER.register(GLOBAL_EFFECT_ID.getPath(), () -> new ResearchEffectEntry.Builder()
-                                                                .setReadFromNBT(GlobalResearchEffect::new)
-                                                                .setRegistryName(GLOBAL_EFFECT_ID)
-                                                                .createResearchEffectEntry());
+                .setReadFromNBT(GlobalResearchEffect::new)
+                .setRegistryName(GLOBAL_EFFECT_ID)
+                .createResearchEffectEntry());
     }
 }

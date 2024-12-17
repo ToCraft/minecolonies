@@ -39,8 +39,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.NOON;
 /**
  * Class which has world related util functions like chunk load checks
  */
-public class WorldUtil
-{
+public class WorldUtil {
     /**
      * Checks if the block is loaded for block access
      *
@@ -48,8 +47,7 @@ public class WorldUtil
      * @param pos   position to check
      * @return true if block is accessible/loaded
      */
-    public static boolean isBlockLoaded(final LevelAccessor world, final BlockPos pos)
-    {
+    public static boolean isBlockLoaded(final LevelAccessor world, final BlockPos pos) {
         return isChunkLoaded(world, pos.getX() >> 4, pos.getZ() >> 4);
     }
 
@@ -61,13 +59,10 @@ public class WorldUtil
      * @param z     chunk position
      * @return true if loaded
      */
-    public static boolean isChunkLoaded(final LevelAccessor world, final int x, final int z)
-    {
-        if (world.getChunkSource() instanceof ServerChunkCache)
-        {
+    public static boolean isChunkLoaded(final LevelAccessor world, final int x, final int z) {
+        if (world.getChunkSource() instanceof ServerChunkCache) {
             final ChunkHolder holder = ((ServerChunkCache) world.getChunkSource()).chunkMap.getVisibleChunkIfPresent(ChunkPos.asLong(x, z));
-            if (holder != null)
-            {
+            if (holder != null) {
                 return holder.getFullStatus().isOrAfter(FullChunkStatus.FULL) && holder.getChunkIfPresent(ChunkStatus.FULL) != null;
             }
 
@@ -82,10 +77,8 @@ public class WorldUtil
      * @param world the world to mark it dirty in.
      * @param pos   the position within the chunk.
      */
-    public static void markChunkDirty(final Level world, final BlockPos pos)
-    {
-        if (WorldUtil.isBlockLoaded(world, pos))
-        {
+    public static void markChunkDirty(final Level world, final BlockPos pos) {
+        if (WorldUtil.isBlockLoaded(world, pos)) {
             world.getChunk(pos.getX() >> 4, pos.getZ() >> 4).setUnsaved(true);
             final BlockState state = world.getBlockState(pos);
             world.sendBlockUpdated(pos, state, state, 3);
@@ -99,8 +92,7 @@ public class WorldUtil
      * @param pos   chunk position
      * @return true if loaded
      */
-    public static boolean isChunkLoaded(final LevelAccessor world, final ChunkPos pos)
-    {
+    public static boolean isChunkLoaded(final LevelAccessor world, final ChunkPos pos) {
         return isChunkLoaded(world, pos.x, pos.z);
     }
 
@@ -111,8 +103,7 @@ public class WorldUtil
      * @param pos   position to check
      * @return true if block is accessible/loaded
      */
-    public static boolean isEntityBlockLoaded(final LevelAccessor world, final BlockPos pos)
-    {
+    public static boolean isEntityBlockLoaded(final LevelAccessor world, final BlockPos pos) {
         return isEntityChunkLoaded(world, pos.getX() >> 4, pos.getZ() >> 4);
     }
 
@@ -124,8 +115,7 @@ public class WorldUtil
      * @param z     chunk position
      * @return true if loaded
      */
-    public static boolean isEntityChunkLoaded(final LevelAccessor world, final int x, final int z)
-    {
+    public static boolean isEntityChunkLoaded(final LevelAccessor world, final int x, final int z) {
         return isEntityChunkLoaded(world, new ChunkPos(x, z));
     }
 
@@ -136,10 +126,8 @@ public class WorldUtil
      * @param pos   chunk position
      * @return true if loaded
      */
-    public static boolean isEntityChunkLoaded(final LevelAccessor world, final ChunkPos pos)
-    {
-        if (world instanceof ServerLevel)
-        {
+    public static boolean isEntityChunkLoaded(final LevelAccessor world, final ChunkPos pos) {
+        if (world instanceof ServerLevel) {
             return ((ServerLevel) world).isPositionEntityTicking(pos.getWorldPosition());
         }
         return isChunkLoaded(world, pos);
@@ -152,8 +140,7 @@ public class WorldUtil
      * @param box   the box.
      * @return true if loaded.
      */
-    public static boolean isAABBLoaded(final Level world, final AABB box)
-    {
+    public static boolean isAABBLoaded(final Level world, final AABB box) {
         return isChunkLoaded(world, ((int) box.minX) >> 4, ((int) box.minZ) >> 4) && isChunkLoaded(world, ((int) box.maxX) >> 4, ((int) box.maxZ) >> 4);
     }
 
@@ -163,8 +150,7 @@ public class WorldUtil
      * @param world the world to check.
      * @return true if so.
      */
-    public static boolean isDayTime(final Level world)
-    {
+    public static boolean isDayTime(final Level world) {
         return world.getDayTime() % 24000 <= NIGHT;
     }
 
@@ -174,8 +160,7 @@ public class WorldUtil
      * @param world the world to check.
      * @return true if so.
      */
-    public static boolean isPastTime(final Level world, final int pastTime)
-    {
+    public static boolean isPastTime(final Level world, final int pastTime) {
         return world.getDayTime() % 24000 <= pastTime;
     }
 
@@ -185,8 +170,7 @@ public class WorldUtil
      * @param world the world to check.
      * @return true if so.
      */
-    public static boolean isPastNoon(final Level world)
-    {
+    public static boolean isPastNoon(final Level world) {
         return isPastTime(world, NOON);
     }
 
@@ -196,8 +180,7 @@ public class WorldUtil
      * @param world the world to check.
      * @return true if so.
      */
-    public static boolean isOverworldType(@NotNull final Level world)
-    {
+    public static boolean isOverworldType(@NotNull final Level world) {
         return isOfWorldType(world, BuiltinDimensionTypes.OVERWORLD);
     }
 
@@ -207,8 +190,7 @@ public class WorldUtil
      * @param world the world to check.
      * @return true if so.
      */
-    public static boolean isNetherType(@NotNull final Level world)
-    {
+    public static boolean isNetherType(@NotNull final Level world) {
         return isOfWorldType(world, BuiltinDimensionTypes.NETHER);
     }
 
@@ -219,14 +201,11 @@ public class WorldUtil
      * @param type  the type to compare.
      * @return true if it matches.
      */
-    public static boolean isOfWorldType(@NotNull final Level world, @NotNull final ResourceKey<DimensionType> type)
-    {
+    public static boolean isOfWorldType(@NotNull final Level world, @NotNull final ResourceKey<DimensionType> type) {
         RegistryAccess dynRegistries = world.registryAccess();
         ResourceLocation loc = dynRegistries.registry(Registries.DIMENSION_TYPE).get().getKey(world.dimensionType());
-        if (loc == null)
-        {
-            if (world.isClientSide)
-            {
+        if (loc == null) {
+            if (world.isClientSide) {
                 return world.dimensionType().effectsLocation().equals(type.location());
             }
             return false;
@@ -243,8 +222,7 @@ public class WorldUtil
      * @param world world to check
      * @return true if peaceful
      */
-    public static boolean isPeaceful(@NotNull final Level world)
-    {
+    public static boolean isPeaceful(@NotNull final Level world) {
         return !world.getLevelData().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) || world.getDifficulty().equals(Difficulty.PEACEFUL);
     }
 
@@ -256,10 +234,8 @@ public class WorldUtil
      * @param pos   position to set
      * @param state state to set
      */
-    public static boolean setBlockState(final LevelAccessor world, final BlockPos pos, final BlockState state)
-    {
-        if (world.isClientSide())
-        {
+    public static boolean setBlockState(final LevelAccessor world, final BlockPos pos, final BlockState state) {
+        if (world.isClientSide()) {
             return world.setBlock(pos, state, 3);
         }
 
@@ -274,23 +250,18 @@ public class WorldUtil
      * @param state state to set
      * @param flags flags to use
      */
-    public static boolean setBlockState(final LevelAccessor world, final BlockPos pos, final BlockState state, int flags)
-    {
-        if (world.isClientSide() || !(world instanceof ServerLevel serverLevel))
-        {
+    public static boolean setBlockState(final LevelAccessor world, final BlockPos pos, final BlockState state, int flags) {
+        if (world.isClientSide() || !(world instanceof ServerLevel serverLevel)) {
             return world.setBlock(pos, state, flags);
         }
 
-        if ((flags & 2) != 0)
-        {
+        if ((flags & 2) != 0) {
             final Set<Mob> navigators = serverLevel.navigatingMobs;
             serverLevel.navigatingMobs.clear();
             final boolean result = world.setBlock(pos, state, flags);
             serverLevel.navigatingMobs.addAll(navigators);
             return result;
-        }
-        else
-        {
+        } else {
             return world.setBlock(pos, state, flags);
         }
     }
@@ -303,8 +274,7 @@ public class WorldUtil
      * @param isMoving moving flag
      * @return true if success
      */
-    public static boolean removeBlock(final LevelAccessor world, BlockPos pos, boolean isMoving)
-    {
+    public static boolean removeBlock(final LevelAccessor world, BlockPos pos, boolean isMoving) {
         final FluidState fluidstate = world.getFluidState(pos);
         return setBlockState(world, pos, fluidstate.createLegacyBlock(), 3 | (isMoving ? 64 : 0));
     }
@@ -320,21 +290,19 @@ public class WorldUtil
      * @return a list of all within those borders.
      */
     public static <T extends Entity> List<? extends T> getEntitiesWithinBuilding(
-      final @NotNull Level world,
-      final @NotNull Class<? extends T> clazz,
-      final @NotNull IBuilding building,
-      @Nullable final Predicate<? super T> predicate)
-    {
+            final @NotNull Level world,
+            final @NotNull Class<? extends T> clazz,
+            final @NotNull IBuilding building,
+            @Nullable final Predicate<? super T> predicate) {
         final Tuple<BlockPos, BlockPos> corners = building.getCorners();
 
-        if (predicate == null)
-        {
+        if (predicate == null) {
             return world.getEntitiesOfClass(clazz,
-              new AABB(corners.getA().getX(), corners.getA().getY(), corners.getA().getZ(), corners.getB().getX(), corners.getB().getY(), corners.getB().getZ()));
+                    new AABB(corners.getA().getX(), corners.getA().getY(), corners.getA().getZ(), corners.getB().getX(), corners.getB().getY(), corners.getB().getZ()));
         }
         return world.getEntitiesOfClass(clazz,
-          new AABB(corners.getA().getX(), corners.getA().getY(), corners.getA().getZ(), corners.getB().getX(), corners.getB().getY(), corners.getB().getZ()),
-          predicate);
+                new AABB(corners.getA().getX(), corners.getA().getY(), corners.getA().getZ(), corners.getB().getX(), corners.getB().getY(), corners.getB().getZ()),
+                predicate);
     }
 
     /**
@@ -343,8 +311,7 @@ public class WorldUtil
      * @param dimensionType
      * @return
      */
-    public static int getDimensionMaxHeight(final DimensionType dimensionType)
-    {
+    public static int getDimensionMaxHeight(final DimensionType dimensionType) {
         return dimensionType.logicalHeight() + dimensionType.minY();
     }
 
@@ -354,8 +321,7 @@ public class WorldUtil
      * @param dimensionType
      * @return
      */
-    public static int getDimensionMinHeight(final DimensionType dimensionType)
-    {
+    public static int getDimensionMinHeight(final DimensionType dimensionType) {
         return dimensionType.minY();
     }
 
@@ -366,80 +332,70 @@ public class WorldUtil
      * @param world
      * @return
      */
-    public static boolean isInWorldHeight(final int yBlock, final Level world)
-    {
+    public static boolean isInWorldHeight(final int yBlock, final Level world) {
         final DimensionType dimensionType = world.dimensionType();
         return yBlock > getDimensionMinHeight(dimensionType) && yBlock < getDimensionMaxHeight(dimensionType);
     }
 
     /**
      * Get nearest player, our own cheaper check.
+     *
      * @param livingEntity the entity to check.
-     * @param x pos x
-     * @param y pos y
-     * @param z pos z
+     * @param x            pos x
+     * @param y            pos y
+     * @param z            pos z
      * @param lookDistance min distance.
      * @return closest player or null.
      */
     @Nullable
-    public static Player getNearestPlayer(Mob livingEntity, final int x, final int y, final int z, final double lookDistance)
-    {
+    public static Player getNearestPlayer(Mob livingEntity, final int x, final int y, final int z, final double lookDistance) {
         return getNearestEntity(livingEntity.level().players(), livingEntity, x, y, z, lookDistance);
     }
 
     /**
      * Get the closest entity, cheaper than mojank.
-     * @param entityList entity list to check.
+     *
+     * @param entityList   entity list to check.
      * @param livingEntity the entity they should be close to.
-     * @param x pos x
-     * @param y pos y
-     * @param z pos z
+     * @param x            pos x
+     * @param y            pos y
+     * @param z            pos z
      * @param lookDistance max distance.
+     * @param <T>          type of entity.
      * @return the entity or null.
-     * @param <T> type of entity.
      */
     @Nullable
-    public static <T extends LivingEntity> T getNearestEntity(List<? extends T> entityList, @Nullable Mob livingEntity, int x, int y, int z, double lookDistance)
-    {
+    public static <T extends LivingEntity> T getNearestEntity(List<? extends T> entityList, @Nullable Mob livingEntity, int x, int y, int z, double lookDistance) {
         double currentEntityDistance = 100;
         T closestEntity = null;
         final BlockPos entityPos = new BlockPos(x, y, z);
 
-        for (T entity : entityList)
-        {
-            if (entity == livingEntity)
-            {
+        for (T entity : entityList) {
+            if (entity == livingEntity) {
                 continue;
-            }
-            else if (!entity.canBeSeenByAnyone())
-            {
+            } else if (!entity.canBeSeenByAnyone()) {
                 continue;
             }
 
             double entityDistance = entity.blockPosition().above().distSqr(entityPos);
-            if (entityDistance > lookDistance)
-            {
+            if (entityDistance > lookDistance) {
                 continue;
             }
 
             double invisPct = entity.getVisibilityPercent(livingEntity);
             double invisPctModifier = Math.max(lookDistance * invisPct, 2.0D);
-            if (entityDistance > invisPctModifier * invisPctModifier)
-            {
+            if (entityDistance > invisPctModifier * invisPctModifier) {
                 continue;
             }
 
-            if (livingEntity instanceof Mob)
-            {
+            if (livingEntity instanceof Mob) {
                 Mob mob = (Mob) livingEntity;
-                if (!mob.getSensing().hasLineOfSight(entity))
-                {
+                if (!mob.getSensing().hasLineOfSight(entity)) {
                     continue;
                 }
             }
 
-            if (entityDistance < currentEntityDistance)
-            {
+            if (entityDistance < currentEntityDistance) {
                 currentEntityDistance = entityDistance;
                 closestEntity = entity;
             }

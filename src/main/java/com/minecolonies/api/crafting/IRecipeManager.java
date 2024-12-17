@@ -9,8 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The Interface describing the recipeManager which takes care of the recipes discovered by the colonies in this world.
  */
-public interface IRecipeManager
-{
+public interface IRecipeManager {
     /**
      * Get a unmodifiable copy of the recipes map.
      *
@@ -52,7 +51,7 @@ public interface IRecipeManager
 
     /**
      * Register the recipe as used with the recipe manager
-     * 
+     *
      * @param token the recipe token
      */
     void registerUse(final IToken<?> token);

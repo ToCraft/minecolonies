@@ -8,8 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Interface used to describe locations in the world.
  */
-public interface ILocation
-{
+public interface ILocation {
 
     /**
      * Method to get the location in the dimension

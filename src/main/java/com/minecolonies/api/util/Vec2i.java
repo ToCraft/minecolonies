@@ -7,55 +7,45 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Colton
  */
-public class Vec2i
-{
+public class Vec2i {
     private final int x;
     private final int z;
 
-    public Vec2i(final int x, final int z)
-    {
+    public Vec2i(final int x, final int z) {
         this.x = x;
         this.z = z;
     }
 
-    public long distanceSq(@NotNull final Vec2i vec2i)
-    {
+    public long distanceSq(@NotNull final Vec2i vec2i) {
         return distanceSq(vec2i.getX(), vec2i.getZ());
     }
 
-    public long distanceSq(final int x, final int y)
-    {
+    public long distanceSq(final int x, final int y) {
         final long xDiff = (long) this.getX() - x;
         final long zDiff = (long) this.getZ() - y;
 
         return xDiff * xDiff + zDiff * zDiff;
     }
 
-    public int getX()
-    {
+    public int getX() {
         return x;
     }
 
-    public int getZ()
-    {
+    public int getZ() {
         return z;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return (x << 16) + z;
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 

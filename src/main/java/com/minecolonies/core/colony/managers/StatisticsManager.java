@@ -19,13 +19,12 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Manager for colony related statistics.
  */
-public class StatisticsManager implements IStatisticsManager
-{
+public class StatisticsManager implements IStatisticsManager {
     /**
      * NBT tags.
      */
     private static final String TAG_STAT_MANAGER = "stat_manager";
-    private static final String TAG_STAT         = "stat";
+    private static final String TAG_STAT = "stat";
 
     /**
      * The current stats of the colony.
@@ -38,73 +37,59 @@ public class StatisticsManager implements IStatisticsManager
     private Set<String> dirtyStats = new HashSet<>();
 
     @Override
-    public void increment(final @NotNull String id, final int day)
-    {
+    public void increment(final @NotNull String id, final int day) {
         incrementBy(id, 1, day);
     }
 
     @Override
-    public void incrementBy(final @NotNull String id, int qty, final int day)
-    {
+    public void incrementBy(final @NotNull String id, int qty, final int day) {
         final Int2IntLinkedOpenHashMap innerMap = stats.computeIfAbsent(id, k -> new Int2IntLinkedOpenHashMap());
         innerMap.addTo(day, qty);
         dirtyStats.add(id);
     }
 
     @Override
-    public int getStatTotal(final @NotNull String id)
-    {
+    public int getStatTotal(final @NotNull String id) {
         final Int2IntLinkedOpenHashMap stats = this.stats.getOrDefault(id, new Int2IntLinkedOpenHashMap());
         int totalCount = 0;
-        for (final int count : stats.values())
-        {
+        for (final int count : stats.values()) {
             totalCount += count;
         }
         return totalCount;
     }
 
     @Override
-    public int getStatsInPeriod(final @NotNull String id, final int startDay, final int endDay)
-    {
+    public int getStatsInPeriod(final @NotNull String id, final int startDay, final int endDay) {
         final Int2IntLinkedOpenHashMap stats = this.stats.getOrDefault(id, new Int2IntLinkedOpenHashMap());
         int count = 0;
-        for (int day = startDay; day <= endDay; day++)
-        {
+        for (int day = startDay; day <= endDay; day++) {
             count += stats.get(day);
         }
         return count;
     }
 
     @Override
-    public @NotNull Set<String> getStatTypes()
-    {
+    public @NotNull Set<String> getStatTypes() {
         return stats.keySet();
     }
 
     @Override
-    public void serialize(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync)
-    {
+    public void serialize(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync) {
         buf.writeBoolean(fullSync);
         buf.writeVarInt(fullSync ? stats.size() : dirtyStats.size());
 
-        if (fullSync)
-        {
-            for (final Map.Entry<String, Int2IntLinkedOpenHashMap> dataEntry : stats.entrySet())
-            {
+        if (fullSync) {
+            for (final Map.Entry<String, Int2IntLinkedOpenHashMap> dataEntry : stats.entrySet()) {
                 buf.writeUtf(dataEntry.getKey());
                 buf.writeVarInt(dataEntry.getValue().size());
 
-                for (final Int2IntMap.Entry valueEntry : dataEntry.getValue().int2IntEntrySet())
-                {
+                for (final Int2IntMap.Entry valueEntry : dataEntry.getValue().int2IntEntrySet()) {
                     buf.writeVarInt(valueEntry.getIntKey());
                     buf.writeVarInt(valueEntry.getIntValue());
                 }
             }
-        }
-        else
-        {
-            for (final String id : dirtyStats)
-            {
+        } else {
+            for (final String id : dirtyStats) {
                 var dataEntry = stats.get(id);
 
                 buf.writeUtf(id);
@@ -114,30 +99,25 @@ public class StatisticsManager implements IStatisticsManager
             }
         }
 
-        if (!dirtyStats.isEmpty())
-        {
+        if (!dirtyStats.isEmpty()) {
             dirtyStats = new HashSet<>();
         }
     }
 
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         final boolean fullSync = buf.readBoolean();
-        if (fullSync)
-        {
+        if (fullSync) {
             stats.clear();
         }
 
         final int statSize = buf.readVarInt();
-        for (int i = 0; i < statSize; i++)
-        {
+        for (int i = 0; i < statSize; i++) {
             final String id = buf.readUtf();
             final int statEntrySize = buf.readVarInt();
 
             final Int2IntLinkedOpenHashMap statValues = (fullSync || !stats.containsKey(id)) ? new Int2IntLinkedOpenHashMap(statEntrySize) : stats.get(id);
-            for (int j = 0; j < statEntrySize; j++)
-            {
+            for (int j = 0; j < statEntrySize; j++) {
                 statValues.put(buf.readVarInt(), buf.readVarInt());
             }
 
@@ -146,17 +126,14 @@ public class StatisticsManager implements IStatisticsManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundTag compound)
-    {
+    public void writeToNBT(@NotNull final CompoundTag compound) {
         final ListTag statManagerNBT = new ListTag();
-        for (final Map.Entry<String, Int2IntLinkedOpenHashMap> stat : stats.entrySet())
-        {
+        for (final Map.Entry<String, Int2IntLinkedOpenHashMap> stat : stats.entrySet()) {
             final CompoundTag statCompound = new CompoundTag();
             statCompound.putString(TAG_ID, stat.getKey());
 
             final ListTag statNBT = new ListTag();
-            for (final Int2IntMap.Entry dailyStats : stat.getValue().int2IntEntrySet())
-            {
+            for (final Int2IntMap.Entry dailyStats : stat.getValue().int2IntEntrySet()) {
                 final CompoundTag timeStampTag = new CompoundTag();
 
                 timeStampTag.putInt(TAG_TIME, dailyStats.getIntKey());
@@ -173,20 +150,16 @@ public class StatisticsManager implements IStatisticsManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final CompoundTag compound)
-    {
+    public void readFromNBT(@NotNull final CompoundTag compound) {
         stats.clear();
-        if (compound.contains(TAG_STAT_MANAGER))
-        {
+        if (compound.contains(TAG_STAT_MANAGER)) {
             final ListTag statsNbts = compound.getList(TAG_STAT_MANAGER, Tag.TAG_COMPOUND);
-            for (int i = 0; i < statsNbts.size(); i++)
-            {
+            for (int i = 0; i < statsNbts.size(); i++) {
                 final CompoundTag statCompound = statsNbts.getCompound(i);
                 final String id = statCompound.getString(TAG_ID);
                 final ListTag timeStampNbts = statCompound.getList(TAG_STAT, Tag.TAG_COMPOUND);
                 final Int2IntLinkedOpenHashMap timeStamps = new Int2IntLinkedOpenHashMap();
-                for (int j = 0; j < timeStampNbts.size(); j++)
-                {
+                for (int j = 0; j < timeStampNbts.size(); j++) {
                     final CompoundTag compoundTag = timeStampNbts.getCompound(j);
                     final int day = compoundTag.getInt(TAG_TIME);
                     final int qty = compoundTag.getInt(TAG_QUANTITY);

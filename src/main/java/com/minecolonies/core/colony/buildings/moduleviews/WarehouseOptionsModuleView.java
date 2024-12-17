@@ -11,43 +11,37 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Client side version of the warehouse module.
  */
-public class WarehouseOptionsModuleView extends AbstractBuildingModuleView
-{
+public class WarehouseOptionsModuleView extends AbstractBuildingModuleView {
     /**
      * Storage upgrade level.
      */
     private int storageUpgrade = 0;
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return "com.minecolonies.coremod.gui.workerhuts.settings";
     }
 
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         storageUpgrade = buf.readInt();
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new WarehouseOptionsModuleWindow(buildingView, this);
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return "settings";
     }
 
     /**
      * Increment storage upgrade.
      */
-    public void incrementStorageUpgrade()
-    {
+    public void incrementStorageUpgrade() {
         storageUpgrade++;
     }
 
@@ -56,8 +50,7 @@ public class WarehouseOptionsModuleView extends AbstractBuildingModuleView
      *
      * @return the level.
      */
-    public int getStorageUpgradeLevel()
-    {
+    public int getStorageUpgradeLevel() {
         return storageUpgrade;
     }
 }

@@ -11,9 +11,9 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.colony.jobs.JobMiner;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Future;
@@ -24,8 +24,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * A work order that the build can take to build mine.
  */
-public class WorkOrderMiner extends AbstractWorkOrder
-{
+public class WorkOrderMiner extends AbstractWorkOrder {
     /**
      * Position of the issuer of the order.
      */
@@ -34,8 +33,7 @@ public class WorkOrderMiner extends AbstractWorkOrder
     /**
      * Unused constructor for reflection.
      */
-    public WorkOrderMiner()
-    {
+    public WorkOrderMiner() {
         super();
     }
 
@@ -51,31 +49,27 @@ public class WorkOrderMiner extends AbstractWorkOrder
      * @param minerBuilding The id of the building of the miner.
      */
     public WorkOrderMiner(
-      final String packName,
-      final String structureName,
-      final String workOrderName,
-      final RotationMirror rotMir,
-      final BlockPos location,
-      final boolean keepMirror,
-      final BlockPos minerBuilding)
-    {
+            final String packName,
+            final String structureName,
+            final String workOrderName,
+            final RotationMirror rotMir,
+            final BlockPos location,
+            final boolean keepMirror,
+            final BlockPos minerBuilding) {
         // TODO: rotationMirror (and all call sites of this)
         super(packName, structureName, workOrderName, WorkOrderType.BUILD, location, keepMirror ? rotMir : RotationMirror.NONE.rotate(rotMir.rotation()), 0, 1);
         this.minerBuilding = minerBuilding;
     }
 
     @Override
-    public Future<Blueprint> getBlueprintFuture(@NotNull final HolderLookup.Provider provider)
-    {
+    public Future<Blueprint> getBlueprintFuture(@NotNull final HolderLookup.Provider provider) {
         return IOPool.submit(() ->
         {
             Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getStructurePath(), true, provider);
-            if (blueprint == null)
-            {
+            if (blueprint == null) {
                 // automatic fallback to default style
                 blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, getStructurePath(), provider);
-                if (blueprint != null)
-                {
+                if (blueprint != null) {
                     packName = STORAGE_STYLE;
                     changed = true;
                 }
@@ -85,20 +79,17 @@ public class WorkOrderMiner extends AbstractWorkOrder
     }
 
     @Override
-    public boolean canBuild(@NotNull ICitizenData citizen)
-    {
+    public boolean canBuild(@NotNull ICitizenData citizen) {
         return this.minerBuilding.equals(citizen.getWorkBuilding().getID());
     }
 
     @Override
-    public boolean canBeMadeBy(final IJob<?> job)
-    {
+    public boolean canBeMadeBy(final IJob<?> job) {
         return job instanceof JobMiner;
     }
 
     @Override
-    public boolean isValid(final IColony colony)
-    {
+    public boolean isValid(final IColony colony) {
         return super.isValid(colony) && colony.getBuildingManager().getBuilding(minerBuilding) != null;
     }
 
@@ -109,8 +100,7 @@ public class WorkOrderMiner extends AbstractWorkOrder
      * @param manager  the work manager.
      */
     @Override
-    public void read(@NotNull final CompoundTag compound, final IWorkManager manager)
-    {
+    public void read(@NotNull final CompoundTag compound, final IWorkManager manager) {
         super.read(compound, manager);
         minerBuilding = BlockPosUtil.read(compound, TAG_POS);
     }
@@ -121,8 +111,7 @@ public class WorkOrderMiner extends AbstractWorkOrder
      * @param compound NBT tag compound.
      */
     @Override
-    public void write(@NotNull final CompoundTag compound)
-    {
+    public void write(@NotNull final CompoundTag compound) {
         super.write(compound);
         BlockPosUtil.write(compound, TAG_POS, minerBuilding);
     }
@@ -132,8 +121,7 @@ public class WorkOrderMiner extends AbstractWorkOrder
      *
      * @return the BlockPos.
      */
-    public BlockPos getMinerBuilding()
-    {
+    public BlockPos getMinerBuilding() {
         return minerBuilding;
     }
 }

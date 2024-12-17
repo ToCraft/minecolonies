@@ -19,15 +19,13 @@ import static net.minecraft.world.item.BoneMealItem.applyBonemeal;
 /**
  * Class used to handle the compost item.
  */
-public class ItemCompost extends AbstractItemMinecolonies
-{
+public class ItemCompost extends AbstractItemMinecolonies {
 
     /***
      * Constructor for the ItemCompost
      * @param properties the properties.
      */
-    public ItemCompost(final Item.Properties properties)
-    {
+    public ItemCompost(final Item.Properties properties) {
         super("compost", properties.stacksTo(Constants.STACKSIZE));
     }
 
@@ -41,15 +39,11 @@ public class ItemCompost extends AbstractItemMinecolonies
      * @param player the input player.
      * @return true if successfully bone-mealed.
      */
-    private static boolean applyCompost(@NotNull ItemStack stack, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player)
-    {
+    private static boolean applyCompost(@NotNull ItemStack stack, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
         BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof MinecoloniesCropBlock cropBlock)
-        {
-            if (!cropBlock.isMaxAge(state))
-            {
-                if (level instanceof ServerLevel serverLevel)
-                {
+        if (state.getBlock() instanceof MinecoloniesCropBlock cropBlock) {
+            if (!cropBlock.isMaxAge(state)) {
+                if (level instanceof ServerLevel serverLevel) {
                     cropBlock.attemptGrow(state, serverLevel, pos);
                     stack.shrink(1);
                 }
@@ -65,12 +59,9 @@ public class ItemCompost extends AbstractItemMinecolonies
 
     @Override
     @NotNull
-    public InteractionResult useOn(final UseOnContext ctx)
-    {
-        if (applyCompost(ctx.getItemInHand(), ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer()))
-        {
-            if (!ctx.getLevel().isClientSide)
-            {
+    public InteractionResult useOn(final UseOnContext ctx) {
+        if (applyCompost(ctx.getItemInHand(), ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer())) {
+            if (!ctx.getLevel().isClientSide) {
                 ctx.getLevel().levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, ctx.getClickedPos(), 0);
             }
 

@@ -8,8 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Abstract event for citizen related things.
  */
-public class AbstractCitizenEvent extends AbstractColonyEvent
-{
+public class AbstractCitizenEvent extends AbstractColonyEvent {
     /**
      * The citizen related to the event.
      */
@@ -20,8 +19,7 @@ public class AbstractCitizenEvent extends AbstractColonyEvent
      *
      * @param citizen the citizen related to the event.
      */
-    protected AbstractCitizenEvent(final @NotNull ICitizenData citizen)
-    {
+    protected AbstractCitizenEvent(final @NotNull ICitizenData citizen) {
         super(citizen.getColony());
         this.citizen = citizen;
     }
@@ -32,8 +30,7 @@ public class AbstractCitizenEvent extends AbstractColonyEvent
      * @return the citizen instance.
      */
     @NotNull
-    public ICitizen getCitizen()
-    {
+    public ICitizen getCitizen() {
         return citizen;
     }
 }

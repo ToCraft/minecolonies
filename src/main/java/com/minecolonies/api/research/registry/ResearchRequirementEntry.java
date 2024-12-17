@@ -11,29 +11,27 @@ import java.util.function.Function;
  * Entry for the {@link IResearchRequirement} registry. Makes it possible to create a single registry for a {@link IResearchRequirement}.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public class ResearchRequirementEntry
-{
+public class ResearchRequirementEntry {
     private final Function<CompoundTag, IResearchRequirement> readFromNBT;
     private final ResourceLocation registryname;
 
     /**
      * A builder class for {@link ResearchRequirementEntry}.
      */
-    public static final class Builder
-    {
+    public static final class Builder {
         private Function<CompoundTag, IResearchRequirement> readFromNBT;
-        private ResourceLocation                            registryName;
+        private ResourceLocation registryName;
 
         /**
          * Set the function to reconstruct the ResearchRequirement during deserialization.
          * This function will be available from ResearchRequirementEntry.readFromNBT
          * It must take a CompoundTag and return an IResearchRequirement containing a meaningful Description:
          * implementing either a Constructor or static method is encouraged.
-         * @param readFromNBT  a function taking CompoundTag and returning an IResearchRequirement.
+         *
+         * @param readFromNBT a function taking CompoundTag and returning an IResearchRequirement.
          * @return The builder.
          */
-        public Builder setReadFromNBT(final Function<CompoundTag, IResearchRequirement> readFromNBT)
-        {
+        public Builder setReadFromNBT(final Function<CompoundTag, IResearchRequirement> readFromNBT) {
             this.readFromNBT = readFromNBT;
             return this;
         }
@@ -44,8 +42,7 @@ public class ResearchRequirementEntry
          * @param registryName The name for the registry entry.
          * @return The builder.
          */
-        public Builder setRegistryName(final ResourceLocation registryName)
-        {
+        public Builder setRegistryName(final ResourceLocation registryName) {
             this.registryName = registryName;
             return this;
         }
@@ -56,8 +53,7 @@ public class ResearchRequirementEntry
          * @return The entry.
          */
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder explicitly allowed to create an instance.
-        public ResearchRequirementEntry createResearchRequirementEntry()
-        {
+        public ResearchRequirementEntry createResearchRequirementEntry() {
             Objects.requireNonNull(readFromNBT);
             Objects.requireNonNull(registryName);
 
@@ -65,21 +61,18 @@ public class ResearchRequirementEntry
         }
     }
 
-    public IResearchRequirement readFromNBT(CompoundTag nbt)
-    {
+    public IResearchRequirement readFromNBT(CompoundTag nbt) {
         return readFromNBT.apply(nbt);
     }
 
     private ResearchRequirementEntry(
-      final Function<CompoundTag, IResearchRequirement> readFromNBT, final ResourceLocation registryName)
-    {
+            final Function<CompoundTag, IResearchRequirement> readFromNBT, final ResourceLocation registryName) {
         super();
         this.readFromNBT = readFromNBT;
         this.registryname = registryName;
     }
 
-    public ResourceLocation getRegistryName()
-    {
+    public ResourceLocation getRegistryName() {
         return registryname;
     }
 }

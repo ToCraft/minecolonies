@@ -8,16 +8,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Amazon model.
  */
-public class AmazonModel<T extends AbstractEntityAmazon> extends HumanoidModel<AbstractEntityAmazon>
-{
-    public AmazonModel(final ModelPart part)
-    {
+public class AmazonModel<T extends AbstractEntityAmazon> extends HumanoidModel<AbstractEntityAmazon> {
+    public AmazonModel(final ModelPart part) {
         super(part);
     }
 
     @Override
-    public void setupAnim(@NotNull final AbstractEntityAmazon entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
-    {
+    public void setupAnim(@NotNull final AbstractEntityAmazon entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         head.y -= 3;
         rightLeg.y -= 3.5;

@@ -36,8 +36,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  * The worker module for citizen where they are assigned to if they work at it.
  */
 public class WorkerBuildingModule extends AbstractAssignedCitizenModule
-  implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
-{
+        implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule {
     /**
      * Module specific skills.
      */
@@ -60,12 +59,11 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     private final Function<IBuilding, Integer> sizeLimit;
 
     public WorkerBuildingModule(
-      final JobEntry entry,
-      final Skill primary,
-      final Skill secondary,
-      final boolean canWorkingDuringRain,
-      final Function<IBuilding, Integer> sizeLimit)
-    {
+            final JobEntry entry,
+            final Skill primary,
+            final Skill secondary,
+            final boolean canWorkingDuringRain,
+            final Function<IBuilding, Integer> sizeLimit) {
         this.jobEntry = entry;
         this.primary = primary;
         this.secondary = secondary;
@@ -74,21 +72,17 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     }
 
     @Override
-    public boolean assignCitizen(final ICitizenData citizen)
-    {
-        if (assignedCitizen.contains(citizen) || isFull() || citizen == null)
-        {
+    public boolean assignCitizen(final ICitizenData citizen) {
+        if (assignedCitizen.contains(citizen) || isFull() || citizen == null) {
             return false;
         }
 
         IJob job = citizen.getJob();
-        if (job == null)
-        {
+        if (job == null) {
             job = createJob(citizen);
         }
 
-        if (!job.assignTo(this))
-        {
+        if (!job.assignTo(this)) {
             return false;
         }
 
@@ -96,42 +90,30 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
-        if (compound.contains(TAG_WORKER))
-        {
+        if (compound.contains(TAG_WORKER)) {
             final ListTag workersTagList = compound.getList(TAG_WORKER, Tag.TAG_COMPOUND);
-            for (int i = 0; i < workersTagList.size(); ++i)
-            {
+            for (int i = 0; i < workersTagList.size(); ++i) {
                 final ICitizenData data = building.getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
-                if (data != null && data.getJob() != null && data.getJob().getJobRegistryEntry() == jobEntry)
-                {
+                if (data != null && data.getJob() != null && data.getJob().getJobRegistryEntry() == jobEntry) {
                     assignCitizen(data);
                 }
             }
-        }
-        else if (compound.contains(getModuleSerializationIdentifier()))
-        {
+        } else if (compound.contains(getModuleSerializationIdentifier())) {
             final CompoundTag jobCompound = compound.getCompound(jobEntry.getKey().toString());
             final int[] residentIds = jobCompound.getIntArray(TAG_WORKING_RESIDENTS);
-            for (final int citizenId : residentIds)
-            {
+            for (final int citizenId : residentIds) {
                 final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
-                if (citizen != null)
-                {
+                if (citizen != null) {
                     assignCitizen(citizen);
                 }
             }
-        }
-        else
-        {
+        } else {
             final int[] residentIds = compound.getIntArray(TAG_WORKING_RESIDENTS);
-            for (final int citizenId : residentIds)
-            {
+            for (final int citizenId : residentIds) {
                 final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
-                if (citizen != null)
-                {
+                if (citizen != null) {
                     assignCitizen(citizen);
                 }
             }
@@ -139,28 +121,22 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     }
 
     @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
+    public void onColonyTick(@NotNull final IColony colony) {
         // If we have no active worker, grab one from the Colony
-        if (!isFull() && BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()))
-        {
+        if (!isFull() && BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry())) {
             final ICitizenData joblessCitizen = colony.getCitizenManager().getJoblessCitizen();
-            if (joblessCitizen != null)
-            {
+            if (joblessCitizen != null) {
                 assignCitizen(joblessCitizen);
             }
         }
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         super.serializeNBT(provider, compound);
-        if (!assignedCitizen.isEmpty())
-        {
+        if (!assignedCitizen.isEmpty()) {
             final int[] residentIds = new int[assignedCitizen.size()];
-            for (int i = 0; i < assignedCitizen.size(); ++i)
-            {
+            for (int i = 0; i < assignedCitizen.size(); ++i) {
                 residentIds[i] = assignedCitizen.get(i).getId();
             }
             compound.putIntArray(TAG_WORKING_RESIDENTS, residentIds);
@@ -168,8 +144,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf) {
         super.serializeToView(buf);
         buf.writeById(IMinecoloniesAPI.getInstance().getJobRegistry()::getIdOrThrow, jobEntry);
         buf.writeInt(getPrimarySkill().ordinal());
@@ -177,20 +152,16 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     }
 
     @Override
-    void onAssignment(final ICitizenData citizen)
-    {
-        for (final AbstractCraftingBuildingModule module : building.getModulesByType(AbstractCraftingBuildingModule.class))
-        {
+    void onAssignment(final ICitizenData citizen) {
+        for (final AbstractCraftingBuildingModule module : building.getModulesByType(AbstractCraftingBuildingModule.class)) {
             module.updateWorkerAvailableForRecipes();
         }
         citizen.getJob().onLevelUp();
     }
 
     @Override
-    void onRemoval(final ICitizenData citizen)
-    {
-        if (citizen.getJob() != null)
-        {
+    void onRemoval(final ICitizenData citizen) {
+        if (citizen.getJob() != null) {
             citizen.getJob().onRemoval();
         }
 
@@ -199,18 +170,14 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     }
 
     @Override
-    public int getModuleMax()
-    {
+    public int getModuleMax() {
         return sizeLimit.apply(this.building);
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        for (final Optional<AbstractEntityCitizen> entityCitizen : Objects.requireNonNull(getAssignedEntities()))
-        {
-            if (entityCitizen.isPresent() && entityCitizen.get().getCitizenJobHandler().getColonyJob() == null)
-            {
+    public void onUpgradeComplete(final int newLevel) {
+        for (final Optional<AbstractEntityCitizen> entityCitizen : Objects.requireNonNull(getAssignedEntities())) {
+            if (entityCitizen.isPresent() && entityCitizen.get().getCitizenJobHandler().getColonyJob() == null) {
                 entityCitizen.get().getCitizenJobHandler().setModelDependingOnJob(null);
             }
         }
@@ -220,61 +187,53 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     /**
      * Get the Job DisplayName
      */
-    public String getJobDisplayName()
-    {
+    public String getJobDisplayName() {
         return Component.translatableEscape(jobEntry.getTranslationKey()).getString();
     }
 
     @NotNull
     @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
+    public IJob<?> createJob(final ICitizenData citizen) {
         return jobEntry.produceJob(citizen);
     }
 
     @Override
-    public boolean canWorkDuringTheRain()
-    {
+    public boolean canWorkDuringTheRain() {
         return building.getBuildingLevel() >= building.getMaxBuildingLevel() || canWorkingDuringRain;
     }
 
     @NotNull
     @Override
-    public Skill getPrimarySkill()
-    {
+    public Skill getPrimarySkill() {
         return primary;
     }
 
     @NotNull
     @Override
-    public Skill getSecondarySkill()
-    {
+    public Skill getSecondarySkill() {
         return secondary;
     }
 
     @Override
-    public List<IRequestResolver<?>> createResolvers()
-    {
+    public List<IRequestResolver<?>> createResolvers() {
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
         builder.add(new BuildingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-            .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
-          new PrivateWorkerCraftingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-            .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry),
-          new PrivateWorkerCraftingProductionResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-            .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry));
+                        .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+                new PrivateWorkerCraftingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
+                        .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry),
+                new PrivateWorkerCraftingProductionResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
+                        .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry));
         return builder.build();
     }
 
     @Override
-    public JobEntry getJobEntry()
-    {
+    public JobEntry getJobEntry() {
         return jobEntry;
     }
 
     @Override
     @Deprecated
-    protected String getModuleSerializationIdentifier()
-    {
+    protected String getModuleSerializationIdentifier() {
         return jobEntry.getKey().toString();
     }
 }

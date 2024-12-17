@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Handler for the warehouse module.
  */
-public class WarehouseModule extends AbstractBuildingModule implements IPersistentModule
-{
+public class WarehouseModule extends AbstractBuildingModule implements IPersistentModule {
     /**
      * The storage tag for the storage capacity.
      */
@@ -25,43 +24,38 @@ public class WarehouseModule extends AbstractBuildingModule implements IPersiste
     /**
      * Construct a new grouped itemlist module with the unique list identifier.
      */
-    public WarehouseModule()
-    {
+    public WarehouseModule() {
         super();
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         storageUpgrade = compound.getInt(TAG_STORAGE);
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         compound.putInt(TAG_STORAGE, storageUpgrade);
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(storageUpgrade);
     }
 
     /**
      * Get the upgrade level.
+     *
      * @return the level.
      */
-    public int getStorageUpgrade()
-    {
+    public int getStorageUpgrade() {
         return storageUpgrade;
     }
 
     /**
      * Increment the storage upgrade level.
      */
-    public void incrementStorageUpgrade()
-    {
+    public void incrementStorageUpgrade() {
         this.storageUpgrade++;
     }
 }

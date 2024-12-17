@@ -12,15 +12,14 @@ import org.jetbrains.annotations.NotNull;
  * @author Asherslab
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class BuildingGuardTower extends AbstractBuildingGuards
-{
+public class BuildingGuardTower extends AbstractBuildingGuards {
 
     /**
      * Our constants. The Schematic names, Defence bonus, and Offence bonus.
      */
-    private static final String SCHEMATIC_NAME        = "guardtower";
-    private static final int    MAX_LEVEL             = 5;
-    private static final int    BONUS_HP_SINGLE_GUARD = 20;
+    private static final String SCHEMATIC_NAME = "guardtower";
+    private static final int MAX_LEVEL = 5;
+    private static final int BONUS_HP_SINGLE_GUARD = 20;
 
     /**
      * The abstract constructor of the building.
@@ -28,29 +27,24 @@ public class BuildingGuardTower extends AbstractBuildingGuards
      * @param c the colony
      * @param l the position
      */
-    public BuildingGuardTower(@NotNull final IColony c, final BlockPos l)
-    {
+    public BuildingGuardTower(@NotNull final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return SCHEMATIC_NAME;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_LEVEL;
     }
 
     @Override
-    public int getClaimRadius(final int newLevel)
-    {
-        switch (newLevel)
-        {
+    public int getClaimRadius(final int newLevel) {
+        switch (newLevel) {
             case 1:
                 return 2;
             case 2:
@@ -66,44 +60,38 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     }
 
     @Override
-    public void onDestroyed()
-    {
+    public void onDestroyed() {
         super.onDestroyed();
         colony.getBuildingManager().guardBuildingChangedAt(this, 0);
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
+    public void onUpgradeComplete(final int newLevel) {
         super.onUpgradeComplete(newLevel);
         colony.getBuildingManager().guardBuildingChangedAt(this, newLevel);
     }
 
     @Override
-    public boolean requiresManualTarget()
-    {
+    public boolean requiresManualTarget() {
         return (patrolTargets == null || patrolTargets.isEmpty() || tempNextPatrolPoint != null || !shallPatrolManually()) && tempNextPatrolPoint == null;
     }
 
     @Override
-    public int getBonusHealth()
-    {
+    public int getBonusHealth() {
         return BONUS_HP_SINGLE_GUARD + super.getBonusHealth();
     }
 
     /**
      * The client view for the bakery building.
      */
-    public static class View extends AbstractBuildingGuards.View
-    {
+    public static class View extends AbstractBuildingGuards.View {
         /**
          * The client view constructor for the AbstractGuardBuilding.
          *
          * @param c the colony.
          * @param l the location.
          */
-        public View(final IColonyView c, @NotNull final BlockPos l)
-        {
+        public View(final IColonyView c, @NotNull final BlockPos l) {
             super(c, l);
         }
     }

@@ -10,8 +10,7 @@ import java.util.UUID;
 /**
  * Permission event class, used to store events happening in the colony.
  */
-public class PermissionEvent
-{
+public class PermissionEvent {
     /**
      * Player UUID.
      */
@@ -41,8 +40,7 @@ public class PermissionEvent
      * @param action   the action happening.
      * @param position the position of the action.
      */
-    public PermissionEvent(final UUID id, final String name, final Action action, final BlockPos position)
-    {
+    public PermissionEvent(final UUID id, final String name, final Action action, final BlockPos position) {
         this.id = id;
         this.name = name;
         this.action = action;
@@ -54,15 +52,11 @@ public class PermissionEvent
      *
      * @param buf the ByteBuf.
      */
-    public PermissionEvent(final RegistryFriendlyByteBuf buf)
-    {
+    public PermissionEvent(final RegistryFriendlyByteBuf buf) {
         final UUID uuid = buf.readUUID();
-        if (uuid.equals(UUID.fromString("1-2-3-4-5")))
-        {
+        if (uuid.equals(UUID.fromString("1-2-3-4-5"))) {
             this.id = null;
-        }
-        else
-        {
+        } else {
             this.id = uuid;
         }
         this.name = buf.readUtf(32767);
@@ -76,8 +70,7 @@ public class PermissionEvent
      * @return the UUID.
      */
     @Nullable
-    public UUID getId()
-    {
+    public UUID getId() {
         return id;
     }
 
@@ -86,8 +79,7 @@ public class PermissionEvent
      *
      * @return the name String.
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
@@ -96,8 +88,7 @@ public class PermissionEvent
      *
      * @return the Action
      */
-    public Action getAction()
-    {
+    public Action getAction() {
         return action;
     }
 
@@ -106,8 +97,7 @@ public class PermissionEvent
      *
      * @return the BlockPos.
      */
-    public BlockPos getPosition()
-    {
+    public BlockPos getPosition() {
         return position;
     }
 
@@ -116,14 +106,10 @@ public class PermissionEvent
      *
      * @param buf the buffer.
      */
-    public void serialize(final RegistryFriendlyByteBuf buf)
-    {
-        if (id == null)
-        {
+    public void serialize(final RegistryFriendlyByteBuf buf) {
+        if (id == null) {
             buf.writeUUID(UUID.fromString("1-2-3-4-5"));
-        }
-        else
-        {
+        } else {
             buf.writeUUID(id);
         }
         buf.writeUtf(name);
@@ -132,26 +118,22 @@ public class PermissionEvent
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         final PermissionEvent that = (PermissionEvent) o;
         return Objects.equals(id, that.id) &&
-                 Objects.equals(name, that.name) &&
-                 action == that.action &&
-                 Objects.equals(position, that.position);
+                Objects.equals(name, that.name) &&
+                action == that.action &&
+                Objects.equals(position, that.position);
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(id, name, action, position);
     }
 }

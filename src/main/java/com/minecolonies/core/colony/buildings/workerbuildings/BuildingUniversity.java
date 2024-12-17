@@ -13,7 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -28,15 +27,13 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BOOKCASES;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_RESEARCHERS_MORE_KNOWLEDGE;
 import static com.minecolonies.api.util.constant.TranslationConstants.RESEARCH_CONCLUDED;
 
 /**
  * Creates a new building for the university.
  */
-public class BuildingUniversity extends AbstractBuilding
-{
+public class BuildingUniversity extends AbstractBuilding {
     /**
      * Description of the job executed in the hut.
      */
@@ -63,36 +60,30 @@ public class BuildingUniversity extends AbstractBuilding
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingUniversity(final IColony c, final BlockPos l)
-    {
+    public BuildingUniversity(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return UNIVERSITY;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         final ListTag furnaceTagList = compound.getList(TAG_BOOKCASES, Tag.TAG_INT_ARRAY);
-        for (int i = 0; i < furnaceTagList.size(); ++i)
-        {
+        for (int i = 0; i < furnaceTagList.size(); ++i) {
             bookCases.add(NBTUtils.readBlockPos(furnaceTagList.get(i)));
         }
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
         @NotNull final ListTag bookcaseTagList = new ListTag();
-        for (@NotNull final BlockPos entry : bookCases)
-        {
+        for (@NotNull final BlockPos entry : bookCases) {
             bookcaseTagList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_BOOKCASES, bookcaseTagList);
@@ -101,11 +92,9 @@ public class BuildingUniversity extends AbstractBuilding
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
-    {
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world) {
         super.registerBlockPosition(block, pos, world);
-        if (block.defaultBlockState().is(Tags.Blocks.BOOKSHELVES))
-        {
+        if (block.defaultBlockState().is(Tags.Blocks.BOOKSHELVES)) {
             bookCases.add(pos);
         }
     }
@@ -115,15 +104,12 @@ public class BuildingUniversity extends AbstractBuilding
      *
      * @return the position of it.
      */
-    public BlockPos getRandomBookShelf()
-    {
-        if (bookCases.isEmpty())
-        {
+    public BlockPos getRandomBookShelf() {
+        if (bookCases.isEmpty()) {
             return getPosition();
         }
         final BlockPos returnPos = bookCases.get(random.nextInt(bookCases.size()));
-        if (colony.getWorld().getBlockState(returnPos).is(Tags.Blocks.BOOKSHELVES))
-        {
+        if (colony.getWorld().getBlockState(returnPos).is(Tags.Blocks.BOOKSHELVES)) {
             return returnPos;
         }
         bookCases.remove(returnPos);
@@ -131,26 +117,22 @@ public class BuildingUniversity extends AbstractBuilding
     }
 
     @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
+    public void onColonyTick(@NotNull final IColony colony) {
         super.onColonyTick(colony);
 
         final List<ILocalResearch> inProgress = colony.getResearchManager().getResearchTree().getResearchInProgress();
         final WorkerBuildingModule module = getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.researcher.get());
 
         int i = 1;
-        for (final ILocalResearch research : inProgress)
-        {
-            if (i > module.getAssignedCitizen().size())
-            {
+        for (final ILocalResearch research : inProgress) {
+            if (i > module.getAssignedCitizen().size()) {
                 return;
             }
 
             if (colony.getResearchManager()
-                  .getResearchTree()
-                  .getResearch(research.getBranch(), research.getId())
-                  .research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree()))
-            {
+                    .getResearchTree()
+                    .getResearch(research.getBranch(), research.getId())
+                    .research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree())) {
                 onSuccess(research);
             }
             colony.getResearchManager().markDirty();
@@ -163,15 +145,13 @@ public class BuildingUniversity extends AbstractBuilding
      *
      * @param research the concluded research.
      */
-    public void onSuccess(final ILocalResearch research)
-    {
-        for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
-        {
+    public void onSuccess(final ILocalResearch research) {
+        for (final ICitizenData citizen : colony.getCitizenManager().getCitizens()) {
             citizen.applyResearchEffects();
         }
 
         final MutableComponent message = Component.translatableEscape(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
-          MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()));
+                MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()));
 
         MessageUtils.format(message).sendTo(colony).forManagers();
         colony.getResearchManager().checkAutoStartResearch();
@@ -179,15 +159,11 @@ public class BuildingUniversity extends AbstractBuilding
     }
 
     @Override
-    public void processOfflineTime(final long time)
-    {
-        if (getBuildingLevel() >= OFFLINE_PROCESSING_LEVEL_CAP && time > 0)
-        {
+    public void processOfflineTime(final long time) {
+        if (getBuildingLevel() >= OFFLINE_PROCESSING_LEVEL_CAP && time > 0) {
             MessageUtils.format(MESSAGE_RESEARCHERS_MORE_KNOWLEDGE).sendTo(colony).forAllPlayers();
-            for (final ICitizenData citizenData : getAllAssignedCitizen())
-            {
-                if (citizenData.getJob() != null)
-                {
+            for (final ICitizenData citizenData : getAllAssignedCitizen()) {
+                if (citizenData.getJob() != null) {
                     citizenData.getJob().processOfflineTime(time);
                 }
             }

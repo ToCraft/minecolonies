@@ -1,11 +1,11 @@
 package com.minecolonies.core.entity.ai.combat;
 
 import com.minecolonies.api.entity.ai.IStateAI;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.combat.threat.ThreatTableEntry;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,8 +21,7 @@ import static com.minecolonies.api.util.constant.GuardConstants.Y_VISION;
 /**
  * Target search AI
  */
-public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
-{
+public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI {
     /**
      * The entity this AI runs for
      */
@@ -38,8 +37,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      *
      * @param user The creature which is using the AI
      */
-    public TargetAI(final T user, final int targetFrequency, final ITickRateStateMachine stateMachine)
-    {
+    public TargetAI(final T user, final int targetFrequency, final ITickRateStateMachine stateMachine) {
         this.user = user;
         stateMachine.addTransition(new TickingTransition<>(CombatAIStates.NO_TARGET, this::checkForTarget, () -> CombatAIStates.ATTACKING, 5));
         stateMachine.addTransition(new TickingTransition<>(CombatAIStates.NO_TARGET, this::searchNearbyTarget, () -> CombatAIStates.ATTACKING, targetFrequency));
@@ -50,32 +48,25 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      *
      * @return true if we found a target, false if no target.
      */
-    protected boolean checkForTarget()
-    {
-        if (target != null && !target.isAlive())
-        {
+    protected boolean checkForTarget() {
+        if (target != null && !target.isAlive()) {
             onTargetDied(target);
             target = null;
         }
 
         final ThreatTableEntry nextTarget = user.getThreatTable().getTarget();
-        if (nextTarget == null)
-        {
+        if (nextTarget == null) {
             return false;
         }
 
-        if (isEntityValidTarget(nextTarget.getEntity()))
-        {
-            if (target != nextTarget.getEntity())
-            {
+        if (isEntityValidTarget(nextTarget.getEntity())) {
+            if (target != nextTarget.getEntity()) {
                 target = nextTarget.getEntity();
                 onTargetChange();
             }
 
             return true;
-        }
-        else
-        {
+        } else {
             resetTarget();
             return false;
         }
@@ -87,15 +78,12 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      * @param target Entity to check
      * @return true if should attack
      */
-    public boolean isEntityValidTarget(final LivingEntity target)
-    {
-        if (target == user || target == null || !target.isAlive() || !isWithinPersecutionDistance(target))
-        {
+    public boolean isEntityValidTarget(final LivingEntity target) {
+        if (target == user || target == null || !target.isAlive() || !isWithinPersecutionDistance(target)) {
             return false;
         }
 
-        if (target == user.getLastHurtByMob())
-        {
+        if (target == user.getLastHurtByMob()) {
             return true;
         }
 
@@ -105,20 +93,16 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
     /**
      * Resets the current target and removes it from all saved targets.
      */
-    public void resetTarget()
-    {
-        if (target == null)
-        {
+    public void resetTarget() {
+        if (target == null) {
             return;
         }
 
-        if (user.getLastHurtMob() == target)
-        {
+        if (user.getLastHurtMob() == target) {
             user.setLastHurtMob(null);
         }
 
-        if (user.getLastHurtByMob() == target)
-        {
+        if (user.getLastHurtByMob() == target) {
             user.setLastHurtByMob(null);
         }
 
@@ -131,35 +115,28 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      *
      * @return The next IAIState to go to.
      */
-    protected boolean searchNearbyTarget()
-    {
-        if (checkForTarget())
-        {
+    protected boolean searchNearbyTarget() {
+        if (checkForTarget()) {
             return true;
         }
 
         final List<LivingEntity> entities = user.level().getEntitiesOfClass(LivingEntity.class, getSearchArea());
 
-        if (entities.isEmpty())
-        {
+        if (entities.isEmpty()) {
             return false;
         }
 
         boolean foundTarget = false;
-        for (final LivingEntity entity : entities)
-        {
-            if (!entity.isAlive())
-            {
+        for (final LivingEntity entity : entities) {
+            if (!entity.isAlive()) {
                 continue;
             }
 
-            if (skipSearch(entity))
-            {
+            if (skipSearch(entity)) {
                 return false;
             }
 
-            if (isEntityValidTarget(entity) && user.getSensing().hasLineOfSight(entity))
-            {
+            if (isEntityValidTarget(entity) && user.getSensing().hasLineOfSight(entity)) {
                 user.getThreatTable().addThreat(entity, 0);
                 foundTarget = true;
             }
@@ -174,8 +151,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      * @param entity checked entity
      * @return true if skip
      */
-    protected boolean skipSearch(final LivingEntity entity)
-    {
+    protected boolean skipSearch(final LivingEntity entity) {
         return false;
     }
 
@@ -184,8 +160,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      *
      * @return the {@link AABB}
      */
-    protected AABB getSearchArea()
-    {
+    protected AABB getSearchArea() {
         final BlockPos raiderPos = user.blockPosition();
         final Direction randomDirection = Direction.from3DDataValue(user.getRandom().nextInt(4) + 2);
         final int searchRange = getSearchRange();
@@ -204,8 +179,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      *
      * @return
      */
-    protected int getYSearchRange()
-    {
+    protected int getYSearchRange() {
         return Y_VISION;
     }
 
@@ -214,8 +188,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      *
      * @return
      */
-    protected int getSearchRange()
-    {
+    protected int getSearchRange() {
         return 16;
     }
 
@@ -225,8 +198,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      * @param target
      * @return
      */
-    protected boolean isAttackableTarget(final LivingEntity target)
-    {
+    protected boolean isAttackableTarget(final LivingEntity target) {
         return target instanceof Enemy && !user.getClass().isInstance(target);
     }
 
@@ -236,8 +208,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      * @param target
      * @return
      */
-    protected boolean isWithinPersecutionDistance(final LivingEntity target)
-    {
+    protected boolean isWithinPersecutionDistance(final LivingEntity target) {
         return true;
     }
 
@@ -246,16 +217,14 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      *
      * @param target
      */
-    protected void onTargetDied(final LivingEntity target)
-    {
+    protected void onTargetDied(final LivingEntity target) {
 
     }
 
     /**
      * Actions on changing to a new target entity
      */
-    protected void onTargetChange()
-    {
+    protected void onTargetChange() {
 
     }
 }

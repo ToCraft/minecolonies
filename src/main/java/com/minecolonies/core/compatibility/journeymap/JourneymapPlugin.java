@@ -34,8 +34,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JO
  * Plugin entrypoint for JourneyMap
  */
 @JourneyMapPlugin(apiVersion = IClientAPI.API_VERSION)
-public class JourneymapPlugin implements IClientPlugin
-{
+public class JourneymapPlugin implements IClientPlugin {
     private static final Style JOB_TOOLTIP = Style.EMPTY.withColor(ChatFormatting.YELLOW).withItalic(true);
 
     private Journeymap jmap;
@@ -43,8 +42,7 @@ public class JourneymapPlugin implements IClientPlugin
     private EventListener listener;
 
     @Override
-    public void initialize(@NotNull final IClientAPI api)
-    {
+    public void initialize(@NotNull final IClientAPI api) {
         this.jmap = new Journeymap(api);
         this.listener = new EventListener(this.jmap);
 
@@ -55,15 +53,12 @@ public class JourneymapPlugin implements IClientPlugin
     }
 
     @Override
-    public String getModId()
-    {
+    public String getModId() {
         return MOD_ID;
     }
 
-    private void onMappingEvent(final MappingEvent event)
-    {
-        switch (event.getStage())
-        {
+    private void onMappingEvent(final MappingEvent event) {
+        switch (event.getStage()) {
             case MAPPING_STARTED:
                 ColonyBorderMapping.load(this.jmap, event.dimension);
                 break;
@@ -75,46 +70,37 @@ public class JourneymapPlugin implements IClientPlugin
         }
     }
 
-    private void onOptionsRegistryEvent(final RegistryEvent.OptionsRegistryEvent event)
-    {
+    private void onOptionsRegistryEvent(final RegistryEvent.OptionsRegistryEvent event) {
         this.jmap.setOptions(new JourneymapOptions());
     }
 
-    private void onInfoRegistryEvent(final RegistryEvent.InfoSlotRegistryEvent event)
-    {
+    private void onInfoRegistryEvent(final RegistryEvent.InfoSlotRegistryEvent event) {
         event.register(MOD_ID, "com.minecolonies.coremod.journeymap.currentcolony", 2500, ColonyBorderMapping::getCurrentColony);
     }
 
-    private void onEntityRadarUpdateEvent(final EntityRadarUpdateEvent event)
-    {
+    private void onEntityRadarUpdateEvent(final EntityRadarUpdateEvent event) {
         final WrappedEntity wrapper = event.getWrappedEntity();
         final Entity entity = wrapper.getEntityRef().get();
 
-        if (entity instanceof AbstractEntityCitizen)
-        {
+        if (entity instanceof AbstractEntityCitizen) {
             final boolean isVisitor = entity instanceof VisitorCitizen;
             MutableComponent jobName;
 
-            if (isVisitor)
-            {
-                if (!JourneymapOptions.getShowVisitors(this.jmap.getOptions()))
-                {
+            if (isVisitor) {
+                if (!JourneymapOptions.getShowVisitors(this.jmap.getOptions())) {
                     wrapper.setDisable(true);
                     return;
                 }
 
                 jobName = Component.translatableEscape(PARTIAL_JOURNEY_MAP_INFO + "visitor");
-            }
-            else
-            {
+            } else {
                 final String jobId = entity.getEntityData().get(DATA_JOB);
                 final JobEntry jobEntry = jobId.isEmpty() ? null : IJobRegistry.getInstance().get(ResourceLocation.parse(jobId));
                 final IJob<?> job = jobEntry == null ? null : jobEntry.produceJob(null);
 
                 if (job instanceof AbstractJobGuard
                         ? !JourneymapOptions.getShowGuards(this.jmap.getOptions())
-                        : !JourneymapOptions.getShowCitizens(this.jmap.getOptions()))
-                {
+                        : !JourneymapOptions.getShowCitizens(this.jmap.getOptions())) {
                     wrapper.setDisable(true);
                     return;
                 }
@@ -124,11 +110,9 @@ public class JourneymapPlugin implements IClientPlugin
                         : jobEntry.getTranslationKey());
             }
 
-            if (JourneymapOptions.getShowColonistTooltip(this.jmap.getOptions()))
-            {
+            if (JourneymapOptions.getShowColonistTooltip(this.jmap.getOptions())) {
                 Component name = entity.getCustomName();
-                if (name != null)
-                {
+                if (name != null) {
                     wrapper.setEntityToolTips(Arrays.asList(name, jobName.setStyle(JOB_TOOLTIP)));
                 }
             }
@@ -137,26 +121,19 @@ public class JourneymapPlugin implements IClientPlugin
                     ? JourneymapOptions.getShowColonistNameMinimap(this.jmap.getOptions())
                     : JourneymapOptions.getShowColonistNameFullscreen(this.jmap.getOptions());
 
-            if (!showName)
-            {
+            if (!showName) {
                 wrapper.setCustomName("");
             }
 
-            if (!isVisitor && JourneymapOptions.getShowColonistTeamColour(this.jmap.getOptions()))
-            {
+            if (!isVisitor && JourneymapOptions.getShowColonistTeamColour(this.jmap.getOptions())) {
                 wrapper.setColor(entity.getTeamColor());
             }
-        }
-        else if (entity instanceof AbstractEntityRaiderMob)
-        {
+        } else if (entity instanceof AbstractEntityRaiderMob) {
             final JourneymapOptions.RaiderColor color = JourneymapOptions.getRaiderColor(this.jmap.getOptions());
 
-            if (JourneymapOptions.RaiderColor.NONE.equals(color))
-            {
+            if (JourneymapOptions.RaiderColor.NONE.equals(color)) {
                 wrapper.setDisable(true);
-            }
-            else if (!JourneymapOptions.RaiderColor.HOSTILE.equals(color))
-            {
+            } else if (!JourneymapOptions.RaiderColor.HOSTILE.equals(color)) {
                 wrapper.setColor(color.getColor().getValue());
             }
         }

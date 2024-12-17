@@ -21,13 +21,12 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 /**
  * Abstract class wrapping around multiple IItemHandler.
  */
-public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializable<CompoundTag>, IWorldNameableModifiable
-{
+public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializable<CompoundTag>, IWorldNameableModifiable {
 
-    ///NBT Constants
-    private static final String NBT_KEY_HANDLERS           = "Handlers";
+    /// NBT Constants
+    private static final String NBT_KEY_HANDLERS = "Handlers";
     private static final String NBT_KEY_HANDLERS_INDEXLIST = "Index";
-    private static final String NBT_KEY_NAME               = "Name";
+    private static final String NBT_KEY_NAME = "Name";
 
     private final IItemHandlerModifiable[] handlers;
 
@@ -48,14 +47,11 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      * @param defaultName The default name of this {@link CombinedItemHandler}.
      * @param handlers    The combining {@link IItemHandlerModifiable}.
      */
-    public CombinedItemHandler(@NotNull final String defaultName, @NotNull final IItemHandlerModifiable... handlers)
-    {
+    public CombinedItemHandler(@NotNull final String defaultName, @NotNull final IItemHandlerModifiable... handlers) {
         this.handlers = handlers;
         this.defaultName = defaultName;
-        for (final IItemHandler handler : handlers)
-        {
-            if (handler != null)
-            {
+        for (final IItemHandler handler : handlers) {
+            if (handler != null) {
                 totalSlots += handler.getSlots();
             }
         }
@@ -68,24 +64,20 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      * @param customName  The preset custom name of this {@link CombinedItemHandler}.
      * @param handlers    The combinging {@link IItemHandlerModifiable}.
      */
-    public CombinedItemHandler(@NotNull final String defaultName, @NotNull final String customName, @NotNull final IItemHandlerModifiable... handlers)
-    {
+    public CombinedItemHandler(@NotNull final String defaultName, @NotNull final String customName, @NotNull final IItemHandlerModifiable... handlers) {
         this(defaultName, handlers);
         this.customName = customName;
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = new CompoundTag();
 
         int index = 0;
         final ListTag handlerList = new ListTag();
         final ListTag indexList = new ListTag();
-        for (final IItemHandlerModifiable handlerModifiable : handlers)
-        {
-            if (handlerModifiable instanceof INBTSerializable)
-            {
+        for (final IItemHandlerModifiable handlerModifiable : handlers) {
+            if (handlerModifiable instanceof INBTSerializable) {
                 final INBTSerializable<?> serializable = (INBTSerializable<?>) handlerModifiable;
                 handlerList.add(serializable.serializeNBT(provider));
                 indexList.add(IntTag.valueOf(index));
@@ -97,8 +89,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         compound.put(NBT_KEY_HANDLERS, handlerList);
         compound.put(NBT_KEY_HANDLERS_INDEXLIST, indexList);
 
-        if (customName != null)
-        {
+        if (customName != null) {
             compound.putString(NBT_KEY_NAME, customName);
         }
 
@@ -107,19 +98,15 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
 
     @SuppressWarnings(UNCHECKED)
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt) {
         final ListTag handlerList = nbt.getList(NBT_KEY_HANDLERS, Tag.TAG_COMPOUND);
         final ListTag indexList = nbt.getList(NBT_KEY_HANDLERS_INDEXLIST, Tag.TAG_INT);
 
-        if (handlerList.size() == handlers.length)
-        {
-            for (int i = 0; i < handlerList.size(); i++)
-            {
+        if (handlerList.size() == handlers.length) {
+            for (int i = 0; i < handlerList.size(); i++) {
                 final CompoundTag handlerCompound = handlerList.getCompound(i);
                 final IItemHandlerModifiable modifiable = handlers[indexList.getInt(i)];
-                if (modifiable instanceof INBTSerializable)
-                {
+                if (modifiable instanceof INBTSerializable) {
                     final INBTSerializable<CompoundTag> serializable = (INBTSerializable<CompoundTag>) modifiable;
                     serializable.deserializeNBT(provider, handlerCompound);
                 }
@@ -138,14 +125,11 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      * @throws RuntimeException if the handler is called in a way that the handler was not expecting.
      **/
     @Override
-    public void setStackInSlot(final int slot, final ItemStack stack)
-    {
+    public void setStackInSlot(final int slot, final ItemStack stack) {
         int activeSlot = slot;
 
-        for (final IItemHandlerModifiable modifiable : handlers)
-        {
-            if (activeSlot < modifiable.getSlots())
-            {
+        for (final IItemHandlerModifiable modifiable : handlers) {
+            if (activeSlot < modifiable.getSlots()) {
                 modifiable.setStackInSlot(activeSlot, stack);
                 return;
             }
@@ -160,15 +144,12 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      * @param slot the slot of an itemHandler.
      * @return the last index.
      */
-    public int getLastIndex(final int slot)
-    {
+    public int getLastIndex(final int slot) {
         int slots = 0;
         int activeSlot = slot;
 
-        for (final IItemHandlerModifiable modifiable : handlers)
-        {
-            if (activeSlot < modifiable.getSlots())
-            {
+        for (final IItemHandlerModifiable modifiable : handlers) {
+            if (activeSlot < modifiable.getSlots()) {
                 return modifiable.getSlots() + slots;
             }
             slots += modifiable.getSlots();
@@ -183,8 +164,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      * @return The number of slots available
      **/
     @Override
-    public int getSlots()
-    {
+    public int getSlots() {
         return totalSlots;
     }
 
@@ -206,14 +186,11 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      **/
     @NotNull
     @Override
-    public ItemStack getStackInSlot(final int slot)
-    {
+    public ItemStack getStackInSlot(final int slot) {
         int activeSlot = slot;
 
-        for (final IItemHandlerModifiable modifiable : handlers)
-        {
-            if (activeSlot < modifiable.getSlots())
-            {
+        for (final IItemHandlerModifiable modifiable : handlers) {
+            if (activeSlot < modifiable.getSlots()) {
                 return modifiable.getStackInSlot(activeSlot);
             }
 
@@ -235,14 +212,11 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      **/
     @NotNull
     @Override
-    public ItemStack insertItem(final int slot, @NotNull final ItemStack stack, final boolean simulate)
-    {
+    public ItemStack insertItem(final int slot, @NotNull final ItemStack stack, final boolean simulate) {
         int activeSlot = slot;
 
-        for (final IItemHandlerModifiable modifiable : handlers)
-        {
-            if (activeSlot < modifiable.getSlots())
-            {
+        for (final IItemHandlerModifiable modifiable : handlers) {
+            if (activeSlot < modifiable.getSlots()) {
                 return modifiable.insertItem(activeSlot, stack, simulate);
             }
 
@@ -263,19 +237,15 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      **/
     @NotNull
     @Override
-    public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
-    {
+    public ItemStack extractItem(final int slot, final int amount, final boolean simulate) {
         int checkedSlots = 0;
-        for (final IItemHandlerModifiable modifiable : handlers)
-        {
-            if (modifiable.getSlots() + checkedSlots <= slot)
-            {
+        for (final IItemHandlerModifiable modifiable : handlers) {
+            if (modifiable.getSlots() + checkedSlots <= slot) {
                 checkedSlots += modifiable.getSlots();
                 continue;
             }
             final int activeSlot = slot - checkedSlots;
-            if (activeSlot < modifiable.getSlots())
-            {
+            if (activeSlot < modifiable.getSlots()) {
                 return modifiable.extractItem(activeSlot, amount, simulate);
             }
         }
@@ -284,17 +254,12 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     }
 
     @Override
-    public int getSlotLimit(final int slot)
-    {
+    public int getSlotLimit(final int slot) {
         int slotIndex = slot;
-        for (final IItemHandlerModifiable modifiable : handlers)
-        {
-            if (slotIndex >= modifiable.getSlots())
-            {
+        for (final IItemHandlerModifiable modifiable : handlers) {
+            if (slotIndex >= modifiable.getSlots()) {
                 slotIndex -= modifiable.getSlots();
-            }
-            else
-            {
+            } else {
                 return modifiable.getSlotLimit(slotIndex);
             }
         }
@@ -303,17 +268,12 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
-    {
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
         int slotIndex = slot;
-        for (final IItemHandlerModifiable modifiable : handlers)
-        {
-            if (slotIndex >= modifiable.getSlots())
-            {
+        for (final IItemHandlerModifiable modifiable : handlers) {
+            if (slotIndex >= modifiable.getSlots()) {
                 slotIndex -= modifiable.getSlots();
-            }
-            else
-            {
+            } else {
                 return modifiable.isItemValid(slotIndex, stack);
             }
         }
@@ -321,47 +281,38 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         return false;
     }
 
-    protected IItemHandlerModifiable[] getHandlers()
-    {
+    protected IItemHandlerModifiable[] getHandlers() {
         return handlers.clone();
     }
 
     @Override
-    public void setName(@Nullable final String name)
-    {
+    public void setName(@Nullable final String name) {
         this.customName = name == null ? "" : name;
     }
 
     @NotNull
     @Override
-    public Component getName()
-    {
+    public Component getName() {
         return Component.literal(customName.isEmpty() ? defaultName : customName);
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         final CombinedItemHandler that = (CombinedItemHandler) o;
 
-        if (handlers.length != that.handlers.length)
-        {
+        if (handlers.length != that.handlers.length) {
             return false;
         }
 
         final int length = handlers.length;
-        for (int i = 0; i < length; i++)
-        {
-            if (handlers[i] != that.handlers[i])
-            {
+        for (int i = 0; i < length; i++) {
+            if (handlers[i] != that.handlers[i]) {
                 return false;
             }
         }
@@ -370,8 +321,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Arrays.hashCode(handlers);
     }
 }

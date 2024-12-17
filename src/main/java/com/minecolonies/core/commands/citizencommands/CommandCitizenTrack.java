@@ -29,56 +29,47 @@ import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 /**
  * Displays information about a chosen citizen in a chosen colony.
  */
-public class CommandCitizenTrack implements IMCColonyOfficerCommand
-{
+public class CommandCitizenTrack implements IMCColonyOfficerCommand {
     /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof Player))
-        {
+        if (!(sender instanceof Player)) {
             return 1;
         }
 
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? Level.OVERWORLD : context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
+        if (colony == null) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(IntegerArgumentType.getInteger(context, CITIZENID_ARG));
 
-        if (citizenData == null)
-        {
+        if (citizenData == null) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_NOT_FOUND), true);
             return 0;
         }
 
         final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
 
-        if (!optionalEntityCitizen.isPresent())
-        {
+        if (!optionalEntityCitizen.isPresent()) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_NOT_LOADED), true);
             return 0;
         }
         final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
 
-        if (PathfindingUtils.trackingMap.getOrDefault(sender.getUUID(), UUID.randomUUID()).equals(entityCitizen.getUUID()))
-        {
+        if (PathfindingUtils.trackingMap.getOrDefault(sender.getUUID(), UUID.randomUUID()).equals(entityCitizen.getUUID())) {
             context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_DISABLED), true);
             PathfindingUtils.trackingMap.remove(sender.getUUID());
             new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>()).sendToPlayer((ServerPlayer) sender);
-        }
-        else
-        {
+        } else {
             context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_ENABLED), true);
             PathfindingUtils.trackingMap.put(sender.getUUID(), entityCitizen.getUUID());
         }
@@ -91,16 +82,14 @@ public class CommandCitizenTrack implements IMCColonyOfficerCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "trackPath";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
-                         .then(IMCCommand.newArgument(CITIZENID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute)));
+                .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                        .then(IMCCommand.newArgument(CITIZENID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute)));
     }
 }

@@ -20,8 +20,7 @@ import java.util.Set;
 /**
  * The abstract implementation for plantation field tile entities.
  */
-public abstract class AbstractTileEntityPlantationField extends BlockEntity implements IBlueprintDataProviderBE, IRotatableBlockEntity
-{
+public abstract class AbstractTileEntityPlantationField extends BlockEntity implements IBlueprintDataProviderBE, IRotatableBlockEntity {
     /**
      * Default method.
      *
@@ -29,8 +28,7 @@ public abstract class AbstractTileEntityPlantationField extends BlockEntity impl
      * @param pos        the positions this tile entity is at.
      * @param state      the state the entity is in.
      */
-    protected AbstractTileEntityPlantationField(final BlockEntityType<? extends AbstractTileEntityPlantationField> entityType, final BlockPos pos, final BlockState state)
-    {
+    protected AbstractTileEntityPlantationField(final BlockEntityType<? extends AbstractTileEntityPlantationField> entityType, final BlockPos pos, final BlockState state) {
         super(entityType, pos, state);
     }
 
@@ -70,6 +68,7 @@ public abstract class AbstractTileEntityPlantationField extends BlockEntity impl
 
     /**
      * Get the rotation of the controller.
+     *
      * @return the placed rotation.
      */
     public abstract RotationMirror getRotationMirror();

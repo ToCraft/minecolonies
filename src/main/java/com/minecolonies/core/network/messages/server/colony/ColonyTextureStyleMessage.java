@@ -11,8 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Message to set the colony texture style.
  */
-public class ColonyTextureStyleMessage extends AbstractColonyServerMessage
-{
+public class ColonyTextureStyleMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "colony_texture_style", ColonyTextureStyleMessage::new);
 
     /**
@@ -23,30 +22,26 @@ public class ColonyTextureStyleMessage extends AbstractColonyServerMessage
     /**
      * Change the colony style from the client to the serverside.
      *
-     * @param colony      the colony the player changed the style in.
-     * @param style the list of patterns they set in the banner picker
+     * @param colony the colony the player changed the style in.
+     * @param style  the list of patterns they set in the banner picker
      */
-    public ColonyTextureStyleMessage(final IColony colony, final String style)
-    {
+    public ColonyTextureStyleMessage(final IColony colony, final String style) {
         super(TYPE, colony);
         this.style = style;
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         colony.setTextureStyle(style);
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeUtf(style);
     }
 
-    protected ColonyTextureStyleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ColonyTextureStyleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.style = buf.readUtf(32767);
     }

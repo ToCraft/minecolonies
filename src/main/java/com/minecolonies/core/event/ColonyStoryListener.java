@@ -16,7 +16,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -32,8 +31,7 @@ import static net.neoforged.fml.common.EventBusSubscriber.Bus.MOD;
  * Loads and listens to colony story changes.
  */
 @EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = MOD)
-public class ColonyStoryListener extends SimpleJsonResourceReloadListener
-{
+public class ColonyStoryListener extends SimpleJsonResourceReloadListener {
     /**
      * Gson instance
      */
@@ -66,31 +64,28 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
     public static Set<StoryText> supplyCampStories = new HashSet<>();
 
     @SubscribeEvent
-    public static void modInitClient(final RegisterClientReloadListenersEvent event)
-    {
+    public static void modInitClient(final RegisterClientReloadListenersEvent event) {
         event.registerReloadListener(new ColonyStoryListener());
     }
 
     /**
      * Create a new listener.
      */
-    public ColonyStoryListener()
-    {
+    public ColonyStoryListener() {
         super(GSON, COLONY_STORIES_DIR);
     }
 
     /**
      * Pick a random entry from the given set of story texts.
+     *
      * @param stories the set of story texts to pick from.
      * @param biome   biomes to filter the stories against.
      * @param rng     random number source.
-     * @return        one of the stories, at random.
+     * @return one of the stories, at random.
      */
-    public static String pickRandom(final Collection<StoryText> stories, final Holder<Biome> biome, final Random rng)
-    {
+    public static String pickRandom(final Collection<StoryText> stories, final Holder<Biome> biome, final Random rng) {
         final List<String> matches = StoryText.allMatches(stories, biome);
-        if (matches.isEmpty())
-        {
+        if (matches.isEmpty()) {
             return "";
         }
 
@@ -98,84 +93,58 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
     }
 
     @Override
-    protected void apply(final Map<ResourceLocation, JsonElement> jsonElementMap, final @NotNull ResourceManager resourceManager, final @NotNull ProfilerFiller profiler)
-    {
+    protected void apply(final Map<ResourceLocation, JsonElement> jsonElementMap, final @NotNull ResourceManager resourceManager, final @NotNull ProfilerFiller profiler) {
         abandonedColonyNames.clear();
         abandonedColonyStories.clear();
         supplyShipStories.clear();
         supplyCampStories.clear();
 
-        for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
-        {
-            try
-            {
-                if (entry.getValue().isJsonArray())
-                {
+        for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet()) {
+            try {
+                if (entry.getValue().isJsonArray()) {
                     entry.getValue().getAsJsonArray().forEach(e -> parseStory(e.getAsJsonObject()));
-                }
-                else
-                {
+                } else {
                     parseStory(entry.getValue().getAsJsonObject());
                 }
-            }
-            catch (final Throwable e)
-            {
+            } catch (final Throwable e) {
                 Log.getLogger().error("Error parsing story " + entry.getKey().toString(), e);
             }
         }
     }
 
-    private void parseStory(final JsonObject json)
-    {
+    private void parseStory(final JsonObject json) {
         final ResourceLocation type = ResourceLocation.parse(Objects.requireNonNullElse(json.get("type"), new JsonPrimitive("")).getAsString());
-        if (type.equals(ABANDONED_COLONY_NAME))
-        {
+        if (type.equals(ABANDONED_COLONY_NAME)) {
             abandonedColonyNames.addAll(parseStoryText(json));
-        }
-        else if (type.equals(ABANDONED_COLONY_STORY))
-        {
+        } else if (type.equals(ABANDONED_COLONY_STORY)) {
             abandonedColonyStories.addAll(parseStoryText(json));
-        }
-        else if (type.equals(SUPPLY_CAMP_STORY))
-        {
+        } else if (type.equals(SUPPLY_CAMP_STORY)) {
             supplyCampStories.addAll(parseStoryText(json));
-        }
-        else if (type.equals(SUPPLY_SHIP_STORY))
-        {
+        } else if (type.equals(SUPPLY_SHIP_STORY)) {
             supplyShipStories.addAll(parseStoryText(json));
-        }
-        else
-        {
+        } else {
             // unrecognised type; ignore without warning in case it's something intended for a different mod
         }
     }
 
-    private List<StoryText> parseStoryText(final JsonObject json)
-    {
+    private List<StoryText> parseStoryText(final JsonObject json) {
         BiomeFilter biomeFilter = BiomeFilter.ALL;
 
         final JsonElement biomesJson = json.get("biomes");
-        if (biomesJson != null)
-        {
-            if (biomesJson.isJsonArray())
-            {
-                for (final JsonElement element : biomesJson.getAsJsonArray())
-                {
+        if (biomesJson != null) {
+            if (biomesJson.isJsonArray()) {
+                for (final JsonElement element : biomesJson.getAsJsonArray()) {
                     biomeFilter = biomeFilter.or(BiomeFilter.parse(element.getAsString()));
                 }
-            }
-            else
-            {
+            } else {
                 biomeFilter = BiomeFilter.parse(biomesJson.getAsString());
             }
         }
 
         final JsonElement contentJson = json.get("content");
-        if (contentJson.isJsonArray())
-        {
+        if (contentJson.isJsonArray()) {
             final List<StoryText> stories = new ArrayList<>();
-            for (final JsonElement element : contentJson.getAsJsonArray())
-            {
+            for (final JsonElement element : contentJson.getAsJsonArray()) {
                 stories.add(new StoryText(biomeFilter, element.getAsString()));
             }
             return stories;
@@ -187,8 +156,7 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
     /**
      * A biome filter; either by id or by tag.
      */
-    private record BiomeFilter(Predicate<Holder<Biome>> filter) implements Predicate<Holder<Biome>>
-    {
+    private record BiomeFilter(Predicate<Holder<Biome>> filter) implements Predicate<Holder<Biome>> {
         /**
          * A filter that accepts any biome.
          */
@@ -196,17 +164,16 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
 
         /**
          * Combine two {@link BiomeFilter} with an OR condition.
+         *
          * @param other the other filter.
-         * @return      a filter that returns {@code this || other}.
+         * @return a filter that returns {@code this || other}.
          */
-        public BiomeFilter or(final BiomeFilter other)
-        {
+        public BiomeFilter or(final BiomeFilter other) {
             return (this == ALL) ? other : (other == ALL) ? this : new BiomeFilter(this.filter().or(other.filter()));
         }
 
         @Override
-        public boolean test(final Holder<Biome> biome)
-        {
+        public boolean test(final Holder<Biome> biome) {
             return this.filter.test(biome);
         }
 
@@ -217,15 +184,11 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
          * @return the biome filter.
          * @throws IllegalStateException for invalid values.
          */
-        public static BiomeFilter parse(final String value)
-        {
-            if (value.startsWith("#"))
-            {
+        public static BiomeFilter parse(final String value) {
+            if (value.startsWith("#")) {
                 final TagKey<Biome> tagKey = TagKey.create(Registries.BIOME, ResourceLocation.parse(value.substring(1)));
                 return new BiomeFilter(b -> b.is(tagKey));
-            }
-            else
-            {
+            } else {
                 final RegistryAccess registryAccess = ServerLifecycleHooks.getCurrentServer().registryAccess();
                 final ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(value));
                 final Holder<Biome> biome = registryAccess.registryOrThrow(Registries.BIOME).getHolderOrThrow(key);
@@ -236,29 +199,29 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
 
     /**
      * A bit of story text that is filterable by biome.
+     *
      * @param biomeFilter the filter that passes any biome where this story is valid.
      * @param content     the text content.
      */
-    public record StoryText(BiomeFilter biomeFilter, String content)
-    {
+    public record StoryText(BiomeFilter biomeFilter, String content) {
         /**
          * Check if the given biome is valid for this story text.
+         *
          * @param biome the biome to check.
-         * @return      true if valid.
+         * @return true if valid.
          */
-        public boolean matches(final Holder<Biome> biome)
-        {
+        public boolean matches(final Holder<Biome> biome) {
             return biomeFilter.test(biome);
         }
 
         /**
          * Builds a list of all possible matches from a collection of {@link StoryText}.
+         *
          * @param stories the collection.
          * @param biome   the biome to match against.
-         * @return        a list of matching content.
+         * @return a list of matching content.
          */
-        public static List<String> allMatches(final Collection<StoryText> stories, final Holder<Biome> biome)
-        {
+        public static List<String> allMatches(final Collection<StoryText> stories, final Holder<Biome> biome) {
             return stories.stream().filter(s -> s.matches(biome)).map(StoryText::content).toList();
         }
     }

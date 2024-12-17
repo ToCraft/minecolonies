@@ -16,82 +16,70 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Tuple;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class StandardProviderRequestResolverAssignmentDataStore implements IProviderResolverAssignmentDataStore
-{
+public class StandardProviderRequestResolverAssignmentDataStore implements IProviderResolverAssignmentDataStore {
 
     private final Map<IToken<?>, Collection<IToken<?>>> assignments;
-    private       IToken<?>                             id;
+    private IToken<?> id;
 
     public StandardProviderRequestResolverAssignmentDataStore(
-      final IToken<?> id,
-      final Map<IToken<?>, Collection<IToken<?>>> assignments
-    )
-    {
+            final IToken<?> id,
+            final Map<IToken<?>, Collection<IToken<?>>> assignments
+    ) {
         this.id = id;
         this.assignments = assignments;
     }
 
-    public StandardProviderRequestResolverAssignmentDataStore()
-    {
+    public StandardProviderRequestResolverAssignmentDataStore() {
         this(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN), new HashMap<>());
     }
 
     @NotNull
     @Override
-    public Map<IToken<?>, Collection<IToken<?>>> getAssignments()
-    {
+    public Map<IToken<?>, Collection<IToken<?>>> getAssignments() {
         return assignments;
     }
 
     @Override
-    public IToken<?> getId()
-    {
+    public IToken<?> getId() {
         return id;
     }
 
     @Override
-    public void setId(final IToken<?> id)
-    {
+    public void setId(final IToken<?> id) {
         this.id = id;
     }
 
-    public static class Factory implements IFactory<FactoryVoidInput, StandardProviderRequestResolverAssignmentDataStore>
-    {
+    public static class Factory implements IFactory<FactoryVoidInput, StandardProviderRequestResolverAssignmentDataStore> {
 
         @NotNull
         @Override
-        public TypeToken<? extends StandardProviderRequestResolverAssignmentDataStore> getFactoryOutputType()
-        {
+        public TypeToken<? extends StandardProviderRequestResolverAssignmentDataStore> getFactoryOutputType() {
             return TypeToken.of(StandardProviderRequestResolverAssignmentDataStore.class);
         }
 
         @NotNull
         @Override
-        public TypeToken<? extends FactoryVoidInput> getFactoryInputType()
-        {
+        public TypeToken<? extends FactoryVoidInput> getFactoryInputType() {
             return TypeConstants.FACTORYVOIDINPUT;
         }
 
         @NotNull
         @Override
         public StandardProviderRequestResolverAssignmentDataStore getNewInstance(
-          @NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, @NotNull final Object... context) throws IllegalArgumentException
-        {
+                @NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, @NotNull final Object... context) throws IllegalArgumentException {
             return new StandardProviderRequestResolverAssignmentDataStore();
         }
 
         @NotNull
         @Override
         public CompoundTag serialize(
-          @NotNull final HolderLookup.Provider provider,
-          @NotNull final IFactoryController controller, @NotNull final StandardProviderRequestResolverAssignmentDataStore standardProviderRequestResolverAssignmentDataStore)
-        {
+                @NotNull final HolderLookup.Provider provider,
+                @NotNull final IFactoryController controller, @NotNull final StandardProviderRequestResolverAssignmentDataStore standardProviderRequestResolverAssignmentDataStore) {
             CompoundTag compound = new CompoundTag();
 
             compound.put(NbtTagConstants.TAG_TOKEN, controller.serializeTag(provider, standardProviderRequestResolverAssignmentDataStore.id));
@@ -100,8 +88,8 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
 
                 entryCompound.put(NbtTagConstants.TAG_TOKEN, controller.serializeTag(provider, t));
                 entryCompound.put(NbtTagConstants.TAG_LIST, standardProviderRequestResolverAssignmentDataStore.assignments.get(t).stream()
-                                                              .map(s -> StandardFactoryController.getInstance().serializeTag(provider, s))
-                                                              .collect(NBTUtils.toListNBT()));
+                        .map(s -> StandardFactoryController.getInstance().serializeTag(provider, s))
+                        .collect(NBTUtils.toListNBT()));
 
                 return entryCompound;
             }).collect(NBTUtils.toListNBT()));
@@ -111,27 +99,25 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
 
         @NotNull
         @Override
-        public StandardProviderRequestResolverAssignmentDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
-        {
+        public StandardProviderRequestResolverAssignmentDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable {
             IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NbtTagConstants.TAG_TOKEN));
             Map<IToken<?>, Collection<IToken<?>>> map = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND))
-                                                          .map(CompoundTag -> {
-                                                              final IToken<?> elementToken = controller.deserializeTag(provider, CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
-                                                              final Collection<IToken<?>> elements = NBTUtils.streamCompound(CompoundTag.getList(NbtTagConstants.TAG_LIST,
-                                                                Tag.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserializeTag(provider, elementCompound))
-                                                                                                       .collect(Collectors.toList());
+                    .map(CompoundTag -> {
+                        final IToken<?> elementToken = controller.deserializeTag(provider, CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
+                        final Collection<IToken<?>> elements = NBTUtils.streamCompound(CompoundTag.getList(NbtTagConstants.TAG_LIST,
+                                        Tag.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserializeTag(provider, elementCompound))
+                                .collect(Collectors.toList());
 
-                                                              return new Tuple<>(elementToken, elements);
-                                                          }).collect(Collectors.toMap(t -> t.getA(), t -> t.getB()));
+                        return new Tuple<>(elementToken, elements);
+                    }).collect(Collectors.toMap(t -> t.getA(), t -> t.getB()));
 
             return new StandardProviderRequestResolverAssignmentDataStore(token, map);
         }
 
         @Override
         public void serialize(
-          IFactoryController controller, StandardProviderRequestResolverAssignmentDataStore input,
-          RegistryFriendlyByteBuf packetBuffer)
-        {
+                IFactoryController controller, StandardProviderRequestResolverAssignmentDataStore input,
+                RegistryFriendlyByteBuf packetBuffer) {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.assignments.size());
             input.assignments.forEach((key, value) -> {
@@ -143,19 +129,16 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
 
         @Override
         public StandardProviderRequestResolverAssignmentDataStore deserialize(
-          IFactoryController controller,
-          RegistryFriendlyByteBuf buffer) throws Throwable
-        {
+                IFactoryController controller,
+                RegistryFriendlyByteBuf buffer) throws Throwable {
             final IToken<?> token = controller.deserialize(buffer);
             final Map<IToken<?>, Collection<IToken<?>>> assignments = new HashMap<>();
             final int assignmentsSize = buffer.readInt();
-            for (int i = 0; i < assignmentsSize; ++i)
-            {
+            for (int i = 0; i < assignmentsSize; ++i) {
                 final IToken<?> key = controller.deserialize(buffer);
                 final List<IToken<?>> tokens = new ArrayList<>();
                 final int tokensSize = buffer.readInt();
-                for (int ii = 0; ii < tokensSize; ++ii)
-                {
+                for (int ii = 0; ii < tokensSize; ++ii) {
                     tokens.add(controller.deserialize(buffer));
                 }
                 assignments.put(key, tokens);
@@ -165,8 +148,7 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
         }
 
         @Override
-        public short getSerializationId()
-        {
+        public short getSerializationId() {
             return SerializationIdentifierConstants.STANDARD_PROVIDER_REQUEST_RESOLVER_ASSIGNMENT_DATASTORE_ID;
         }
     }

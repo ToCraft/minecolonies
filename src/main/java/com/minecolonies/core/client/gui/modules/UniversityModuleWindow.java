@@ -33,26 +33,22 @@ import static com.minecolonies.api.util.constant.WindowConstants.RESOURCE_STRING
 /**
  * BOWindow for the university.
  */
-public class UniversityModuleWindow extends AbstractModuleWindow
-{
+public class UniversityModuleWindow extends AbstractModuleWindow {
     /**
      * Constructor for the window of the lumberjack.
      *
      * @param building {@link com.minecolonies.core.colony.buildings.views.EmptyView}.
      */
-    public UniversityModuleWindow(final IBuildingView building)
-    {
+    public UniversityModuleWindow(final IBuildingView building) {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 
         final List<ResourceLocation> inputBranches = IGlobalResearchTree.getInstance().getBranches();
         inputBranches.sort(Comparator.comparingInt(branchId -> IGlobalResearchTree.getInstance().getBranchData(branchId).getSortOrder()));
         final List<ResourceLocation> visibleBranches = new ArrayList<>();
         final List<List<MutableComponent>> allReqs = new ArrayList<>();
-        for (final ResourceLocation branch : inputBranches)
-        {
+        for (final ResourceLocation branch : inputBranches) {
             final List<MutableComponent> requirements = getHidingRequirementDesc(branch);
-            if(requirements.isEmpty() || !IGlobalResearchTree.getInstance().getBranchData(branch).getHidden())
-            {
+            if (requirements.isEmpty() || !IGlobalResearchTree.getInstance().getBranchData(branch).getHidden()) {
                 visibleBranches.add(branch);
                 allReqs.add(requirements);
             }
@@ -65,38 +61,26 @@ public class UniversityModuleWindow extends AbstractModuleWindow
     /**
      * Gets a list describing what requirements must be met to make at least one primary research for a branch visible.
      *
-     * @param branch  The identifier for a branch.
+     * @param branch The identifier for a branch.
      * @return An empty list if at least one primary research is visible, or a list of MutableComponents describing the dependencies for each hidden primary research.
      */
-    public List<MutableComponent> getHidingRequirementDesc(final ResourceLocation branch)
-    {
+    public List<MutableComponent> getHidingRequirementDesc(final ResourceLocation branch) {
         final List<MutableComponent> requirements = new ArrayList<>();
-        for(final ResourceLocation primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch))
-        {
-            if(!IGlobalResearchTree.getInstance().getResearch(branch, primary).isHidden()
-                 || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement(), buildingView.getColony()))
-            {
+        for (final ResourceLocation primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch)) {
+            if (!IGlobalResearchTree.getInstance().getResearch(branch, primary).isHidden()
+                    || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement(), buildingView.getColony())) {
                 return Collections.EMPTY_LIST;
-            }
-            else
-            {
-                if(requirements.isEmpty())
-                {
+            } else {
+                if (requirements.isEmpty()) {
                     requirements.add(Component.translatableEscape("com.minecolonies.coremod.research.locked"));
-                }
-                else
-                {
+                } else {
                     requirements.add(Component.translatableEscape("Or").setStyle((Style.EMPTY).withColor(ChatFormatting.BLUE)));
                 }
-                for(IResearchRequirement req : IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement())
-                {
+                for (IResearchRequirement req : IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement()) {
                     // We'll include even completed partial components in the requirement list.
-                    if (!req.isFulfilled(buildingView.getColony()))
-                    {
+                    if (!req.isFulfilled(buildingView.getColony())) {
                         requirements.add(Component.literal("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(ChatFormatting.RED))));
-                    }
-                    else
-                    {
+                    } else {
                         requirements.add(Component.literal("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(ChatFormatting.AQUA))));
                     }
                 }
@@ -106,80 +90,64 @@ public class UniversityModuleWindow extends AbstractModuleWindow
     }
 
     @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
+    public void onButtonClicked(@NotNull final Button button) {
         super.onButtonClicked(button);
 
         final ResourceLocation id = button.getParent() == null ? null : ResourceLocation.tryParse(button.getParent().getID());
-        if (id != null && IGlobalResearchTree.getInstance().getBranches().contains(id))
-        {
+        if (id != null && IGlobalResearchTree.getInstance().getBranches().contains(id)) {
             new WindowResearchTree(id, buildingView, this).open();
         }
     }
 
     /**
      * Display the count of InProgress research, and the max number for this university, and change the color text to red if at max.
-     * @param offset        An amount to offset the count of inProgress research, normally zero, or -1 when cancelling a research
+     *
+     * @param offset An amount to offset the count of inProgress research, normally zero, or -1 when cancelling a research
      */
-    public void updateResearchCount(final int offset)
-    {
+    public void updateResearchCount(final int offset) {
         this.findPaneOfTypeByID("maxresearchwarn", Text.class)
-          .setText(Component.translatableEscape("com.minecolonies.coremod.gui.research.countinprogress",
-            buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset, buildingView.getBuildingLevel()));
-        if(buildingView.getBuildingLevel() <= buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset)
-        {
+                .setText(Component.translatableEscape("com.minecolonies.coremod.gui.research.countinprogress",
+                        buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset, buildingView.getBuildingLevel()));
+        if (buildingView.getBuildingLevel() <= buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset) {
             this.findPaneOfTypeByID("maxresearchwarn", Text.class).setColors(Color.getByName("red", 0));
-        }
-        else
-        {
+        } else {
             this.findPaneOfTypeByID("maxresearchwarn", Text.class).setColors(Color.getByName("black", 0));
         }
     }
 
-    private static class ResearchListProvider implements ScrollingList.DataProvider
-    {
+    private static class ResearchListProvider implements ScrollingList.DataProvider {
         private final List<ResourceLocation> branches;
         private final List<List<MutableComponent>> requirements;
 
-        ResearchListProvider(List<ResourceLocation> branches, List<List<MutableComponent>> requirements)
-        {
+        ResearchListProvider(List<ResourceLocation> branches, List<List<MutableComponent>> requirements) {
             this.branches = branches;
             this.requirements = requirements;
         }
 
         @Override
-        public int getElementCount()
-        {
+        public int getElementCount() {
             return branches.size();
         }
 
         @Override
-        public void updateElement(final int index, final Pane rowPane)
-        {
+        public void updateElement(final int index, final Pane rowPane) {
             ButtonImage button = rowPane.findPaneOfTypeByID(GUI_LIST_ELEMENT_NAME, ButtonImage.class);
             button.getParent().setID(branches.get(index).toString());
-            if(requirements.get(index).isEmpty())
-            {
+            if (requirements.get(index).isEmpty()) {
                 button.setText(MutableComponent.create(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getName()));
-            }
-            else
-            {
+            } else {
                 button.setText(Component.translatableEscape("----------"));
                 button.disable();
             }
 
             // This null check isn't strictly required, but prevents unnecessary creation of tooltip panes, since the contents here never updates.
-            if(button.getHoverPane() == null && (!requirements.get(index).isEmpty() || !IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle().getKey().isEmpty()))
-            {
+            if (button.getHoverPane() == null && (!requirements.get(index).isEmpty() || !IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle().getKey().isEmpty())) {
                 AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(button);
-                if (!IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle().getKey().isEmpty())
-                {
+                if (!IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle().getKey().isEmpty()) {
                     hoverText.append(MutableComponent.create(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle())).colorName("GRAY").paragraphBreak();
                 }
-                if (!requirements.get(index).isEmpty())
-                {
-                    for (MutableComponent req : requirements.get(index))
-                    {
+                if (!requirements.get(index).isEmpty()) {
+                    for (MutableComponent req : requirements.get(index)) {
                         hoverText.append(req).color(COLOR_TEXT_UNFULFILLED).paragraphBreak();
                     }
                 }

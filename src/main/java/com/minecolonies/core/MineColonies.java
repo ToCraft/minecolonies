@@ -13,15 +13,15 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.component.ModDataComponents;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.IItemHandlerCapProvider;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
@@ -39,15 +39,20 @@ import com.minecolonies.core.network.messages.client.colony.*;
 import com.minecolonies.core.network.messages.server.*;
 import com.minecolonies.core.network.messages.server.colony.*;
 import com.minecolonies.core.network.messages.server.colony.building.*;
-import com.minecolonies.core.network.messages.server.colony.building.builder.*;
-import com.minecolonies.core.network.messages.server.colony.building.enchanter.*;
-import com.minecolonies.core.network.messages.server.colony.building.fields.*;
-import com.minecolonies.core.network.messages.server.colony.building.guard.*;
-import com.minecolonies.core.network.messages.server.colony.building.home.*;
-import com.minecolonies.core.network.messages.server.colony.building.miner.*;
-import com.minecolonies.core.network.messages.server.colony.building.postbox.*;
-import com.minecolonies.core.network.messages.server.colony.building.university.*;
-import com.minecolonies.core.network.messages.server.colony.building.warehouse.*;
+import com.minecolonies.core.network.messages.server.colony.building.builder.BuilderSelectWorkOrderMessage;
+import com.minecolonies.core.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
+import com.minecolonies.core.network.messages.server.colony.building.fields.AssignFieldMessage;
+import com.minecolonies.core.network.messages.server.colony.building.fields.AssignmentModeMessage;
+import com.minecolonies.core.network.messages.server.colony.building.fields.FarmFieldPlotResizeMessage;
+import com.minecolonies.core.network.messages.server.colony.building.fields.FarmFieldUpdateSeedMessage;
+import com.minecolonies.core.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
+import com.minecolonies.core.network.messages.server.colony.building.home.AssignUnassignMessage;
+import com.minecolonies.core.network.messages.server.colony.building.miner.MinerRepairLevelMessage;
+import com.minecolonies.core.network.messages.server.colony.building.miner.MinerSetLevelMessage;
+import com.minecolonies.core.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
+import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
+import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
+import com.minecolonies.core.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
 import com.minecolonies.core.network.messages.server.colony.building.worker.*;
 import com.minecolonies.core.network.messages.server.colony.citizen.*;
 import com.minecolonies.core.placementhandlers.PlacementHandlerInitializer;
@@ -65,8 +70,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.javafmlmod.FMLModContainer;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -80,18 +85,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 @Mod(Constants.MOD_ID)
-public class MineColonies
-{
+public class MineColonies {
     /**
      * The config instance.
      */
     private static Configurations<ClientConfiguration, ServerConfiguration, CommonConfiguration> config;
 
-    public MineColonies(final FMLModContainer modContainer, final Dist dist)
-    {
+    public MineColonies(final FMLModContainer modContainer, final Dist dist) {
         final IEventBus modBus = modContainer.getEventBus();
         final IEventBus forgeBus = NeoForge.EVENT_BUS;
-    
+
         LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json");
         config = new Configurations<>(modContainer, modBus, ClientConfiguration::new, ServerConfiguration::new, CommonConfiguration::new);
 
@@ -135,8 +138,7 @@ public class MineColonies
         forgeBus.register(EventHandler.class);
         forgeBus.register(FMLEventHandler.class);
         forgeBus.register(DataPackSyncEventHandler.ServerEvents.class);
-        if (dist.isClient()) 
-        {
+        if (dist.isClient()) {
             forgeBus.register(ClientEventHandler.class);
             forgeBus.register(DataPackSyncEventHandler.ClientEvents.class);
             modBus.register(ClientRegistryHandler.class);
@@ -147,8 +149,7 @@ public class MineColonies
         modBus.register(this.getClass());
 
         InteractionValidatorInitializer.init();
-        switch (dist)
-        {
+        switch (dist) {
             case CLIENT -> MinecoloniesAPIProxy.getInstance().setApiInstance(new ClientMinecoloniesAPIImpl());
             case DEDICATED_SERVER -> MinecoloniesAPIProxy.getInstance().setApiInstance(new CommonMinecoloniesAPIImpl());
         }
@@ -162,8 +163,7 @@ public class MineColonies
     }
 
     @SubscribeEvent
-    public static void registerNewRegistries(final NewRegistryEvent event)
-    {
+    public static void registerNewRegistries(final NewRegistryEvent event) {
         MinecoloniesAPIProxy.getInstance().onRegistryNewRegistry(event);
     }
 
@@ -173,8 +173,7 @@ public class MineColonies
      * @param event the forge pre init event.
      */
     @SubscribeEvent
-    public static void preInit(@NotNull final FMLCommonSetupEvent event)
-    {
+    public static void preInit(@NotNull final FMLCommonSetupEvent event) {
         StandardFactoryControllerInitializer.onPreInit();
 
         event.enqueueWork(ModLootConditions::init);
@@ -185,8 +184,7 @@ public class MineColonies
      * High event priority so we register before forge defaults.
      */
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void registerCaps(final RegisterCapabilitiesEvent event)
-    {
+    public static void registerCaps(final RegisterCapabilitiesEvent event) {
         // only register LivingEntities that have our own capability provider
         // barbs (pirates, etc.) have cap registered automatically by forge
         event.registerEntity(ItemHandler.ENTITY, ModEntities.CITIZEN, IItemHandlerCapProvider::getItemHandlerCap);
@@ -201,8 +199,7 @@ public class MineColonies
     }
 
     @SubscribeEvent
-    public static void createEntityAttribute(final EntityAttributeCreationEvent event)
-    {
+    public static void createEntityAttribute(final EntityAttributeCreationEvent event) {
         event.put(ModEntities.CITIZEN, AbstractEntityCitizen.getDefaultAttributes().build());
         event.put(ModEntities.VISITOR, AbstractEntityCitizen.getDefaultAttributes().build());
         event.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().build());
@@ -232,8 +229,7 @@ public class MineColonies
      * @param event event
      */
     @SubscribeEvent
-    public static void onLoadComplete(final FMLLoadCompleteEvent event)
-    {
+    public static void onLoadComplete(final FMLLoadCompleteEvent event) {
         PlacementHandlerInitializer.initHandlers();
         RequestSystemInitializer.onPostInit();
     }
@@ -243,17 +239,15 @@ public class MineColonies
      *
      * @return the config handler.
      */
-    public static Configurations<ClientConfiguration, ServerConfiguration, CommonConfiguration> getConfig()
-    {
+    public static Configurations<ClientConfiguration, ServerConfiguration, CommonConfiguration> getConfig() {
         return config;
     }
 
     @SubscribeEvent
-    public static void onNetworkRegistry(final RegisterPayloadHandlersEvent event)
-    {
+    public static void onNetworkRegistry(final RegisterPayloadHandlersEvent event) {
         final String modVersion = ModList.get().getModContainerById(Constants.MOD_ID).get().getModInfo().getVersion().toString();
         final PayloadRegistrar registry = event.registrar(Constants.MOD_ID).versioned(modVersion);
-        
+
         //  ColonyView messages
         ColonyViewMessage.TYPE.register(registry);
         ColonyViewCitizenViewMessage.TYPE.register(registry);
@@ -410,8 +404,7 @@ public class MineColonies
         event.registerItem(new IClientItemExtensions() {
             @NotNull
             @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer()
-            {
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 return new SpearItemTileEntityRenderer();
             }
         }, ModItems.spear);
@@ -420,10 +413,8 @@ public class MineColonies
     /**
      * Report known incompatibilities to the log.
      */
-    private void logIncompatibilities()
-    {
-        if (ModList.get().getModContainerById("minecolonies_tweaks").isPresent())
-        {
+    private void logIncompatibilities() {
+        if (ModList.get().getModContainerById("minecolonies_tweaks").isPresent()) {
             Log.getLogger().warn("|======================================================================================================================================|");
             Log.getLogger().warn("|                                                                                                                                      |");
             Log.getLogger().warn("| Minecolonies has detected an addon mod that alters Minecolonies core code recklessly: 'Tweaks/Compatibility addon for Minecolonies'. |");

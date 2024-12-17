@@ -18,13 +18,12 @@ import java.util.function.Consumer;
  * Basic statemachine class, can be used for any Transition typed which extends the transition interface. It contains the current state and a hashmap for events and transitions,
  * which are the minimal requirements to have a working statemachine.
  */
-public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends IState> implements IStateMachine<T, S>
-{
+public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends IState> implements IStateMachine<T, S> {
     /**
      * The lists of transitions and events
      */
     @NotNull
-    protected final Map<S, List<T>>               transitionMap;
+    protected final Map<S, List<T>> transitionMap;
     @NotNull
     protected final Map<IStateEventType, List<T>> eventTransitionMap;
 
@@ -57,8 +56,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      * @param initialState     the initial state.
      * @param exceptionHandler the exception handler.
      */
-    protected BasicStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)
-    {
+    protected BasicStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler) {
         this.state = initialState;
         this.initState = initialState;
         this.exceptionHandler = exceptionHandler;
@@ -73,14 +71,11 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      *
      * @param transition the transition to add
      */
-    public void addTransition(final T transition)
-    {
-        if (transition.getState() != null)
-        {
+    public void addTransition(final T transition) {
+        if (transition.getState() != null) {
             transitionMap.computeIfAbsent(transition.getState(), k -> new ArrayList<>()).add(transition);
         }
-        if (transition instanceof IStateMachineEvent)
-        {
+        if (transition instanceof IStateMachineEvent) {
             eventTransitionMap.computeIfAbsent(((IStateMachineEvent<?>) transition).getEventType(), k -> new ArrayList<>()).add(transition);
         }
     }
@@ -88,14 +83,10 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
     /**
      * Unregisters a transition
      */
-    public void removeTransition(final T transition)
-    {
-        if (transition instanceof IStateMachineEvent)
-        {
+    public void removeTransition(final T transition) {
+        if (transition instanceof IStateMachineEvent) {
             eventTransitionMap.get(((IStateMachineEvent<?>) transition).getEventType()).removeIf(t -> t == transition);
-        }
-        else
-        {
+        } else {
             transitionMap.get(transition.getState()).removeIf(t -> t == transition);
         }
     }
@@ -103,23 +94,17 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
     /**
      * Updates the statemachine.
      */
-    public void tick()
-    {
-        for (final List<T> transitions : eventTransitionMap.values())
-        {
-            for (final T transition : transitions)
-            {
-                if (checkTransition(transition))
-                {
+    public void tick() {
+        for (final List<T> transitions : eventTransitionMap.values()) {
+            for (final T transition : transitions) {
+                if (checkTransition(transition)) {
                     return;
                 }
             }
         }
 
-        for (final T transition : currentStateTransitions)
-        {
-            if (checkTransition(transition))
-            {
+        for (final T transition : currentStateTransitions) {
+            if (checkTransition(transition)) {
                 return;
             }
         }
@@ -131,17 +116,12 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      * @param transition the target to check
      * @return true if this target worked and we should stop executing this tick
      */
-    public boolean checkTransition(@NotNull final T transition)
-    {
-        try
-        {
-            if (!transition.checkCondition())
-            {
+    public boolean checkTransition(@NotNull final T transition) {
+        try {
+            if (!transition.checkCondition()) {
                 return false;
             }
-        }
-        catch (final RuntimeException e)
-        {
+        } catch (final RuntimeException e) {
             Log.getLogger().warn("Condition check for state " + getState() + " threw an exception:", e);
             this.onException(e);
             return false;
@@ -155,33 +135,25 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      * @param transition the transitions we're looking at
      * @return true if did transition to a new state
      */
-    public boolean transitionToNext(@NotNull final T transition)
-    {
+    public boolean transitionToNext(@NotNull final T transition) {
         final S newState;
-        try
-        {
+        try {
             newState = transition.getNextState();
-        }
-        catch (final RuntimeException e)
-        {
+        } catch (final RuntimeException e) {
             Log.getLogger().warn("Statemachine for state " + getState() + " threw an exception:", e);
             this.onException(e);
             return false;
         }
 
-        if (newState != null)
-        {
-            if (transition instanceof IStateMachineOneTimeEvent && ((IStateMachineOneTimeEvent<?>) transition).shouldRemove())
-            {
+        if (newState != null) {
+            if (transition instanceof IStateMachineOneTimeEvent && ((IStateMachineOneTimeEvent<?>) transition).shouldRemove()) {
                 removeTransition(transition);
             }
 
-            if (newState != state)
-            {
+            if (newState != state) {
                 currentStateTransitions = transitionMap.get(newState);
 
-                if (currentStateTransitions == null || currentStateTransitions.isEmpty())
-                {
+                if (currentStateTransitions == null || currentStateTransitions.isEmpty()) {
                     // Reached Trap/Sink state we cannot leave.
                     onException(new RuntimeException("Missing AI transition for state: " + newState));
                     reset();
@@ -200,8 +172,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      *
      * @param e The exception to be handled.
      */
-    protected void onException(final RuntimeException e)
-    {
+    protected void onException(final RuntimeException e) {
         exceptionHandler.accept(e);
     }
 
@@ -210,16 +181,14 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      *
      * @return The current IAIState.
      */
-    public final S getState()
-    {
+    public final S getState() {
         return state;
     }
 
     /**
      * Resets the statemachine
      */
-    public void reset()
-    {
+    public void reset() {
         state = initState;
         currentStateTransitions = transitionMap.get(initState);
     }

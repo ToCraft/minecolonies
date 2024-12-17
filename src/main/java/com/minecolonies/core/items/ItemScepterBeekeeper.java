@@ -27,8 +27,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Beekeeper Scepter Item class. Used to give tasks to Beekeeper.
  */
-public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IBlockOverlayItem
-{
+public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IBlockOverlayItem {
     private static final int RED_OVERLAY = 0xFFFF0000;
     private static final int YELLOW_OVERLAY = 0xFFFFFF00;
 
@@ -37,58 +36,46 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
      *
      * @param properties the properties.
      */
-    public ItemScepterBeekeeper(final Properties properties)
-    {
+    public ItemScepterBeekeeper(final Properties properties) {
         super("scepterbeekeeper", properties.stacksTo(1));
     }
 
     @Override
-    public InteractionResult useOn(final UseOnContext useContext)
-    {
+    public InteractionResult useOn(final UseOnContext useContext) {
         // if server world, do nothing
-        if (useContext.getLevel().isClientSide)
-        {
+        if (useContext.getLevel().isClientSide) {
             return InteractionResult.FAIL;
         }
 
         final Player player = useContext.getPlayer();
         final ItemStack scepter = useContext.getPlayer().getItemInHand(useContext.getHand());
 
-        if (!(BuildingId.readBuildingFromItemStack(scepter) instanceof final BuildingBeekeeper building))
-        {
+        if (!(BuildingId.readBuildingFromItemStack(scepter) instanceof final BuildingBeekeeper building)) {
             return InteractionResult.FAIL;
         }
 
-        if (useContext.getLevel().getBlockState(useContext.getClickedPos()).getBlock() instanceof BeehiveBlock)
-        {
+        if (useContext.getLevel().getBlockState(useContext.getClickedPos()).getBlock() instanceof BeehiveBlock) {
             final Collection<BlockPos> positions = building.getHives();
 
             final BlockPos pos = useContext.getClickedPos();
-            if (positions.contains(pos))
-            {
+            if (positions.contains(pos)) {
                 MessageUtils.format(TOOL_BEEHIVE_SCEPTER_REMOVE_HIVE).sendTo(useContext.getPlayer());
                 building.removeHive(pos);
                 SoundUtils.playSoundForPlayer((ServerPlayer) player, SoundEvents.NOTE_BLOCK_BELL.value(), (float) SoundUtils.VOLUME * 2, 0.5f);
                 new ColonyViewBuildingViewMessage(building).sendToPlayer((ServerPlayer) player);
-            }
-            else
-            {
-                if (positions.size() < building.getMaximumHives())
-                {
+            } else {
+                if (positions.size() < building.getMaximumHives()) {
                     MessageUtils.format(TOOL_BEEHIVE_SCEPTER_ADD_HIVE).sendTo(useContext.getPlayer());
                     building.addHive(pos);
                     SoundUtils.playSuccessSound(player, player.blockPosition());
                     new ColonyViewBuildingViewMessage(building).sendToPlayer((ServerPlayer) player);
                 }
-                if (positions.size() >= building.getMaximumHives())
-                {
+                if (positions.size() >= building.getMaximumHives()) {
                     MessageUtils.format(TOOL_BEEHIVE_SCEPTER_MAX_HIVES).sendTo(useContext.getPlayer());
                     player.getInventory().removeItemNoUpdate(player.getInventory().selected);
                 }
             }
-        }
-        else
-        {
+        } else {
             player.getInventory().removeItemNoUpdate(player.getInventory().selected);
         }
 
@@ -97,16 +84,13 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
 
     @NotNull
     @Override
-    public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack)
-    {
-        if (BuildingId.readBuildingViewFromItemStack(stack) instanceof final BuildingBeekeeper.View hut)
-        {
+    public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack) {
+        if (BuildingId.readBuildingViewFromItemStack(stack) instanceof final BuildingBeekeeper.View hut) {
             final List<OverlayBox> overlays = new ArrayList<>();
 
             overlays.add(new OverlayBox(hut.getPosition(), RED_OVERLAY, 0.02f, true));
 
-            for (final BlockPos hive : hut.getHives())
-            {
+            for (final BlockPos hive : hut.getHives()) {
                 overlays.add(new OverlayBox(hive, YELLOW_OVERLAY, 0.04f, true));
             }
 

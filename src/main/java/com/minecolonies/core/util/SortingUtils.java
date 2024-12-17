@@ -20,13 +20,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Utilities for sorting item handlers.
  */
-public final class SortingUtils
-{
+public final class SortingUtils {
     /**
      * Private constructor to hide implicit one.
      */
-    private SortingUtils()
-    {
+    private SortingUtils() {
         /*
          * Intentionally left empty.
          */
@@ -37,27 +35,21 @@ public final class SortingUtils
      *
      * @param inv the item handler to sort.
      */
-    public static void sort(@NotNull final HolderLookup.Provider provider, final CombinedItemHandler inv)
-    {
+    public static void sort(@NotNull final HolderLookup.Provider provider, final CombinedItemHandler inv) {
         final CompoundTag backup = inv.serializeNBT(provider);
         final AtomicInteger runCount = new AtomicInteger(0);
 
-        try
-        {
+        try {
             final Map<ExactMatchItemStorage, Integer> map = new HashMap<>();
-            if (inv != null)
-            {
-                for (int i = 0; i < inv.getSlots(); i++)
-                {
-                    if (ItemStackUtils.isEmpty(inv.getStackInSlot(i)))
-                    {
+            if (inv != null) {
+                for (int i = 0; i < inv.getSlots(); i++) {
+                    if (ItemStackUtils.isEmpty(inv.getStackInSlot(i))) {
                         continue;
                     }
                     final ExactMatchItemStorage storage = new ExactMatchItemStorage(inv.getStackInSlot(i));
                     inv.setStackInSlot(i, ItemStack.EMPTY);
                     int amount = storage.getAmount();
-                    if (map.containsKey(storage))
-                    {
+                    if (map.containsKey(storage)) {
                         amount += map.remove(storage);
                     }
                     map.put(storage, amount);
@@ -67,11 +59,9 @@ public final class SortingUtils
                 final double totalSlots = inv.getSlots();
                 final int totalReq = tuple.getA().get();
                 map.entrySet().stream().sorted(SortingUtils::compare)
-                  .forEach(entry -> SortingUtils.pushIntoInv(runCount, entry, inv, tuple.getA(), totalSlots, totalReq, tuple.getB()));
+                        .forEach(entry -> SortingUtils.pushIntoInv(runCount, entry, inv, tuple.getA(), totalSlots, totalReq, tuple.getB()));
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             inv.deserializeNBT(provider, backup);
             Log.getLogger().warn("Minecolonies warehouse sorting had an error, report it to the mod author.", e);
         }
@@ -89,28 +79,24 @@ public final class SortingUtils
      * @param creativeTabs     the creative tabs information for the items.
      */
     private static void pushIntoInv(
-      final AtomicInteger currentSlot,
-      final Map.Entry<ExactMatchItemStorage, Integer> entry,
-      final CombinedItemHandler inv,
-      final AtomicInteger requiredSlots,
-      final double totalSlots, final double totalRequirement, final Map<Integer, Integer> creativeTabs)
-    {
+            final AtomicInteger currentSlot,
+            final Map.Entry<ExactMatchItemStorage, Integer> entry,
+            final CombinedItemHandler inv,
+            final AtomicInteger requiredSlots,
+            final double totalSlots, final double totalRequirement, final Map<Integer, Integer> creativeTabs) {
         final int creativeTabId = IColonyManager.getInstance().getCompatibilityManager().getCreativeTabKey(entry.getKey());
 
         int slotLimit = 0;
         final ItemStack stack = entry.getKey().getItemStack();
         int tempSize = entry.getValue();
-        while (tempSize > 0)
-        {
+        while (tempSize > 0) {
             ItemStack tempStack = stack.copy();
             tempStack.setCount(Math.min(tempSize, tempStack.getMaxStackSize()));
             tempSize -= tempStack.getCount();
             slotLimit = inv.getLastIndex(currentSlot.get());
-            for (int i = 0; i < 5; i++)
-            {
+            for (int i = 0; i < 5; i++) {
                 tempStack = inv.insertItem(currentSlot.getAndIncrement(), tempStack, false);
-                if (tempStack.isEmpty())
-                {
+                if (tempStack.isEmpty()) {
                     break;
                 }
 
@@ -121,14 +107,12 @@ public final class SortingUtils
             creativeTabs.put(creativeTabId, creativeTabs.get(creativeTabId) - 1);
         }
 
-        if (creativeTabs.get(creativeTabId) <= 0 && (totalSlots - slotLimit) >= requiredSlots.get())
-        {
+        if (creativeTabs.get(creativeTabId) <= 0 && (totalSlots - slotLimit) >= requiredSlots.get()) {
             final double dumpedSlots = (totalRequirement - requiredSlots.get());
             final double usageFactor = totalSlots / dumpedSlots;
             final double theoreticalJumpFactor = (totalSlots - slotLimit) / requiredSlots.get();
 
-            if (theoreticalJumpFactor <= usageFactor || theoreticalJumpFactor > 4)
-            {
+            if (theoreticalJumpFactor <= usageFactor || theoreticalJumpFactor > 4) {
                 currentSlot.set(slotLimit);
             }
         }
@@ -141,21 +125,18 @@ public final class SortingUtils
      * @param t2 the second itemStorage entry.
      * @return an integer which describes the difference.
      */
-    private static int compare(final Map.Entry<ExactMatchItemStorage, Integer> t1, final Map.Entry<ExactMatchItemStorage, Integer> t2)
-    {
+    private static int compare(final Map.Entry<ExactMatchItemStorage, Integer> t1, final Map.Entry<ExactMatchItemStorage, Integer> t2) {
         final int creativeTabId1 = IColonyManager.getInstance().getCompatibilityManager().getCreativeTabKey(t1.getKey());
         final int creativeTabId2 = IColonyManager.getInstance().getCompatibilityManager().getCreativeTabKey(t2.getKey());
 
-        if (creativeTabId1 != creativeTabId2)
-        {
+        if (creativeTabId1 != creativeTabId2) {
             return creativeTabId1 - creativeTabId2;
         }
 
         final int id1 = getId(t1.getKey().getItem());
         final int id2 = getId(t2.getKey().getItem());
 
-        if (id1 == id2)
-        {
+        if (id1 == id2) {
             return t1.getKey().getDamageValue() - t2.getKey().getDamageValue();
         }
         return id1 - id2;
@@ -167,8 +148,7 @@ public final class SortingUtils
      * @param item the item to check.
      * @return the integer id of minecraft.
      */
-    private static int getId(final Item item)
-    {
+    private static int getId(final Item item) {
         return BuiltInRegistries.ITEM.getId(item);
     }
 
@@ -178,12 +158,10 @@ public final class SortingUtils
      * @param map the map of itemStorages with amount.
      * @return a tuple containing the required information.
      */
-    private static Tuple<AtomicInteger, Map<Integer, Integer>> calcRequiredSlots(final Map<ExactMatchItemStorage, Integer> map)
-    {
+    private static Tuple<AtomicInteger, Map<Integer, Integer>> calcRequiredSlots(final Map<ExactMatchItemStorage, Integer> map) {
         final Map<Integer, Integer> creativeTabs = new HashMap<>();
         int sum = 0;
-        for (final Map.Entry<ExactMatchItemStorage, Integer> entry : map.entrySet())
-        {
+        for (final Map.Entry<ExactMatchItemStorage, Integer> entry : map.entrySet()) {
             sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
             final int index = IColonyManager.getInstance().getCompatibilityManager().getCreativeTabKey(entry.getKey());
             creativeTabs.put(index, creativeTabs.getOrDefault(index, 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));

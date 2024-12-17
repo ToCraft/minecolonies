@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +26,7 @@ import java.util.*;
  * This class handles all permission checks on events and cancels them if needed.
  */
 @EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class QuestObjectiveEventHandler
-{
+public class QuestObjectiveEventHandler {
     /**
      * Building building objective tracker.
      */
@@ -60,27 +58,20 @@ public class QuestObjectiveEventHandler
      * @param event BlockEvent.BreakEvent
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void on(final BlockEvent.BreakEvent event)
-    {
+    public static void on(final BlockEvent.BreakEvent event) {
         final LevelAccessor world = event.getLevel();
-        if (world.isClientSide())
-        {
+        if (world.isClientSide()) {
             return;
         }
 
         final Block block = event.getState().getBlock();
-        if (breakBlockObjectives.containsKey(block) && breakBlockObjectives.get(block).containsKey(event.getPlayer().getUUID()))
-        {
+        if (breakBlockObjectives.containsKey(block) && breakBlockObjectives.get(block).containsKey(event.getPlayer().getUUID())) {
             final List<IQuestInstance> objectives = breakBlockObjectives.get(block).get(event.getPlayer().getUUID());
-            for (IQuestInstance colonyQuest : new ArrayList<>(objectives))
-            {
+            for (IQuestInstance colonyQuest : new ArrayList<>(objectives)) {
                 final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getObjectiveIndex());
-                if (objective instanceof IBreakBlockObjectiveTemplate)
-                {
+                if (objective instanceof IBreakBlockObjectiveTemplate) {
                     ((IBreakBlockObjectiveTemplate) objective).onBlockBreak(colonyQuest.getCurrentObjectiveInstance(), colonyQuest, event.getPlayer());
-                }
-                else
-                {
+                } else {
                     objectives.remove(colonyQuest);
                     break;
                 }
@@ -89,22 +80,16 @@ public class QuestObjectiveEventHandler
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void on(final LivingDeathEvent event)
-    {
+    public static void on(final LivingDeathEvent event) {
         if (event.getSource().getEntity() instanceof Player
-              && entityKillObjectives.containsKey(event.getEntity().getType())
-              && entityKillObjectives.get(event.getEntity().getType()).containsKey(event.getSource().getEntity().getUUID()))
-        {
+                && entityKillObjectives.containsKey(event.getEntity().getType())
+                && entityKillObjectives.get(event.getEntity().getType()).containsKey(event.getSource().getEntity().getUUID())) {
             final List<IQuestInstance> objectives = entityKillObjectives.get(event.getEntity().getType()).get(event.getSource().getEntity().getUUID());
-            for (IQuestInstance colonyQuest : new ArrayList<>(objectives))
-            {
+            for (IQuestInstance colonyQuest : new ArrayList<>(objectives)) {
                 final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getObjectiveIndex());
-                if (objective instanceof IKillEntityObjectiveTemplate)
-                {
+                if (objective instanceof IKillEntityObjectiveTemplate) {
                     ((IKillEntityObjectiveTemplate) objective).onEntityKill(colonyQuest.getCurrentObjectiveInstance(), colonyQuest, (Player) event.getSource().getEntity());
-                }
-                else
-                {
+                } else {
                     objectives.remove(colonyQuest);
                     break;
                 }
@@ -118,27 +103,20 @@ public class QuestObjectiveEventHandler
      * @param event BlockEvent.BreakEvent
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void on(final BlockEvent.EntityPlaceEvent event)
-    {
+    public static void on(final BlockEvent.EntityPlaceEvent event) {
         final LevelAccessor world = event.getLevel();
-        if (world.isClientSide() || !(event.getEntity() instanceof Player))
-        {
+        if (world.isClientSide() || !(event.getEntity() instanceof Player)) {
             return;
         }
 
-        final Block block =  event.getPlacedBlock().getBlock();
-        if (placeBlockObjectives.containsKey(block) && placeBlockObjectives.get(block).containsKey(event.getEntity().getUUID()))
-        {
+        final Block block = event.getPlacedBlock().getBlock();
+        if (placeBlockObjectives.containsKey(block) && placeBlockObjectives.get(block).containsKey(event.getEntity().getUUID())) {
             final List<IQuestInstance> objectives = placeBlockObjectives.get(block).get(event.getEntity().getUUID());
-            for (IQuestInstance colonyQuest : new ArrayList<>(objectives))
-            {
+            for (IQuestInstance colonyQuest : new ArrayList<>(objectives)) {
                 final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(colonyQuest.getId()).getObjective(colonyQuest.getObjectiveIndex());
-                if (objective instanceof IPlaceBlockObjectiveTemplate)
-                {
+                if (objective instanceof IPlaceBlockObjectiveTemplate) {
                     ((IPlaceBlockObjectiveTemplate) objective).onBlockPlace(colonyQuest.getCurrentObjectiveInstance(), colonyQuest, (Player) event.getEntity());
-                }
-                else
-                {
+                } else {
                     objectives.remove(colonyQuest);
                     break;
                 }
@@ -153,8 +131,7 @@ public class QuestObjectiveEventHandler
      * @param assignedPlayer the player we check for.
      * @param colonyQuest    the colony quest it is related to.
      */
-    public static void addQuestMineObjectiveListener(final Block blockToMine, final UUID assignedPlayer, final IQuestInstance colonyQuest)
-    {
+    public static void addQuestMineObjectiveListener(final Block blockToMine, final UUID assignedPlayer, final IQuestInstance colonyQuest) {
         final Map<UUID, List<IQuestInstance>> currentMap = breakBlockObjectives.getOrDefault(blockToMine, new HashMap<>());
         final List<IQuestInstance> objectives = currentMap.getOrDefault(assignedPlayer, new ArrayList<>());
         objectives.add(colonyQuest);
@@ -169,20 +146,18 @@ public class QuestObjectiveEventHandler
      * @param assignedPlayer the player we check for.
      * @param colonyQuest    the colony quest it is related to.
      */
-    public static void removeQuestMineObjectiveListener(final Block blockToMine, final UUID assignedPlayer, final IQuestInstance colonyQuest)
-    {
+    public static void removeQuestMineObjectiveListener(final Block blockToMine, final UUID assignedPlayer, final IQuestInstance colonyQuest) {
         breakBlockObjectives.getOrDefault(blockToMine, new HashMap<>()).getOrDefault(assignedPlayer, new ArrayList<>()).remove(colonyQuest);
     }
 
     /**
      * Add an objective listener for block placement to this event handler.
      *
-     * @param blockToPlace    the block that we listen for.
+     * @param blockToPlace   the block that we listen for.
      * @param assignedPlayer the player we check for.
      * @param colonyQuest    the colony quest it is related to.
      */
-    public static void addQuestPlaceObjectiveListener(final Block blockToPlace, final UUID assignedPlayer, final IQuestInstance colonyQuest)
-    {
+    public static void addQuestPlaceObjectiveListener(final Block blockToPlace, final UUID assignedPlayer, final IQuestInstance colonyQuest) {
         final Map<UUID, List<IQuestInstance>> currentMap = placeBlockObjectives.getOrDefault(blockToPlace, new HashMap<>());
         final List<IQuestInstance> objectives = currentMap.getOrDefault(assignedPlayer, new ArrayList<>());
         objectives.add(colonyQuest);
@@ -193,12 +168,11 @@ public class QuestObjectiveEventHandler
     /**
      * Remove an objective listener for block placement to this event handler.
      *
-     * @param blockToPlace    the block that we listen for.
+     * @param blockToPlace   the block that we listen for.
      * @param assignedPlayer the player we check for.
      * @param colonyQuest    the colony quest it is related to.
      */
-    public static void removeQuestPlaceBlockObjectiveListener(final Block blockToPlace, final UUID assignedPlayer, final IQuestInstance colonyQuest)
-    {
+    public static void removeQuestPlaceBlockObjectiveListener(final Block blockToPlace, final UUID assignedPlayer, final IQuestInstance colonyQuest) {
         placeBlockObjectives.getOrDefault(blockToPlace, new HashMap<>()).getOrDefault(assignedPlayer, new ArrayList<>()).remove(colonyQuest);
     }
 
@@ -209,8 +183,7 @@ public class QuestObjectiveEventHandler
      * @param assignedPlayer the player we check for.
      * @param colonyQuest    the colony quest it is related to.
      */
-    public static void addKillQuestObjectiveListener(final EntityType<?> entityToKill, final UUID assignedPlayer, final IQuestInstance colonyQuest)
-    {
+    public static void addKillQuestObjectiveListener(final EntityType<?> entityToKill, final UUID assignedPlayer, final IQuestInstance colonyQuest) {
         final Map<UUID, List<IQuestInstance>> currentMap = entityKillObjectives.getOrDefault(entityToKill, new HashMap<>());
         final List<IQuestInstance> objectives = currentMap.getOrDefault(assignedPlayer, new ArrayList<>());
         objectives.add(colonyQuest);
@@ -225,25 +198,21 @@ public class QuestObjectiveEventHandler
      * @param assignedPlayer the player we check for.
      * @param colonyQuest    the colony quest it is related to.
      */
-    public static void removeKillQuestObjectiveListener(final EntityType<?> entityToKill, final UUID assignedPlayer, final IQuestInstance colonyQuest)
-    {
+    public static void removeKillQuestObjectiveListener(final EntityType<?> entityToKill, final UUID assignedPlayer, final IQuestInstance colonyQuest) {
         entityKillObjectives.getOrDefault(entityToKill, new HashMap<>()).getOrDefault(assignedPlayer, new ArrayList<>()).remove(colonyQuest);
     }
 
     /**
      * Research complete event.
+     *
      * @param colony the colony the research happened in.
-     * @param id the research id.
+     * @param id     the research id.
      */
-    public static void onResearchComplete(final IColony colony, final ResourceLocation id)
-    {
-        if (researchObjectives.containsKey(id))
-        {
-            for (final IQuestInstance instance : new ArrayList<>(researchObjectives.get(id).getOrDefault(colony, new ArrayList<>())))
-            {
+    public static void onResearchComplete(final IColony colony, final ResourceLocation id) {
+        if (researchObjectives.containsKey(id)) {
+            for (final IQuestInstance instance : new ArrayList<>(researchObjectives.get(id).getOrDefault(colony, new ArrayList<>()))) {
                 final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getObjectiveIndex());
-                if (objective instanceof IResearchObjectiveTemplate researchTemplate)
-                {
+                if (objective instanceof IResearchObjectiveTemplate researchTemplate) {
                     researchTemplate.onResearchCompletion(instance);
                 }
             }
@@ -252,18 +221,15 @@ public class QuestObjectiveEventHandler
 
     /**
      * Building upgrade handling.
+     *
      * @param building the building being upgraded.
-     * @param level its level.
+     * @param level    its level.
      */
-    public static void onBuildingUpgradeComplete(final IBuilding building, final int level)
-    {
-        if (buildBuildingObjectives.containsKey(building.getBuildingType()))
-        {
-            for (final IQuestInstance instance : new ArrayList<>(buildBuildingObjectives.get(building.getBuildingType()).getOrDefault(building.getColony(), new ArrayList<>())))
-            {
+    public static void onBuildingUpgradeComplete(final IBuilding building, final int level) {
+        if (buildBuildingObjectives.containsKey(building.getBuildingType())) {
+            for (final IQuestInstance instance : new ArrayList<>(buildBuildingObjectives.get(building.getBuildingType()).getOrDefault(building.getColony(), new ArrayList<>()))) {
                 final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getObjectiveIndex());
-                if (objective instanceof IBuildingUpgradeObjectiveTemplate buildingTemplate)
-                {
+                if (objective instanceof IBuildingUpgradeObjectiveTemplate buildingTemplate) {
                     buildingTemplate.onBuildingUpgrade(instance.getCurrentObjectiveInstance(), instance, level);
                 }
             }
@@ -272,11 +238,11 @@ public class QuestObjectiveEventHandler
 
     /**
      * Track building leveling.
+     *
      * @param buildingEntry the building to track.
-     * @param colonyQuest the quest tracking it.
+     * @param colonyQuest   the quest tracking it.
      */
-    public static void trackBuildingLevelUp(final @NotNull BuildingEntry buildingEntry, final @NotNull IQuestInstance colonyQuest)
-    {
+    public static void trackBuildingLevelUp(final @NotNull BuildingEntry buildingEntry, final @NotNull IQuestInstance colonyQuest) {
         final Map<IColony, List<IQuestInstance>> currentMap = buildBuildingObjectives.getOrDefault(buildingEntry, new HashMap<>());
         final List<IQuestInstance> objectives = currentMap.getOrDefault(colonyQuest.getColony(), new ArrayList<>());
         objectives.add(colonyQuest);
@@ -286,21 +252,21 @@ public class QuestObjectiveEventHandler
 
     /**
      * Stop tracking building leveling.
+     *
      * @param buildingEntry the building to stop tracking.
-     * @param colonyQuest the quest tracking it.
+     * @param colonyQuest   the quest tracking it.
      */
-    public static void stopTrackingBuildingLevelUp(final @NotNull BuildingEntry buildingEntry, final @NotNull IQuestInstance colonyQuest)
-    {
+    public static void stopTrackingBuildingLevelUp(final @NotNull BuildingEntry buildingEntry, final @NotNull IQuestInstance colonyQuest) {
         buildBuildingObjectives.getOrDefault(buildingEntry, new HashMap<>()).getOrDefault(colonyQuest.getColony(), new ArrayList<>()).remove(colonyQuest);
     }
 
     /**
      * Track research.
-     * @param researchId the research to track.
+     *
+     * @param researchId  the research to track.
      * @param colonyQuest the quest tracking it.
      */
-    public static void trackResearch(final ResourceLocation researchId, final IQuestInstance colonyQuest)
-    {
+    public static void trackResearch(final ResourceLocation researchId, final IQuestInstance colonyQuest) {
         final Map<IColony, List<IQuestInstance>> currentMap = researchObjectives.getOrDefault(researchId, new HashMap<>());
         final List<IQuestInstance> objectives = currentMap.getOrDefault(colonyQuest.getColony(), new ArrayList<>());
         objectives.add(colonyQuest);
@@ -310,11 +276,11 @@ public class QuestObjectiveEventHandler
 
     /**
      * Stop tracking research.
-     * @param researchId the research to stop tracking.
+     *
+     * @param researchId  the research to stop tracking.
      * @param colonyQuest the quest tracking it.
      */
-    public static void stopTrackingResearch(final @NotNull ResourceLocation researchId, final @NotNull IQuestInstance colonyQuest)
-    {
+    public static void stopTrackingResearch(final @NotNull ResourceLocation researchId, final @NotNull IQuestInstance colonyQuest) {
         researchObjectives.getOrDefault(researchId, new HashMap<>()).getOrDefault(colonyQuest.getColony(), new ArrayList<>()).remove(colonyQuest);
     }
 }

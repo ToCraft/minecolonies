@@ -5,8 +5,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 /**
  * Marker interface for requestables handled by deliverymen.
  */
-public interface IDeliverymanRequestable extends IRequestable
-{
+public interface IDeliverymanRequestable extends IRequestable {
     /**
      * Returns the priority of the Requestable. The higher the priority, the more urgent it is and the faster a deliveryman will handle it.
      *

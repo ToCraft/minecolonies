@@ -11,8 +11,7 @@ import java.util.function.Predicate;
 /**
  * Default interface for objects that contain module instances.
  */
-public interface IModuleContainer<T>
-{
+public interface IModuleContainer<T> {
     /**
      * Check if the object has a particular module.
      *
@@ -42,7 +41,7 @@ public interface IModuleContainer<T>
      *
      * @return the module or empty if not existent.
      */
-     <M extends IBuildingModule, V extends IBuildingModuleView> M getModule(final BuildingEntry.ModuleProducer<M,V> producer);
+    <M extends IBuildingModule, V extends IBuildingModuleView> M getModule(final BuildingEntry.ModuleProducer<M, V> producer);
 
     /**
      * Get the first module with a particular class or interface.

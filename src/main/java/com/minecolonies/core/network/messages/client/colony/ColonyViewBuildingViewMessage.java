@@ -20,12 +20,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Add or Update a AbstractBuilding.View to a ColonyView on the client.
  */
-public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
-{
+public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_building_view", ColonyViewBuildingViewMessage::new);
 
-    private final int          colonyId;
-    private final BlockPos     buildingId;
+    private final int colonyId;
+    private final BlockPos buildingId;
     private final RegistryFriendlyByteBuf buildingData;
 
     /**
@@ -39,8 +38,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
      *
      * @param building AbstractBuilding to add or update a view.
      */
-    public ColonyViewBuildingViewMessage(@NotNull final IBuilding building)
-    {
+    public ColonyViewBuildingViewMessage(@NotNull final IBuilding building) {
         this(building, true);
     }
 
@@ -49,8 +47,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
      *
      * @param building AbstractBuilding to add or update a view.
      */
-    public ColonyViewBuildingViewMessage(@NotNull final IBuilding building, final boolean fullSync)
-    {
+    public ColonyViewBuildingViewMessage(@NotNull final IBuilding building, final boolean fullSync) {
         super(TYPE);
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -59,8 +56,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
         this.dimension = building.getColony().getDimension();
     }
 
-    protected ColonyViewBuildingViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ColonyViewBuildingViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
@@ -69,8 +65,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buildingData.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeBlockPos(buildingId);
@@ -79,8 +74,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         IColonyManager.getInstance().handleColonyBuildingViewMessage(colonyId, buildingId, buildingData, dimension);
     }
 }

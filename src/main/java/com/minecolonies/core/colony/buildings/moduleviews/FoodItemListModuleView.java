@@ -14,30 +14,27 @@ import java.util.function.Function;
 /**
  * Client side version of the abstract class for all buildings which require a filterable list of allowed items.
  */
-public class FoodItemListModuleView extends ItemListModuleView
-{
+public class FoodItemListModuleView extends ItemListModuleView {
     /**
      * Create a nw grouped item list view for the client side.
-     * @param id the id.
-     * @param desc desc lang string.
+     *
+     * @param id       the id.
+     * @param desc     desc lang string.
      * @param inverted enabling or disabling.
      * @param allItems a supplier for all the items.
      */
-    public FoodItemListModuleView(final String id, final String desc, final boolean inverted, final Function<IBuildingView, Set<ItemStorage>> allItems)
-    {
+    public FoodItemListModuleView(final String id, final String desc, final boolean inverted, final Function<IBuildingView, Set<ItemStorage>> allItems) {
         super(id, desc, inverted, allItems);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new FoodItemListModuleWindow(Constants.MOD_ID + ":gui/foodlist.xml", buildingView, this);
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return this.getId();
     }
 }

@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class used to manage the stash building block.
  */
-public class Stash extends AbstractBuilding implements IRSComponent
-{
+public class Stash extends AbstractBuilding implements IRSComponent {
     /**
      * Description of the block used to set this block.
      */
@@ -27,39 +26,33 @@ public class Stash extends AbstractBuilding implements IRSComponent
      * @param c the colony.
      * @param l the location.
      */
-    public Stash(final IColony c, final BlockPos l)
-    {
+    public Stash(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @Override
-    public ImmutableCollection<IRequestResolver<?>> createResolvers()
-    {
+    public ImmutableCollection<IRequestResolver<?>> createResolvers() {
         return ImmutableList.of();
     }
 
     @Override
-    public Tuple<BlockPos, BlockPos> getCorners()
-    {
-        return new Tuple<>(getPosition(),getPosition());
+    public Tuple<BlockPos, BlockPos> getCorners() {
+        return new Tuple<>(getPosition(), getPosition());
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return STASH;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return 0;
     }
 
     @Override
-    public RotationMirror getRotationMirror()
-    {
+    public RotationMirror getRotationMirror() {
         return RotationMirror.NONE;
     }
 }

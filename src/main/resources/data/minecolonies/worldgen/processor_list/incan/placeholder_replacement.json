@@ -116,7 +116,6 @@
             "predicate_type": "minecraft:always_true"
           }
         }
-
       ],
       "processor_type": "minecraft:rule"
     }

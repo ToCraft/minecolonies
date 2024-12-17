@@ -17,40 +17,34 @@ import java.util.Set;
  * learn to craft beyond this, but they won't craft for the request
  * system either, only for themselves.
  */
-public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Crafting
-{
+public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Crafting {
     /**
      * Create a new module.
      */
-    public SimpleCraftingModule(final JobEntry entry)
-    {
+    public SimpleCraftingModule(final JobEntry entry) {
         super(entry);
     }
 
     @Nullable
     @Override
-    public IJob<?> getCraftingJob()
-    {
+    public IJob<?> getCraftingJob() {
         // the building may have a job, but it's not a dedicated crafting job.
         // this hides the building from JEI.
         return null;
     }
 
     @Override
-    public List<IRequestResolver<?>> createResolvers()
-    {
+    public List<IRequestResolver<?>> createResolvers() {
         return Collections.emptyList();
     }
 
     @Override
-    public boolean canLearnManyRecipes()
-    {
+    public boolean canLearnManyRecipes() {
         return false;
     }
 
     @Override
-    public Set<CraftingType> getSupportedCraftingTypes()
-    {
+    public Set<CraftingType> getSupportedCraftingTypes() {
         return Set.of(ModCraftingTypes.SMALL_CRAFTING.get());
     }
 }

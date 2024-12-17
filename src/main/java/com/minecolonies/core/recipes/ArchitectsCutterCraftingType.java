@@ -3,7 +3,6 @@ package com.minecolonies.core.recipes;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
-import com.ldtteam.domumornamentum.component.ModDataComponents;
 import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipe;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipeInput;
@@ -30,20 +29,16 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class ArchitectsCutterCraftingType extends RecipeCraftingType<ArchitectsCutterRecipeInput, ArchitectsCutterRecipe>
-{
-    public ArchitectsCutterCraftingType()
-    {
+public class ArchitectsCutterCraftingType extends RecipeCraftingType<ArchitectsCutterRecipeInput, ArchitectsCutterRecipe> {
+    public ArchitectsCutterCraftingType() {
         super(ModCraftingTypes.ARCHITECTS_CUTTER_ID, ModRecipeTypes.ARCHITECTS_CUTTER.get(), null);
     }
 
     @Override
-    public @NotNull List<IGenericRecipe> findRecipes(@NotNull RecipeManager recipeManager, @Nullable Level world)
-    {
+    public @NotNull List<IGenericRecipe> findRecipes(@NotNull RecipeManager recipeManager, @Nullable Level world) {
         final Random rnd = new Random();
         final List<IGenericRecipe> recipes = new ArrayList<>();
-        for (final RecipeHolder<ArchitectsCutterRecipe> holder : recipeManager.getAllRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get()))
-        {
+        for (final RecipeHolder<ArchitectsCutterRecipe> holder : recipeManager.getAllRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get())) {
             final ArchitectsCutterRecipe recipe = holder.value();
             // cutter recipes don't implement getIngredients(), so we have to work around it
             final Block generatedBlock = BuiltInRegistries.BLOCK.get(recipe.getBlockName());
@@ -52,11 +47,9 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<ArchitectsC
                 continue;
 
             final List<List<ItemStack>> inputs = new ArrayList<>();
-            for (final IMateriallyTexturedBlockComponent component : materiallyTexturedBlock.getComponents())
-            {
+            for (final IMateriallyTexturedBlockComponent component : materiallyTexturedBlock.getComponents()) {
                 final Named<Block> tag = BuiltInRegistries.BLOCK.getTag(component.getValidSkins()).orElse(null);
-                if (tag != null)
-                {
+                if (tag != null) {
                     final List<Block> blocks = tag.stream().map(Holder::value).collect(Collectors.toList());
                     Collections.shuffle(blocks, rnd);
                     inputs.add(blocks.stream().map(ItemStack::new).collect(Collectors.toList()));

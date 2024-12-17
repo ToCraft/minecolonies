@@ -17,11 +17,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -35,12 +31,12 @@ import java.util.stream.Stream;
 
 import static com.ldtteam.structurize.items.ModItems.buildTool;
 
-/** Standard implementation of IGenericRecipe.*/
-public class GenericRecipe implements IGenericRecipe
-{
+/**
+ * Standard implementation of IGenericRecipe.
+ */
+public class GenericRecipe implements IGenericRecipe {
     @Nullable
-    public static IGenericRecipe of(@Nullable final RecipeHolder<?> holder, @NotNull final Level world)
-    {
+    public static IGenericRecipe of(@Nullable final RecipeHolder<?> holder, @NotNull final Level world) {
         if (holder == null) return null;
 
         final Recipe<?> recipe = holder.value();
@@ -49,13 +45,10 @@ public class GenericRecipe implements IGenericRecipe
                 .collect(Collectors.toList()));
         final int size;
         final Block intermediate;
-        if (recipe instanceof SmeltingRecipe)
-        {
+        if (recipe instanceof SmeltingRecipe) {
             size = 1;
             intermediate = Blocks.FURNACE;
-        }
-        else
-        {
+        } else {
             size = recipe.canCraftInDimensions(2, 2) ? 2 : 3;
             intermediate = Blocks.AIR;
         }
@@ -64,8 +57,7 @@ public class GenericRecipe implements IGenericRecipe
     }
 
     @Nullable
-    public static IGenericRecipe of(@Nullable final IRecipeStorage storage, @NotNull final List<Component> restrictions, final int levelSort)
-    {
+    public static IGenericRecipe of(@Nullable final IRecipeStorage storage, @NotNull final List<Component> restrictions, final int levelSort) {
         if (storage == null) return null;
         final List<List<ItemStack>> inputs = storage.getCleanedInput().stream()
                 .map(input -> Collections.singletonList(toItemStack(input)))
@@ -76,19 +68,18 @@ public class GenericRecipe implements IGenericRecipe
     }
 
     @Nullable
-    public static IGenericRecipe of(@Nullable final IRecipeStorage storage)
-    {
+    public static IGenericRecipe of(@Nullable final IRecipeStorage storage) {
         return of(storage, new ArrayList<>(), -1);
     }
 
     @Nullable
-    public static IGenericRecipe of(@Nullable final IToken<?> recipeToken)
-    {
+    public static IGenericRecipe of(@Nullable final IToken<?> recipeToken) {
         if (recipeToken == null) return null;
         return of(IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken));
     }
 
-    @Nullable private final ResourceLocation id;
+    @Nullable
+    private final ResourceLocation id;
     private final ItemStack output;
     private final List<ItemStack> allMultiOutputs;
     private final List<ItemStack> additionalOutputs;
@@ -97,8 +88,8 @@ public class GenericRecipe implements IGenericRecipe
     private final Block intermediate;
     private final @Nullable ResourceKey<LootTable> lootTable;
     private final EquipmentTypeEntry requiredTool;
-    private final EntityType<?>       requiredEntity;
-    private final List<Component>    restrictions;
+    private final EntityType<?> requiredEntity;
+    private final List<Component> restrictions;
     private final int levelSort;
 
     public GenericRecipe(@Nullable final ResourceLocation id,
@@ -109,8 +100,7 @@ public class GenericRecipe implements IGenericRecipe
                          final @Nullable ResourceKey<LootTable> lootTable,
                          @NotNull final EquipmentTypeEntry requiredTool,
                          @NotNull final List<Component> restrictions,
-                         final int levelSort)
-    {
+                         final int levelSort) {
         this.id = id == null || id.getPath().isEmpty() ? null : id;
         this.output = output;
         this.allMultiOutputs = Collections.singletonList(output);
@@ -135,8 +125,7 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final EquipmentTypeEntry requiredTool,
                          @Nullable final EntityType<?> requiredEntity,
                          @NotNull final List<Component> restrictions,
-                         final int levelSort)
-    {
+                         final int levelSort) {
         this.id = id;
         this.output = output;
         this.allMultiOutputs = Stream.concat(Stream.of(output), altOutputs.stream()).filter(ItemStackUtils::isNotEmpty).toList();
@@ -152,75 +141,64 @@ public class GenericRecipe implements IGenericRecipe
     }
 
     @Override
-    public int getGridSize() { return this.gridSize; }
+    public int getGridSize() {
+        return this.gridSize;
+    }
 
     @Override
     @Nullable
-    public ResourceLocation getRecipeId()
-    {
+    public ResourceLocation getRecipeId() {
         return this.id;
     }
 
     @Override
     @NotNull
-    public ItemStack getPrimaryOutput()
-    {
+    public ItemStack getPrimaryOutput() {
         return this.output;
     }
 
     @NotNull
-    public List<ItemStack> getAllMultiOutputs()
-    {
+    public List<ItemStack> getAllMultiOutputs() {
         return this.allMultiOutputs;
     }
 
     @NotNull
     @Override
-    public List<ItemStack> getAdditionalOutputs()
-    {
+    public List<ItemStack> getAdditionalOutputs() {
         return this.additionalOutputs;
     }
 
     @Override
     @NotNull
-    public List<List<ItemStack>> getInputs()
-    {
+    public List<List<ItemStack>> getInputs() {
         return this.inputs;
     }
 
     @NotNull
     @Override
-    public List<Component> getRestrictions()
-    {
+    public List<Component> getRestrictions() {
         return this.restrictions;
     }
 
     @Override
-    public int getLevelSort()
-    {
+    public int getLevelSort() {
         return this.levelSort;
     }
 
     @Override
-    public Optional<Boolean> matchesOutput(@NotNull OptionalPredicate<ItemStack> predicate)
-    {
+    public Optional<Boolean> matchesOutput(@NotNull OptionalPredicate<ItemStack> predicate) {
         return predicate.test(this.output);
     }
 
     @Override
-    public Optional<Boolean> matchesInput(@NotNull OptionalPredicate<ItemStack> predicate)
-    {
+    public Optional<Boolean> matchesInput(@NotNull OptionalPredicate<ItemStack> predicate) {
         Optional<Boolean> result = Optional.empty();
 
-        for (final List<ItemStack> slot : this.inputs)
-        {
-            for (final ItemStack stack : slot)
-            {
+        for (final List<ItemStack> slot : this.inputs) {
+            for (final ItemStack stack : slot) {
                 final Optional<Boolean> itemResult = predicate.test(stack);
-                if (itemResult.isPresent())
-                {
-                    if (!itemResult.get())
-                    {
+                if (itemResult.isPresent()) {
+                    if (!itemResult.get()) {
                         // immediately fail on any predicate failure
                         return itemResult;
                     }
@@ -234,38 +212,35 @@ public class GenericRecipe implements IGenericRecipe
 
     @NotNull
     @Override
-    public Block getIntermediate()
-    {
+    public Block getIntermediate() {
         return this.intermediate;
     }
 
     @Nullable
     @Override
-    public ResourceKey<LootTable> getLootTable() { return this.lootTable; }
+    public ResourceKey<LootTable> getLootTable() {
+        return this.lootTable;
+    }
 
     @NotNull
     @Override
-    public EquipmentTypeEntry getRequiredTool()
-    {
+    public EquipmentTypeEntry getRequiredTool() {
         return this.requiredTool;
     }
 
     @Nullable
     @Override
-    public EntityType<?> getRequiredEntity()
-    {
+    public EntityType<?> getRequiredEntity() {
         return this.requiredEntity;
     }
 
     @Override
-    public String toString()
-    {
-        return "GenericRecipe{output=" + output +'}';
+    public String toString() {
+        return "GenericRecipe{output=" + output + '}';
     }
 
     @NotNull
-    private static ItemStack toItemStack(@NotNull final ItemStorage input)
-    {
+    private static ItemStack toItemStack(@NotNull final ItemStorage input) {
         final ItemStack result = input.getItemStack().copy();
         result.setCount(input.getAmount());
         return result;
@@ -273,36 +248,28 @@ public class GenericRecipe implements IGenericRecipe
 
     @NotNull
     private static List<ItemStack> calculateSecondaryOutputs(@NotNull final Recipe<?> recipe,
-                                                             @Nullable final Level world)
-    {
-        if (recipe instanceof CraftingRecipe)
-        {
+                                                             @Nullable final Level world) {
+        if (recipe instanceof CraftingRecipe) {
             final List<Ingredient> inputs = recipe.getIngredients();
-            final CraftingContainer inv = new TransientCraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, 0)
-            {
+            final CraftingContainer inv = new TransientCraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, 0) {
                 @Override
-                public @NotNull ItemStack quickMoveStack(final @NotNull Player player, final int slot)
-                {
+                public @NotNull ItemStack quickMoveStack(final @NotNull Player player, final int slot) {
                     return ItemStack.EMPTY;
                 }
 
                 @Override
-                public boolean stillValid(@NotNull final Player playerIn)
-                {
+                public boolean stillValid(@NotNull final Player playerIn) {
                     return false;
                 }
 
             }, 3, 3);
-            for (int slot = 0; slot < inputs.size(); ++slot)
-            {
+            for (int slot = 0; slot < inputs.size(); ++slot) {
                 final ItemStack[] stacks = inputs.get(slot).getItems();
-                if (stacks.length > 0)
-                {
+                if (stacks.length > 0) {
                     inv.setItem(slot, stacks[0].copy());
                 }
             }
-            if (((CraftingRecipe) recipe).matches(inv.asCraftInput(), world))
-            {
+            if (((CraftingRecipe) recipe).matches(inv.asCraftInput(), world)) {
                 return ((CraftingRecipe) recipe).getRemainingItems(inv.asCraftInput()).stream()
                         .filter(ItemStackUtils::isNotEmpty)
                         .filter(stack -> stack.getItem() != buildTool.get())  // this is filtered out of the inputs too
@@ -312,26 +279,22 @@ public class GenericRecipe implements IGenericRecipe
         return Collections.emptyList();
     }
 
-    private static List<List<ItemStack>> compactInputs(final List<List<ItemStack>> inputs)
-    {
+    private static List<List<ItemStack>> compactInputs(final List<List<ItemStack>> inputs) {
         // FYI, this largely does the same job as RecipeStorage.calculateCleanedInput(), but we can't re-use
         // that implementation as we need to operate on Ingredients, which can be a list of stacks.
         final Map<IngredientStacks, IngredientStacks> ingredients = new HashMap<>();
 
-        for (final List<ItemStack> ingredient : inputs)
-        {
+        for (final List<ItemStack> ingredient : inputs) {
             final IngredientStacks newIngredient = new IngredientStacks(ingredient);
             // also ignore the build tool as an ingredient, since colony crafters don't require it.
             //   (see RecipeStorage.calculateCleanedInput() for why)
-            if (!newIngredient.getStacks().isEmpty() && newIngredient.getStacks().get(0).getItem() == buildTool.get()) continue;
+            if (!newIngredient.getStacks().isEmpty() && newIngredient.getStacks().get(0).getItem() == buildTool.get())
+                continue;
 
             final IngredientStacks existing = ingredients.get(newIngredient);
-            if (existing == null)
-            {
+            if (existing == null) {
                 ingredients.put(newIngredient, newIngredient);
-            }
-            else
-            {
+            } else {
                 existing.merge(newIngredient);
             }
         }
@@ -342,19 +305,15 @@ public class GenericRecipe implements IGenericRecipe
                 .collect(Collectors.toList());
     }
 
-    private static class IngredientStacks implements Comparable<IngredientStacks>
-    {
+    private static class IngredientStacks implements Comparable<IngredientStacks> {
         private final List<ItemStack> stacks;
         private final List<Item> items;
 
-        public IngredientStacks(final List<ItemStack> ingredient)
-        {
+        public IngredientStacks(final List<ItemStack> ingredient) {
             this.stacks = new ArrayList<>(ingredient.size());
             this.items = new ArrayList<>(ingredient.size());
-            for (ItemStack stack : ingredient)
-            {
-                if (!stack.isEmpty())
-                {
+            for (ItemStack stack : ingredient) {
+                if (!stack.isEmpty()) {
                     ItemStack copy = stack.copy();
                     this.stacks.add(copy);
                     Item item = copy.getItem();
@@ -364,13 +323,16 @@ public class GenericRecipe implements IGenericRecipe
         }
 
         @NotNull
-        public List<ItemStack> getStacks() { return this.stacks; }
+        public List<ItemStack> getStacks() {
+            return this.stacks;
+        }
 
-        public int getCount() { return this.stacks.isEmpty() ? 0 : this.stacks.get(0).getCount(); }
+        public int getCount() {
+            return this.stacks.isEmpty() ? 0 : this.stacks.get(0).getCount();
+        }
 
         @Override
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             final IngredientStacks that = (IngredientStacks) o;
@@ -379,14 +341,12 @@ public class GenericRecipe implements IGenericRecipe
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return this.items.hashCode();
         }
 
         @Override
-        public int compareTo(@NotNull IngredientStacks o)
-        {
+        public int compareTo(@NotNull IngredientStacks o) {
             int diff = this.getCount() - o.getCount();
             if (diff != 0) return diff;
 
@@ -396,18 +356,15 @@ public class GenericRecipe implements IGenericRecipe
             return this.hashCode() - o.hashCode();
         }
 
-        public void merge(@NotNull final IngredientStacks other)
-        {
+        public void merge(@NotNull final IngredientStacks other) {
             // assumes equals(other)
-            for (int i = 0; i < this.stacks.size(); i++)
-            {
+            for (int i = 0; i < this.stacks.size(); i++) {
                 this.stacks.get(i).grow(other.stacks.get(i).getCount());
             }
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "IngredientStacks{" +
                     "stacks=" + stacks +
                     ", items=" + items +

@@ -19,8 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Reactivate a building.
  */
-public class ReactivateBuildingMessage extends AbstractServerPlayMessage
-{
+public class ReactivateBuildingMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "reactivate_building", ReactivateBuildingMessage::new);
 
     /**
@@ -33,8 +32,7 @@ public class ReactivateBuildingMessage extends AbstractServerPlayMessage
      *
      * @param pos the position of the building.
      */
-    public ReactivateBuildingMessage(final BlockPos pos)
-    {
+    public ReactivateBuildingMessage(final BlockPos pos) {
         super(TYPE);
         this.pos = pos;
     }
@@ -44,8 +42,7 @@ public class ReactivateBuildingMessage extends AbstractServerPlayMessage
      *
      * @param buf The buffer begin read from.
      */
-    protected ReactivateBuildingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ReactivateBuildingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         pos = buf.readBlockPos();
     }
@@ -56,26 +53,20 @@ public class ReactivateBuildingMessage extends AbstractServerPlayMessage
      * @param buf The buffer being written to.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(pos);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player) {
         final Level world = player.getCommandSenderWorld();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
-        {
+        if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)) {
             final AbstractBuilding building = (AbstractBuilding) colony.getBuildingManager().getBuilding(pos);
-            if (building == null)
-            {
+            if (building == null) {
                 final BlockEntity tileEntity = world.getBlockEntity(pos);
-                if (tileEntity instanceof final TileEntityColonyBuilding hut)
-                {
-                    if (!colony.getBuildingManager().canPlaceAt(tileEntity.getBlockState().getBlock(), pos, player))
-                    {
+                if (tileEntity instanceof final TileEntityColonyBuilding hut) {
+                    if (!colony.getBuildingManager().canPlaceAt(tileEntity.getBlockState().getBlock(), pos, player)) {
                         return;
                     }
 

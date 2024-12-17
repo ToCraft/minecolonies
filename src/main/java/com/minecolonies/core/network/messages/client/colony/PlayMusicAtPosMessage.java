@@ -13,15 +13,12 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Asks the client to play a specific music
  */
-public class PlayMusicAtPosMessage extends AbstractClientPlayMessage
-{
+public class PlayMusicAtPosMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "play_music_at_pos", PlayMusicAtPosMessage::new);
 
     /**
@@ -54,8 +51,7 @@ public class PlayMusicAtPosMessage extends AbstractClientPlayMessage
      *
      * @param event the sound event.
      */
-    public PlayMusicAtPosMessage(final SoundEvent event, final BlockPos pos, final Level world, final float volume, final float pitch)
-    {
+    public PlayMusicAtPosMessage(final SoundEvent event, final BlockPos pos, final Level world, final float volume, final float pitch) {
         super(TYPE);
         this.soundEvent = event;
         this.pos = pos;
@@ -65,8 +61,7 @@ public class PlayMusicAtPosMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         buf.writeResourceLocation(BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent));
         buf.writeBlockPos(pos);
         buf.writeUtf(dimensionID.location().toString());
@@ -74,8 +69,7 @@ public class PlayMusicAtPosMessage extends AbstractClientPlayMessage
         buf.writeFloat(pitch);
     }
 
-    protected PlayMusicAtPosMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected PlayMusicAtPosMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.soundEvent = BuiltInRegistries.SOUND_EVENT.get(buf.readResourceLocation());
         this.pos = buf.readBlockPos();
@@ -84,12 +78,10 @@ public class PlayMusicAtPosMessage extends AbstractClientPlayMessage
         this.pitch = buf.readFloat();
     }
 
-    
+
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
-        if (player.level().dimension() == dimensionID)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
+        if (player.level().dimension() == dimensionID) {
             player.level().playSound(player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundSource.AMBIENT, volume, pitch);
         }
     }

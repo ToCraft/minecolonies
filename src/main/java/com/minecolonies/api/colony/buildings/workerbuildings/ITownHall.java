@@ -5,8 +5,7 @@ import com.minecolonies.api.colony.permissions.PermissionEvent;
 
 import java.util.UUID;
 
-public interface ITownHall extends IBuilding
-{
+public interface ITownHall extends IBuilding {
     /**
      * Add a colony permission event to the colony. Reduce the list by one if bigger than a treshhold.
      *
@@ -16,6 +15,7 @@ public interface ITownHall extends IBuilding
 
     /**
      * Removes all permission events with the given player id (because they were just given permissions)
+     *
      * @param id the player id
      */
     void removePermissionEvents(UUID id);

@@ -6,10 +6,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+
 import java.util.Set;
 
-public interface ISchematicProvider extends INBTSerializable<CompoundTag>
-{
+public interface ISchematicProvider extends INBTSerializable<CompoundTag> {
     /**
      * Returns the {@code BlockPos} of the current object, also used as ID.
      *
@@ -56,12 +56,14 @@ public interface ISchematicProvider extends INBTSerializable<CompoundTag>
 
     /**
      * Set the parent building position
+     *
      * @param pos
      */
     void setParent(BlockPos pos);
 
     /**
      * Get the child building positions
+     *
      * @return
      */
     Set<BlockPos> getChildren();

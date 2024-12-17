@@ -1,19 +1,17 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.tileentities.*;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-public class TileEntityInitializer
-{
+public class TileEntityInitializer {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Constants.MOD_ID);
 
-    static
-    {
+    static {
         MinecoloniesTileEntities.SCARECROW = BLOCK_ENTITIES.register("scarecrow", () -> BlockEntityType.Builder.of(TileEntityScarecrow::new, ModBlocks.blockScarecrow).build(null));
 
         MinecoloniesTileEntities.PLANTATION_FIELD = BLOCK_ENTITIES.register("plantationfield", () -> BlockEntityType.Builder.of(TileEntityPlantationField::new, ModBlocks.blockPlantationField).build(null));
@@ -23,8 +21,8 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.BUILDING = BLOCK_ENTITIES.register("colonybuilding", () -> BlockEntityType.Builder.of(TileEntityColonyBuilding::new, ModBlocks.getHuts()).build(null));
 
         MinecoloniesTileEntities.DECO_CONTROLLER = BLOCK_ENTITIES.register("decorationcontroller", () -> BlockEntityType.Builder
-                                                     .of(TileEntityDecorationController::new, ModBlocks.blockDecorationPlaceholder)
-                                                     .build(null));
+                .of(TileEntityDecorationController::new, ModBlocks.blockDecorationPlaceholder)
+                .build(null));
 
         MinecoloniesTileEntities.RACK = BLOCK_ENTITIES.register("rack", () -> BlockEntityType.Builder.of(TileEntityRack::new, ModBlocks.blockRack).build(null));
 
@@ -35,7 +33,7 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.WAREHOUSE = BLOCK_ENTITIES.register("warehouse", () -> BlockEntityType.Builder.of(TileEntityWareHouse::new, ModBlocks.blockHutWareHouse).build(null));
 
         MinecoloniesTileEntities.COMPOSTED_DIRT = BLOCK_ENTITIES.register("composteddirt", () -> BlockEntityType.Builder.of(TileEntityCompostedDirt::new, ModBlocks.blockCompostedDirt)
-                                                    .build(null));
+                .build(null));
 
         MinecoloniesTileEntities.ENCHANTER = BLOCK_ENTITIES.register("enchanter", () -> BlockEntityType.Builder.of(TileEntityEnchanter::new, ModBlocks.blockHutEnchanter).build(null));
 

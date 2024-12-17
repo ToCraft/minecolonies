@@ -36,8 +36,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -46,45 +44,36 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Final class holding all the requests for requestables inside minecolonie
  */
-public final class StandardRequests
-{
+public final class StandardRequests {
 
     /**
      * private constructor to hide the implicit public one.
      */
-    private StandardRequests()
-    {
+    private StandardRequests() {
         super();
     }
 
     /**
      * Request for a single ItemStack.
      */
-    public static class ItemStackRequest extends AbstractRequest<Stack>
-    {
-        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Stack requested)
-        {
+    public static class ItemStackRequest extends AbstractRequest<Stack> {
+        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Stack requested) {
             super(requester, token, requested);
         }
 
-        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Stack requested)
-        {
+        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Stack requested) {
             super(requester, token, state, requested);
         }
 
         @NotNull
         @Override
-        public Component getShortDisplayString()
-        {
+        public Component getShortDisplayString() {
             final MutableComponent combined = Component.literal("");
 
-            if (getRequest().getMinimumCount() == getRequest().getCount())
-            {
+            if (getRequest().getMinimumCount() == getRequest().getCount()) {
                 combined.append(Component.literal(getRequest().getCount() + " "));
                 combined.append(getRequest().getStack().getHoverName());
-            }
-            else
-            {
+            } else {
                 combined.append(Component.literal(getRequest().getMinimumCount() + "-" + getRequest().getCount() + " "));
                 combined.append(getRequest().getStack().getHoverName());
             }
@@ -94,17 +83,15 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public List<ItemStack> getDisplayStacks()
-        {
+        public List<ItemStack> getDisplayStacks() {
             return getRequest().getRequestedItems();
-        }    
+        }
     }
 
     /**
      * Request for a list of potential candidates.
      */
-    public static class ItemStackListRequest extends AbstractRequest<StackList>
-    {
+    public static class ItemStackListRequest extends AbstractRequest<StackList> {
         /**
          * The list to display to the player.
          */
@@ -122,8 +109,7 @@ public final class StandardRequests
          * @param token     the token assigned to this request.
          * @param requested the request data.
          */
-        public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final StackList requested)
-        {
+        public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final StackList requested) {
             super(requester, token, requested);
             this.displayList = ImmutableList.copyOf(requested.getStacks());
             this.stackList = requested;
@@ -137,8 +123,7 @@ public final class StandardRequests
          * @param state     the state of the request.
          * @param requested the request data.
          */
-        public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final StackList requested)
-        {
+        public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final StackList requested) {
             super(requester, token, state, requested);
             this.displayList = ImmutableList.copyOf(requested.getStacks());
             this.stackList = requested;
@@ -146,8 +131,7 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public Component getShortDisplayString()
-        {
+        public Component getShortDisplayString() {
             final MutableComponent result = Component.literal("");
             result.append(Component.translatableEscape(stackList.getDescription()));
             return result;
@@ -155,10 +139,8 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public List<ItemStack> getDisplayStacks()
-        {
-            if (displayList.isEmpty())
-            {
+        public List<ItemStack> getDisplayStacks() {
+            if (displayList.isEmpty()) {
                 return ImmutableList.of();
             }
             return displayList;
@@ -168,54 +150,45 @@ public final class StandardRequests
     /**
      * Request for a single ItemStack.
      */
-    public static class ItemTagRequest extends AbstractRequest<RequestTag>
-    {
+    public static class ItemTagRequest extends AbstractRequest<RequestTag> {
 
         private List<ItemStack> stacks;
 
-        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestTag requested)
-        {
+        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestTag requested) {
             super(requester, token, requested);
             stacks = StreamSupport.stream(BuiltInRegistries.ITEM.getTagOrEmpty(requested.getTag()).spliterator(), false).map(ItemStack::new).collect(Collectors.toList());
         }
 
-        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final RequestTag requested)
-        {
+        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final RequestTag requested) {
             super(requester, token, state, requested);
             stacks = StreamSupport.stream(BuiltInRegistries.ITEM.getTagOrEmpty(requested.getTag()).spliterator(), false).map(ItemStack::new).collect(Collectors.toList());
         }
 
         @NotNull
         @Override
-        public Component getShortDisplayString()
-        {
+        public Component getShortDisplayString() {
             final MutableComponent combined = Component.literal("");
             combined.append(Component.literal(getRequest().getCount() + " "));
             // getRequest().getTag() is a long string that can't be easily be read by players or turned into a translation key.
             // Instead, try to get a translated text first.
             final String tagKey = "com.minecolonies.coremod.tag." + getRequest().getTag().toString().toLowerCase().replace
-                                                                                                                     ("namedtag[", "").replace(':', '.').replace("]", "");
+                    ("namedtag[", "").replace(':', '.').replace("]", "");
             final MutableComponent tagText = Component.translatableEscape(tagKey);
             // test the translated text; if there's a difference, the client has a matching translation key.
-            if (!tagText.getString().equals(tagKey))
-            {
+            if (!tagText.getString().equals(tagKey)) {
                 combined.append(Component.literal("#").append(tagText));
             }
             // Otherwise, use the first item from request set if present, or the full tag identifier to assist debugging otherwise.
-            else if (!stacks.isEmpty())
-            {
+            else if (!stacks.isEmpty()) {
                 combined.append(Component.literal("#").append(stacks.get(0).getHoverName()));
-            }
-            else
-            {
+            } else {
                 combined.append(Component.literal("#").append(Component.literal(getRequest().getTag().toString())));
             }
             return combined;
         }
 
         @Override
-        public List<ItemStack> getDisplayStacks()
-        {
+        public List<ItemStack> getDisplayStacks() {
             return Collections.unmodifiableList(this.stacks);
         }
     }
@@ -223,17 +196,14 @@ public final class StandardRequests
     /**
      * Generic delivery request.
      */
-    public static class DeliveryRequest extends AbstractRequest<Delivery> implements IStackBasedTask
-    {
-        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Delivery requested)
-        {
+    public static class DeliveryRequest extends AbstractRequest<Delivery> implements IStackBasedTask {
+        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Delivery requested) {
             super(requester, token, state, requested);
         }
 
         @NotNull
         @Override
-        public ImmutableList<ItemStack> getDeliveries()
-        {
+        public ImmutableList<ItemStack> getDeliveries() {
             //This request type has no deliverable.
             //It is the delivery.
             return ImmutableList.of();
@@ -241,79 +211,63 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public Component getShortDisplayString()
-        {
+        public Component getShortDisplayString() {
             return Component.literal("")
-                     .append(Component.translatableEscape(RequestSystemTranslationConstants.REQUESTS_TYPE_DELIVERY)
-                               .append(Component.literal(getRequest().getStack().getCount() + " "))
-                               .append(getRequest().getStack().getDisplayName()));
+                    .append(Component.translatableEscape(RequestSystemTranslationConstants.REQUESTS_TYPE_DELIVERY)
+                            .append(Component.literal(getRequest().getStack().getCount() + " "))
+                            .append(getRequest().getStack().getDisplayName()));
         }
 
         @NotNull
         @Override
-        public List<ItemStack> getDisplayStacks()
-        {
+        public List<ItemStack> getDisplayStacks() {
             return ImmutableList.of();
         }
 
         @Override
-        public MutableComponent getDisplayPrefix()
-        {
+        public MutableComponent getDisplayPrefix() {
             return Component.translatableEscape(RequestSystemTranslationConstants.REQUESTS_TYPE_DELIVERY);
         }
 
         @Override
-        public int getDisplayCount()
-        {
+        public int getDisplayCount() {
             return getRequest().getStack().getCount();
         }
 
         @Override
-        public ItemStack getTaskStack()
-        {
+        public ItemStack getTaskStack() {
             return getRequest().getStack();
         }
 
         @Override
-        public List<MutableComponent> getResolverToolTip(final IColonyView colony)
-        {
+        public List<MutableComponent> getResolverToolTip(final IColonyView colony) {
             final String requester = getRequester().getRequesterDisplayName(colony.getRequestManager(), this).getString();
 
             int posInList = -1;
-            for (IBuildingView view : colony.getBuildings())
-            {
-                if (view.getBuildingType() == ModBuildings.deliveryman.get())
-                {
+            for (IBuildingView view : colony.getBuildings()) {
+                if (view.getBuildingType() == ModBuildings.deliveryman.get()) {
                     posInList = getPosInList(colony, view, getId());
-                    if (posInList >= 0)
-                    {
+                    if (posInList >= 0) {
                         break;
                     }
-                }
-                else if (view.getBuildingType() == ModBuildings.wareHouse.get())
-                {
+                } else if (view.getBuildingType() == ModBuildings.wareHouse.get()) {
                     posInList = view.getModuleView(BuildingModules.WAREHOUSE_REQUEST_QUEUE).getTasks().indexOf(getId());
-                    if (posInList >= 0)
-                    {
+                    if (posInList >= 0) {
                         break;
                     }
                 }
             }
 
-            if (posInList >= 0)
-            {
-            	return posInList == 0 ? ImmutableList.of(Component.translatableEscape(FROM, requester), Component.translatableEscape(IN_PROGRESS)) : ImmutableList.of(Component.translatableEscape(FROM, requester), Component.translatableEscape(IN_QUEUE, posInList));
-            }
-            else
-            {
+            if (posInList >= 0) {
+                return posInList == 0 ? ImmutableList.of(Component.translatableEscape(FROM, requester), Component.translatableEscape(IN_PROGRESS)) : ImmutableList.of(Component.translatableEscape(FROM, requester), Component.translatableEscape(IN_QUEUE, posInList));
+            } else {
                 return ImmutableList.of(Component.translatableEscape(FROM, requester));
             }
         }
 
         @NotNull
         @Override
-        public ResourceLocation getDisplayIcon()
-        {
+        public ResourceLocation getDisplayIcon() {
             return new ResourceLocation("minecolonies", "textures/gui/citizen/delivery.png");
         }
     }
@@ -321,17 +275,14 @@ public final class StandardRequests
     /**
      * Generic delivery request.
      */
-    public static class PickupRequest extends AbstractRequest<Pickup>
-    {
-        public PickupRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Pickup requested)
-        {
+    public static class PickupRequest extends AbstractRequest<Pickup> {
+        public PickupRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Pickup requested) {
             super(requester, token, state, requested);
         }
 
         @NotNull
         @Override
-        public ImmutableList<ItemStack> getDeliveries()
-        {
+        public ImmutableList<ItemStack> getDeliveries() {
             //This request type has no deliverable.
             //It is a pickup.
             return ImmutableList.of();
@@ -339,8 +290,7 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public Component getShortDisplayString()
-        {
+        public Component getShortDisplayString() {
             final MutableComponent result = Component.literal("");
             result.append(Component.translatableEscape(RequestSystemTranslationConstants.REQUESTS_TYPE_PICKUP));
             return result;
@@ -348,51 +298,39 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public List<ItemStack> getDisplayStacks()
-        {
+        public List<ItemStack> getDisplayStacks() {
             return ImmutableList.of();
         }
 
         @NotNull
         @Override
-        public ResourceLocation getDisplayIcon()
-        {
+        public ResourceLocation getDisplayIcon() {
             // This can be just the delivery icon. For the user, it's no big deal.
             return new ResourceLocation("minecolonies", "textures/gui/citizen/delivery.png");
         }
 
         @Override
-        public List<MutableComponent> getResolverToolTip(final IColonyView colony)
-        {
+        public List<MutableComponent> getResolverToolTip(final IColonyView colony) {
             final String requester = getRequester().getRequesterDisplayName(colony.getRequestManager(), this).getString();
 
             int posInList = -1;
-            for (IBuildingView view : colony.getBuildings())
-            {
-                if (view.getBuildingType() == ModBuildings.deliveryman.get())
-                {
+            for (IBuildingView view : colony.getBuildings()) {
+                if (view.getBuildingType() == ModBuildings.deliveryman.get()) {
                     posInList = getPosInList(colony, view, getId());
-                    if (posInList >= 0)
-                    {
+                    if (posInList >= 0) {
                         break;
                     }
-                }
-                else if (view.getBuildingType() == ModBuildings.wareHouse.get())
-                {
+                } else if (view.getBuildingType() == ModBuildings.wareHouse.get()) {
                     posInList = view.getModuleView(BuildingModules.WAREHOUSE_REQUEST_QUEUE).getTasks().indexOf(getId());
-                    if (posInList >= 0)
-                    {
+                    if (posInList >= 0) {
                         break;
                     }
                 }
             }
 
-            if (posInList >= 0)
-            {
+            if (posInList >= 0) {
                 return posInList == 0 ? ImmutableList.of(Component.translatableEscape(FROM, requester), Component.translatableEscape(IN_PROGRESS)) : ImmutableList.of(Component.translatableEscape(FROM, requester), Component.translatableEscape(IN_QUEUE, posInList));
-            }
-            else
-            {
+            } else {
                 return ImmutableList.of(Component.translatableEscape(FROM, requester));
             }
         }
@@ -402,45 +340,38 @@ public final class StandardRequests
     /**
      * An abstract implementation for crafting requests
      */
-    public abstract static class AbstractCraftingRequest<C extends AbstractCrafting> extends AbstractRequest<C> implements IStackBasedTask
-    {
+    public abstract static class AbstractCraftingRequest<C extends AbstractCrafting> extends AbstractRequest<C> implements IStackBasedTask {
 
-        protected AbstractCraftingRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final C requested)
-        {
+        protected AbstractCraftingRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final C requested) {
             super(requester, token, requested);
         }
 
         protected AbstractCraftingRequest(
-          @NotNull final IRequester requester,
-          @NotNull final IToken<?> token,
-          @NotNull final RequestState state,
-          @NotNull final C requested)
-        {
+                @NotNull final IRequester requester,
+                @NotNull final IToken<?> token,
+                @NotNull final RequestState state,
+                @NotNull final C requested) {
             super(requester, token, state, requested);
         }
 
         @NotNull
         @Override
-        public final Component getShortDisplayString()
-        {
+        public final Component getShortDisplayString() {
             return Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_SYSTEM_CRAFTING_DISPLAY, Component.literal(String.valueOf(getRequest().getMinCount())), getRequest().getStack().getDisplayName());
         }
 
         @Override
-        public MutableComponent getDisplayPrefix()
-        {
+        public MutableComponent getDisplayPrefix() {
             return Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_SYSTEM_CRAFTING_DISPLAY_SHORT, Component.literal(String.valueOf(getRequest().getMinCount())));
         }
 
         @Override
-        public int getDisplayCount()
-        {
+        public int getDisplayCount() {
             return getRequest().getCount();
         }
 
         @Override
-        public ItemStack getTaskStack()
-        {
+        public ItemStack getTaskStack() {
             return getRequest().getStack();
         }
 
@@ -448,45 +379,34 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public final List<ItemStack> getDisplayStacks()
-        {
+        public final List<ItemStack> getDisplayStacks() {
             return ImmutableList.of();
         }
 
         @Override
-        public List<MutableComponent> getResolverToolTip(final IColonyView colony)
-        {
+        public List<MutableComponent> getResolverToolTip(final IColonyView colony) {
             final String requester = getRequester().getRequesterDisplayName(colony.getRequestManager(), this).getString();
 
-            try
-            {
+            try {
                 final BlockPos resolver = colony.getRequestManager().getResolverForRequest(getId()).getLocation().getInDimensionLocation();
                 final IBuildingView view = colony.getBuilding(resolver);
 
                 int posInList = getPosInList(colony, view, getId());
-                if (posInList >= 0)
-                {
-                	return posInList == 0 ? ImmutableList.of(Component.translatableEscape(AT, requester), Component.translatableEscape(IN_PROGRESS)) : ImmutableList.of(Component.translatableEscape(FROM, requester), Component.translatableEscape(IN_QUEUE, posInList));
-                }
-                else if (getState() == RequestState.FOLLOWUP_IN_PROGRESS)
-                {
+                if (posInList >= 0) {
+                    return posInList == 0 ? ImmutableList.of(Component.translatableEscape(AT, requester), Component.translatableEscape(IN_PROGRESS)) : ImmutableList.of(Component.translatableEscape(FROM, requester), Component.translatableEscape(IN_QUEUE, posInList));
+                } else if (getState() == RequestState.FOLLOWUP_IN_PROGRESS) {
                     return ImmutableList.of(Component.translatableEscape(AT, requester), Component.translatableEscape(FINISHED));
-                }
-                else
-                {
+                } else {
                     return ImmutableList.of(Component.translatableEscape(AT, requester), Component.translatableEscape(MISSING_DELIVERIES));
                 }
-            }
-            catch (IllegalArgumentException ex)
-            {
+            } catch (IllegalArgumentException ex) {
                 return ImmutableList.of(Component.translatableEscape(AT, requester), Component.translatableEscape(NOT_RESOLVED));
             }
         }
 
         @NotNull
         @Override
-        public final ResourceLocation getDisplayIcon()
-        {
+        public final ResourceLocation getDisplayIcon() {
             return ResourceLocation.parse(getDisplayIconFile());
         }
 
@@ -496,34 +416,29 @@ public final class StandardRequests
     /**
      * The crafting request for private crafting of a citizen
      */
-    public static class PrivateCraftingRequest extends AbstractCraftingRequest<PrivateCrafting>
-    {
+    public static class PrivateCraftingRequest extends AbstractCraftingRequest<PrivateCrafting> {
 
         protected PrivateCraftingRequest(
-          @NotNull final IRequester requester,
-          @NotNull final IToken<?> token,
-          @NotNull final PrivateCrafting requested)
-        {
+                @NotNull final IRequester requester,
+                @NotNull final IToken<?> token,
+                @NotNull final PrivateCrafting requested) {
             super(requester, token, requested);
         }
 
         protected PrivateCraftingRequest(
-          @NotNull final IRequester requester,
-          @NotNull final IToken<?> token,
-          @NotNull final RequestState state, @NotNull final PrivateCrafting requested)
-        {
+                @NotNull final IRequester requester,
+                @NotNull final IToken<?> token,
+                @NotNull final RequestState state, @NotNull final PrivateCrafting requested) {
             super(requester, token, state, requested);
         }
 
         @Override
-        protected String getTranslationKey()
-        {
+        protected String getTranslationKey() {
             return RequestSystemTranslationConstants.REQUESTS_TYPE_CRAFTING;
         }
 
         @Override
-        protected String getDisplayIconFile()
-        {
+        protected String getDisplayIconFile() {
             return "minecolonies:textures/gui/citizen/crafting_public.png";
         }
     }
@@ -531,34 +446,29 @@ public final class StandardRequests
     /**
      * The public crafting requests, used for workers that perform crafting
      */
-    public static class PublicCraftingRequest extends AbstractCraftingRequest<PublicCrafting>
-    {
+    public static class PublicCraftingRequest extends AbstractCraftingRequest<PublicCrafting> {
 
         protected PublicCraftingRequest(
-          @NotNull final IRequester requester,
-          @NotNull final IToken<?> token,
-          @NotNull final PublicCrafting requested)
-        {
+                @NotNull final IRequester requester,
+                @NotNull final IToken<?> token,
+                @NotNull final PublicCrafting requested) {
             super(requester, token, requested);
         }
 
         protected PublicCraftingRequest(
-          @NotNull final IRequester requester,
-          @NotNull final IToken<?> token,
-          @NotNull final RequestState state, @NotNull final PublicCrafting requested)
-        {
+                @NotNull final IRequester requester,
+                @NotNull final IToken<?> token,
+                @NotNull final RequestState state, @NotNull final PublicCrafting requested) {
             super(requester, token, state, requested);
         }
 
         @Override
-        protected String getTranslationKey()
-        {
+        protected String getTranslationKey() {
             return RequestSystemTranslationConstants.REQUESTS_TYPE_CRAFTING;
         }
 
         @Override
-        protected String getDisplayIconFile()
-        {
+        protected String getDisplayIconFile() {
             return "minecolonies:textures/gui/citizen/crafting_public.png";
         }
     }
@@ -566,37 +476,30 @@ public final class StandardRequests
     /**
      * Generic Tool Request.
      */
-    public static class ToolRequest extends AbstractRequest<Tool>
-    {
-        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Tool requested)
-        {
+    public static class ToolRequest extends AbstractRequest<Tool> {
+        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Tool requested) {
             super(requester, token, requested);
         }
 
-        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Tool requested)
-        {
+        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Tool requested) {
             super(requester, token, state, requested);
         }
 
         @NotNull
         @Override
-        public Component getLongDisplayString()
-        {
+        public Component getLongDisplayString() {
             final MutableComponent result = Component.literal("");
             result.append(getRequest().getEquipmentType().getDisplayName());
 
-            if (getRequest().getMinLevel() > EquipmentLevelConstants.TOOL_LEVEL_HAND)
-            {
+            if (getRequest().getMinLevel() > EquipmentLevelConstants.TOOL_LEVEL_HAND) {
                 result.append(Component.literal(" "));
                 result.append(Component.translatableEscape(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MINIMUM_LEVEL_PREFIX));
                 result.append(Component.literal(" "));
                 result.append(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
             }
 
-            if (getRequest().getMaxLevel() < EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM)
-            {
-                if (getRequest().getMinLevel() > EquipmentLevelConstants.TOOL_LEVEL_HAND)
-                {
+            if (getRequest().getMaxLevel() < EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM) {
+                if (getRequest().getMinLevel() > EquipmentLevelConstants.TOOL_LEVEL_HAND) {
                     result.append(Component.literal(" "));
                     result.append(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
                 }
@@ -612,8 +515,7 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public Component getShortDisplayString()
-        {
+        public Component getShortDisplayString() {
             final MutableComponent result = Component.literal("");
             result.append(getRequest().getEquipmentType().getDisplayName());
             return result;
@@ -623,31 +525,27 @@ public final class StandardRequests
     /**
      * Generic food request.
      */
-    public static class FoodRequest extends AbstractRequest<Food>
-    {
+    public static class FoodRequest extends AbstractRequest<Food> {
         /**
          * Food examples to display.
          */
         private static ImmutableList<ItemStack> foodExamples;
 
-        FoodRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Food requested)
-        {
+        FoodRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Food requested) {
             super(requester, token, requested);
         }
 
         FoodRequest(
-          @NotNull final IRequester requester,
-          @NotNull final IToken<?> token,
-          @NotNull final RequestState state,
-          @NotNull final Food requested)
-        {
+                @NotNull final IRequester requester,
+                @NotNull final IToken<?> token,
+                @NotNull final RequestState state,
+                @NotNull final Food requested) {
             super(requester, token, state, requested);
         }
 
         @NotNull
         @Override
-        public Component getShortDisplayString()
-        {
+        public Component getShortDisplayString() {
             final MutableComponent result = Component.literal("");
             result.append(Component.translatableEscape(RequestSystemTranslationConstants.REQUESTS_TYPE_FOOD));
             return result;
@@ -655,19 +553,16 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public List<ItemStack> getDisplayStacks()
-        {
-            if (foodExamples == null)
-            {
+        public List<ItemStack> getDisplayStacks() {
+            if (foodExamples == null) {
                 foodExamples = ImmutableList.copyOf(IColonyManager.getInstance()
-                                                      .getCompatibilityManager().getFood()
-                                                      .stream()
-                                                      .map(ItemStorage::getItemStack)
-                                                      .collect(Collectors.toList()));
+                        .getCompatibilityManager().getFood()
+                        .stream()
+                        .map(ItemStorage::getItemStack)
+                        .collect(Collectors.toList()));
             }
 
-            if (!this.getRequest().getExclusionList().isEmpty())
-            {
+            if (!this.getRequest().getExclusionList().isEmpty()) {
                 return ImmutableList.copyOf(foodExamples.stream()
                         .filter(item -> this.getRequest().matches(item))
                         .collect(Collectors.toList()));
@@ -680,46 +575,40 @@ public final class StandardRequests
     /**
      * Generic smeltable ore request.
      */
-    public static class SmeltAbleOreRequest extends AbstractRequest<SmeltableOre>
-    {
+    public static class SmeltAbleOreRequest extends AbstractRequest<SmeltableOre> {
         /**
          * Ore examples to display.
          */
         private static ImmutableList<ItemStack> oreExamples;
 
-        SmeltAbleOreRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final SmeltableOre requested)
-        {
+        SmeltAbleOreRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final SmeltableOre requested) {
             super(requester, token, requested);
         }
 
         SmeltAbleOreRequest(
-          @NotNull final IRequester requester,
-          @NotNull final IToken<?> token,
-          @NotNull final RequestState state,
-          @NotNull final SmeltableOre requested)
-        {
+                @NotNull final IRequester requester,
+                @NotNull final IToken<?> token,
+                @NotNull final RequestState state,
+                @NotNull final SmeltableOre requested) {
             super(requester, token, state, requested);
         }
 
         @NotNull
         @Override
-        public Component getShortDisplayString()
-        {
+        public Component getShortDisplayString() {
             return Component.translatableEscape(RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE);
         }
 
         @NotNull
         @Override
-        public List<ItemStack> getDisplayStacks()
-        {
-            if (oreExamples == null)
-            {
+        public List<ItemStack> getDisplayStacks() {
+            if (oreExamples == null) {
                 oreExamples = ImmutableList.copyOf(IColonyManager.getInstance()
-                                                     .getCompatibilityManager()
-                                                     .getListOfAllItems()
-                                                     .stream()
-                                                     .filter(IColonyManager.getInstance().getCompatibilityManager()::isOre)
-                                                     .collect(Collectors.toList()));
+                        .getCompatibilityManager()
+                        .getListOfAllItems()
+                        .stream()
+                        .filter(IColonyManager.getInstance().getCompatibilityManager()::isOre)
+                        .collect(Collectors.toList()));
             }
             return oreExamples;
         }
@@ -728,31 +617,27 @@ public final class StandardRequests
     /**
      * Generic burnable request.
      */
-    public static class BurnableRequest extends AbstractRequest<Burnable>
-    {
+    public static class BurnableRequest extends AbstractRequest<Burnable> {
         /**
          * List of burnable examples.
          */
         private static ImmutableList<ItemStack> burnableExamples;
 
-        BurnableRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Burnable requested)
-        {
+        BurnableRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Burnable requested) {
             super(requester, token, requested);
         }
 
         BurnableRequest(
-          @NotNull final IRequester requester,
-          @NotNull final IToken<?> token,
-          @NotNull final RequestState state,
-          @NotNull final Burnable requested)
-        {
+                @NotNull final IRequester requester,
+                @NotNull final IToken<?> token,
+                @NotNull final RequestState state,
+                @NotNull final Burnable requested) {
             super(requester, token, state, requested);
         }
 
         @NotNull
         @Override
-        public Component getShortDisplayString()
-        {
+        public Component getShortDisplayString() {
             final MutableComponent result = Component.literal("");
             result.append(Component.translatableEscape(RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE));
             return result;
@@ -760,16 +645,14 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public List<ItemStack> getDisplayStacks()
-        {
-            if (burnableExamples == null)
-            {
+        public List<ItemStack> getDisplayStacks() {
+            if (burnableExamples == null) {
                 burnableExamples = ImmutableList.copyOf(IColonyManager.getInstance()
-                                                          .getCompatibilityManager()
-                                                          .getListOfAllItems()
-                                                          .stream()
-                                                          .filter(FurnaceBlockEntity::isFuel)
-                                                          .collect(Collectors.toList()));
+                        .getCompatibilityManager()
+                        .getListOfAllItems()
+                        .stream()
+                        .filter(FurnaceBlockEntity::isFuel)
+                        .collect(Collectors.toList()));
             }
 
             return burnableExamples;
@@ -779,31 +662,24 @@ public final class StandardRequests
     /**
      * Request for a single ItemStack.
      */
-    public static class MinStackRequest extends AbstractRequest<MinimumStack>
-    {
-        public MinStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final MinimumStack requested)
-        {
+    public static class MinStackRequest extends AbstractRequest<MinimumStack> {
+        public MinStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final MinimumStack requested) {
             super(requester, token, requested);
         }
 
-        public MinStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final MinimumStack requested)
-        {
+        public MinStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final MinimumStack requested) {
             super(requester, token, state, requested);
         }
 
         @NotNull
         @Override
-        public Component getShortDisplayString()
-        {
+        public Component getShortDisplayString() {
             final MutableComponent combined = Component.literal("");
 
-            if (getRequest().getMinimumCount() == getRequest().getCount())
-            {
+            if (getRequest().getMinimumCount() == getRequest().getCount()) {
                 combined.append(Component.literal(getRequest().getCount() + " "));
                 combined.append(getRequest().getStack().getHoverName());
-            }
-            else
-            {
+            } else {
                 combined.append(Component.literal(getRequest().getMinimumCount() + "-" + getRequest().getCount() + " "));
                 combined.append(getRequest().getStack().getHoverName());
             }
@@ -813,45 +689,35 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public List<ItemStack> getDisplayStacks()
-        {
+        public List<ItemStack> getDisplayStacks() {
             return getRequest().getRequestedItems();
         }
     }
 
     /**
      * Find the position the request is in the list.
-     * @return the position.
+     *
      * @param colony the colony.
-     * @param view the building view.
+     * @param view   the building view.
+     * @return the position.
      */
-    private static int getPosInList(final IColonyView colony, final IBuildingView view, final IToken<?> id)
-    {
-        if (view == null)
-        {
+    private static int getPosInList(final IColonyView colony, final IBuildingView view, final IToken<?> id) {
+        if (view == null) {
             return 0;
         }
 
-        for (final WorkerBuildingModuleView moduleView : view.getModuleViews(WorkerBuildingModuleView.class))
-        {
-            for (int worker : moduleView.getAssignedCitizens())
-            {
+        for (final WorkerBuildingModuleView moduleView : view.getModuleViews(WorkerBuildingModuleView.class)) {
+            for (int worker : moduleView.getAssignedCitizens()) {
                 final ICitizenDataView citizen = colony.getCitizen(worker);
-                if (citizen != null)
-                {
-                    if (citizen.getJobView() instanceof CrafterJobView)
-                    {
+                if (citizen != null) {
+                    if (citizen.getJobView() instanceof CrafterJobView) {
                         int index = ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(id);
-                        if (index >= 0)
-                        {
+                        if (index >= 0) {
                             return index;
                         }
-                    }
-                    else if (citizen.getJobView() instanceof DmanJobView)
-                    {
+                    } else if (citizen.getJobView() instanceof DmanJobView) {
                         int index = ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(id);
-                        if (index >= 0)
-                        {
+                        if (index >= 0) {
                             return index;
                         }
                     }

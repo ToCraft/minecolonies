@@ -16,8 +16,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Message to open the colony founding covenant.
  */
-public class OpenCantFoundColonyWarningMessage  extends AbstractClientPlayMessage
-{
+public class OpenCantFoundColonyWarningMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_cant_found_colony_warning", OpenCantFoundColonyWarningMessage::new);
 
     /**
@@ -38,16 +37,14 @@ public class OpenCantFoundColonyWarningMessage  extends AbstractClientPlayMessag
     /**
      * Default constructor
      **/
-    public OpenCantFoundColonyWarningMessage(RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public OpenCantFoundColonyWarningMessage(RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(type);
         this.warningMessageTranslationKey = Utils.deserializeCodecMess(ComponentSerialization.STREAM_CODEC, buf);
         this.townHallPos = buf.readBlockPos();
         this.displayConfigTooltip = buf.readBoolean();
     }
 
-    public OpenCantFoundColonyWarningMessage(final Component warningMessageTranslationKey, final BlockPos townHallPos, final boolean displayConfigTooltip)
-    {
+    public OpenCantFoundColonyWarningMessage(final Component warningMessageTranslationKey, final BlockPos townHallPos, final boolean displayConfigTooltip) {
         super(TYPE);
         this.warningMessageTranslationKey = warningMessageTranslationKey;
         this.townHallPos = townHallPos;
@@ -55,14 +52,12 @@ public class OpenCantFoundColonyWarningMessage  extends AbstractClientPlayMessag
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         new WindowTownHallCantCreateColony(townHallPos, (MutableComponent) warningMessageTranslationKey, displayConfigTooltip).open();
     }
 
     @Override
-    public void toBytes(RegistryFriendlyByteBuf buf)
-    {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         Utils.serializeCodecMess(ComponentSerialization.STREAM_CODEC, buf, warningMessageTranslationKey);
         buf.writeBlockPos(townHallPos);
         buf.writeBoolean(displayConfigTooltip);

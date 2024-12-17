@@ -1,30 +1,27 @@
 package com.minecolonies.core.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFarmer;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Job class of the farmer, handles his fields.
  */
-public class JobFarmer extends AbstractJobCrafter<EntityAIWorkFarmer, JobFarmer>
-{
+public class JobFarmer extends AbstractJobCrafter<EntityAIWorkFarmer, JobFarmer> {
     /**
      * Public constructor of the farmer job.
      *
      * @param entity the entity to assign to the job.
      */
-    public JobFarmer(final ICitizenData entity)
-    {
+    public JobFarmer(final ICitizenData entity) {
         super(entity);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.FARMER_ID;
     }
 
@@ -33,8 +30,7 @@ public class JobFarmer extends AbstractJobCrafter<EntityAIWorkFarmer, JobFarmer>
      */
     @NotNull
     @Override
-    public EntityAIWorkFarmer generateAI()
-    {
+    public EntityAIWorkFarmer generateAI() {
         return new EntityAIWorkFarmer(this);
     }
 }

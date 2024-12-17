@@ -11,7 +11,6 @@ import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingMo
 import com.minecolonies.core.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -23,8 +22,7 @@ import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_COOK;
  * Class of the kitchen building.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingKitchen extends AbstractBuilding
-{
+public class BuildingKitchen extends AbstractBuilding {
     /**
      * The cook string.
      */
@@ -41,48 +39,41 @@ public class BuildingKitchen extends AbstractBuilding
      * @param c the colony.
      * @param l the location
      */
-    public BuildingKitchen(final IColony c, final BlockPos l)
-    {
+    public BuildingKitchen(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return KITCHEN_DESC;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
 
-    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
-    {
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public CraftingModule(final JobEntry jobEntry)
-        {
+        public CraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         @NotNull
         @Override
-        public OptionalPredicate<ItemStack> getIngredientValidator()
-        {
+        public OptionalPredicate<ItemStack> getIngredientValidator() {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_COOK)
                     .combine(super.getIngredientValidator());
         }
 
         @Override
-        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-        {
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) {
             if (!super.isRecipeCompatible(recipe)) return false;
 
             final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_COOK);
@@ -90,34 +81,30 @@ public class BuildingKitchen extends AbstractBuilding
 
             final ItemStack output = recipe.getPrimaryOutput();
             return FoodUtils.EDIBLE.test(output)
-                || FoodUtils.EDIBLE.test(FurnaceRecipes.getInstance()
+                    || FoodUtils.EDIBLE.test(FurnaceRecipes.getInstance()
                     .getSmeltingResult(output));
         }
     }
 
-    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
-    {
+    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public SmeltingModule(final JobEntry jobEntry)
-        {
+        public SmeltingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         @NotNull
         @Override
-        public OptionalPredicate<ItemStack> getIngredientValidator()
-        {
+        public OptionalPredicate<ItemStack> getIngredientValidator() {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_COOK)
                     .combine(super.getIngredientValidator());
         }
 
         @Override
-        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-        {
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) {
             if (!super.isRecipeCompatible(recipe)) return false;
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_COOK).orElse(FoodUtils.EDIBLE.test(recipe.getPrimaryOutput()));
         }

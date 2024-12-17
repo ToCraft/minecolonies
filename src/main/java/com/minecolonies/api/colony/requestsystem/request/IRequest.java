@@ -27,15 +27,13 @@ import java.util.Set;
  *
  * @param <R> The type of request, eg ItemStack, FluidStack etc.
  */
-public interface IRequest<R extends IRequestable>
-{
+public interface IRequest<R extends IRequestable> {
     /**
      * Method to get the assigning strategy for this request.
      *
      * @return The assigning strategy for this request.
      */
-    default AssigningStrategy getStrategy()
-    {
+    default AssigningStrategy getStrategy() {
         return AssigningStrategy.PRIORITY_BASED;
     }
 
@@ -279,8 +277,9 @@ public interface IRequest<R extends IRequestable>
 
     /**
      * Get a request of a specific type.
+     *
      * @param tClass the class of it.
-     * @param <T> the type.
+     * @param <T>    the type.
      * @return the request of this particular type.
      */
     @NotNull
@@ -288,12 +287,14 @@ public interface IRequest<R extends IRequestable>
 
     /**
      * Get all super classes of this type (cached value).
+     *
      * @return an immutable copy of the set.
      */
     Set<TypeToken<?>> getSuperClasses();
 
     /**
      * Get the resolver tooltip for a request.
+     *
      * @param colony the colony view to obtain information if necessary.
      * @return a list of strings or empty.
      */

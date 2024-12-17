@@ -12,8 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends AbstractColonyServerMessage
-{
+public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends AbstractColonyServerMessage {
     /**
      * The buildingID this message originates from
      */
@@ -24,8 +23,7 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
      *
      * @param building the building we're executing on.
      */
-    public AbstractBuildingServerMessage(final PlayMessageType<?> type, final IBuildingView building)
-    {
+    public AbstractBuildingServerMessage(final PlayMessageType<?> type, final IBuildingView building) {
         this(type, building.getColony().getDimension(), building.getColony().getID(), building.getID());
     }
 
@@ -36,8 +34,7 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
      * @param colonyId    the ID of the colony we're executing on.
      * @param dimensionId the ID of the dimension we're executing on.
      */
-    public AbstractBuildingServerMessage(final PlayMessageType<?> type, final ResourceKey<Level> dimensionId, final int colonyId, final BlockPos buildingId)
-    {
+    public AbstractBuildingServerMessage(final PlayMessageType<?> type, final ResourceKey<Level> dimensionId, final int colonyId, final BlockPos buildingId) {
         super(type, dimensionId, colonyId);
         this.buildingId = buildingId;
     }
@@ -45,34 +42,27 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
     protected abstract void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final T building);
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeBlockPos(buildingId);
     }
 
-    protected AbstractBuildingServerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected AbstractBuildingServerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.buildingId = buf.readBlockPos();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected final void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected final void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
-        if (building == null)
-        {
+        if (building == null) {
             return;
         }
 
-        try
-        {
+        try {
             onExecute(ctxIn, player, colony, (T) building);
-        }
-        catch (ClassCastException e)
-        {
+        } catch (ClassCastException e) {
             Log.getLogger().warn("onExecute called with wrong type: ", e);
         }
     }

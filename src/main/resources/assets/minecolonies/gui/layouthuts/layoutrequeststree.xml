@@ -1,4 +1,5 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="16 16" pos="1 3" visible="false"/>
     <button id="detail" size="16 16" pos="1 23" source="minecolonies:textures/gui/citizen/detail_button.png"/>
     <itemicon id="requestStack" size="16 16" pos="1 3"/>
@@ -10,9 +11,11 @@
 
     <!-- Color green if possible? -->
     <button id="fulfill" size="37 16" pos="20 23" color="black"
-                 label="$(com.minecolonies.coremod.gui.citizen.requestsfulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+            label="$(com.minecolonies.coremod.gui.citizen.requestsfulfill)"
+            source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
     <!-- button to cancel the request-->
     <button id="cancel" size="37 16" pos="70 23" color="black"
-                 label="$(com.minecolonies.coremod.gui.citizen.requestscancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+            label="$(com.minecolonies.coremod.gui.citizen.requestscancel)"
+            source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 </window>

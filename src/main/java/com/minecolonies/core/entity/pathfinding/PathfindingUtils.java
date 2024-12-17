@@ -32,8 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PathfindingUtils
-{
+public class PathfindingUtils {
     /**
      * Empty fluid comparison
      */
@@ -55,17 +54,14 @@ public class PathfindingUtils
      * @param reached the reached blocks.
      * @param mob     the tracked mob.
      */
-    public static void syncDebugReachedPositions(final HashSet<BlockPos> reached, final List<ServerPlayer> players)
-    {
-        if (reached.isEmpty() || players.isEmpty())
-        {
+    public static void syncDebugReachedPositions(final HashSet<BlockPos> reached, final List<ServerPlayer> players) {
+        if (reached.isEmpty() || players.isEmpty()) {
             return;
         }
 
         final SyncPathReachedMessage message = new SyncPathReachedMessage(reached);
 
-        for (final ServerPlayer player : players)
-        {
+        for (final ServerPlayer player : players) {
             message.sendToPlayer(player);
         }
     }
@@ -78,27 +74,23 @@ public class PathfindingUtils
      * @param entity Entity for the pathfinding operation.
      * @return ChunkCoordinates for starting location.
      */
-    public static BlockPos prepareStart(@NotNull final LivingEntity entity)
-    {
+    public static BlockPos prepareStart(@NotNull final LivingEntity entity) {
         @NotNull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.getX()),
-            Mth.floor(entity.getY()),
-            Mth.floor(entity.getZ()));
+                Mth.floor(entity.getY()),
+                Mth.floor(entity.getZ()));
         final Level level = entity.level();
         BlockState bs = level.getBlockState(pos);
         // 1 Up when we're standing within this collision shape
         final VoxelShape collisionShape = bs.getCollisionShape(level, pos);
         final boolean isFineToStandIn = canStandInSolidBlock(bs);
-        if (bs.blocksMotion() && !isFineToStandIn && collisionShape.max(Direction.Axis.Y) > 0)
-        {
+        if (bs.blocksMotion() && !isFineToStandIn && collisionShape.max(Direction.Axis.Y) > 0) {
             final double relPosX = Math.abs(entity.getX() % 1);
             final double relPosZ = Math.abs(entity.getZ() % 1);
 
-            for (final AABB box : collisionShape.toAabbs())
-            {
+            for (final AABB box : collisionShape.toAabbs()) {
                 if (relPosX >= box.minX && relPosX <= box.maxX
-                    && relPosZ >= box.minZ && relPosZ <= box.maxZ
-                    && box.maxY > 0)
-                {
+                        && relPosZ >= box.minZ && relPosZ <= box.maxZ
+                        && box.maxY > 0) {
                     pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
                     bs = level.getBlockState(pos);
                     break;
@@ -107,33 +99,26 @@ public class PathfindingUtils
         }
 
         BlockState down = level.getBlockState(pos.below());
-        while (canStandInSolidBlock(bs) && canStandInSolidBlock(down) && !down.getBlock().isLadder(down, level, pos.below(), entity) && down.getFluidState().isEmpty())
-        {
+        while (canStandInSolidBlock(bs) && canStandInSolidBlock(down) && !down.getBlock().isLadder(down, level, pos.below(), entity) && down.getFluidState().isEmpty()) {
             pos.move(Direction.DOWN, 1);
             bs = down;
             down = level.getBlockState(pos.below());
 
-            if (pos.getY() < entity.getCommandSenderWorld().getMinBuildHeight())
-            {
+            if (pos.getY() < entity.getCommandSenderWorld().getMinBuildHeight()) {
                 return entity.blockPosition();
             }
         }
 
         final Block b = bs.getBlock();
 
-        if (entity.isInWater() && !(entity instanceof AbstractDrownedEntityPirate))
-        {
-            while (!bs.getFluidState().isEmpty())
-            {
+        if (entity.isInWater() && !(entity instanceof AbstractDrownedEntityPirate)) {
+            while (!bs.getFluidState().isEmpty()) {
                 pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
                 bs = level.getBlockState(pos);
             }
-        }
-        else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || (bs.blocksMotion() && !canStandInSolidBlock(bs)))
-        {
+        } else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || (bs.blocksMotion() && !canStandInSolidBlock(bs))) {
             final VoxelShape shape = bs.getCollisionShape(level, pos);
-            if (shape.isEmpty())
-            {
+            if (shape.isEmpty()) {
                 return pos.immutable();
             }
 
@@ -143,12 +128,9 @@ public class PathfindingUtils
             final double dX = relativePos.x;
             final double dZ = relativePos.z;
 
-            if (Math.abs(dX) < Math.abs(dZ))
-            {
+            if (Math.abs(dX) < Math.abs(dZ)) {
                 pos.set(pos.getX(), pos.getY(), dZ < 0 ? pos.getZ() - 1 : pos.getZ() + 1);
-            }
-            else
-            {
+            } else {
                 pos.set(dX < 0 ? pos.getX() - 1 : pos.getX() + 1, pos.getY(), pos.getZ());
             }
         }
@@ -162,10 +144,9 @@ public class PathfindingUtils
      * @param state the state to check.
      * @return true if so.
      */
-    private static boolean canStandInSolidBlock(final BlockState state)
-    {
+    private static boolean canStandInSolidBlock(final BlockState state) {
         return state.getBlock() instanceof DoorBlock || state.getBlock() instanceof TrapDoorBlock || (state.getBlock() instanceof PanelBlock && state.getValue(PanelBlock.OPEN))
-            || !state.getBlock().hasCollision;
+                || !state.getBlock().hasCollision;
     }
 
     /**
@@ -175,35 +156,22 @@ public class PathfindingUtils
      * @param pos   the position.
      * @param p     the path.
      */
-    public static void setLadderFacing(@NotNull final LevelReader world, final BlockPos pos, @NotNull final PathPointExtended p)
-    {
+    public static void setLadderFacing(@NotNull final LevelReader world, final BlockPos pos, @NotNull final PathPointExtended p) {
         final BlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
-        if (block instanceof VineBlock)
-        {
-            if (state.getValue(VineBlock.SOUTH))
-            {
+        if (block instanceof VineBlock) {
+            if (state.getValue(VineBlock.SOUTH)) {
                 p.setLadderFacing(Direction.NORTH);
-            }
-            else if (state.getValue(VineBlock.WEST))
-            {
+            } else if (state.getValue(VineBlock.WEST)) {
                 p.setLadderFacing(Direction.EAST);
-            }
-            else if (state.getValue(VineBlock.NORTH))
-            {
+            } else if (state.getValue(VineBlock.NORTH)) {
                 p.setLadderFacing(Direction.SOUTH);
-            }
-            else if (state.getValue(VineBlock.EAST))
-            {
+            } else if (state.getValue(VineBlock.EAST)) {
                 p.setLadderFacing(Direction.WEST);
             }
-        }
-        else if (block instanceof LadderBlock)
-        {
+        } else if (block instanceof LadderBlock) {
             p.setLadderFacing(state.getValue(LadderBlock.FACING));
-        }
-        else
-        {
+        } else {
             p.setLadderFacing(Direction.UP);
         }
     }
@@ -214,8 +182,7 @@ public class PathfindingUtils
      * @param state the state to check.
      * @return true if so.
      */
-    public static boolean isLiquid(final BlockState state)
-    {
+    public static boolean isLiquid(final BlockState state) {
         return state.liquid() || (!state.blocksMotion() && !state.getFluidState().isEmpty());
     }
 
@@ -225,8 +192,7 @@ public class PathfindingUtils
      * @param pos the pos in the world.
      * @return true if so.
      */
-    public static boolean isWater(@NotNull final BlockGetter world, final BlockPos pos)
-    {
+    public static boolean isWater(@NotNull final BlockGetter world, final BlockPos pos) {
         return isWater(world, pos, null, null);
     }
 
@@ -238,37 +204,30 @@ public class PathfindingUtils
      * @param pFluidState existing fluidstate or null
      * @return true if so.
      */
-    public static boolean isWater(@NotNull final BlockGetter world, final BlockPos pos, @Nullable BlockState pState, @Nullable FluidState pFluidState)
-    {
+    public static boolean isWater(@NotNull final BlockGetter world, final BlockPos pos, @Nullable BlockState pState, @Nullable FluidState pFluidState) {
         BlockState state = pState;
-        if (state == null)
-        {
+        if (state == null) {
             state = world.getBlockState(pos);
         }
 
-        if (state.isSolid())
-        {
+        if (state.isSolid()) {
             return false;
         }
-        if (state.getBlock() == Blocks.WATER)
-        {
+        if (state.getBlock() == Blocks.WATER) {
             return true;
         }
 
         FluidState fluidState = pFluidState;
-        if (fluidState == null)
-        {
+        if (fluidState == null) {
             fluidState = state.getFluidState();
         }
 
-        if (fluidState == empty || fluidState.isEmpty())
-        {
+        if (fluidState == empty || fluidState.isEmpty()) {
             return false;
         }
 
         if (state.getBlock() instanceof TrapdoorBlock
-            || state.getBlock() instanceof PanelBlock && (!state.getValue(TrapdoorBlock.OPEN) && state.getValue(TrapdoorBlock.HALF) == Half.TOP))
-        {
+                || state.getBlock() instanceof PanelBlock && (!state.getValue(TrapdoorBlock.OPEN) && state.getValue(TrapdoorBlock.HALF) == Half.TOP)) {
             return false;
         }
 
@@ -284,27 +243,22 @@ public class PathfindingUtils
      * @param pFluidState existing fluidstate or null
      * @return true if so.
      */
-    public static boolean isLava(@NotNull final BlockGetter world, final BlockPos pos, @Nullable BlockState pState, @Nullable FluidState pFluidState)
-    {
+    public static boolean isLava(@NotNull final BlockGetter world, final BlockPos pos, @Nullable BlockState pState, @Nullable FluidState pFluidState) {
         BlockState state = pState;
-        if (state == null)
-        {
+        if (state == null) {
             state = world.getBlockState(pos);
         }
 
-        if (state.getBlock() == Blocks.LAVA)
-        {
+        if (state.getBlock() == Blocks.LAVA) {
             return true;
         }
 
         FluidState fluidState = pFluidState;
-        if (fluidState == null)
-        {
+        if (fluidState == null) {
             fluidState = world.getFluidState(pos);
         }
 
-        if (fluidState == empty || fluidState.isEmpty())
-        {
+        if (fluidState == empty || fluidState.isEmpty()) {
             return false;
         }
 
@@ -319,15 +273,13 @@ public class PathfindingUtils
      * @param options
      * @return
      */
-    public static boolean isLadder(final BlockState blockState, @Nullable final PathingOptions options)
-    {
-        if (options != null && options.canWalkUnderWater() && isLiquid(blockState))
-        {
+    public static boolean isLadder(final BlockState blockState, @Nullable final PathingOptions options) {
+        if (options != null && options.canWalkUnderWater() && isLiquid(blockState)) {
             return true;
         }
         return blockState.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbAdvanced()) ||
-            blockState.getBlock() instanceof LadderBlock ||
-            blockState.is(ModTags.freeClimbBlocks));
+                blockState.getBlock() instanceof LadderBlock ||
+                blockState.is(ModTags.freeClimbBlocks));
     }
 
     /**
@@ -336,16 +288,15 @@ public class PathfindingUtils
      * @param blockState block to check.
      * @return true if dangerous.
      */
-    public static boolean isDangerous(final BlockState blockState)
-    {
+    public static boolean isDangerous(final BlockState blockState) {
         final Block block = blockState.getBlock();
 
         return blockState.is(ModTags.dangerousBlocks) ||
-            block instanceof FireBlock ||
-            block instanceof CampfireBlock ||
-            block instanceof MagmaBlock ||
-            block instanceof SweetBerryBushBlock ||
-            block instanceof PowderSnowBlock;
+                block instanceof FireBlock ||
+                block instanceof CampfireBlock ||
+                block instanceof MagmaBlock ||
+                block instanceof SweetBerryBushBlock ||
+                block instanceof PowderSnowBlock;
     }
 
     /**
@@ -360,8 +311,7 @@ public class PathfindingUtils
      * @param blockLookup
      * @return
      */
-    public static boolean hasAnyCollisionAlong(int startX, int startY, int startZ, int endX, int endY, int endZ, CachingBlockLookup blockLookup)
-    {
+    public static boolean hasAnyCollisionAlong(int startX, int startY, int startZ, int endX, int endY, int endZ, CachingBlockLookup blockLookup) {
         int x = startX, y = startY, z = startZ;
 
         int dx = Math.abs(endX - startX);
@@ -381,75 +331,55 @@ public class PathfindingUtils
         double stepCostSumY = (dy == 0) ? Double.POSITIVE_INFINITY : 0.5 / dy;
         double stepCostSumZ = (dz == 0) ? Double.POSITIVE_INFINITY : 0.5 / dz;
 
-        for (int i = 0; i < (dx + dy + dz) && (x != endX || y != endY || z != endZ); i++)
-        {
-            if (ShapeUtil.hasCollision(blockLookup, x, y, z, blockLookup.getBlockState(x, y, z)))
-            {
+        for (int i = 0; i < (dx + dy + dz) && (x != endX || y != endY || z != endZ); i++) {
+            if (ShapeUtil.hasCollision(blockLookup, x, y, z, blockLookup.getBlockState(x, y, z))) {
                 return true;
             }
 
             // Explore multiple possibilities if two options have the same cost, e.g. on quadratic distance to make sure all blocks around get checked:
-            if (doubleEquals(stepCostSumX, stepCostSumY))
-            {
-                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z, blockLookup.getBlockState(x + stepX, y, z)))
-                {
+            if (doubleEquals(stepCostSumX, stepCostSumY)) {
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z, blockLookup.getBlockState(x + stepX, y, z))) {
                     return true;
                 }
 
-                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y + stepY, z, blockLookup.getBlockState(x + stepX, y + stepY, z)))
-                {
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y + stepY, z, blockLookup.getBlockState(x + stepX, y + stepY, z))) {
                     return true;
                 }
             }
 
-            if (doubleEquals(stepCostSumX, stepCostSumZ))
-            {
-                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z, blockLookup.getBlockState(x + stepX, y, z)))
-                {
+            if (doubleEquals(stepCostSumX, stepCostSumZ)) {
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z, blockLookup.getBlockState(x + stepX, y, z))) {
                     return true;
                 }
 
-                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z + stepZ, blockLookup.getBlockState(x + stepX, y, z + stepZ)))
-                {
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z + stepZ, blockLookup.getBlockState(x + stepX, y, z + stepZ))) {
                     return true;
                 }
             }
 
-            if (doubleEquals(stepCostSumY, stepCostSumZ))
-            {
-                if (ShapeUtil.hasCollision(blockLookup, x, y + stepY, z, blockLookup.getBlockState(x, y + stepY, z)))
-                {
+            if (doubleEquals(stepCostSumY, stepCostSumZ)) {
+                if (ShapeUtil.hasCollision(blockLookup, x, y + stepY, z, blockLookup.getBlockState(x, y + stepY, z))) {
                     return true;
                 }
 
-                if (ShapeUtil.hasCollision(blockLookup, x, y + stepY, z + stepZ, blockLookup.getBlockState(x, y + stepY, z + stepZ)))
-                {
+                if (ShapeUtil.hasCollision(blockLookup, x, y + stepY, z + stepZ, blockLookup.getBlockState(x, y + stepY, z + stepZ))) {
                     return true;
                 }
             }
 
-            if (stepCostSumX < stepCostSumY)
-            {
-                if (stepCostSumX < stepCostSumZ)
-                {
+            if (stepCostSumX < stepCostSumY) {
+                if (stepCostSumX < stepCostSumZ) {
                     x += stepX;
                     stepCostSumX += stepCostX;
-                }
-                else
-                {
+                } else {
                     z += stepZ;
                     stepCostSumZ += stepCostZ;
                 }
-            }
-            else
-            {
-                if (stepCostSumY < stepCostSumZ)
-                {
+            } else {
+                if (stepCostSumY < stepCostSumZ) {
                     y += stepY;
                     stepCostSumY += stepCostY;
-                }
-                else
-                {
+                } else {
                     z += stepZ;
                     stepCostSumZ += stepCostZ;
                 }
@@ -459,10 +389,8 @@ public class PathfindingUtils
         return ShapeUtil.hasCollision(blockLookup, endX, endY, endZ, blockLookup.getBlockState(endX, endY, endZ));
     }
 
-    private static boolean doubleEquals(final double a, final double b)
-    {
-        if (Double.isFinite(a) || Double.isFinite(b) || Double.isNaN(a) || Double.isNaN(b))
-        {
+    private static boolean doubleEquals(final double a, final double b) {
+        if (Double.isFinite(a) || Double.isFinite(b) || Double.isNaN(a) || Double.isNaN(b)) {
             return false;
         }
 

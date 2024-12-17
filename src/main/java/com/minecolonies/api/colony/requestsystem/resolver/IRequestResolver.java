@@ -20,8 +20,7 @@ import java.util.function.Predicate;
  *
  * @param <R> The request type that this resolver can provide.
  */
-public interface IRequestResolver<R extends IRequestable> extends IRequester
-{
+public interface IRequestResolver<R extends IRequestable> extends IRequester {
 
     /**
      * Used to determine which type of requests can be resolved by this Resolver.
@@ -79,8 +78,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @param request    The request assigned.
      * @param simulation True when simulating.
      */
-    default void onRequestAssigned(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, boolean simulation)
-    {
+    default void onRequestAssigned(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, boolean simulation) {
         //Noop
     }
 
@@ -106,25 +104,23 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @param manager               The systems manager.
      * @param shouldTriggerReassign The request assigned
      */
-    default void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest<?>> shouldTriggerReassign)
-    {
+    default void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest<?>> shouldTriggerReassign) {
         //Noop
     }
 
     @Nullable
-    default List<IRequest<?>> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest)
-    {
+    default List<IRequest<?>> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest) {
         return Lists.newArrayList();
     }
 
     /**
      * Check how suitable this resolver is for the request.
+     *
      * @param manager the req manager.
      * @param request the request to check.
      * @return the suitability metric (an int for easy comparison).
      */
-    default int getSuitabilityMetric(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
-    {
+    default int getSuitabilityMetric(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request) {
         return 0;
     }
 
@@ -137,6 +133,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
 
     /**
      * If this resolver has valid data in it.
+     *
      * @return true if so.
      */
     boolean isValid();

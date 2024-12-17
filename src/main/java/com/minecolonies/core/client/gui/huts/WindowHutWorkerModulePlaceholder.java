@@ -10,8 +10,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
  *
  * @param <B> Object extending {@link AbstractBuildingView}.
  */
-public class WindowHutWorkerModulePlaceholder<B extends IBuildingView> extends AbstractWindowWorkerModuleBuilding<B>
-{
+public class WindowHutWorkerModulePlaceholder<B extends IBuildingView> extends AbstractWindowWorkerModuleBuilding<B> {
     private static final String WORKER_PLACEHOLDER_RESOURCE_SUFFIX = ":gui/windowhutworkerplaceholder.xml";
 
     /**
@@ -19,8 +18,7 @@ public class WindowHutWorkerModulePlaceholder<B extends IBuildingView> extends A
      *
      * @param building AbstractBuilding extending {@link AbstractBuildingView}.
      */
-    public WindowHutWorkerModulePlaceholder(final B building)
-    {
+    public WindowHutWorkerModulePlaceholder(final B building) {
         super(building, Constants.MOD_ID + WORKER_PLACEHOLDER_RESOURCE_SUFFIX);
     }
 }

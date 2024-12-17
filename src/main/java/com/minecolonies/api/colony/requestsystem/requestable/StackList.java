@@ -25,23 +25,22 @@ import static com.minecolonies.api.util.constant.translation.RequestSystemTransl
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items matching one of a list of stacks.
  */
-public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverable
-{
+public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverable {
     /**
      * Set of type tokens belonging to this class.
      */
     private final static Set<TypeToken<?>> TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(StackList.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_STACK_LIST  = "StackList";
-    private static final String NBT_MATCHMETA   = "MatchMeta";
-    private static final String NBT_MATCHNBT    = "MatchNBT";
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_STACK_LIST = "StackList";
+    private static final String NBT_MATCHMETA = "MatchMeta";
+    private static final String NBT_MATCHNBT = "MatchNBT";
     private static final String NBT_MATCHOREDIC = "MatchOreDic";
-    private static final String NBT_RESULT      = "Result";
+    private static final String NBT_RESULT = "Result";
     private static final String TAG_DESCRIPTION = "Desc";
-    private static final String NBT_COUNT       = "Count";
-    private static final String NBT_MINCOUNT    = "MinCount";
-    private static final String NBT_LEFTOVER    = "leftover";
+    private static final String NBT_COUNT = "Count";
+    private static final String NBT_MINCOUNT = "MinCount";
+    private static final String NBT_LEFTOVER = "leftover";
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -99,8 +98,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param description the description.
      * @param count       the count.
      */
-    public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count)
-    {
+    public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count) {
         this(stacks, description, count, count);
     }
 
@@ -112,8 +110,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param count       the count.
      * @param minCount    the min count.
      */
-    public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count, final int minCount)
-    {
+    public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count, final int minCount) {
         this(stacks, true, true, false, ItemStackUtils.EMPTY, description, count, minCount, 0);
     }
 
@@ -126,8 +123,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param minCount    the min count.
      * @param leftOver    the amount to be left over.
      */
-    public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count, final int minCount, final int leftOver)
-    {
+    public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count, final int minCount, final int leftOver) {
         this(stacks, true, true, false, ItemStackUtils.EMPTY, description, count, minCount, leftOver);
     }
 
@@ -145,19 +141,17 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param leftOver    the left over amount.
      */
     public StackList(
-      @NotNull final List<ItemStack> stacks,
-      final boolean matchMeta,
-      final boolean matchNBT,
-      final boolean matchOreDic,
-      @NotNull final ItemStack result,
-      final String description,
-      final int count,
-      final int minCount,
-      final int leftOver)
-    {
+            @NotNull final List<ItemStack> stacks,
+            final boolean matchMeta,
+            final boolean matchNBT,
+            final boolean matchOreDic,
+            @NotNull final ItemStack result,
+            final String description,
+            final int count,
+            final int minCount,
+            final int leftOver) {
         this.description = description;
-        for (final ItemStack stack : stacks)
-        {
+        for (final ItemStack stack : stacks) {
             final ItemStack tempStack = stack.copy();
             tempStack.setCount(Math.min(tempStack.getCount(), tempStack.getMaxStackSize()));
 
@@ -180,12 +174,10 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final StackList input)
-    {
+    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final StackList input) {
         final CompoundTag compound = new CompoundTag();
         @NotNull final ListTag neededResTagList = new ListTag();
-        for (@NotNull final ItemStack resource : input.theStacks)
-        {
+        for (@NotNull final ItemStack resource : input.theStacks) {
             neededResTagList.add(resource.saveOptional(provider));
         }
         compound.put(NBT_STACK_LIST, neededResTagList);
@@ -194,8 +186,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         compound.putBoolean(NBT_MATCHNBT, input.matchNBT);
         compound.putBoolean(NBT_MATCHOREDIC, input.matchOreDic);
 
-        if (!ItemStackUtils.isEmpty(input.result))
-        {
+        if (!ItemStackUtils.isEmpty(input.result)) {
             compound.put(NBT_RESULT, input.result.saveOptional(provider));
         }
         compound.putString(TAG_DESCRIPTION, input.description);
@@ -213,13 +204,11 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static StackList deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
-    {
+    public static StackList deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound) {
         final List<ItemStack> stacks = new ArrayList<>();
 
         final ListTag neededResTagList = compound.getList(NBT_STACK_LIST, Tag.TAG_COMPOUND);
-        for (int i = 0; i < neededResTagList.size(); ++i)
-        {
+        for (int i = 0; i < neededResTagList.size(); ++i) {
             final CompoundTag neededRes = neededResTagList.getCompound(i);
             stacks.add(ItemStack.parseOptional(provider, neededRes));
         }
@@ -231,8 +220,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         final String desc = compound.contains(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : REQUEST_SYSTEM_STACK_LIST;
         int count = stacks.isEmpty() ? 0 : stacks.get(0).getCount();
         int minCount = count;
-        if (compound.contains(NBT_COUNT))
-        {
+        if (compound.contains(NBT_COUNT)) {
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);
         }
@@ -248,8 +236,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final StackList input)
-    {
+    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final StackList input) {
         buffer.writeInt(input.theStacks.size());
         input.theStacks.forEach(res -> Utils.serializeCodecMess(buffer, res));
 
@@ -258,8 +245,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         buffer.writeBoolean(input.matchOreDic);
 
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
-        if (!ItemStackUtils.isEmpty(input.result))
-        {
+        if (!ItemStackUtils.isEmpty(input.result)) {
             Utils.serializeCodecMess(buffer, input.result);
         }
         buffer.writeUtf(input.description);
@@ -275,13 +261,11 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static StackList deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
-    {
+    public static StackList deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer) {
         final List<ItemStack> stacks = new ArrayList<>();
 
         final int stacksSize = buffer.readInt();
-        for (int i = 0; i < stacksSize; ++i)
-        {
+        for (int i = 0; i < stacksSize; ++i) {
             stacks.add(Utils.deserializeCodecMess(buffer));
         }
 
@@ -298,14 +282,10 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
     }
 
     @Override
-    public boolean matches(@NotNull final ItemStack stack)
-    {
-        if (matchOreDic)
-        {
-            for (final ItemStack tempStack : theStacks)
-            {
-                if (!Collections.disjoint(stack.getTags().toList(), tempStack.getTags().toList()))
-                {
+    public boolean matches(@NotNull final ItemStack stack) {
+        if (matchOreDic) {
+            for (final ItemStack tempStack : theStacks) {
+                if (!Collections.disjoint(stack.getTags().toList(), tempStack.getTags().toList())) {
                     return true;
                 }
             }
@@ -315,86 +295,69 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
     }
 
     @Override
-    public int getMinimumCount()
-    {
+    public int getMinimumCount() {
         return minCount;
     }
 
     @Override
-    public int getCount()
-    {
+    public int getCount() {
         return count;
     }
 
     @Override
-    public int getLeftOver()
-    {
+    public int getLeftOver() {
         return leftOver;
     }
 
     @NotNull
-    public List<ItemStack> getStacks()
-    {
+    public List<ItemStack> getStacks() {
         return theStacks;
     }
 
     @Override
-    public void setResult(@NotNull final ItemStack result)
-    {
+    public void setResult(@NotNull final ItemStack result) {
         this.result = result;
     }
 
     @Override
-    public IDeliverable copyWithCount(final int newCount)
-    {
+    public IDeliverable copyWithCount(final int newCount) {
         return new StackList(this.theStacks, this.matchMeta, this.matchNBT, this.matchOreDic, this.result, this.description, newCount, this.minCount, this.leftOver);
     }
 
     @NotNull
     @Override
-    public ItemStack getResult()
-    {
+    public ItemStack getResult() {
         return result;
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof StackList))
-        {
+        if (!(o instanceof StackList)) {
             return false;
         }
 
         final StackList stack1 = (StackList) o;
 
-        if (matchMeta != stack1.matchMeta)
-        {
+        if (matchMeta != stack1.matchMeta) {
             return false;
         }
-        if (matchNBT != stack1.matchNBT)
-        {
+        if (matchNBT != stack1.matchNBT) {
             return false;
         }
-        if (matchOreDic != stack1.matchOreDic)
-        {
+        if (matchOreDic != stack1.matchOreDic) {
             return false;
         }
 
-        for (final ItemStack tempStack : stack1.getStacks())
-        {
-            if (!ItemStackUtils.compareItemStackListIgnoreStackSize(getStacks(), tempStack))
-            {
+        for (final ItemStack tempStack : stack1.getStacks()) {
+            if (!ItemStackUtils.compareItemStackListIgnoreStackSize(getStacks(), tempStack)) {
                 return false;
             }
         }
-        for (final ItemStack tempStack : getStacks())
-        {
-            if (!ItemStackUtils.compareItemStackListIgnoreStackSize(stack1.getStacks(), tempStack))
-            {
+        for (final ItemStack tempStack : getStacks()) {
+            if (!ItemStackUtils.compareItemStackListIgnoreStackSize(stack1.getStacks(), tempStack)) {
                 return false;
             }
         }
@@ -402,8 +365,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result1 = getStacks().hashCode();
         result1 = 31 * result1 + (matchMeta ? 1 : 0);
         result1 = 31 * result1 + (matchNBT ? 1 : 0);
@@ -417,20 +379,17 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      *
      * @return the description.
      */
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
     @Override
-    public List<ItemStack> getRequestedItems() 
-    {
+    public List<ItemStack> getRequestedItems() {
         return theStacks;
     }
 
     @Override
-    public Set<TypeToken<?>> getSuperClasses()
-    {
+    public Set<TypeToken<?>> getSuperClasses() {
         return TYPE_TOKENS;
     }
 }

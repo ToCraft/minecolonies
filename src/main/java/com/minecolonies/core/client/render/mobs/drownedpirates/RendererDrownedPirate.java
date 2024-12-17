@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for Barbarians And Archer Barbarians.
  */
-public class RendererDrownedPirate extends AbstractRendererDrownedPirate<AbstractDrownedEntityPirate, HumanoidModel<AbstractDrownedEntityPirate>>
-{
+public class RendererDrownedPirate extends AbstractRendererDrownedPirate<AbstractDrownedEntityPirate, HumanoidModel<AbstractDrownedEntityPirate>> {
     /**
      * Texture of the entity.
      */
@@ -25,17 +24,14 @@ public class RendererDrownedPirate extends AbstractRendererDrownedPirate<Abstrac
      *
      * @param context the renderManager
      */
-    public RendererDrownedPirate(final EntityRendererProvider.Context context)
-    {
+    public RendererDrownedPirate(final EntityRendererProvider.Context context) {
         super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)), 0.5F);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractDrownedEntityPirate entity)
-    {
-        switch (entity.getTextureId())
-        {
+    public ResourceLocation getTextureLocation(final AbstractDrownedEntityPirate entity) {
+        switch (entity.getTextureId()) {
             case 0:
                 return TEXTURE1;
             case 1:

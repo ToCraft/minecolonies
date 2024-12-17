@@ -6,13 +6,13 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.core.colony.jobs.JobCrusher;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.core.util.WorkerUtil;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -27,8 +27,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Crusher AI class.
  */
-public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, BuildingCrusher>
-{
+public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, BuildingCrusher> {
     /**
      * Delay for each of the craftings.
      */
@@ -38,67 +37,55 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
      * Crusher icon
      */
     private final static VisibleCitizenStatus CRUSHING =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/crusher.png"), "com.minecolonies.gui.visiblestatus.crusher");
+            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/crusher.png"), "com.minecolonies.gui.visiblestatus.crusher");
 
     /**
      * Constructor for the crusher. Defines the tasks the crusher executes.
      *
      * @param job a crusher job to use.
      */
-    public EntityAIWorkCrusher(@NotNull final JobCrusher job)
-    {
+    public EntityAIWorkCrusher(@NotNull final JobCrusher job) {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(CRUSH, this::crush, TICK_DELAY)
+                new AITarget(IDLE, START_WORKING, 1),
+                new AITarget(CRUSH, this::crush, TICK_DELAY)
         );
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    public Class<BuildingCrusher> getExpectedBuildingClass()
-    {
+    public Class<BuildingCrusher> getExpectedBuildingClass() {
         return BuildingCrusher.class;
     }
 
     @Override
-    protected IAIState decide()
-    {
+    protected IAIState decide() {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-        if (job.getTaskQueue().isEmpty())
-        {
-            if (building.getCurrentDailyQuantity() < building.getSetting(BuildingCrusher.DAILY_LIMIT).getValue())
-            {
+        if (job.getTaskQueue().isEmpty()) {
+            if (building.getCurrentDailyQuantity() < building.getSetting(BuildingCrusher.DAILY_LIMIT).getValue()) {
                 return CRUSH;
             }
 
-            if (worker.getNavigation().isDone())
-            {
-                if (building.isInBuilding(worker.blockPosition()))
-                {
+            if (worker.getNavigation().isDone()) {
+                if (building.isInBuilding(worker.blockPosition())) {
                     setDelay(TICKS_20 * 20);
                     worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners());
-                }
-                else
-                {
+                } else {
                     walkToBuilding();
                 }
             }
             return IDLE;
         }
 
-        if (job.getCurrentTask() == null)
-        {
+        if (job.getCurrentTask() == null) {
             return IDLE;
         }
 
-        if (walkToBuilding())
-        {
+        if (walkToBuilding()) {
             return START_WORKING;
         }
 
-        if (job.getActionsDone() >= getActionsDoneUntilDumping())
-        {
+        if (job.getActionsDone() >= getActionsDoneUntilDumping()) {
             // Wait to dump before continuing.
             return getState();
         }
@@ -111,10 +98,8 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
      *
      * @return the next AiState to go to.
      */
-    protected IAIState crush()
-    {
-        if (walkToBuilding())
-        {
+    protected IAIState crush() {
+        if (walkToBuilding()) {
             return getState();
         }
 
@@ -126,33 +111,26 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
 
         final IRecipeStorage recipeMode = crusherBuilding.getSetting(BuildingCrusher.MODE).getValue(crusherBuilding);
         final int dailyLimit = crusherBuilding.getSetting(BuildingCrusher.DAILY_LIMIT).getValue();
-        if (currentRecipeStorage == null)
-        {
+        if (currentRecipeStorage == null) {
             currentRecipeStorage = recipeMode;
         }
 
-        if ((getState() != CRAFT && crusherBuilding.getCurrentDailyQuantity() >= dailyLimit) || currentRecipeStorage == null)
-        {
+        if ((getState() != CRAFT && crusherBuilding.getCurrentDailyQuantity() >= dailyLimit) || currentRecipeStorage == null) {
             return START_WORKING;
         }
 
         final IAIState check = checkForItems(currentRecipeStorage);
-        if (job.getProgress() > MAX_LEVEL - Math.min((getSecondarySkillLevel() / 2) + 1, MAX_LEVEL))
-        {
+        if (job.getProgress() > MAX_LEVEL - Math.min((getSecondarySkillLevel() / 2) + 1, MAX_LEVEL)) {
             job.setProgress(0);
 
-            if (check == CRAFT)
-            {
-                if (getState() != CRAFT)
-                {
+            if (check == CRAFT) {
+                if (getState() != CRAFT) {
                     crusherBuilding.setCurrentDailyQuantity(crusherBuilding.getCurrentDailyQuantity() + 1);
-                    if (crusherBuilding.getCurrentDailyQuantity() >= dailyLimit)
-                    {
+                    if (crusherBuilding.getCurrentDailyQuantity() >= dailyLimit) {
                         incrementActionsDoneAndDecSaturation();
                     }
                 }
-                if (currentRequest != null)
-                {
+                if (currentRequest != null) {
                     currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
                 }
 
@@ -162,27 +140,21 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
 
                 worker.decreaseSaturationForContinuousAction();
                 worker.getCitizenExperienceHandler().addExperience(0.1);
-            }
-            else if (getState() != CRAFT)
-            {
+            } else if (getState() != CRAFT) {
                 currentRecipeStorage = recipeMode;
                 final int requestQty = Math.min((dailyLimit - crusherBuilding.getCurrentDailyQuantity()) * 2, STACKSIZE);
-                if (requestQty <= 0)
-                {
+                if (requestQty <= 0) {
                     return START_WORKING;
                 }
                 final ItemStack stack = currentRecipeStorage.getInput().get(0).getItemStack().copy();
                 stack.setCount(requestQty);
                 checkIfRequestForItemExistOrCreateAsync(stack);
                 return START_WORKING;
-            }
-            else
-            {
+            } else {
                 return check;
             }
         }
-        if (check == CRAFT)
-        {
+        if (check == CRAFT) {
             new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).getItemStack().copy(), crusherBuilding.getID()).sendToTrackingEntity(worker);
             new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().below()).sendToTrackingEntity(worker);
             SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.STONE_BREAK);
@@ -196,34 +168,29 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
      * @return the next state to go to.
      */
     @Override
-    protected IAIState craft()
-    {
-        if (currentRecipeStorage == null)
-        {
+    protected IAIState craft() {
+        if (currentRecipeStorage == null) {
             return START_WORKING;
         }
 
-        if (currentRequest == null && job.getCurrentTask() != null)
-        {
+        if (currentRequest == null && job.getCurrentTask() != null) {
             return GET_RECIPE;
         }
 
-        if (walkToBuilding())
-        {
+        if (walkToBuilding()) {
             return getState();
         }
 
         job.setProgress(job.getProgress() + 1);
 
         worker.setItemInHand(InteractionHand.MAIN_HAND,
-          currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
+                currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
         worker.setItemInHand(InteractionHand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
         CitizenItemUtils.hitBlockWithToolInHand(worker, building.getPosition());
 
         currentRequest = job.getCurrentTask();
 
-        if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
-        {
+        if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED)) {
             currentRequest = null;
             incrementActionsDone(getActionRewardForCraftingSuccess());
             currentRecipeStorage = null;
@@ -231,25 +198,19 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         }
 
         final IAIState check = crush();
-        if (check == getState())
-        {
-            if (job.getCraftCounter() >= job.getMaxCraftingCount())
-            {
+        if (check == getState()) {
+            if (job.getCraftCounter() >= job.getMaxCraftingCount()) {
                 incrementActionsDone(getActionRewardForCraftingSuccess());
                 currentRecipeStorage = null;
                 resetValues();
 
-                if (inventoryNeedsDump())
-                {
-                    if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
-                    {
+                if (inventoryNeedsDump()) {
+                    if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null) {
                         job.finishRequest(true);
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             currentRequest = null;
             job.finishRequest(false);
             incrementActionsDoneAndDecSaturation();

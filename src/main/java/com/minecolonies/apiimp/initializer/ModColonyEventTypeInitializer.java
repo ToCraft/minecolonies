@@ -16,17 +16,14 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /**
  * Initializer for colony event types, register new event types here.
  */
-public final class ModColonyEventTypeInitializer
-{
+public final class ModColonyEventTypeInitializer {
     public final static DeferredRegister<ColonyEventTypeRegistryEntry> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES, Constants.MOD_ID);
 
-    private ModColonyEventTypeInitializer()
-    {
+    private ModColonyEventTypeInitializer() {
         throw new IllegalStateException("Tried to initialize: ModColonyEventTypeInitializer but this is a Utility class.");
     }
 
-    static
-    {
+    static {
         DEFERRED_REGISTER.register(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath(), () -> new ColonyEventTypeRegistryEntry(PirateRaidEvent::loadFromNBT, PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID));
         DEFERRED_REGISTER.register(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID.getPath(), () -> new ColonyEventTypeRegistryEntry(BarbarianRaidEvent::loadFromNBT, BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID));
         DEFERRED_REGISTER.register(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath(), () -> new ColonyEventTypeRegistryEntry(EgyptianRaidEvent::loadFromNBT, EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID));

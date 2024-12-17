@@ -11,33 +11,27 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Creates a message to switch recipe outputs when multiple are available.
  */
-public class SwitchRecipeCraftingTeachingMessage extends AbstractServerPlayMessage
-{
+public class SwitchRecipeCraftingTeachingMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "switch_recipe_crafting", SwitchRecipeCraftingTeachingMessage::new);
 
     /**
      * Create message.
      */
-    public SwitchRecipeCraftingTeachingMessage()
-    {
+    public SwitchRecipeCraftingTeachingMessage() {
         super(TYPE);
     }
 
-    protected SwitchRecipeCraftingTeachingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected SwitchRecipeCraftingTeachingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
     }
 
     @Override
-    public void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    public void toBytes(final RegistryFriendlyByteBuf buf) {
     }
 
     @Override
-    public void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
-    {
-        if (player.containerMenu instanceof final ContainerCrafting container)
-        {
+    public void onExecute(final IPayloadContext ctxIn, final ServerPlayer player) {
+        if (player.containerMenu instanceof final ContainerCrafting container) {
             container.switchRecipes();
         }
     }

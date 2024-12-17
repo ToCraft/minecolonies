@@ -9,8 +9,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for the builder hut.
  */
-public class WindowHutGuide extends AbstractWindowSkeleton
-{
+public class WindowHutGuide extends AbstractWindowSkeleton {
     /**
      * Color constants for builder list.
      */
@@ -21,8 +20,7 @@ public class WindowHutGuide extends AbstractWindowSkeleton
      *
      * @param building {@link BuildingBuilder.View}.
      */
-    public WindowHutGuide(final BuildingBuilder.View building)
-    {
+    public WindowHutGuide(final BuildingBuilder.View building) {
         super(Constants.MOD_ID + GUIDE_RESOURCE_SUFFIX);
         registerButton(GUIDE_CONFIRM, this::closeGuide);
         registerButton(GUIDE_CLOSE, this::closeGuide);
@@ -30,8 +28,7 @@ public class WindowHutGuide extends AbstractWindowSkeleton
         this.building = building;
     }
 
-    private void closeGuide()
-    {
+    private void closeGuide() {
         close();
         new WindowHutBuilderModule(building, false).open();
     }

@@ -8,8 +8,7 @@ import java.util.List;
 /**
  * Client side version of the abstract class for all buildings which require a filterable list of allowed items.
  */
-public interface IMinimumStockModuleView extends IBuildingModuleView
-{
+public interface IMinimumStockModuleView extends IBuildingModuleView {
     /**
      * The minimum stock.
      *

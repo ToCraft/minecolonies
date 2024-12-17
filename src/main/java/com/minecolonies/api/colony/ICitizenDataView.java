@@ -17,8 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public interface ICitizenDataView extends ICitizen
-{
+public interface ICitizenDataView extends ICitizen {
     /**
      * Entity Id getter.
      *
@@ -35,6 +34,7 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * Get the job as mutable component.
+     *
      * @return the job desc.
      */
     MutableComponent getJobComponent();
@@ -125,7 +125,7 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * Check if the citizen has any visible interactions.
-     * 
+     *
      * @return true if so.
      */
     boolean hasVisibleInteractions();
@@ -174,6 +174,7 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * Get the job view that belongs to this citizen (or null).
+     *
      * @return the job.
      */
     @Nullable
@@ -181,6 +182,7 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * Get the partner of the citizen.
+     *
      * @return the partner or null if non existent.
      */
     @Nullable
@@ -188,42 +190,49 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * Get the list of children of a citizen.
+     *
      * @return the citizen ids.
      */
     List<Integer> getChildren();
 
     /**
      * Get the list of children of a citizen.
+     *
      * @return the citizen ids.
      */
     List<Integer> getSiblings();
 
     /**
      * Get the names of the parents.
+     *
      * @return the name.
      */
     Tuple<String, String> getParents();
 
     /**
      * Get the custom texture of the citizen.
+     *
      * @return the res location.
      */
     ResourceLocation getCustomTexture();
 
     /**
      * Force set the job view.
+     *
      * @param view the job view to set.
      */
     void setJobView(IJobView view);
 
     /**
      * Set the home building on the client side.
+     *
      * @param position the pos of the home building.
      */
     void setHomeBuilding(BlockPos position);
 
     /**
      * Get UUID of the custom texture.
+     *
      * @return the uuid.
      */
     UUID getCustomTextureUUID();

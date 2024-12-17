@@ -37,40 +37,39 @@ import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAM
 /**
  * General information between WorkOrders.
  */
-public abstract class AbstractWorkOrder implements IWorkOrder
-{
+public abstract class AbstractWorkOrder implements IWorkOrder {
     /**
      * NBT for storage.
      */
-    private static final String TAG_TYPE                = "type";
-    private static final String TAG_ID                  = "id";
-    private static final String TAG_TH_PRIORITY         = "priority";
-    private static final String TAG_CLAIMED_BY          = "claimedBy";
+    private static final String TAG_TYPE = "type";
+    private static final String TAG_ID = "id";
+    private static final String TAG_TH_PRIORITY = "priority";
+    private static final String TAG_CLAIMED_BY = "claimedBy";
     private static final String TAG_CLAIMED_BY_BUILDING = "claimedByBuilding";
-    private static final String TAG_STRUCTURE_PACK      = "structurePack";
-    private static final String TAG_STRUCTURE_PATH      = "structurePath";
-    private static final String TAG_TRANSLATION_KEY     = "translationKey";
-    private static final String TAG_WO_TYPE             = "workOrderType";
-    private static final String TAG_LOCATION            = "location";
-    private static final String TAG_ROTATION            = "rotation";
-    private static final String TAG_IS_MIRRORED         = "isMirrored";
-    private static final String TAG_CURRENT_LEVEL       = "currentLevel";
-    private static final String TAG_TARGET_LEVEL        = "targetLevel";
+    private static final String TAG_STRUCTURE_PACK = "structurePack";
+    private static final String TAG_STRUCTURE_PATH = "structurePath";
+    private static final String TAG_TRANSLATION_KEY = "translationKey";
+    private static final String TAG_WO_TYPE = "workOrderType";
+    private static final String TAG_LOCATION = "location";
+    private static final String TAG_ROTATION = "rotation";
+    private static final String TAG_IS_MIRRORED = "isMirrored";
+    private static final String TAG_CURRENT_LEVEL = "currentLevel";
+    private static final String TAG_TARGET_LEVEL = "targetLevel";
     private static final String TAG_AMOUNT_OF_RESOURCES = "amountOfResources";
-    private static final String TAG_ITERATOR            = "iterator";
-    private static final String TAG_IS_CLEARED          = "cleared";
-    private static final String TAG_IS_REQUESTED        = "requested";
+    private static final String TAG_ITERATOR = "iterator";
+    private static final String TAG_IS_CLEARED = "cleared";
+    private static final String TAG_IS_REQUESTED = "requested";
 
     /**
      * Bimap of workOrder from string to class.
      */
     @NotNull
     private static final BiMap<String, Tuple<Class<? extends IWorkOrder>, Class<? extends IWorkOrderView>>> nameToClassBiMap = HashBiMap.create();
+
     /*
      * WorkOrder registry.
      */
-    static
-    {
+    static {
         addMapping("building", WorkOrderBuilding.class, WorkOrderBuildingView.class);
         addMapping("decoration", WorkOrderDecoration.class, WorkOrderDecorationView.class);
         addMapping("plantation_field", WorkOrderPlantationField.class, WorkOrderPlantationFieldView.class);
@@ -164,25 +163,19 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param orderClass class of work order
      */
     private static void addMapping(
-      final String name,
-      @NotNull final Class<? extends IWorkOrder> orderClass,
-      @NotNull final Class<? extends IWorkOrderView> viewClass)
-    {
-        if (nameToClassBiMap.containsKey(name))
-        {
+            final String name,
+            @NotNull final Class<? extends IWorkOrder> orderClass,
+            @NotNull final Class<? extends IWorkOrderView> viewClass) {
+        if (nameToClassBiMap.containsKey(name)) {
             throw new IllegalArgumentException("Duplicate type '" + name + "' when adding Work Order class mapping");
         }
 
-        try
-        {
-            if (orderClass.getDeclaredConstructor() != null)
-            {
+        try {
+            if (orderClass.getDeclaredConstructor() != null) {
                 nameToClassBiMap.put(name, new Tuple<>(orderClass, viewClass));
                 nameToClassBiMap.inverse().put(new Tuple<>(orderClass, viewClass), name);
             }
-        }
-        catch (final NoSuchMethodException exception)
-        {
+        } catch (final NoSuchMethodException exception) {
             throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Work Order class mapping", exception);
         }
     }
@@ -194,49 +187,38 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param manager  the work manager.
      * @return {@link IWorkOrder} from the NBT
      */
-    public static IWorkOrder createFromNBT(@NotNull final CompoundTag compound, final WorkManager manager)
-    {
+    public static IWorkOrder createFromNBT(@NotNull final CompoundTag compound, final WorkManager manager) {
         @Nullable IWorkOrder order = null;
         @Nullable Class<? extends IWorkOrder> oclass = null;
 
-        try
-        {
+        try {
             // TODO: In 1.19 remove this check as this is purely for backwards compatibility with old class mappings
             String type = compound.getString(TAG_TYPE);
-            if (type.equals("removal"))
-            {
+            if (type.equals("removal")) {
                 oclass = WorkOrderBuilding.class;
-            }
-            else
-            {
+            } else {
                 oclass = nameToClassBiMap.get(type).getA();
             }
 
-            if (oclass != null)
-            {
+            if (oclass != null) {
                 final Constructor<?> constructor = oclass.getDeclaredConstructor();
                 order = (IWorkOrder) constructor.newInstance();
             }
-        }
-        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
-        {
+        } catch (NoSuchMethodException | InstantiationException | InvocationTargetException |
+                 IllegalAccessException e) {
             Log.getLogger().trace(e);
         }
 
-        if (order == null)
-        {
+        if (order == null) {
             Log.getLogger().warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
             return null;
         }
 
-        try
-        {
+        try {
             order.read(compound, manager);
-        }
-        catch (final RuntimeException ex)
-        {
+        } catch (final RuntimeException ex) {
             Log.getLogger().error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              compound.getString(TAG_TYPE), oclass.getName()), ex);
+                    compound.getString(TAG_TYPE), oclass.getName()), ex);
             return null;
         }
 
@@ -250,39 +232,31 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return View object of the workOrder
      */
     @Nullable
-    public static IWorkOrderView createWorkOrderView(final RegistryFriendlyByteBuf buf)
-    {
+    public static IWorkOrderView createWorkOrderView(final RegistryFriendlyByteBuf buf) {
         @Nullable AbstractWorkOrderView orderView = null;
         String mappingName = buf.readUtf(32767);
 
-        try
-        {
+        try {
             @Nullable Class<? extends IWorkOrderView> oclass = nameToClassBiMap.get(mappingName).getB();
 
-            if (oclass != null)
-            {
+            if (oclass != null) {
                 final Constructor<?> constructor = oclass.getDeclaredConstructor();
                 orderView = (AbstractWorkOrderView) constructor.newInstance();
             }
-        }
-        catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e)
-        {
+        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException |
+                 IllegalAccessException e) {
             Log.getLogger().trace(e);
         }
 
-        if (orderView == null)
-        {
+        if (orderView == null) {
             Log.getLogger().warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", mappingName));
             return null;
         }
-        try
-        {
+        try {
             orderView.deserialize(buf);
-        }
-        catch (final RuntimeException ex)
-        {
+        } catch (final RuntimeException ex) {
             Log.getLogger().error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              orderView.getId()), ex);
+                    orderView.getId()), ex);
             return null;
         }
 
@@ -292,22 +266,20 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * Default constructor; we also start with a new id and replace it during loading; this greatly simplifies creating subclasses.
      */
-    public AbstractWorkOrder()
-    {
+    public AbstractWorkOrder() {
         this.iteratorType = "";
         this.changed = false;
     }
 
     protected AbstractWorkOrder(
-      String packName,
-      String path,
-      String translationKey,
-      WorkOrderType workOrderType,
-      BlockPos location,
-      RotationMirror rotationMirror,
-      int currentLevel,
-      int targetLevel)
-    {
+            String packName,
+            String path,
+            String translationKey,
+            WorkOrderType workOrderType,
+            BlockPos location,
+            RotationMirror rotationMirror,
+            int currentLevel,
+            int targetLevel) {
         this();
         this.packName = packName;
         this.path = path;
@@ -320,186 +292,156 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     @Override
-    public final int getID()
-    {
+    public final int getID() {
         return id;
     }
 
     @Override
-    public final void setID(int id)
-    {
+    public final void setID(int id) {
         this.id = id;
     }
 
     @Override
-    public final int getPriority()
-    {
+    public final int getPriority() {
         return priority;
     }
 
     @Override
-    public final void setPriority(int priority)
-    {
+    public final void setPriority(int priority) {
         this.priority = priority;
     }
 
     @Override
-    public final BlockPos getClaimedBy()
-    {
+    public final BlockPos getClaimedBy() {
         return claimedBy;
     }
 
     @Override
-    public final void setClaimedBy(BlockPos claimedBy)
-    {
+    public final void setClaimedBy(BlockPos claimedBy) {
         this.claimedBy = claimedBy;
     }
 
     @Override
-    public final void setClaimedBy(@Nullable ICitizenData citizen)
-    {
+    public final void setClaimedBy(@Nullable ICitizenData citizen) {
         changed = true;
         claimedBy = (citizen != null && citizen.getWorkBuilding() != null) ? citizen.getWorkBuilding().getPosition() : null;
     }
 
     @Override
-    public final boolean isClaimed()
-    {
+    public final boolean isClaimed() {
         return claimedBy != null;
     }
 
     @Override
-    public final boolean isClaimedBy(@NotNull ICitizenData citizen)
-    {
-        if (citizen.getWorkBuilding() != null)
-        {
+    public final boolean isClaimedBy(@NotNull ICitizenData citizen) {
+        if (citizen.getWorkBuilding() != null) {
             return citizen.getWorkBuilding().getPosition().equals(claimedBy);
         }
         return false;
     }
 
     @Override
-    public final void clearClaimedBy()
-    {
+    public final void clearClaimedBy() {
         changed = true;
         claimedBy = null;
     }
 
     @Override
-    public final String getStructurePath()
-    {
+    public final String getStructurePath() {
         return path;
     }
 
     @Override
-    public String getStructurePack()
-    {
+    public String getStructurePack() {
         return packName;
     }
 
     @Override
-    public Future<Blueprint> getBlueprintFuture(@NotNull final HolderLookup.Provider provider)
-    {
+    public Future<Blueprint> getBlueprintFuture(@NotNull final HolderLookup.Provider provider) {
         return StructurePacks.getBlueprintFuture(getStructurePack(), getStructurePath(), provider);
     }
 
     @Override
-    public final String getTranslationKey()
-    {
+    public final String getTranslationKey() {
         return translationKey;
     }
 
     @Override
-    public final WorkOrderType getWorkOrderType()
-    {
+    public final WorkOrderType getWorkOrderType() {
         return workOrderType;
     }
 
     @Override
-    public final BlockPos getLocation()
-    {
+    public final BlockPos getLocation() {
         return location;
     }
 
     @Override
-    public final RotationMirror getRotationMirror()
-    {
+    public final RotationMirror getRotationMirror() {
         return rotationMirror;
     }
 
     @Override
-    public final int getCurrentLevel()
-    {
+    public final int getCurrentLevel() {
         return currentLevel;
     }
 
     @Override
-    public final int getTargetLevel()
-    {
+    public final int getTargetLevel() {
         return targetLevel;
     }
 
     @Override
-    public final int getAmountOfResources()
-    {
+    public final int getAmountOfResources() {
         return amountOfResources;
     }
 
     @Override
-    public final void setAmountOfResources(int newQuantity)
-    {
+    public final void setAmountOfResources(int newQuantity) {
         changed = true;
         this.amountOfResources = newQuantity;
     }
 
     @Override
-    public final String getIteratorType()
-    {
+    public final String getIteratorType() {
         return iteratorType;
     }
 
     @Override
-    public final void setIteratorType(String iteratorType)
-    {
+    public final void setIteratorType(String iteratorType) {
         changed = true;
         this.iteratorType = iteratorType;
     }
 
     @Override
-    public final boolean isCleared()
-    {
+    public final boolean isCleared() {
         return cleared;
     }
 
     @Override
-    public final void setCleared(boolean cleared)
-    {
+    public final void setCleared(boolean cleared) {
         changed = true;
         this.cleared = cleared;
     }
 
     @Override
-    public final boolean isRequested()
-    {
+    public final boolean isRequested() {
         return requested;
     }
 
     @Override
-    public final void setRequested(final boolean requested)
-    {
+    public final void setRequested(final boolean requested) {
         changed = true;
         this.requested = requested;
     }
 
     @Override
-    public final boolean isDirty()
-    {
+    public final boolean isDirty() {
         return changed;
     }
 
     @Override
-    public final void resetChange()
-    {
+    public final void resetChange() {
         this.changed = false;
     }
 
@@ -509,8 +451,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return the display name for the work order
      */
     @Override
-    public Component getDisplayName()
-    {
+    public Component getDisplayName() {
         return Component.translatableEscape(getTranslationKey());
     }
 
@@ -540,8 +481,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      */
     @Override
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    public boolean isValid(final IColony colony)
-    {
+    public boolean isValid(final IColony colony) {
         return true;
     }
 
@@ -552,28 +492,21 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param manager  the workManager calling this method.
      */
     @Override
-    public void read(@NotNull final CompoundTag compound, final IWorkManager manager)
-    {
+    public void read(@NotNull final CompoundTag compound, final IWorkManager manager) {
         id = compound.getInt(TAG_ID);
-        if (compound.contains(TAG_TH_PRIORITY))
-        {
+        if (compound.contains(TAG_TH_PRIORITY)) {
             priority = compound.getInt(TAG_TH_PRIORITY);
         }
 
-        if (compound.contains(TAG_CLAIMED_BY))
-        {
+        if (compound.contains(TAG_CLAIMED_BY)) {
             final int citizenId = compound.getInt(TAG_CLAIMED_BY);
-            if (manager.getColony() != null)
-            {
+            if (manager.getColony() != null) {
                 final ICitizenData data = manager.getColony().getCitizenManager().getCivilian(citizenId);
-                if (data != null && data.getWorkBuilding() != null)
-                {
+                if (data != null && data.getWorkBuilding() != null) {
                     claimedBy = data.getWorkBuilding().getPosition();
                 }
             }
-        }
-        else if (compound.contains(TAG_CLAIMED_BY_BUILDING))
-        {
+        } else if (compound.contains(TAG_CLAIMED_BY_BUILDING)) {
             claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING);
         }
         packName = compound.getString(TAG_STRUCTURE_PACK);
@@ -596,13 +529,11 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param compound NBT tag compount
      */
     @Override
-    public void write(@NotNull final CompoundTag compound)
-    {
+    public void write(@NotNull final CompoundTag compound) {
         compound.putInt(TAG_TH_PRIORITY, priority);
         compound.putString(TAG_TYPE, getMappingName());
         compound.putInt(TAG_ID, id);
-        if (claimedBy != null)
-        {
+        if (claimedBy != null) {
             BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         }
         compound.putString(TAG_STRUCTURE_PACK, packName);
@@ -625,8 +556,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param buf Buffer to write to
      */
     @Override
-    public void serializeViewNetworkData(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeViewNetworkData(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeUtf(getMappingName());
         buf.writeInt(id);
         buf.writeInt(priority);
@@ -645,15 +575,13 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         buf.writeBoolean(requested);
     }
 
-    private String getMappingName()
-    {
+    private String getMappingName() {
         final Optional<String> s = nameToClassBiMap.entrySet().stream()
-          .filter(f -> this.getClass().equals(f.getValue().getA()))
-          .map(Map.Entry::getKey)
-          .findFirst();
+                .filter(f -> this.getClass().equals(f.getValue().getA()))
+                .map(Map.Entry::getKey)
+                .findFirst();
 
-        if (!s.isPresent())
-        {
+        if (!s.isPresent()) {
             throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
         }
 
@@ -669,8 +597,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param readingFromNbt if being read from NBT.
      */
     @Override
-    public void onAdded(final IColony colony, final boolean readingFromNbt)
-    {
+    public void onAdded(final IColony colony, final boolean readingFromNbt) {
         /*
          * Intentionally left empty.
          */
@@ -685,8 +612,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param citizen citizen that completed the work order
      */
     @Override
-    public void onCompleted(final IColony colony, ICitizenData citizen)
-    {
+    public void onCompleted(final IColony colony, ICitizenData citizen) {
         /*
          * Intentionally left empty.
          */
@@ -700,8 +626,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param colony in which the work order exist
      */
     @Override
-    public void onRemoved(final IColony colony)
-    {
+    public void onRemoved(final IColony colony) {
         /*
          * Intentionally left empty.
          */
@@ -715,13 +640,12 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return true if so.
      */
     @Override
-    public boolean canBeResolved(final IColony colony, final int level)
-    {
+    public boolean canBeResolved(final IColony colony, final int level) {
         return colony.getBuildingManager()
-          .getBuildings()
-          .values()
-          .stream()
-          .anyMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty() && building.getBuildingLevel() >= level);
+                .getBuildings()
+                .values()
+                .stream()
+                .anyMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty() && building.getBuildingLevel() >= level);
     }
 
     /**
@@ -732,8 +656,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return true if so.
      */
     @Override
-    public boolean tooFarFromAnyBuilder(final IColony colony, final int level)
-    {
+    public boolean tooFarFromAnyBuilder(final IColony colony, final int level) {
         return false;
     }
 }

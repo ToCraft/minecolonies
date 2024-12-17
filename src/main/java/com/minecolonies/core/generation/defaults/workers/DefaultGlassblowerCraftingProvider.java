@@ -12,24 +12,20 @@ import java.util.function.Consumer;
 /**
  * Datagen for Glassblower
  */
-public class DefaultGlassblowerCraftingProvider extends CustomRecipeProvider
-{
+public class DefaultGlassblowerCraftingProvider extends CustomRecipeProvider {
     private static final String GLASSBLOWER = ModJobs.GLASSBLOWER_ID.getPath();
 
-    public DefaultGlassblowerCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultGlassblowerCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "DefaultGlassblowerCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
     }
 }

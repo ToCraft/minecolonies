@@ -13,47 +13,42 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class StandardRetryingRequestResolverFactory implements IFactory<IRequestManager, StandardRetryingRequestResolver>
-{
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN    = "Token";
+public class StandardRetryingRequestResolverFactory implements IFactory<IRequestManager, StandardRetryingRequestResolver> {
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_TOKEN = "Token";
     private static final String NBT_LOCATION = "Location";
-    private static final String NBT_VALUE    = "Value";
-    private static final String NBT_TRIES    = "Requests";
-    private static final String NBT_DELAYS   = "Delays";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_VALUE = "Value";
+    private static final String NBT_TRIES = "Requests";
+    private static final String NBT_DELAYS = "Delays";
+
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
     @Override
-    public TypeToken<? extends StandardRetryingRequestResolver> getFactoryOutputType()
-    {
+    public TypeToken<? extends StandardRetryingRequestResolver> getFactoryOutputType() {
         return TypeToken.of(StandardRetryingRequestResolver.class);
     }
 
     @NotNull
     @Override
-    public TypeToken<? extends IRequestManager> getFactoryInputType()
-    {
+    public TypeToken<? extends IRequestManager> getFactoryInputType() {
         return TypeToken.of(IRequestManager.class);
     }
 
     @NotNull
     @Override
     public StandardRetryingRequestResolver getNewInstance(
-      @NotNull final IFactoryController factoryController,
-      @NotNull final IRequestManager iRequestManager,
-      @NotNull final Object... context)
-      throws IllegalArgumentException
-    {
-        if (context.length != 0)
-        {
+            @NotNull final IFactoryController factoryController,
+            @NotNull final IRequestManager iRequestManager,
+            @NotNull final Object... context)
+            throws IllegalArgumentException {
+        if (context.length != 0) {
             throw new IllegalArgumentException("Context is not empty.");
         }
 
@@ -63,8 +58,7 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     @NotNull
     @Override
     public CompoundTag serialize(@NotNull final HolderLookup.Provider provider,
-      @NotNull final IFactoryController controller, @NotNull final StandardRetryingRequestResolver standardRetryingRequestResolver)
-    {
+                                 @NotNull final IFactoryController controller, @NotNull final StandardRetryingRequestResolver standardRetryingRequestResolver) {
         final CompoundTag compound = new CompoundTag();
 
         compound.put(NBT_TRIES, standardRetryingRequestResolver.getAssignedRequests().keySet().stream().map(t -> {
@@ -92,8 +86,7 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
 
     @NotNull
     @Override
-    public StandardRetryingRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
-    {
+    public StandardRetryingRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) {
         final Map<IToken<?>, Integer> assignments = NBTUtils.streamCompound(nbt.getList(NBT_TRIES, Tag.TAG_COMPOUND)).map(assignmentCompound -> {
             IToken<?> token = controller.deserializeTag(provider, assignmentCompound.getCompound(NBT_TOKEN));
             Integer tries = assignmentCompound.getInt(NBT_VALUE);
@@ -117,8 +110,7 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     }
 
     @Override
-    public void serialize(IFactoryController controller, StandardRetryingRequestResolver input, RegistryFriendlyByteBuf packetBuffer)
-    {
+    public void serialize(IFactoryController controller, StandardRetryingRequestResolver input, RegistryFriendlyByteBuf packetBuffer) {
         packetBuffer.writeInt(input.getAssignedRequests().size());
         input.getAssignedRequests().forEach((key, value) -> {
             controller.serialize(packetBuffer, key);
@@ -136,19 +128,16 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     }
 
     @Override
-    public StandardRetryingRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
-    {
+    public StandardRetryingRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable {
         final Map<IToken<?>, Integer> requests = new HashMap<>();
         final int requestsSize = buffer.readInt();
-        for (int i = 0; i < requestsSize; ++i)
-        {
+        for (int i = 0; i < requestsSize; ++i) {
             requests.put(controller.deserialize(buffer), buffer.readInt());
         }
 
         final Map<IToken<?>, Integer> delays = new HashMap<>();
         final int delaysSize = buffer.readInt();
-        for (int i = 0; i < delaysSize; ++i)
-        {
+        for (int i = 0; i < delaysSize; ++i) {
             delays.put(controller.deserialize(buffer), buffer.readInt());
         }
 
@@ -161,8 +150,7 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     }
 
     @Override
-    public short getSerializationId()
-    {
+    public short getSerializationId() {
         return SerializationIdentifierConstants.STANDARD_RETRYING_REQUEST_RESOLVER_ID;
     }
 }

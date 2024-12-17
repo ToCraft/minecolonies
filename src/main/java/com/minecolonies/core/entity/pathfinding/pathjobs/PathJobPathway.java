@@ -18,8 +18,7 @@ import java.util.List;
 /**
  * Path job to find a path between buildings
  */
-public class PathJobPathway extends AbstractPathJob implements IDestinationPathJob
-{
+public class PathJobPathway extends AbstractPathJob implements IDestinationPathJob {
     /**
      * Buildings to avoid
      */
@@ -38,11 +37,10 @@ public class PathJobPathway extends AbstractPathJob implements IDestinationPathJ
     private final BlockPos end;
 
     public PathJobPathway(
-      final int colonyID,
-      final List<IBuilding> buildings,
-      final Level world,
-      @NotNull final BlockPos start, final BlockPos end, final EntityCitizen citizen)
-    {
+            final int colonyID,
+            final List<IBuilding> buildings,
+            final Level world,
+            @NotNull final BlockPos start, final BlockPos end, final EntityCitizen citizen) {
         super(world, start, end, new PathResult<PathJobPathway>(), citizen);
         this.colonyid = colonyID;
         this.buildings = buildings;
@@ -52,11 +50,9 @@ public class PathJobPathway extends AbstractPathJob implements IDestinationPathJ
 
     // TODO: Before usage not thread safe chunk/cap access. Should be using passed along info
     @Override
-    protected double computeHeuristic(final int x, final int y, final int z)
-    {
+    protected double computeHeuristic(final int x, final int y, final int z) {
         final LevelChunk chunk = (LevelChunk) world.getChunk(x >> 4, z >> 4);
-        if (ColonyUtils.getOwningColony(chunk) == colonyid)
-        {
+        if (ColonyUtils.getOwningColony(chunk) == colonyid) {
             return Math.sqrt(BlockPosUtil.distSqr(end.getX(), end.getY(), end.getZ(), x, y, z)) / (ColonyUtils.getAllClaimingBuildings(chunk).size() + 1);
         }
 
@@ -64,17 +60,14 @@ public class PathJobPathway extends AbstractPathJob implements IDestinationPathJ
     }
 
     @Override
-    protected boolean isAtDestination(final MNode n)
-    {
+    protected boolean isAtDestination(final MNode n) {
         return BlockPosUtil.distSqr(end, n.x, n.y, n.z) < 5 * 5;
     }
 
     @Override
-    protected double getEndNodeScore(final MNode n)
-    {
+    protected double getEndNodeScore(final MNode n) {
         final double dist = BlockPosUtil.dist(end, n.x, n.y, n.z);
-        if (dist < 15)
-        {
+        if (dist < 15) {
             return n.getCost();
         }
 
@@ -82,16 +75,12 @@ public class PathJobPathway extends AbstractPathJob implements IDestinationPathJ
     }
 
     @Override
-    protected boolean isPassable(final int x, final int y, final int z, final boolean head, final MNode currentnode)
-    {
-        if (super.isPassable(x, y, z, head, currentnode))
-        {
-            for (final IBuilding building : buildings)
-            {
+    protected boolean isPassable(final int x, final int y, final int z, final boolean head, final MNode currentnode) {
+        if (super.isPassable(x, y, z, head, currentnode)) {
+            for (final IBuilding building : buildings) {
                 if (BlockPosUtil.isInArea(building.getCorners().getA(), building.getCorners().getB(), tempWorldPos.set(x, y, z))
-                      && !BlockPosUtil.isInArea(building.getCorners().getA(), building.getCorners().getB(), end)
-                      && !BlockPosUtil.isInArea(building.getCorners().getA(), building.getCorners().getB(), start))
-                {
+                        && !BlockPosUtil.isInArea(building.getCorners().getA(), building.getCorners().getB(), end)
+                        && !BlockPosUtil.isInArea(building.getCorners().getA(), building.getCorners().getB(), start)) {
                     return false;
                 }
             }
@@ -104,22 +93,19 @@ public class PathJobPathway extends AbstractPathJob implements IDestinationPathJ
 
     @Override
     protected double modifyCost(
-      final double stepCost,
-      final MNode parent,
-      final boolean swimstart,
-      final boolean swimming,
-      final int x,
-      final int y,
-      final int z,
-      final BlockState state, final BlockState below)
-    {
-        if (parent.parent != null && parent.x == parent.parent.x && x != parent.x)
-        {
+            final double stepCost,
+            final MNode parent,
+            final boolean swimstart,
+            final boolean swimming,
+            final int x,
+            final int y,
+            final int z,
+            final BlockState state, final BlockState below) {
+        if (parent.parent != null && parent.x == parent.parent.x && x != parent.x) {
             return stepCost * 10;
         }
 
-        if (parent.parent != null && parent.z == parent.parent.z && z != parent.z)
-        {
+        if (parent.parent != null && parent.z == parent.parent.z && z != parent.z) {
             return stepCost * 10;
         }
 
@@ -127,8 +113,7 @@ public class PathJobPathway extends AbstractPathJob implements IDestinationPathJ
     }
 
     @Override
-    public BlockPos getDestination()
-    {
+    public BlockPos getDestination() {
         return end;
     }
 }

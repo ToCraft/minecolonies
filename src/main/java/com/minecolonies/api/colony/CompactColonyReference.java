@@ -7,8 +7,7 @@ import net.minecraft.world.level.Level;
 /**
  * Compact colony for allies and feud data.
  */
-public class CompactColonyReference
-{
+public class CompactColonyReference {
     /**
      * The name of the colony.
      */
@@ -43,8 +42,7 @@ public class CompactColonyReference
      * @param hasTownHall if it has a town hall.
      * @param dimension   the dimension it is in.
      */
-    public CompactColonyReference(final String name, final BlockPos center, final int id, final boolean hasTownHall, final ResourceKey<Level> dimension)
-    {
+    public CompactColonyReference(final String name, final BlockPos center, final int id, final boolean hasTownHall, final ResourceKey<Level> dimension) {
         this.name = name;
         this.center = center;
         this.id = id;

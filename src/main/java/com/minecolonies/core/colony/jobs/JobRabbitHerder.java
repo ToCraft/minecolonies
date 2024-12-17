@@ -14,15 +14,13 @@ import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STA
 /**
  * The rabbit herder job
  */
-public class JobRabbitHerder extends AbstractJob<EntityAIWorkRabbitHerder, JobRabbitHerder>
-{
+public class JobRabbitHerder extends AbstractJob<EntityAIWorkRabbitHerder, JobRabbitHerder> {
     /**
      * Instantiates the placeholder job.
      *
      * @param entity the entity.
      */
-    public JobRabbitHerder(final ICitizenData entity)
-    {
+    public JobRabbitHerder(final ICitizenData entity) {
         super(entity);
     }
 
@@ -33,8 +31,7 @@ public class JobRabbitHerder extends AbstractJob<EntityAIWorkRabbitHerder, JobRa
      */
     @Nullable
     @Override
-    public EntityAIWorkRabbitHerder generateAI()
-    {
+    public EntityAIWorkRabbitHerder generateAI() {
         return new EntityAIWorkRabbitHerder(this);
     }
 
@@ -45,17 +42,14 @@ public class JobRabbitHerder extends AbstractJob<EntityAIWorkRabbitHerder, JobRa
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.RABBIT_HERDER_ID;
     }
 
     @Override
-    public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack)
-    {
+    public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack) {
         if (getCitizen().getWorkBuilding() != null && getCitizen().getEntity().isPresent() && getCitizen().getWorkBuilding()
-          .isInBuilding(getCitizen().getEntity().get().blockPosition()))
-        {
+                .isInBuilding(getCitizen().getEntity().get().blockPosition())) {
             getCitizen().getWorkBuilding().getModule(STATS_MODULE).incrementBy(ITEM_USED + ";" + pickedUpStack.getItem().getDescriptionId(), pickedUpStack.getCount());
         }
 

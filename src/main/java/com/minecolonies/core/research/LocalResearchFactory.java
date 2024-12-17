@@ -19,33 +19,28 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 /**
  * Factory implementation taking care of creating new instances, serializing and deserializing LocalResearch.
  */
-public class LocalResearchFactory implements ILocalResearchFactory
-{
+public class LocalResearchFactory implements ILocalResearchFactory {
     @NotNull
     @Override
-    public TypeToken<LocalResearch> getFactoryOutputType()
-    {
+    public TypeToken<LocalResearch> getFactoryOutputType() {
         return TypeToken.of(LocalResearch.class);
     }
 
     @NotNull
     @Override
-    public TypeToken<FactoryVoidInput> getFactoryInputType()
-    {
+    public TypeToken<FactoryVoidInput> getFactoryInputType() {
         return TypeConstants.FACTORYVOIDINPUT;
     }
 
     @NotNull
     @Override
-    public ILocalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final int depth)
-    {
+    public ILocalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final int depth) {
         return new LocalResearch(id, branch, depth);
     }
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final ILocalResearch research)
-    {
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final ILocalResearch research) {
         final CompoundTag compound = new CompoundTag();
         compound.putInt(TAG_STATE, research.getState().ordinal());
         compound.putString(TAG_ID, research.getId().toString());
@@ -58,8 +53,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
 
     @NotNull
     @Override
-    public ILocalResearch deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
-    {
+    public ILocalResearch deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) {
         final int state = nbt.getInt(TAG_STATE);
         final ResourceLocation id = ResourceLocation.parse(nbt.getString(TAG_ID));
         final ResourceLocation branch = ResourceLocation.parse(nbt.getString(TAG_BRANCH));
@@ -73,8 +67,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
     }
 
     @Override
-    public void serialize(IFactoryController controller, ILocalResearch input, RegistryFriendlyByteBuf packetBuffer)
-    {
+    public void serialize(IFactoryController controller, ILocalResearch input, RegistryFriendlyByteBuf packetBuffer) {
         packetBuffer.writeInt(input.getState().ordinal());
         packetBuffer.writeUtf(input.getId().toString());
         packetBuffer.writeResourceLocation(input.getBranch());
@@ -83,8 +76,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
     }
 
     @Override
-    public ILocalResearch deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
-    {
+    public ILocalResearch deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable {
         final int state = buffer.readInt();
         final ResourceLocation id = buffer.readResourceLocation();
         final ResourceLocation branch = buffer.readResourceLocation();
@@ -98,8 +90,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
     }
 
     @Override
-    public short getSerializationId()
-    {
+    public short getSerializationId() {
         return SerializationIdentifierConstants.LOCAL_RESEARCH_ID;
     }
 }

@@ -19,22 +19,20 @@ import java.util.stream.Stream;
 
 /**
  * An ingredient that can be used in a vanilla recipe to match plantable items.
- *
+ * <p>
  * // any plant item
  * {
- *     "type": "minecolonies:plant"
+ * "type": "minecolonies:plant"
  * }
  */
-public class PlantIngredient implements ICustomIngredient
-{
+public class PlantIngredient implements ICustomIngredient {
     private static final Lazy<PlantIngredient> INSTANCE = Lazy.of(PlantIngredient::new);
 
     public static final MapCodec<PlantIngredient> CODEC = MapCodec.unit(INSTANCE);
 
     private final List<ItemStack> items;
 
-    private PlantIngredient()
-    {
+    private PlantIngredient() {
         items = BuiltInRegistries.ITEM.stream()
                 .filter(item -> item instanceof final BlockItem block &&
                         (block.getBlock() instanceof CropBlock || block.getBlock() instanceof StemBlock))
@@ -43,16 +41,13 @@ public class PlantIngredient implements ICustomIngredient
     }
 
     @NotNull
-    public static Ingredient of()
-    {
+    public static Ingredient of() {
         return INSTANCE.get().toVanilla();
     }
 
     @Override
-    public boolean test(@Nullable final ItemStack stack)
-    {
-        if (stack == null)
-        {
+    public boolean test(@Nullable final ItemStack stack) {
+        if (stack == null) {
             return false;
         }
 
@@ -61,21 +56,18 @@ public class PlantIngredient implements ICustomIngredient
 
     @NotNull
     @Override
-    public Stream<ItemStack> getItems()
-    {
+    public Stream<ItemStack> getItems() {
         return items.stream();
     }
 
     @Override
-    public boolean isSimple()
-    {
+    public boolean isSimple() {
         return true;
     }
 
     @NotNull
     @Override
-    public IngredientType<?> getType()
-    {
+    public IngredientType<?> getType() {
         return ModIngredientTypeInitializer.PLANT_INGREDIENT_TYPE.get();
     }
 }

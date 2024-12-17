@@ -8,8 +8,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 /**
  * Holds ref to the mod recipe serializers and recipe types.
  */
-public class ModRecipeSerializer
-{
+public class ModRecipeSerializer {
     public static DeferredHolder<RecipeSerializer<?>, CompostRecipe.Serializer> CompostRecipeSerializer;
     public static DeferredHolder<RecipeType<?>, RecipeType<CompostRecipe>> CompostRecipeType;
 }

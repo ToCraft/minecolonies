@@ -5,8 +5,7 @@ import com.minecolonies.api.entity.ai.ITickingStateAI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ICitizenJobHandler
-{
+public interface ICitizenJobHandler {
     /**
      * Set Model depending on job.
      *

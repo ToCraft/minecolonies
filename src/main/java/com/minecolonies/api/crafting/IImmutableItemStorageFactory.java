@@ -11,24 +11,19 @@ import static com.minecolonies.api.util.constant.Constants.PARAMS_ITEMSTORAGE;
 /**
  * Interface for the IItemStorageFactory which is responsible for creating and maintaining ItemStorage objects.
  */
-public interface IImmutableItemStorageFactory extends IFactory<FactoryVoidInput, ImmutableItemStorage>
-{
+public interface IImmutableItemStorageFactory extends IFactory<FactoryVoidInput, ImmutableItemStorage> {
     @NotNull
     @Override
-    default ImmutableItemStorage getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput token, @NotNull final Object... context)
-    {
-        if (context.length < PARAMS_ITEMSTORAGE)
-        {
+    default ImmutableItemStorage getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput token, @NotNull final Object... context) {
+        if (context.length < PARAMS_ITEMSTORAGE) {
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only 2 are allowed!");
         }
 
-        if (!(context[0] instanceof ItemStack))
-        {
+        if (!(context[0] instanceof ItemStack)) {
             throw new IllegalArgumentException("First parameter is supposed to be an ItemStack!");
         }
 
-        if (!(context[1] instanceof Integer))
-        {
+        if (!(context[1] instanceof Integer)) {
             throw new IllegalArgumentException("Second parameter is supposed to be an Integer!");
         }
 

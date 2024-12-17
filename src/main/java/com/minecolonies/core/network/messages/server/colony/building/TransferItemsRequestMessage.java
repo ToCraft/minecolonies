@@ -25,8 +25,7 @@ import java.util.Map;
  *
  * @author xavierh
  */
-public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "transfer_items_request", TransferItemsRequestMessage::new);
 
     /**
@@ -52,16 +51,14 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
      * @param quantity       of item needed to be transfered
      * @param attemptResolve whether to attempt to resolve.
      */
-    public TransferItemsRequestMessage(@NotNull final IBuildingView building, final ItemStack itemStack, final int quantity, final boolean attemptResolve)
-    {
+    public TransferItemsRequestMessage(@NotNull final IBuildingView building, final ItemStack itemStack, final int quantity, final boolean attemptResolve) {
         super(TYPE, building);
         this.itemStack = itemStack;
         this.quantity = quantity;
         this.attemptResolve = attemptResolve;
     }
 
-    protected TransferItemsRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected TransferItemsRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         itemStack = Utils.deserializeCodecMess(buf);
         quantity = buf.readInt();
@@ -69,8 +66,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         Utils.serializeCodecMess(buf, itemStack);
         buf.writeInt(quantity);
@@ -78,10 +74,8 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (quantity <= 0)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (quantity <= 0) {
             Log.getLogger().warn("TransferItemsRequestMessage quantity below 0");
             return;
         }
@@ -90,72 +84,59 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         // Inventory content before
         Map<ItemStorage, ItemStorage> previousContent = null;
         final int amountToTake;
-        if (isCreative)
-        {
+        if (isCreative) {
             amountToTake = quantity;
-        }
-        else
-        {
-            if (MineColonies.getConfig().getServer().debugInventories.get())
-            {
+        } else {
+            if (MineColonies.getConfig().getServer().debugInventories.get()) {
                 previousContent = InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.getInventory()));
             }
 
             amountToTake = Math.min(quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()),
-              stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true)));
+                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true)));
         }
 
         ItemStack remainingItemStack = ItemStack.EMPTY;
         int tempAmount = amountToTake;
-        for (int i = 0; i < Math.max(1, Math.ceil((double) amountToTake/itemStack.getMaxStackSize())); i++)
-        {
+        for (int i = 0; i < Math.max(1, Math.ceil((double) amountToTake / itemStack.getMaxStackSize())); i++) {
             final ItemStack itemStackToTake = itemStack.copy();
             final int insertAmount = Math.min(itemStack.getMaxStackSize(), tempAmount);
             itemStackToTake.setCount(insertAmount);
             tempAmount -= insertAmount;
 
             remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
-            if (!remainingItemStack.isEmpty())
-            {
+            if (!remainingItemStack.isEmpty()) {
                 tempAmount += remainingItemStack.getCount();
                 break;
             }
         }
 
-        if (!ItemStackUtils.isEmpty(remainingItemStack))
-        {
+        if (!ItemStackUtils.isEmpty(remainingItemStack)) {
             MessageUtils.format(Component.translatableEscape("entity.builder.inventoryfull", remainingItemStack.getDisplayName()).withStyle(ChatFormatting.RED)).sendTo(player);
         }
 
-        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != amountToTake)
-        {
+        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != amountToTake) {
             //Only doing this at the moment as the additional chest do not detect new content
             building.getTileEntity().setChanged();
         }
 
-        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != amountToTake)
-        {
-            if (!isCreative)
-            {
+        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != amountToTake) {
+            if (!isCreative) {
                 int amountToRemoveFromPlayer = amountToTake - tempAmount;
-                while (amountToRemoveFromPlayer > 0)
-                {
+                while (amountToRemoveFromPlayer > 0) {
                     final int slot =
-                      InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()),
-                        stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true));
+                            InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()),
+                                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true));
                     final ItemStack itemsTaken = player.getInventory().removeItem(slot, amountToRemoveFromPlayer);
                     amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
                 }
             }
 
-            if (attemptResolve)
-            {
+            if (attemptResolve) {
                 building.overruleNextOpenRequestWithStack(itemStack);
             }
         }
 
-        if (!isCreative && previousContent != null && MineColonies.getConfig().getServer().debugInventories.get())
-        {
+        if (!isCreative && previousContent != null && MineColonies.getConfig().getServer().debugInventories.get()) {
             InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.getInventory())), true);
         }
     }

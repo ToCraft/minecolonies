@@ -9,14 +9,12 @@ import java.util.Collection;
 /**
  * Class used to handle internal reassignment changes. Take the given blacklist into account when it assigns the requests.
  */
-public final class WrappedBlacklistAssignmentRequestManager extends AbstractWrappedRequestManager
-{
+public final class WrappedBlacklistAssignmentRequestManager extends AbstractWrappedRequestManager {
 
     @NotNull
     private final Collection<IToken<?>> blackListedResolvers;
 
-    public WrappedBlacklistAssignmentRequestManager(@NotNull final IStandardRequestManager wrappedManager, @NotNull final Collection<IToken<?>> blackListedResolvers)
-    {
+    public WrappedBlacklistAssignmentRequestManager(@NotNull final IStandardRequestManager wrappedManager, @NotNull final Collection<IToken<?>> blackListedResolvers) {
         super(wrappedManager);
         this.blackListedResolvers = blackListedResolvers;
     }
@@ -28,8 +26,7 @@ public final class WrappedBlacklistAssignmentRequestManager extends AbstractWrap
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
     @Override
-    public void assignRequest(@NotNull final IToken<?> token) throws IllegalArgumentException
-    {
+    public void assignRequest(@NotNull final IToken<?> token) throws IllegalArgumentException {
         wrappedManager.getRequestHandler().assignRequest(wrappedManager.getRequestHandler().getRequest(token), blackListedResolvers);
     }
 }

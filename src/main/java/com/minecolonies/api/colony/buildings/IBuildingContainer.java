@@ -12,8 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface IBuildingContainer extends ISchematicProvider, IItemHandlerCapProvider
-{
+public interface IBuildingContainer extends ISchematicProvider, IItemHandlerCapProvider {
     @Override
     void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound);
 

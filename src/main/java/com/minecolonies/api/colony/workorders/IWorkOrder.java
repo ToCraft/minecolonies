@@ -17,8 +17,7 @@ import java.util.concurrent.Future;
 
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
-public interface IWorkOrder
-{
+public interface IWorkOrder {
     /**
      * Get the ID of the work order.
      *
@@ -63,6 +62,7 @@ public interface IWorkOrder
 
     /**
      * Get a blueprint future.
+     *
      * @return the blueprint future (might contain null).
      */
     Future<Blueprint> getBlueprintFuture(@NotNull final HolderLookup.Provider provider);
@@ -310,18 +310,18 @@ public interface IWorkOrder
     /**
      * Whether this work order can be made by a builder.
      *
-     * @return a boolean.
      * @param job
+     * @return a boolean.
      */
     boolean canBeMadeBy(final IJob<?> job);
 
     /**
      * Get the file name of the structure.
      * Calculates the file name from the path.
+     *
      * @return the name without the appendix.
      */
-    default String getFileName()
-    {
+    default String getFileName() {
         final String[] split = getStructurePath().contains("\\") ? getStructurePath().split("\\\\") : getStructurePath().split("/");
         return split[split.length - 1].replace(".blueprint", "");
     }

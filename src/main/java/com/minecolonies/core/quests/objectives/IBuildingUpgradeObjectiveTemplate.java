@@ -6,8 +6,7 @@ import com.minecolonies.api.quests.IQuestInstance;
 /**
  * Specific objective for building upgrade.
  */
-public interface IBuildingUpgradeObjectiveTemplate
-{
+public interface IBuildingUpgradeObjectiveTemplate {
     /**
      * Callback for block upgrade event
      *

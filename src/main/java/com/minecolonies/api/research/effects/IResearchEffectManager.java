@@ -6,8 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The manager of unlocked research effects of a given colony.
  */
-public interface IResearchEffectManager
-{
+public interface IResearchEffectManager {
     /**
      * Get the research effect which is assigned to a particular string.
      *
@@ -22,10 +21,10 @@ public interface IResearchEffectManager
      * Get the research effect strength for a given ResearchEffect type,
      * or zero, if no matching effect is present.
      *
-     * @param id   the id of the effect.
+     * @param id the id of the effect.
      * @return the strength of the effect, 1 by default for researches effects which do not have values configured, or zero if it isn't present.
      */
-     double getEffectStrength(final ResourceLocation id);
+    double getEffectStrength(final ResourceLocation id);
 
     /**
      * Apply the effect to the research effects class.

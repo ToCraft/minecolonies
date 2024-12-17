@@ -18,37 +18,32 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.util.Tuple;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class StandardDataStoreManager implements IDataStoreManager
-{
+public class StandardDataStoreManager implements IDataStoreManager {
 
     private final Map<IToken<?>, IDataStore> storeMap;
 
-    public StandardDataStoreManager(final Map<IToken<?>, IDataStore> storeMap) {this.storeMap = storeMap;}
+    public StandardDataStoreManager(final Map<IToken<?>, IDataStore> storeMap) {
+        this.storeMap = storeMap;
+    }
 
-    public StandardDataStoreManager()
-    {
+    public StandardDataStoreManager() {
         this(new HashMap<>());
     }
 
     @Override
-    public <T extends IDataStore> T get(final IToken<?> id, final TypeToken<T> type)
-    {
+    public <T extends IDataStore> T get(final IToken<?> id, final TypeToken<T> type) {
         return get(id, () -> StandardFactoryController.getInstance().getNewInstance(type));
     }
 
     @Override
-    public <T extends IDataStore> T get(final IToken<?> id, final Supplier<T> factory)
-    {
-        if (!storeMap.containsKey(id))
-        {
+    public <T extends IDataStore> T get(final IToken<?> id, final Supplier<T> factory) {
+        if (!storeMap.containsKey(id)) {
             final T defaultInstance = factory.get();
 
             defaultInstance.setId(id);
@@ -59,45 +54,38 @@ public class StandardDataStoreManager implements IDataStoreManager
     }
 
     @Override
-    public void remove(final IToken<?> id)
-    {
+    public void remove(final IToken<?> id) {
         storeMap.remove(id);
     }
 
     @Override
-    public void removeAll()
-    {
+    public void removeAll() {
         storeMap.clear();
     }
 
-    public static class Factory implements IFactory<FactoryVoidInput, StandardDataStoreManager>
-    {
+    public static class Factory implements IFactory<FactoryVoidInput, StandardDataStoreManager> {
 
         @NotNull
         @Override
-        public TypeToken<? extends StandardDataStoreManager> getFactoryOutputType()
-        {
+        public TypeToken<? extends StandardDataStoreManager> getFactoryOutputType() {
             return TypeToken.of(StandardDataStoreManager.class);
         }
 
         @NotNull
         @Override
-        public TypeToken<? extends FactoryVoidInput> getFactoryInputType()
-        {
+        public TypeToken<? extends FactoryVoidInput> getFactoryInputType() {
             return TypeConstants.FACTORYVOIDINPUT;
         }
 
         @NotNull
         @Override
-        public StandardDataStoreManager getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, @NotNull final Object... context) throws IllegalArgumentException
-        {
+        public StandardDataStoreManager getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, @NotNull final Object... context) throws IllegalArgumentException {
             return new StandardDataStoreManager();
         }
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardDataStoreManager standardDataStoreManager)
-        {
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardDataStoreManager standardDataStoreManager) {
             final CompoundTag compound = new CompoundTag();
 
             compound.put(NbtTagConstants.TAG_LIST, standardDataStoreManager.storeMap.keySet().stream().map(iToken -> {
@@ -114,21 +102,16 @@ public class StandardDataStoreManager implements IDataStoreManager
 
         @NotNull
         @Override
-        public StandardDataStoreManager deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
-        {
+        public StandardDataStoreManager deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable {
             final Map<IToken<?>, IDataStore> storeMap = new HashMap<>();
             final ListTag list = nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND);
-            for (int i = 0; i < list.size(); i++)
-            {
+            for (int i = 0; i < list.size(); i++) {
                 final CompoundTag tag = list.getCompound(i);
-                try
-                {
+                try {
                     final IToken<?> token = controller.deserializeTag(provider, tag.getCompound(NbtTagConstants.TAG_TOKEN));
                     final IDataStore store = controller.deserializeTag(provider, tag.getCompound(NbtTagConstants.TAG_VALUE));
                     storeMap.put(token, store);
-                }
-                catch (final Exception ex)
-                {
+                } catch (final Exception ex) {
                     Log.getLogger().error(ex);
                 }
             }
@@ -137,8 +120,7 @@ public class StandardDataStoreManager implements IDataStoreManager
         }
 
         @Override
-        public void serialize(IFactoryController controller, StandardDataStoreManager input, RegistryFriendlyByteBuf packetBuffer)
-        {
+        public void serialize(IFactoryController controller, StandardDataStoreManager input, RegistryFriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(input.storeMap.size());
             input.storeMap.forEach((key, value) -> {
                 controller.serialize(packetBuffer, key);
@@ -147,18 +129,13 @@ public class StandardDataStoreManager implements IDataStoreManager
         }
 
         @Override
-        public StandardDataStoreManager deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer)
-        {
+        public StandardDataStoreManager deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) {
             final Map<IToken<?>, IDataStore> storeMap = new HashMap<>();
             final int storeSize = buffer.readInt();
-            for (int i = 0; i < storeSize; ++i)
-            {
-                try
-                {
+            for (int i = 0; i < storeSize; ++i) {
+                try {
                     storeMap.put(controller.deserialize(buffer), controller.deserialize(buffer));
-                }
-                catch (final Exception ex)
-                {
+                } catch (final Exception ex) {
                     Log.getLogger().error(ex);
                 }
             }
@@ -167,8 +144,7 @@ public class StandardDataStoreManager implements IDataStoreManager
         }
 
         @Override
-        public short getSerializationId()
-        {
+        public short getSerializationId() {
             return SerializationIdentifierConstants.STANDARD_DATASTORE_MANAGER_ID;
         }
     }

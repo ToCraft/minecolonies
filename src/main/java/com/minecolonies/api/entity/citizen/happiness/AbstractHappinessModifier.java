@@ -11,8 +11,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Abstract happiness modifier implementation.
  */
-public abstract class AbstractHappinessModifier implements IHappinessModifier
-{
+public abstract class AbstractHappinessModifier implements IHappinessModifier {
     /**
      * The supplier to get the happiness factor.
      */
@@ -34,61 +33,51 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
      * @param id     its string id.
      * @param weight its weight.
      */
-    public AbstractHappinessModifier(final String id, final double weight, final IHappinessSupplierWrapper supplier)
-    {
+    public AbstractHappinessModifier(final String id, final double weight, final IHappinessSupplierWrapper supplier) {
         this.id = id;
         this.weight = weight;
         this.supplier = supplier;
     }
 
     @Override
-    public double getFactor(@Nullable final ICitizenData citizenData)
-    {
+    public double getFactor(@Nullable final ICitizenData citizenData) {
         return citizenData == null ? supplier.getLastCachedValue() : supplier.getValue(citizenData);
     }
 
     /**
      * Create an empty instance of the abstract happiness modifier.
      */
-    public AbstractHappinessModifier()
-    {
+    public AbstractHappinessModifier() {
         super();
     }
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
     @Override
-    public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT, final boolean persist)
-    {
+    public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT, final boolean persist) {
         this.id = compoundNBT.getString(TAG_ID);
         this.weight = compoundNBT.getDouble(TAG_WEIGHT);
         final CompoundTag supplierCompound = compoundNBT.getCompound(TAG_SUPPLIER);
-        if (supplierCompound.contains(TAG_ID))
-        {
+        if (supplierCompound.contains(TAG_ID)) {
             supplier = new DynamicHappinessSupplier();
-        }
-        else
-        {
+        } else {
             supplier = new StaticHappinessSupplier();
         }
         supplier.deserializeNBT(provider, supplierCompound);
     }
 
     @Override
-    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT, final boolean persist)
-    {
+    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT, final boolean persist) {
         compoundNBT.putString(TAG_ID, this.id);
         compoundNBT.putDouble(TAG_WEIGHT, this.weight);
         compoundNBT.put(TAG_SUPPLIER, this.supplier.serializeNBT(provider));
     }
 
     @Override
-    public double getWeight()
-    {
+    public double getWeight() {
         return weight;
     }
 }

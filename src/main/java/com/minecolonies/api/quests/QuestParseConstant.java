@@ -3,16 +3,15 @@ package com.minecolonies.api.quests;
 /**
  * Constant for quest parsing.
  */
-public class QuestParseConstant
-{
+public class QuestParseConstant {
     /**
      * Json parse constants.
      */
     public static final String DETAILS_KEY = "details";
-    public static final String TARGET_KEY   = "target";
-    public static final String QUANTITY_KEY   = "qty";
+    public static final String TARGET_KEY = "target";
+    public static final String QUANTITY_KEY = "qty";
     public static final String DIFFICULTY_KEY = "difficulty";
-    public static final String NEXT_OBJ_KEY   = "next-objective";
+    public static final String NEXT_OBJ_KEY = "next-objective";
     public static final String BLOCK_KEY = "block";
     public static final String ITEM_KEY = "item";
     public static final String NBT_MODE_KEY = "nbt-mode";
@@ -21,8 +20,8 @@ public class QuestParseConstant
     public static final String DAYS_KEY = "days";
     public static final String CHANGE_KEY = "change";
     public static final String TYPE_KEY = "type";
-    public static final String TARGET1_KEY   = "target1";
-    public static final String TARGET2_KEY   = "target2";
+    public static final String TARGET1_KEY = "target1";
+    public static final String TARGET2_KEY = "target2";
     public static final String ID_KEY = "id";
     public static final String SKILL_KEY = "skill";
     public static final String TEXT_ID = "text";

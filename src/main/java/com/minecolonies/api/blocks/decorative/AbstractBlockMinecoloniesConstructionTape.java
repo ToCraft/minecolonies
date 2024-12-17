@@ -19,15 +19,14 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B> implements SimpleWaterloggedBlock
-{
-    public static final BooleanProperty NORTH       = PipeBlock.NORTH;
-    public static final BooleanProperty EAST        = PipeBlock.EAST;
-    public static final BooleanProperty SOUTH       = PipeBlock.SOUTH;
-    public static final BooleanProperty WEST        = PipeBlock.WEST;
+public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B> implements SimpleWaterloggedBlock {
+    public static final BooleanProperty NORTH = PipeBlock.NORTH;
+    public static final BooleanProperty EAST = PipeBlock.EAST;
+    public static final BooleanProperty SOUTH = PipeBlock.SOUTH;
+    public static final BooleanProperty WEST = PipeBlock.WEST;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    protected VoxelShape[] shapes = new VoxelShape[] {};
+    protected VoxelShape[] shapes = new VoxelShape[]{};
 
     /**
      * The default face for when there are no connections.
@@ -39,43 +38,35 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
      */
     public static final BooleanProperty CORNER = BooleanProperty.create("corner");
 
-    public AbstractBlockMinecoloniesConstructionTape(final Properties properties)
-    {
+    public AbstractBlockMinecoloniesConstructionTape(final Properties properties) {
         super(properties);
     }
 
     @NotNull
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context)
-    {
+    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return this.shapes[this.getIndex(state)];
     }
 
-    private static int getMask(Direction facing)
-    {
+    private static int getMask(Direction facing) {
         return 1 << facing.get2DDataValue();
     }
 
-    protected int getIndex(BlockState state)
-    {
+    protected int getIndex(BlockState state) {
         int i = 0;
-        if (state.getValue(NORTH))
-        {
+        if (state.getValue(NORTH)) {
             i |= getMask(Direction.NORTH);
         }
 
-        if (state.getValue(EAST))
-        {
+        if (state.getValue(EAST)) {
             i |= getMask(Direction.EAST);
         }
 
-        if (state.getValue(SOUTH))
-        {
+        if (state.getValue(SOUTH)) {
             i |= getMask(Direction.SOUTH);
         }
 
-        if (state.getValue(WEST))
-        {
+        if (state.getValue(WEST)) {
             i |= getMask(Direction.WEST);
         }
 
@@ -83,13 +74,11 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
     }
 
     @Override
-    public FluidState getFluidState(final BlockState state)
-    {
+    public FluidState getFluidState(final BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
-    protected VoxelShape[] makeShapes(float nodeWidth, float limbWidth, float nodeHeight, float limbBase, float limbTop)
-    {
+    protected VoxelShape[] makeShapes(float nodeWidth, float limbWidth, float nodeHeight, float limbBase, float limbTop) {
         float nodeStart = 8.0F - nodeWidth;
         float nodeEnd = 8.0F + nodeWidth;
         float limbStart = 8.0F - limbWidth;
@@ -105,22 +94,21 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
 
         // All 16 possible block combinations, in a specific index to be retrieved by getIndex
         VoxelShape[] avoxelshape = new VoxelShape[]
-                                     {
-                                       Shapes.empty(), south, west, cornerse, north,
-                                       Shapes.or(south, north),
-                                       Shapes.or(west, north),
-                                       Shapes.or(cornerse, north), east,
-                                       Shapes.or(south, east),
-                                       Shapes.or(west, east),
-                                       Shapes.or(cornerse, east), cornernw,
-                                       Shapes.or(south, cornernw),
-                                       Shapes.or(west, cornernw),
-                                       Shapes.or(cornerse, cornernw)
-                                     };
+                {
+                        Shapes.empty(), south, west, cornerse, north,
+                        Shapes.or(south, north),
+                        Shapes.or(west, north),
+                        Shapes.or(cornerse, north), east,
+                        Shapes.or(south, east),
+                        Shapes.or(west, east),
+                        Shapes.or(cornerse, east), cornernw,
+                        Shapes.or(south, cornernw),
+                        Shapes.or(west, cornernw),
+                        Shapes.or(cornerse, cornernw)
+                };
 
         // Combine the arm voxel shapes with the main node for all combinations
-        for (int i = 0; i < 16; ++i)
-        {
+        for (int i = 0; i < 16; ++i) {
             avoxelshape[i] = Shapes.or(node, avoxelshape[i]);
         }
 

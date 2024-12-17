@@ -24,8 +24,7 @@ import java.util.Random;
  *     <li>Anything that grows on the field will be harvested, but only things that are 1 block high (multi block high things must break completely, else they are ignored).</li>
  * </ol>
  */
-public abstract class BoneMealedPlantModule extends AbstractPlantationModule
-{
+public abstract class BoneMealedPlantModule extends AbstractPlantationModule {
     /**
      * The default percentage chance to be able to work on this field.
      */
@@ -50,18 +49,15 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
      * @param item     the item which is harvested.
      */
     protected BoneMealedPlantModule(
-      final IField field, final String fieldTag, final String workTag, final Item item)
-    {
+            final IField field, final String fieldTag, final String workTag, final Item item) {
         super(field, fieldTag, workTag, item);
         this.random = new Random();
     }
 
     @Override
-    public PlantationModuleResult.Builder decideFieldWork(final Level world, final @NotNull BlockPos workingPosition)
-    {
+    public PlantationModuleResult.Builder decideFieldWork(final Level world, final @NotNull BlockPos workingPosition) {
         ActionToPerform action = decideWorkAction(world, workingPosition);
-        return switch (action)
-        {
+        return switch (action) {
             case HARVEST -> new PlantationModuleResult.Builder().harvest(workingPosition.above()).pickNewPosition();
             case BONEMEAL -> new PlantationModuleResult.Builder().bonemeal(workingPosition).pickNewPosition();
             default -> PlantationModuleResult.NONE;
@@ -75,16 +71,13 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
      * @param workPosition the position that has been chosen for work.
      * @return the {@link PlantationModuleResult} that the AI is going to perform.
      */
-    private ActionToPerform decideWorkAction(Level world, BlockPos workPosition)
-    {
+    private ActionToPerform decideWorkAction(Level world, BlockPos workPosition) {
         BlockState blockState = world.getBlockState(workPosition.above());
-        if (isValidHarvestBlock(blockState))
-        {
+        if (isValidHarvestBlock(blockState)) {
             return ActionToPerform.HARVEST;
         }
 
-        if (isValidBonemealLocation(blockState))
-        {
+        if (isValidBonemealLocation(blockState)) {
             return ActionToPerform.BONEMEAL;
         }
 
@@ -98,8 +91,7 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
      * @param blockState the block state.
      * @return whether the block can be harvested.
      */
-    protected boolean isValidHarvestBlock(BlockState blockState)
-    {
+    protected boolean isValidHarvestBlock(BlockState blockState) {
         return !blockState.isAir();
     }
 
@@ -110,18 +102,15 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
      * @param blockState the block state.
      * @return whether the block can be planted.
      */
-    protected boolean isValidBonemealLocation(BlockState blockState)
-    {
+    protected boolean isValidBonemealLocation(BlockState blockState) {
         return blockState.isAir();
     }
 
     @Override
-    public @Nullable BlockPos getNextWorkingPosition(Level world)
-    {
+    public @Nullable BlockPos getNextWorkingPosition(Level world) {
         // If there is anything to harvest, return the first position where a non-air block is present.
         BlockPos positionToHarvest = getPositionToHarvest(world);
-        if (positionToHarvest != null)
-        {
+        if (positionToHarvest != null) {
             return positionToHarvest;
         }
 
@@ -131,8 +120,7 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
         // so that the field is not often considered as "needing work".
         int percentChance = Math.max(Math.min(getPercentageChance(), 100), 1);
         boolean willWork = random.nextFloat() < (percentChance / 100F);
-        if (willWork && !getWorkingPositions().isEmpty())
-        {
+        if (willWork && !getWorkingPositions().isEmpty()) {
             // Get a random position on the field, which will act as the planting position.
             List<BlockPos> workingPositions = getWorkingPositions();
             int idx = random.nextInt(0, workingPositions.size());
@@ -149,8 +137,7 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
      * @return the position to harvest or null if no position needs harvesting.
      */
     @Nullable
-    private BlockPos getPositionToHarvest(Level world)
-    {
+    private BlockPos getPositionToHarvest(Level world) {
         return getWorkingPositions().stream().filter(pos -> isValidHarvestBlock(world.getBlockState(pos.above()))).findFirst().orElse(null);
     }
 
@@ -160,32 +147,27 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
      *
      * @return a number between 1 and 100.
      */
-    protected int getPercentageChance()
-    {
+    protected int getPercentageChance() {
         return DEFAULT_PERCENTAGE_CHANCE;
     }
 
     @Override
-    public int getActionLimit()
-    {
+    public int getActionLimit() {
         return 1;
     }
 
     @Override
-    public List<ItemStack> getRequiredItemsForOperation()
-    {
+    public List<ItemStack> getRequiredItemsForOperation() {
         return getValidBonemeal().stream().map(ItemStack::new).toList();
     }
 
     @Override
-    protected int getMaxWorkingPositions()
-    {
+    protected int getMaxWorkingPositions() {
         return MAX_PLANTS;
     }
 
     @Override
-    public List<Item> getValidBonemeal()
-    {
+    public List<Item> getValidBonemeal() {
         return List.of(Items.BONE_MEAL, ModItems.compost);
     }
 }

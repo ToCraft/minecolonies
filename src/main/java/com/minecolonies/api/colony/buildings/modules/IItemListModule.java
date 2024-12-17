@@ -7,8 +7,7 @@ import java.util.List;
 /**
  * Module for ignore/acceptance lists of items.
  */
-public interface IItemListModule
-{
+public interface IItemListModule {
     /**
      * Add an item to the list.
      *
@@ -40,6 +39,7 @@ public interface IItemListModule
 
     /**
      * Get the string identifier of the list.
+     *
      * @return the string.
      */
     String getListIdentifier();
@@ -56,6 +56,7 @@ public interface IItemListModule
 
     /**
      * Get the unique id of this module.
+     *
      * @return the id.
      */
     String getId();

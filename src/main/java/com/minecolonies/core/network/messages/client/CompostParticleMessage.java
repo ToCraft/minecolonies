@@ -17,8 +17,7 @@ import java.util.Random;
 /**
  * Handles the server causing compost particle effects.
  */
-public class CompostParticleMessage extends AbstractClientPlayMessage
-{
+public class CompostParticleMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "compost_particle", CompostParticleMessage::new);
 
     /**
@@ -36,64 +35,55 @@ public class CompostParticleMessage extends AbstractClientPlayMessage
      *
      * @param pos Coordinates
      */
-    public CompostParticleMessage(final BlockPos pos)
-    {
+    public CompostParticleMessage(final BlockPos pos) {
         super(TYPE);
         this.pos = pos;
     }
 
-    public CompostParticleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public CompostParticleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         pos = buf.readBlockPos();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(pos);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         final Level world = player.level();
         final int amount = random.nextInt(15) + 1;
         final BlockState state = world.getBlockState(pos);
         double d0;
         double d1;
         double d2;
-        if (!state.isAir())
-        {
-            for (int i = 0; i < amount; ++i)
-            {
+        if (!state.isAir()) {
+            for (int i = 0; i < amount; ++i) {
                 d0 = random.nextGaussian() * 0.02D;
                 d1 = random.nextGaussian() * 0.02D;
                 d2 = random.nextGaussian() * 0.02D;
                 world.addParticle(ParticleTypes.HAPPY_VILLAGER,
-                  (double) ((float) pos.getX() + random.nextFloat()),
-                  (double) pos.getY() + (double) random.nextFloat() * state.getShape(world, pos).bounds().maxY,
-                  (double) ((float) pos.getZ() + random.nextFloat()),
-                  d0,
-                  d1,
-                  d2
+                        (double) ((float) pos.getX() + random.nextFloat()),
+                        (double) pos.getY() + (double) random.nextFloat() * state.getShape(world, pos).bounds().maxY,
+                        (double) ((float) pos.getZ() + random.nextFloat()),
+                        d0,
+                        d1,
+                        d2
                 );
             }
-        }
-        else
-        {
-            for (int i = 0; i < amount; ++i)
-            {
+        } else {
+            for (int i = 0; i < amount; ++i) {
                 d0 = random.nextGaussian() * 0.02D;
                 d1 = random.nextGaussian() * 0.02D;
                 d2 = random.nextGaussian() * 0.02D;
                 world.addParticle(ParticleTypes.HAPPY_VILLAGER,
-                  (double) ((float) pos.getX() + random.nextFloat()),
-                  (double) pos.getY() + (double) random.nextFloat() * 1.0D,
-                  (double) ((float) pos.getZ() + random.nextFloat()),
-                  d0,
-                  d1,
-                  d2
+                        (double) ((float) pos.getX() + random.nextFloat()),
+                        (double) pos.getY() + (double) random.nextFloat() * 1.0D,
+                        (double) ((float) pos.getZ() + random.nextFloat()),
+                        d0,
+                        d1,
+                        d2
                 );
             }
         }

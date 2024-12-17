@@ -20,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages assigning or unassigning of citizens.
  */
-public class AssignUnassignMessage extends AbstractBuildingServerMessage<DefaultBuildingInstance>
-{
+public class AssignUnassignMessage extends AbstractBuildingServerMessage<DefaultBuildingInstance> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "assign_unassign", AssignUnassignMessage::new);
 
     /**
@@ -45,10 +44,9 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
      * @param building  view of the building to read data from
      * @param assign    assign or unassigning the citizens
      * @param citizenID the id of the citizen to fill the job.
-     * @param entry the job entry.
+     * @param entry     the job entry.
      */
-    public AssignUnassignMessage(@NotNull final IBuildingView building, final boolean assign, final int citizenID, final JobEntry entry)
-    {
+    public AssignUnassignMessage(@NotNull final IBuildingView building, final boolean assign, final int citizenID, final JobEntry entry) {
         super(TYPE, building);
         this.assign = assign;
         this.citizenID = citizenID;
@@ -60,8 +58,7 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
      *
      * @param buf the used byteBuffer.
      */
-    protected AssignUnassignMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected AssignUnassignMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         assign = buf.readBoolean();
         citizenID = buf.readInt();
@@ -74,42 +71,32 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeBoolean(assign);
         buf.writeInt(citizenID);
         buf.writeBoolean(jobEntry != null);
-        if (jobEntry != null)
-        {
+        if (jobEntry != null) {
             buf.writeById(IMinecoloniesAPI.getInstance().getJobRegistry()::getIdOrThrow, jobEntry);
         }
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final DefaultBuildingInstance building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final DefaultBuildingInstance building) {
         final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
         final AbstractAssignedCitizenModule module;
-        if (jobEntry == null)
-        {
+        if (jobEntry == null) {
             module = building.getFirstModuleOccurance(LivingBuildingModule.class);
-        }
-        else
-        {
+        } else {
             module = building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry);
         }
 
-        if (assign && !module.isFull() && !building.equals(citizen.getHomeBuilding()))
-        {
-            if (citizen.getHomeBuilding() != null)
-            {
+        if (assign && !module.isFull() && !building.equals(citizen.getHomeBuilding())) {
+            if (citizen.getHomeBuilding() != null) {
                 citizen.getHomeBuilding().getFirstModuleOccurance(LivingBuildingModule.class).removeCitizen(citizen);
             }
             module.assignCitizen(citizen);
-        }
-        else if (module.hasAssignedCitizen(citizen))
-        {
+        } else if (module.hasAssignedCitizen(citizen)) {
             module.removeCitizen(citizen);
         }
     }

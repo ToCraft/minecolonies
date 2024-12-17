@@ -1,11 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -18,7 +13,12 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
+import com.minecolonies.core.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -30,8 +30,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
  * Class of the crafter job.
  */
 public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? extends AbstractBuilding>, J extends AbstractJobCrafter<AI, J>>
-  extends AbstractJob<AI, J>
-{
+        extends AbstractJob<AI, J> {
     /**
      * The Token of the data store which belongs to this job.
      */
@@ -57,11 +56,9 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @param entity the citizen who becomes a Sawmill
      */
-    public AbstractJobCrafter(final ICitizenData entity)
-    {
+    public AbstractJobCrafter(final ICitizenData entity) {
         super(entity);
-        if (entity != null)
-        {
+        if (entity != null) {
             setupRsDataStore();
         }
     }
@@ -69,34 +66,30 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
     /**
      * Data store setup.
      */
-    private void setupRsDataStore()
-    {
+    private void setupRsDataStore() {
         rsDataStoreToken = this.getCitizen()
-                             .getColony()
-                             .getRequestManager()
-                             .getDataStoreManager()
-                             .get(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                               TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE)
-                             .getId();
+                .getColony()
+                .getRequestManager()
+                .getDataStoreManager()
+                .get(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                        TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE)
+                .getId();
     }
 
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.CRAFTER_ID;
     }
 
     @Override
-    public void serializeToView(final RegistryFriendlyByteBuf buffer)
-    {
+    public void serializeToView(final RegistryFriendlyByteBuf buffer) {
         super.serializeToView(buffer);
         StandardFactoryController.getInstance().serialize(buffer, rsDataStoreToken);
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
         compound.put(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serializeTag(provider, rsDataStoreToken));
         compound.putInt(NbtTagConstants.TAG_PROGRESS, progress);
@@ -106,32 +99,25 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
 
-        if (compound.contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
-        {
+        if (compound.contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE)) {
             rsDataStoreToken = StandardFactoryController.getInstance()
-                                 .deserializeTag(provider, compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
-        }
-        else
-        {
+                    .deserializeTag(provider, compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
+        } else {
             setupRsDataStore();
         }
 
-        if (compound.contains(NbtTagConstants.TAG_PROGRESS))
-        {
+        if (compound.contains(NbtTagConstants.TAG_PROGRESS)) {
             this.progress = compound.getInt(NbtTagConstants.TAG_PROGRESS);
         }
 
-        if (compound.contains(NbtTagConstants.TAG_MAX_COUNTER))
-        {
+        if (compound.contains(NbtTagConstants.TAG_MAX_COUNTER)) {
             this.progress = compound.getInt(NbtTagConstants.TAG_MAX_COUNTER);
         }
 
-        if (compound.contains(NbtTagConstants.TAG_CRAFT_COUNTER))
-        {
+        if (compound.contains(NbtTagConstants.TAG_CRAFT_COUNTER)) {
             this.progress = compound.getInt(NbtTagConstants.TAG_CRAFT_COUNTER);
         }
     }
@@ -141,12 +127,11 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @return the crafter data store.
      */
-    private IRequestSystemCrafterJobDataStore getDataStore()
-    {
+    private IRequestSystemCrafterJobDataStore getDataStore() {
         return getCitizen().getColony()
-                 .getRequestManager()
-                 .getDataStoreManager()
-                 .get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE);
+                .getRequestManager()
+                .getDataStoreManager()
+                .get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE);
     }
 
     /**
@@ -154,13 +139,11 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @return the linked queue.
      */
-    private LinkedList<IToken<?>> getTaskQueueFromDataStore()
-    {
+    private LinkedList<IToken<?>> getTaskQueueFromDataStore() {
         return getDataStore().getQueue();
     }
 
-    public List<IToken<?>> getAssignedTasksFromDataStore()
-    {
+    public List<IToken<?>> getAssignedTasksFromDataStore() {
         return getDataStore().getAssignedTasks();
     }
 
@@ -169,8 +152,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @return true if has currentTask, otherwise false.
      */
-    public boolean hasTask()
-    {
+    public boolean hasTask() {
         return !getTaskQueueFromDataStore().isEmpty();
     }
 
@@ -181,17 +163,14 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      * @return {@link IRequest} of the current Task.
      */
     @SuppressWarnings(UNCHECKED)
-    public <R extends PublicCrafting> IRequest<R> getCurrentTask()
-    {
-        if (getTaskQueueFromDataStore().isEmpty())
-        {
+    public <R extends PublicCrafting> IRequest<R> getCurrentTask() {
+        if (getTaskQueueFromDataStore().isEmpty()) {
             return null;
         }
 
         // This cleans up the state after something went wrong.
         IRequest<R> request = (IRequest<R>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
-        while (request == null)
-        {
+        while (request == null) {
             getTaskQueueFromDataStore().remove(getTaskQueueFromDataStore().peekFirst());
             request = (IRequest<R>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
         }
@@ -204,8 +183,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @param token The token of the requests to add.
      */
-    public void addRequest(@NotNull final IToken<?> token)
-    {
+    public void addRequest(@NotNull final IToken<?> token) {
         getTaskQueueFromDataStore().add(token);
     }
 
@@ -214,10 +192,8 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @param successful True when the processing was successful, false when not.
      */
-    public void finishRequest(final boolean successful)
-    {
-        if (getTaskQueueFromDataStore().isEmpty())
-        {
+    public void finishRequest(final boolean successful) {
+        if (getTaskQueueFromDataStore().isEmpty()) {
             return;
         }
 
@@ -231,25 +207,19 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @param token token of the task to be deleted.
      */
-    public void onTaskDeletion(@NotNull final IToken<?> token)
-    {
-        if (getTaskQueueFromDataStore().contains(token))
-        {
+    public void onTaskDeletion(@NotNull final IToken<?> token) {
+        if (getTaskQueueFromDataStore().contains(token)) {
             getTaskQueueFromDataStore().remove(token);
-        }
-        else if (getAssignedTasksFromDataStore().contains(token))
-        {
+        } else if (getAssignedTasksFromDataStore().contains(token)) {
             getAssignedTasksFromDataStore().remove(token);
         }
     }
 
-    public void onTaskBeingScheduled(@NotNull final IToken<?> token)
-    {
+    public void onTaskBeingScheduled(@NotNull final IToken<?> token) {
         getAssignedTasksFromDataStore().add(token);
     }
 
-    public void onTaskBeingResolved(@NotNull final IToken<?> token)
-    {
+    public void onTaskBeingResolved(@NotNull final IToken<?> token) {
         onTaskDeletion(token);
         addRequest(token);
     }
@@ -259,13 +229,11 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @return The task queue.
      */
-    public List<IToken<?>> getTaskQueue()
-    {
+    public List<IToken<?>> getTaskQueue() {
         return ImmutableList.copyOf(getTaskQueueFromDataStore());
     }
 
-    public List<IToken<?>> getAssignedTasks()
-    {
+    public List<IToken<?>> getAssignedTasks() {
         return ImmutableList.copyOf(getAssignedTasksFromDataStore());
     }
 
@@ -274,8 +242,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @return the count.
      */
-    public int getMaxCraftingCount()
-    {
+    public int getMaxCraftingCount() {
         return maxCraftingCount;
     }
 
@@ -284,8 +251,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @param maxCraftingCount the count to set.
      */
-    public void setMaxCraftingCount(final int maxCraftingCount)
-    {
+    public void setMaxCraftingCount(final int maxCraftingCount) {
         this.maxCraftingCount = maxCraftingCount;
     }
 
@@ -294,8 +260,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @return the counter.
      */
-    public int getCraftCounter()
-    {
+    public int getCraftCounter() {
         return craftCounter;
     }
 
@@ -304,8 +269,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @param craftCounter the counter to set.
      */
-    public void setCraftCounter(final int craftCounter)
-    {
+    public void setCraftCounter(final int craftCounter) {
         this.craftCounter = craftCounter;
     }
 
@@ -314,8 +278,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @return the current progress.
      */
-    public int getProgress()
-    {
+    public int getProgress() {
         return progress;
     }
 
@@ -324,34 +287,30 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      *
      * @param progress the current progress.
      */
-    public void setProgress(final int progress)
-    {
+    public void setProgress(final int progress) {
         this.progress = progress;
     }
 
     @Override
-    public void onRemoval()
-    {
+    public void onRemoval() {
         super.onRemoval();
         cancelAssignedRequests();
         getColony().getRequestManager().getDataStoreManager().remove(this.rsDataStoreToken);
     }
 
-    private void cancelAssignedRequests()
-    {
-        for (final IToken<?> t : getTaskQueue())
-        {
+    private void cancelAssignedRequests() {
+        for (final IToken<?> t : getTaskQueue()) {
             getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
         }
     }
 
     /**
      * Play a job specific work sound at a pos.
+     *
      * @param blockPos the pos to play it at.
-     * @param worker the worker to play it for.
+     * @param worker   the worker to play it for.
      */
-    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
-    {
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker) {
         // Child override if necessary
     }
 }

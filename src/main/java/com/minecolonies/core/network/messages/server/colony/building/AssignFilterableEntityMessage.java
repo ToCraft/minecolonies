@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message which handles the assignment of entities to filterable entity lists.
  */
-public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage<AbstractBuilding>
-{
+public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage<AbstractBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "assign_filterable_entity", AssignFilterableEntityMessage::new);
 
     /**
@@ -40,28 +39,25 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
      *
      * @param id       the id of the list of filterables.
      * @param assign   compost if true, dont if false.
-     * @param entity     the entity to assign
+     * @param entity   the entity to assign
      * @param building the building we're executing on.
      */
-    public AssignFilterableEntityMessage(final IBuildingView building, final int id, final ResourceLocation entity, final boolean assign)
-    {
+    public AssignFilterableEntityMessage(final IBuildingView building, final int id, final ResourceLocation entity, final boolean assign) {
         super(TYPE, building);
         this.assign = assign;
         this.entity = entity;
         this.id = id;
     }
 
-    protected AssignFilterableEntityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected AssignFilterableEntityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.assign = buf.readBoolean();
-        this.entity =buf.readResourceLocation();
+        this.entity = buf.readResourceLocation();
         this.id = buf.readInt();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeBoolean(this.assign);
         buf.writeResourceLocation(this.entity);
@@ -69,16 +65,11 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
-    {
-        if (building.getModule(id) instanceof final EntityListModule module)
-        {
-            if (assign)
-            {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building) {
+        if (building.getModule(id) instanceof final EntityListModule module) {
+            if (assign) {
                 module.addEntity(entity);
-            }
-            else
-            {
+            } else {
                 module.removeEntity(entity);
             }
         }

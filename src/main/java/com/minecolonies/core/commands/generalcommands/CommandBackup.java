@@ -9,23 +9,18 @@ import net.minecraft.network.chat.Component;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_BACKUP_FAILED;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_BACKUP_SUCCESS;
 
-public class CommandBackup implements IMCOPCommand
-{
+public class CommandBackup implements IMCOPCommand {
     /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         BackUpHelper.lastBackupTime = 0;
-        if (BackUpHelper.backupColonyData(context.getSource().getLevel().registryAccess()))
-        {
+        if (BackUpHelper.backupColonyData(context.getSource().getLevel().registryAccess())) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_BACKUP_SUCCESS), true);
-        }
-        else
-        {
+        } else {
             context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_BACKUP_FAILED), true);
         }
         return 1;
@@ -35,8 +30,7 @@ public class CommandBackup implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "backup";
     }
 }

@@ -1,26 +1,24 @@
 package com.minecolonies.core.colony.jobs;
 
-import com.minecolonies.core.entity.citizen.EntityCitizen;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkBaker;
+import com.minecolonies.core.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The fisherman's job class. implements some useful things for him.
  */
-public class JobBaker extends AbstractJobCrafter<EntityAIWorkBaker, JobBaker>
-{
+public class JobBaker extends AbstractJobCrafter<EntityAIWorkBaker, JobBaker> {
     /**
      * Initializes the job class.
      *
      * @param entity The entity which will use this job class.
      */
-    public JobBaker(final ICitizenData entity)
-    {
+    public JobBaker(final ICitizenData entity) {
         super(entity);
     }
 
@@ -31,8 +29,7 @@ public class JobBaker extends AbstractJobCrafter<EntityAIWorkBaker, JobBaker>
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.BAKER_ID;
     }
 
@@ -43,14 +40,12 @@ public class JobBaker extends AbstractJobCrafter<EntityAIWorkBaker, JobBaker>
      */
     @NotNull
     @Override
-    public EntityAIWorkBaker generateAI()
-    {
+    public EntityAIWorkBaker generateAI() {
         return new EntityAIWorkBaker(this);
     }
 
     @Override
-    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
-    {
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker) {
         worker.queueSound(SoundEvents.FIRECHARGE_USE, blockPos, 10, 0, 0.5f, 0.1f);
     }
 }

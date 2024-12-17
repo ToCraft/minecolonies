@@ -18,25 +18,24 @@ import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.core.colony.jobs.JobBuilder;
+import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import com.minecolonies.core.colony.workorders.*;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PURGED_MOBS;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PURGED_MOBS;
 
 /**
  * The builders building.
  */
-public class BuildingBuilder extends AbstractBuildingStructureBuilder
-{
+public class BuildingBuilder extends AbstractBuildingStructureBuilder {
     /**
      * Settings key for the building mode.
      */
@@ -65,8 +64,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      * @param c the colony.
      * @param l the position.
      */
-    public BuildingBuilder(final IColony c, final BlockPos l)
-    {
+    public BuildingBuilder(final IColony c, final BlockPos l) {
         super(c, l);
 
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.pickaxe.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
@@ -83,27 +81,23 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      */
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return BUILDER;
     }
 
     @Override
-    public void onWakeUp()
-    {
+    public void onWakeUp() {
         this.purgedMobsToday = false;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         this.purgedMobsToday = compound.getBoolean(TAG_PURGED_MOBS);
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
         compound.putBoolean(TAG_PURGED_MOBS, this.purgedMobsToday);
         return compound;
@@ -114,8 +108,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      *
      * @param purgedMobsToday true if so.
      */
-    public void setPurgedMobsToday(final boolean purgedMobsToday)
-    {
+    public void setPurgedMobsToday(final boolean purgedMobsToday) {
         this.purgedMobsToday = purgedMobsToday;
     }
 
@@ -124,8 +117,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      *
      * @return true if so.
      */
-    public boolean hasPurgedMobsToday()
-    {
+    public boolean hasPurgedMobsToday() {
         return purgedMobsToday;
     }
 
@@ -134,76 +126,62 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      *
      * @return false if he should.
      */
-    public boolean getManualMode()
-    {
+    public boolean getManualMode() {
         return getSetting(MODE).getValue().equals(MANUAL_SETTING);
     }
 
     @Override
-    public void searchWorkOrder()
-    {
+    public void searchWorkOrder() {
         final ICitizenData citizen = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
-        if (citizen == null)
-        {
+        if (citizen == null) {
             return;
         }
 
         final List<IWorkOrder> list = getColony().getWorkManager().getOrderedList(wo -> wo.canBeMadeBy(citizen.getJob()), getPosition());
         list.sort((a, b) -> {
-            if (a.getWorkOrderType() == WorkOrderType.REMOVE)
-            {
+            if (a.getWorkOrderType() == WorkOrderType.REMOVE) {
                 return -1;
             }
-            if (b.getWorkOrderType() == WorkOrderType.REMOVE)
-            {
+            if (b.getWorkOrderType() == WorkOrderType.REMOVE) {
                 return 1;
             }
             return 0;
         });
 
         final IWorkOrder order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
-        if (order != null)
-        {
+        if (order != null) {
             citizen.getJob(JobBuilder.class).setWorkOrder(order);
             order.setClaimedBy(citizen);
             return;
         }
 
-        if (getManualMode())
-        {
+        if (getManualMode()) {
             return;
         }
 
-        for (final IWorkOrder wo : list)
-        {
+        for (final IWorkOrder wo : list) {
             double distanceToBuilder = Double.MAX_VALUE;
 
-            if (wo instanceof WorkOrderBuilding && wo.getWorkOrderType() != WorkOrderType.REMOVE && !wo.canBuild(citizen))
-            {
+            if (wo instanceof WorkOrderBuilding && wo.getWorkOrderType() != WorkOrderType.REMOVE && !wo.canBuild(citizen)) {
                 continue;
             }
 
-            for (@NotNull final ICitizenData otherBuilder : getColony().getCitizenManager().getCitizens())
-            {
+            for (@NotNull final ICitizenData otherBuilder : getColony().getCitizenManager().getCitizens()) {
                 final JobBuilder job = otherBuilder.getJob(JobBuilder.class);
 
-                if (job == null || otherBuilder.getWorkBuilding() == null || citizen.getId() == otherBuilder.getId())
-                {
+                if (job == null || otherBuilder.getWorkBuilding() == null || citizen.getId() == otherBuilder.getId()) {
                     continue;
                 }
 
-                if (!job.hasWorkOrder() && wo instanceof WorkOrderBuilding && wo.canBuild(otherBuilder))
-                {
+                if (!job.hasWorkOrder() && wo instanceof WorkOrderBuilding && wo.canBuild(otherBuilder)) {
                     final double distance = otherBuilder.getWorkBuilding().getID().distSqr(wo.getLocation());
-                    if (distance < distanceToBuilder)
-                    {
+                    if (distance < distanceToBuilder) {
                         distanceToBuilder = distance;
                     }
                 }
             }
 
-            if (citizen.getWorkBuilding().getID().distSqr(wo.getLocation()) < distanceToBuilder)
-            {
+            if (citizen.getWorkBuilding().getID().distSqr(wo.getLocation()) < distanceToBuilder) {
                 citizen.getJob(JobBuilder.class).setWorkOrder(wo);
                 wo.setClaimedBy(citizen);
                 return;
@@ -216,29 +194,24 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      *
      * @param orderId the id of the work order to select.
      */
-    public void setWorkOrder(int orderId)
-    {
+    public void setWorkOrder(int orderId) {
         final ICitizenData citizen = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
-        if (citizen == null)
-        {
+        if (citizen == null) {
             return;
         }
 
         IWorkOrder wo = getColony().getWorkManager().getWorkOrder(orderId);
-        if (wo == null || (wo.getClaimedBy() != null && !wo.getClaimedBy().equals(getPosition())))
-        {
+        if (wo == null || (wo.getClaimedBy() != null && !wo.getClaimedBy().equals(getPosition()))) {
             return;
         }
 
-        if (citizen.getJob(JobBuilder.class).hasWorkOrder())
-        {
+        if (citizen.getJob(JobBuilder.class).hasWorkOrder()) {
             wo.setClaimedBy(citizen);
             getColony().getWorkManager().setDirty(true);
             return;
         }
 
-        if (wo.canBeMadeBy(citizen.getJob()))
-        {
+        if (wo.canBeMadeBy(citizen.getJob())) {
             citizen.getJob(JobBuilder.class).setWorkOrder(wo);
             wo.setClaimedBy(citizen);
             getColony().getWorkManager().setDirty(true);
@@ -247,22 +220,18 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public boolean canBeBuiltByBuilder(final int newLevel)
-    {
+    public boolean canBeBuiltByBuilder(final int newLevel) {
         return getBuildingLevel() + 1 == newLevel;
     }
 
     @Override
-    public boolean canAssignCitizens()
-    {
+    public boolean canAssignCitizens() {
         return true;
     }
 
     @Override
-    public boolean canEat(final ItemStack stack)
-    {
-        if (requiresResourceForBuilding(stack))
-        {
+    public boolean canEat(final ItemStack stack) {
+        if (requiresResourceForBuilding(stack)) {
             return false;
         }
         return super.canEat(stack);
@@ -271,23 +240,20 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     /**
      * Provides a view of the miner building class.
      */
-    public static class View extends AbstractBuildingBuilderView
-    {
+    public static class View extends AbstractBuildingBuilderView {
         /**
          * Public constructor of the view, creates an instance of it.
          *
          * @param c the colony.
          * @param l the position.
          */
-        public View(final IColonyView c, final BlockPos l)
-        {
+        public View(final IColonyView c, final BlockPos l) {
             super(c, l);
         }
 
         @NotNull
         @Override
-        public BOWindow getWindow()
-        {
+        public BOWindow getWindow() {
             return new WindowHutBuilderModule(this);
         }
     }

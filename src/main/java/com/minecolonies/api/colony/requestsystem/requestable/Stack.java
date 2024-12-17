@@ -22,23 +22,22 @@ import java.util.stream.Collectors;
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items.
  */
-public class Stack implements IConcreteDeliverable
-{
+public class Stack implements IConcreteDeliverable {
     /**
      * Set of type tokens belonging to this class.
      */
     private final static Set<TypeToken<?>>
-      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Stack.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+            TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Stack.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_STACK       = "Stack";
-    private static final String NBT_MATCHMETA   = "MatchMeta";
-    private static final String NBT_MATCHNBT    = "MatchNBT";
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_STACK = "Stack";
+    private static final String NBT_MATCHMETA = "MatchMeta";
+    private static final String NBT_MATCHNBT = "MatchNBT";
     private static final String NBT_BUILDING_RES = "BuildingRes";
-    private static final String NBT_RESULT       = "Result";
-    private static final String NBT_COUNT       = "Count";
-    private static final String NBT_MINCOUNT    = "MinCount";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_RESULT = "Result";
+    private static final String NBT_COUNT = "Count";
+    private static final String NBT_MINCOUNT = "MinCount";
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
     private final ItemStack theStack;
@@ -76,19 +75,17 @@ public class Stack implements IConcreteDeliverable
      *
      * @param stack the required stack.
      */
-    public Stack(@NotNull final ItemStack stack)
-    {
+    public Stack(@NotNull final ItemStack stack) {
         this(stack, true);
     }
 
     /**
      * Create a Stack deliverable.
      *
-     * @param stack the required stack.
+     * @param stack           the required stack.
      * @param matchDurability whether or not to match Durability
      */
-    public Stack(@NotNull final ItemStack stack, boolean matchDurability)
-    {
+    public Stack(@NotNull final ItemStack stack, boolean matchDurability) {
         this(stack, matchDurability, true, ItemStackUtils.EMPTY, Math.min(stack.getCount(), stack.getMaxStackSize()), Math.min(stack.getCount(), stack.getMaxStackSize()));
     }
 
@@ -100,8 +97,7 @@ public class Stack implements IConcreteDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public Stack(@NotNull final ItemStack stack, final int count, final int minCount)
-    {
+    public Stack(@NotNull final ItemStack stack, final int count, final int minCount) {
         this(stack, count, minCount, true);
     }
 
@@ -110,20 +106,19 @@ public class Stack implements IConcreteDeliverable
      *
      * @param itemStorage the storage to use.
      */
-    public Stack(@NotNull final ItemStorage itemStorage)
-    {
+    public Stack(@NotNull final ItemStorage itemStorage) {
         this(itemStorage.getItemStack(), !itemStorage.ignoreDamageValue(), !itemStorage.ignoreNBT(), ItemStackUtils.EMPTY, itemStorage.getAmount(), itemStorage.getAmount());
     }
 
     /**
      * Create a Stack deliverable with variable nbt.
-     * @param stack the stack to deliver.
-     * @param count the count.
+     *
+     * @param stack    the stack to deliver.
+     * @param count    the count.
      * @param minCount the min count.
      * @param matchNBT if nbt has to match.
      */
-    public Stack(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)
-    {
+    public Stack(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT) {
         this(stack, true, matchNBT, ItemStackUtils.EMPTY, count, minCount);
     }
 
@@ -131,49 +126,43 @@ public class Stack implements IConcreteDeliverable
      * Create a Stack deliverable.
      *
      * @param stack       the required stack.
-     * @param matchDamage   if damage has to be matched.
+     * @param matchDamage if damage has to be matched.
      * @param matchNBT    if NBT has to be matched.
      * @param result      the result stack.
      * @param count       the count.
      * @param minCount    the min count.
      */
     public Stack(
-      @NotNull final ItemStack stack,
-      final boolean matchDamage,
-      final boolean matchNBT,
-      @NotNull final ItemStack result,
-      final int count,
-      final int minCount)
-    {
+            @NotNull final ItemStack stack,
+            final boolean matchDamage,
+            final boolean matchNBT,
+            @NotNull final ItemStack result,
+            final int count,
+            final int minCount) {
         this(stack, matchDamage, matchNBT, ItemStackUtils.EMPTY, count, minCount, true);
     }
 
     /**
      * Create a Stack deliverable.
      *
-     * @param stack       the required stack.
-     * @param matchDamage   if damage has to be matched.
-     * @param matchNBT    if NBT has to be matched.
-     * @param result      the result stack.
-     * @param count       the count.
-     * @param minCount    the min count.
+     * @param stack                   the required stack.
+     * @param matchDamage             if damage has to be matched.
+     * @param matchNBT                if NBT has to be matched.
+     * @param result                  the result stack.
+     * @param count                   the count.
+     * @param minCount                the min count.
      * @param canBeResolvedByBuilding if can be resolved by building.
      */
-    public Stack(final ItemStack stack, final boolean matchDamage, final boolean matchNBT, final ItemStack result, final int count, final int minCount, final boolean canBeResolvedByBuilding)
-    {
-        if (ItemStackUtils.isEmpty(stack))
-        {
+    public Stack(final ItemStack stack, final boolean matchDamage, final boolean matchNBT, final ItemStack result, final int count, final int minCount, final boolean canBeResolvedByBuilding) {
+        if (ItemStackUtils.isEmpty(stack)) {
             throw new IllegalArgumentException("Cannot deliver Empty Stack.");
         }
 
-        if (stack.getCount() > stack.getMaxStackSize())
-        {
+        if (stack.getCount() > stack.getMaxStackSize()) {
             Log.getLogger().error("Stack with ItemStack with too large stack size.: ", new Exception());
             this.theStack = stack.copy();
             this.theStack.setCount(this.theStack.getMaxStackSize());
-        }
-        else
-        {
+        } else {
             this.theStack = stack.copy();
         }
 
@@ -192,16 +181,14 @@ public class Stack implements IConcreteDeliverable
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final Stack input)
-    {
+    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final Stack input) {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_STACK, input.theStack.saveOptional(provider));
         compound.putBoolean(NBT_MATCHMETA, input.matchDamage);
         compound.putBoolean(NBT_MATCHNBT, input.matchNBT);
         compound.putBoolean(NBT_BUILDING_RES, input.canBeResolvedByBuilding);
 
-        if (!ItemStackUtils.isEmpty(input.result))
-        {
+        if (!ItemStackUtils.isEmpty(input.result)) {
             compound.put(NBT_RESULT, input.result.saveOptional(provider));
         }
         compound.putInt(NBT_COUNT, input.getCount());
@@ -217,8 +204,7 @@ public class Stack implements IConcreteDeliverable
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static Stack deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
-    {
+    public static Stack deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound) {
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK), provider);
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
@@ -228,8 +214,7 @@ public class Stack implements IConcreteDeliverable
 
         int count = compound.getInt("size");
         int minCount = count;
-        if (compound.contains(NBT_COUNT))
-        {
+        if (compound.contains(NBT_COUNT)) {
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);
         }
@@ -244,16 +229,14 @@ public class Stack implements IConcreteDeliverable
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final Stack input)
-    {
+    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final Stack input) {
         Utils.serializeCodecMess(buffer, input.theStack);
         buffer.writeBoolean(input.matchDamage);
         buffer.writeBoolean(input.matchNBT);
         buffer.writeBoolean(input.canBeResolvedByBuilding);
 
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
-        if (!ItemStackUtils.isEmpty(input.result))
-        {
+        if (!ItemStackUtils.isEmpty(input.result)) {
             Utils.serializeCodecMess(buffer, input.result);
         }
         buffer.writeInt(input.getCount());
@@ -267,8 +250,7 @@ public class Stack implements IConcreteDeliverable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Stack deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
-    {
+    public static Stack deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer) {
         final ItemStack stack = Utils.deserializeCodecMess(buffer);
         final boolean matchMeta = buffer.readBoolean();
         final boolean matchNBT = buffer.readBoolean();
@@ -282,103 +264,88 @@ public class Stack implements IConcreteDeliverable
     }
 
     @Override
-    public boolean matches(@NotNull final ItemStack stack)
-    {
+    public boolean matches(@NotNull final ItemStack stack) {
         return ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack, matchDamage, matchNBT);
     }
 
     @Override
-    public int getCount()
-    {
+    public int getCount() {
         return this.count;
     }
 
     @Override
-    public int getMinimumCount()
-    {
+    public int getMinimumCount() {
         return minCount;
     }
 
     @NotNull
-    public ItemStack getStack()
-    {
+    public ItemStack getStack() {
         return theStack;
     }
 
     @Override
-    public void setResult(@NotNull final ItemStack result)
-    {
+    public void setResult(@NotNull final ItemStack result) {
         this.result = result;
     }
 
     /**
      * Check if nbt should be matched.
+     *
      * @return true if so.
      */
-    public boolean matchNBT()
-    {
+    public boolean matchNBT() {
         return matchNBT;
     }
 
     /**
      * Check if damage should be matched.
+     *
      * @return true if so.
      */
-    public boolean matchDamage()
-    {
+    public boolean matchDamage() {
         return matchDamage;
     }
 
     @Override
-    public IDeliverable copyWithCount(final int newCount)
-    {
+    public IDeliverable copyWithCount(final int newCount) {
         return new Stack(this.theStack, this.matchDamage, this.matchNBT, this.result, newCount, this.minCount);
     }
 
     @NotNull
     @Override
-    public ItemStack getResult()
-    {
+    public ItemStack getResult() {
         return result;
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof Stack))
-        {
+        if (!(o instanceof Stack)) {
             return false;
         }
 
         final Stack stack1 = (Stack) o;
 
-        if (matchDamage != stack1.matchDamage)
-        {
+        if (matchDamage != stack1.matchDamage) {
             return false;
         }
-        if (canBeResolvedByBuilding != stack1.canBeResolvedByBuilding)
-        {
+        if (canBeResolvedByBuilding != stack1.canBeResolvedByBuilding) {
             return false;
         }
-        if (matchNBT != stack1.matchNBT)
-        {
+        if (matchNBT != stack1.matchNBT) {
             return false;
         }
 
-        if (!ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack1.getStack()))
-        {
+        if (!ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack1.getStack())) {
             return false;
         }
         return ItemStackUtils.compareItemStacksIgnoreStackSize(getResult(), stack1.getResult());
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result1 = getStack().hashCode();
         result1 = 31 * result1 + (matchDamage ? 1 : 0);
         result1 = 31 * result1 + (matchNBT ? 1 : 0);
@@ -388,25 +355,21 @@ public class Stack implements IConcreteDeliverable
     }
 
     @Override
-    public boolean canBeResolvedByBuilding()
-    {
+    public boolean canBeResolvedByBuilding() {
         return canBeResolvedByBuilding;
     }
 
-    public void setCanBeResolvedByBuilding(final boolean canBeResolvedByBuilding)
-    {
+    public void setCanBeResolvedByBuilding(final boolean canBeResolvedByBuilding) {
         this.canBeResolvedByBuilding = canBeResolvedByBuilding;
     }
 
     @Override
-    public List<ItemStack> getRequestedItems()
-    {
+    public List<ItemStack> getRequestedItems() {
         return Lists.newArrayList(theStack);
     }
 
     @Override
-    public Set<TypeToken<?>> getSuperClasses()
-    {
+    public Set<TypeToken<?>> getSuperClasses() {
         return TYPE_TOKENS;
     }
 }

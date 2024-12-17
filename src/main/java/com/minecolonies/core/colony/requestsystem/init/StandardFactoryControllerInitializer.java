@@ -22,18 +22,15 @@ import com.minecolonies.core.research.LocalResearchFactory;
 /**
  * Initializer for the {@link StandardFactoryControllerInitializer}
  */
-public final class StandardFactoryControllerInitializer
-{
+public final class StandardFactoryControllerInitializer {
 
     /**
      * Private constructor to hide the implicit public one.
      */
-    private StandardFactoryControllerInitializer()
-    {
+    private StandardFactoryControllerInitializer() {
     }
 
-    public static void onPreInit()
-    {
+    public static void onPreInit() {
         StandardFactoryController.getInstance().registerNewFactory(new StandardTokenFactory());
         StandardFactoryController.getInstance().registerNewFactory(new InitializedTokenFactory());
         StandardFactoryController.getInstance().registerNewFactory(new RandomSeededTokenFactory());

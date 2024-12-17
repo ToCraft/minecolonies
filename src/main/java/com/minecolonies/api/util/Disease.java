@@ -8,8 +8,7 @@ import java.util.List;
 /**
  * Disease storage class.
  */
-public class Disease
-{
+public class Disease {
     /**
      * The name string.
      */
@@ -32,8 +31,7 @@ public class Disease
      * @param rarity its rarity.
      * @param cure   the cure.
      */
-    public Disease(final String name, final int rarity, final List<ItemStack> cure)
-    {
+    public Disease(final String name, final int rarity, final List<ItemStack> cure) {
         this.name = name;
         this.rarity = rarity;
         this.cure = cure;
@@ -44,8 +42,7 @@ public class Disease
      *
      * @return the name.
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
@@ -54,8 +51,7 @@ public class Disease
      *
      * @return the rarity.
      */
-    public int getRarity()
-    {
+    public int getRarity() {
         return rarity;
     }
 
@@ -64,8 +60,7 @@ public class Disease
      *
      * @return the cure.
      */
-    public List<ItemStack> getCure()
-    {
+    public List<ItemStack> getCure() {
         return ImmutableList.copyOf(cure);
     }
 
@@ -74,11 +69,9 @@ public class Disease
      *
      * @return the cure string.
      */
-    public String getCureString()
-    {
+    public String getCureString() {
         StringBuilder cureString = new StringBuilder();
-        for (final ItemStack cureStack : cure)
-        {
+        for (final ItemStack cureStack : cure) {
             cureString.append(cureStack.getHoverName().getString());
             cureString.append("+");
         }

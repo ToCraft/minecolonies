@@ -29,8 +29,7 @@ import static com.minecolonies.core.colony.CitizenData.SUFFIXES;
 /**
  * Repo manager to spawn children.
  */
-public class ReproductionManager implements IReproductionManager
-{
+public class ReproductionManager implements IReproductionManager {
     /**
      * The time in seconds before the initial try to spawn. 5 minutes between each attempt.
      */
@@ -44,7 +43,7 @@ public class ReproductionManager implements IReproductionManager
     /**
      * Min necessary citizens for reproduction.
      */
-    private static final int MIN_SIZE_FOR_REPRO   = 2;
+    private static final int MIN_SIZE_FOR_REPRO = 2;
 
     /**
      * The timer counting ticks to the next time creating a child
@@ -63,19 +62,17 @@ public class ReproductionManager implements IReproductionManager
 
     /**
      * Create a new reproduction manager.
+     *
      * @param colony the colony to spawn kids for.
      */
-    public ReproductionManager(final Colony colony)
-    {
+    public ReproductionManager(final Colony colony) {
         this.colony = colony;
         childCreationTimer = random.nextInt(CHILD_SPAWN_INTERVAL) + MIN_TIME_BEFORE_SPAWNTRY;
     }
 
     @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
-        if ( (childCreationTimer -= MAX_TICKRATE) <= 0)
-        {
+    public void onColonyTick(@NotNull final IColony colony) {
+        if ((childCreationTimer -= MAX_TICKRATE) <= 0) {
             childCreationTimer = (MIN_TIME_BEFORE_SPAWNTRY + random.nextInt(CHILD_SPAWN_INTERVAL)) * (colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4, colony.getCitizenManager().getMaxCitizens()));
             trySpawnChild();
         }
@@ -85,19 +82,15 @@ public class ReproductionManager implements IReproductionManager
      * Try to spawn a new citizen as child. Mom / dad entities are required and chosen randomly in this hut. Childs inherit stats from their parents, avergaged +-2 Childs get
      * assigned to a free housing slot in the colony to be raised there, if the house has an adult living there the child takes its name and gets raised by it.
      */
-    public void trySpawnChild()
-    {
+    public void trySpawnChild() {
         // Spawn a child when adults are present
-        if (colony.canMoveIn() && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens() && colony.getCitizenManager().getCurrentCitizenCount() >= Math.min(MIN_SIZE_FOR_REPRO, MinecoloniesAPIProxy.getInstance().getConfig().getServer().initialCitizenAmount.get()))
-        {
-            if (!checkForBioParents())
-            {
+        if (colony.canMoveIn() && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens() && colony.getCitizenManager().getCurrentCitizenCount() >= Math.min(MIN_SIZE_FOR_REPRO, MinecoloniesAPIProxy.getInstance().getConfig().getServer().initialCitizenAmount.get())) {
+            if (!checkForBioParents()) {
                 return;
             }
 
             final IBuilding newHome = colony.getBuildingManager().getHouseWithSpareBed();
-            if (newHome == null)
-            {
+            if (newHome == null) {
                 return;
             }
 
@@ -106,10 +99,8 @@ public class ReproductionManager implements IReproductionManager
             assignedCitizens.removeIf(ICitizen::isChild);
 
             boolean isOnlyChildInColony = true;
-            for (final ICitizenData data : colony.getCitizenManager().getCitizens())
-            {
-                if (data.isChild())
-                {
+            for (final ICitizenData data : colony.getCitizenManager().getCitizens()) {
+                if (data.isChild()) {
                     isOnlyChildInColony = false;
                     break;
                 }
@@ -118,43 +109,33 @@ public class ReproductionManager implements IReproductionManager
             final ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
             ICitizenData firstParent;
             ICitizenData secondParent;
-            if (!assignedCitizens.isEmpty())
-            {
+            if (!assignedCitizens.isEmpty()) {
                 firstParent = assignedCitizens.get(random.nextInt(assignedCitizens.size()));
                 secondParent = firstParent.getPartner();
-                if (secondParent == null)
-                {
+                if (secondParent == null) {
                     assignedCitizens.removeIf(cit -> cit.getPartner() != null || cit.getName().equals(firstParent.getName()) || cit.isRelatedTo(firstParent) || cit.isChild());
-                    if (assignedCitizens.size() > 0 && random.nextBoolean())
-                    {
+                    if (assignedCitizens.size() > 0 && random.nextBoolean()) {
                         secondParent = assignedCitizens.get(random.nextInt(assignedCitizens.size()));
-                    }
-                    else
-                    {
+                    } else {
                         final BlockPos altPos = colony.getBuildingManager().getRandomBuilding(b -> b.hasModule(LivingBuildingModule.class) && !b.getPosition().equals(newHome.getPosition()) && BlockPosUtil.getDistance2D(b.getPosition(), newHome.getPosition()) < 50);
-                        if (altPos != null)
-                        {
+                        if (altPos != null) {
                             final IBuilding building = colony.getBuildingManager().getBuilding(altPos);
                             final LivingBuildingModule altModule = building.getFirstModuleOccurance(LivingBuildingModule.class);
 
                             final List<ICitizenData> newAssignedCitizens = altModule.getAssignedCitizen();
                             newAssignedCitizens.removeIf(cit -> cit.isChild() || cit.getPartner() != null || cit.isRelatedTo(firstParent));
-                            if (newAssignedCitizens.size() > 0)
-                            {
+                            if (newAssignedCitizens.size() > 0) {
                                 secondParent = newAssignedCitizens.get(random.nextInt(newAssignedCitizens.size()));
                             }
                         }
                     }
                 }
-            }
-            else
-            {
+            } else {
                 firstParent = null;
                 secondParent = null;
             }
 
-            if (secondParent != null)
-            {
+            if (secondParent != null) {
                 firstParent.setPartner(secondParent.getId());
                 secondParent.setPartner(firstParent.getId());
             }
@@ -163,15 +144,13 @@ public class ReproductionManager implements IReproductionManager
             newCitizen.setIsChild(true);
 
             final List<String> possibleSuffixes = new ArrayList<>();
-            if (firstParent != null)
-            {
+            if (firstParent != null) {
                 newCitizen.addSiblings(firstParent.getChildren().toArray(new Integer[0]));
                 firstParent.addChildren(newCitizen.getId());
                 possibleSuffixes.add(firstParent.getTextureSuffix());
             }
 
-            if (secondParent != null)
-            {
+            if (secondParent != null) {
                 newCitizen.addSiblings(secondParent.getChildren().toArray(new Integer[0]));
                 secondParent.addChildren(newCitizen.getId());
                 possibleSuffixes.add(secondParent.getTextureSuffix());
@@ -182,22 +161,18 @@ public class ReproductionManager implements IReproductionManager
 
             module.assignCitizen(newCitizen);
 
-            for (final int sibling : newCitizen.getSiblings())
-            {
+            for (final int sibling : newCitizen.getSiblings()) {
                 final ICitizenData siblingData = colony.getCitizenManager().getCivilian(sibling);
-                if (siblingData != null)
-                {
+                if (siblingData != null) {
                     siblingData.addSiblings(newCitizen.getId());
                 }
             }
 
-            if (possibleSuffixes.contains("_w") && possibleSuffixes.contains("_d"))
-            {
+            if (possibleSuffixes.contains("_w") && possibleSuffixes.contains("_d")) {
                 possibleSuffixes.add("_b");
             }
 
-            if (possibleSuffixes.isEmpty())
-            {
+            if (possibleSuffixes.isEmpty()) {
                 possibleSuffixes.addAll(SUFFIXES);
             }
 
@@ -207,8 +182,7 @@ public class ReproductionManager implements IReproductionManager
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.COLONY_POPULATION.get().trigger(playerMP, populationCount));
 
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), newHome.getPosition());
-            if (isOnlyChildInColony)
-            {
+            if (isOnlyChildInColony) {
                 MessageUtils.format(MESSAGE_NEW_CHILD_BORN, newCitizen.getName(), colony.getName()).sendTo(colony).forManagers();
             }
 
@@ -220,43 +194,33 @@ public class ReproductionManager implements IReproductionManager
     /**
      * Check if there are potential biological parents in the colony.
      * (At least one male/female citizen).
+     *
      * @return true if so.
      */
-    private boolean checkForBioParents()
-    {
+    private boolean checkForBioParents() {
         boolean hasMale = false;
         boolean hasFemale = false;
 
-        for (final ICitizenData data : colony.getCitizenManager().getCitizens())
-        {
-            if (data.isFemale())
-            {
+        for (final ICitizenData data : colony.getCitizenManager().getCitizens()) {
+            if (data.isFemale()) {
                 hasFemale = true;
-            }
-            else
-            {
+            } else {
                 hasMale = true;
             }
 
-            if (hasFemale && hasMale)
-            {
+            if (hasFemale && hasMale) {
                 return true;
             }
         }
 
-        for (final ICivilianData data : colony.getVisitorManager().getCivilianDataMap().values())
-        {
-            if (data.isFemale())
-            {
+        for (final ICivilianData data : colony.getVisitorManager().getCivilianDataMap().values()) {
+            if (data.isFemale()) {
                 hasFemale = true;
-            }
-            else
-            {
+            } else {
                 hasMale = true;
             }
 
-            if (hasFemale && hasMale)
-            {
+            if (hasFemale && hasMale) {
                 return true;
             }
         }

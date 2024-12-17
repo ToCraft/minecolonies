@@ -23,32 +23,27 @@ import java.util.stream.Stream;
  * This is a HolderLookup.Provider that's populated on-demand during datagen, so that we
  * can look up loot tables for {@link com.minecolonies.core.colony.crafting.LootTableAnalyzer}.
  */
-public class DatagenLootTableManager implements HolderLookup.Provider
-{
+public class DatagenLootTableManager implements HolderLookup.Provider {
     private final HolderLookup.Provider baseProvider;
-    private final ExistingFileHelper    existingFileHelper;
-    private final Registry<LootTable>   registry = new DynamicLoadingRegistry<>(Registries.LOOT_TABLE, Lifecycle.stable(), false, LootTable.DIRECT_CODEC);
+    private final ExistingFileHelper existingFileHelper;
+    private final Registry<LootTable> registry = new DynamicLoadingRegistry<>(Registries.LOOT_TABLE, Lifecycle.stable(), false, LootTable.DIRECT_CODEC);
 
     public DatagenLootTableManager(@NotNull final HolderLookup.Provider baseProvider,
-                                   @NotNull final ExistingFileHelper existingFileHelper)
-    {
+                                   @NotNull final ExistingFileHelper existingFileHelper) {
         this.baseProvider = baseProvider;
         this.existingFileHelper = existingFileHelper;
     }
 
     @NotNull
     @Override
-    public Stream<ResourceKey<? extends Registry<?>>> listRegistries()
-    {
+    public Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
         return baseProvider.listRegistries();
     }
 
     @NotNull
     @Override
-    public <T> Optional<HolderLookup.RegistryLookup<T>> lookup(@NotNull final ResourceKey<? extends Registry<? extends T>> registryId)
-    {
-        if (registryId.equals(Registries.LOOT_TABLE))
-        {
+    public <T> Optional<HolderLookup.RegistryLookup<T>> lookup(@NotNull final ResourceKey<? extends Registry<? extends T>> registryId) {
+        if (registryId.equals(Registries.LOOT_TABLE)) {
             return Optional.of((HolderLookup.RegistryLookup<T>) registry.asLookup());
         }
 
@@ -57,8 +52,7 @@ public class DatagenLootTableManager implements HolderLookup.Provider
 
     @NotNull
     @Override
-    public <V> RegistryOps<V> createSerializationContext(@NotNull final DynamicOps<V> ops)
-    {
+    public <V> RegistryOps<V> createSerializationContext(@NotNull final DynamicOps<V> ops) {
         return baseProvider.createSerializationContext(ops);
     }
 
@@ -66,27 +60,24 @@ public class DatagenLootTableManager implements HolderLookup.Provider
      * This is a {@link Registry} that will try to dynamically load the corresponding JSON file if not already found.
      * It's intended for use during datagen for registries that are not populated by default.
      * It does not implement everything needed for a registry; just the minimum required for purpose.
+     *
      * @param <T> The registry object type.
      */
-    private class DynamicLoadingRegistry<T> extends MappedRegistry<T>
-    {
+    private class DynamicLoadingRegistry<T> extends MappedRegistry<T> {
         private final Codec<T> codec;
 
         public DynamicLoadingRegistry(@NotNull final ResourceKey<? extends Registry<T>> registryId,
                                       @NotNull final Lifecycle lifecycle,
                                       final boolean intrusive,
-                                      @NotNull final Codec<T> codec)
-        {
+                                      @NotNull final Codec<T> codec) {
             super(registryId, lifecycle, intrusive);
             this.codec = codec;
         }
 
         @NotNull
         @Override
-        public Optional<Holder.Reference<T>> getHolder(@NotNull final ResourceKey<T> id)
-        {
-            if (super.containsKey(id))
-            {
+        public Optional<Holder.Reference<T>> getHolder(@NotNull final ResourceKey<T> id) {
+            if (super.containsKey(id)) {
                 return super.getHolder(id);
             }
 
@@ -94,20 +85,15 @@ public class DatagenLootTableManager implements HolderLookup.Provider
             return table.map(lt -> this.register(id, lt, RegistrationInfo.BUILT_IN));
         }
 
-        private Optional<T> dynamicLoad(@NotNull final ResourceKey<T> id)
-        {
-            try
-            {
+        private Optional<T> dynamicLoad(@NotNull final ResourceKey<T> id) {
+            try {
                 final Resource resource = existingFileHelper.getResource(id.location(), PackType.SERVER_DATA, ".json", Registries.elementsDirPath(key()));
                 final DynamicOps<JsonElement> ops = createSerializationContext(JsonOps.INSTANCE);
-                try (final var reader = resource.openAsReader())
-                {
+                try (final var reader = resource.openAsReader()) {
                     final JsonElement json = JsonParser.parseReader(reader);
                     return Optional.of(codec.decode(ops, json).getOrThrow().getFirst());
                 }
-            }
-            catch (Throwable e)
-            {
+            } catch (Throwable e) {
                 e.printStackTrace();
                 return Optional.empty();
             }

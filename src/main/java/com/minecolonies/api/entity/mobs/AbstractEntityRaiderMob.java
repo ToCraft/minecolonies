@@ -22,7 +22,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -52,8 +51,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Abstract for all raider entities.
  */
-public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEntity implements IThreatTableEntity, Enemy
-{
+public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEntity implements IThreatTableEntity, Enemy {
     /**
      * The percent of life taken per damage modifier
      */
@@ -72,7 +70,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     /**
      * 1 in X Chance that thorns effect happens
      */
-    private static final int THORNS_CHANCE            = 5;
+    private static final int THORNS_CHANCE = 5;
 
     /**
      * Set the colony raided if raider is in the wrong colony.
@@ -157,8 +155,8 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     /**
      * The collision threshold
      */
-    private final static int    COLL_THRESHOLD = 50;
-    private final static String RAID_TEAM      = "RAIDERS_TEAM";
+    private final static int COLL_THRESHOLD = 50;
+    private final static String RAID_TEAM = "RAIDERS_TEAM";
 
     /**
      * Mob difficulty
@@ -186,8 +184,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      * @param world the world.
      * @param type  the entity type.
      */
-    public AbstractEntityRaiderMob(final EntityType<? extends AbstractEntityRaiderMob> type, final Level world)
-    {
+    public AbstractEntityRaiderMob(final EntityType<? extends AbstractEntityRaiderMob> type, final Level world) {
         super(type, world);
         worldTimeAtSpawn = world.getGameTime();
         this.setPersistenceRequired();
@@ -201,10 +198,8 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      * Ignores cramming
      */
     @Override
-    public void pushEntities()
-    {
-        if (collisionCounter > COLL_THRESHOLD)
-        {
+    public void pushEntities() {
+        if (collisionCounter > COLL_THRESHOLD) {
             return;
         }
 
@@ -212,17 +207,13 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     }
 
     @Override
-    public void push(@NotNull final Entity entityIn)
-    {
-        if (invulTime > 0)
-        {
+    public void push(@NotNull final Entity entityIn) {
+        if (invulTime > 0) {
             return;
         }
 
-        if ((collisionCounter += 3) > COLL_THRESHOLD)
-        {
-            if (collisionCounter > (COLL_THRESHOLD * 3))
-            {
+        if ((collisionCounter += 3) > COLL_THRESHOLD) {
+            if (collisionCounter > (COLL_THRESHOLD * 3)) {
                 collisionCounter = 0;
             }
 
@@ -233,19 +224,16 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     }
 
     @Override
-    public void playAmbientSound()
-    {
+    public void playAmbientSound() {
         super.playAmbientSound();
         final SoundEvent soundevent = this.getAmbientSound();
-        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
-        {
+        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE) {
             this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }
     }
 
     @Override
-    public boolean removeWhenFarAway(final double distanceToClosestPlayer)
-    {
+    public boolean removeWhenFarAway(final double distanceToClosestPlayer) {
         return shouldDespawn() || (level() != null && level().isAreaLoaded(this.blockPosition(), 3) && getColony() == null);
     }
 
@@ -261,17 +249,14 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @return true if so.
      */
-    private boolean shouldDespawn()
-    {
+    private boolean shouldDespawn() {
         return worldTimeAtSpawn != 0 && (level().getGameTime() - worldTimeAtSpawn) >= TICKS_TO_DESPAWN;
     }
 
     @NotNull
     @Override
-    public AbstractAdvancedPathNavigate getNavigation()
-    {
-        if (this.newNavigator == null)
-        {
+    public AbstractAdvancedPathNavigate getNavigation() {
+        if (this.newNavigator == null) {
             this.newNavigator = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigation = newNavigator;
             this.newNavigator.setCanFloat(true);
@@ -281,13 +266,12 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
             newNavigator.getPathingOptions().withJumpCost(1D);
             newNavigator.getPathingOptions().setPassDanger(true);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
-              .withTakeDamageOnStuck(0.4f)
-              .withBuildLeafBridges()
-              .withChanceToByPassMovingAway(0.20)
-              .withPlaceLadders();
+                    .withTakeDamageOnStuck(0.4f)
+                    .withBuildLeafBridges()
+                    .withChanceToByPassMovingAway(0.20)
+                    .withPlaceLadders();
 
-            if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidersbreakblocks.get())
-            {
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidersbreakblocks.get()) {
                 stuckHandler.withBlockBreaks();
                 stuckHandler.withCompleteStuckBlockBreak(6);
             }
@@ -309,8 +293,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @return the amount it got stuck already.
      */
-    public int getStuckCounter()
-    {
+    public int getStuckCounter() {
         return stuckCounter;
     }
 
@@ -319,8 +302,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @param stuckCounter the amount.
      */
-    public void setStuckCounter(final int stuckCounter)
-    {
+    public void setStuckCounter(final int stuckCounter) {
         this.stuckCounter = stuckCounter;
     }
 
@@ -329,8 +311,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @return the amount it got stuck and placed a ladder already.
      */
-    public int getLadderCounter()
-    {
+    public int getLadderCounter() {
         return ladderCounter;
     }
 
@@ -339,33 +320,28 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @param ladderCounter the amount.
      */
-    public void setLadderCounter(final int ladderCounter)
-    {
+    public void setLadderCounter(final int ladderCounter) {
         this.ladderCounter = ladderCounter;
     }
 
     @Override
-    protected SoundEvent getHurtSound(final DamageSource damageSourceIn)
-    {
+    protected SoundEvent getHurtSound(final DamageSource damageSourceIn) {
         return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.HURT);
     }
 
     @Override
-    protected SoundEvent getDeathSound()
-    {
+    protected SoundEvent getDeathSound() {
         return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.DEATH);
     }
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound()
-    {
+    protected SoundEvent getAmbientSound() {
         return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.SAY);
     }
 
     @Override
-    public void addAdditionalSaveData(final CompoundTag compound)
-    {
+    public void addAdditionalSaveData(final CompoundTag compound) {
         compound.putLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_STUCK_COUNTER, stuckCounter);
         compound.putInt(TAG_LADDER_COUNTER, ladderCounter);
@@ -380,29 +356,24 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      */
     @Nullable
     @Override
-    public Entity changeDimension(final DimensionTransition dimensionTransition)
-    {
+    public Entity changeDimension(final DimensionTransition dimensionTransition) {
         return null;
     }
 
     @Override
-    public void readAdditionalSaveData(final CompoundTag compound)
-    {
+    public void readAdditionalSaveData(final CompoundTag compound) {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         stuckCounter = compound.getInt(TAG_STUCK_COUNTER);
         ladderCounter = compound.getInt(TAG_LADDER_COUNTER);
         eventID = compound.getInt(TAG_EVENT_ID);
-        if (compound.contains(TAG_COLONY_ID))
-        {
+        if (compound.contains(TAG_COLONY_ID)) {
             final int colonyId = compound.getInt(TAG_COLONY_ID);
-            if (colonyId != 0)
-            {
+            if (colonyId != 0) {
                 setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, level()));
             }
         }
 
-        if (colony == null || eventID == 0)
-        {
+        if (colony == null || eventID == 0) {
             this.remove(RemovalReason.DISCARDED);
         }
 
@@ -410,85 +381,67 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     }
 
     @Override
-    public void aiStep()
-    {
-        if (!this.isAlive())
-        {
+    public void aiStep() {
+        if (!this.isAlive()) {
             return;
         }
 
         updateSwingTime();
 
-        if (invulTime > 0)
-        {
+        if (invulTime > 0) {
             invulTime--;
-        }
-        else
-        {
+        } else {
             this.setInvulnerable(false);
         }
 
-        if (collisionCounter > 0)
-        {
+        if (collisionCounter > 0) {
             collisionCounter--;
         }
 
-        if (level().isClientSide)
-        {
+        if (level().isClientSide) {
             super.aiStep();
             return;
         }
 
-        if (currentTick % (random.nextInt(EVERY_X_TICKS) + 1) == 0)
-        {
+        if (currentTick % (random.nextInt(EVERY_X_TICKS) + 1) == 0) {
             envDmgCooldown--;
-            if (worldTimeAtSpawn == 0)
-            {
+            if (worldTimeAtSpawn == 0) {
                 worldTimeAtSpawn = level().getGameTime();
             }
 
-            if (this.chunkPosition() != lastChunkPos)
-            {
+            if (this.chunkPosition() != lastChunkPos) {
                 this.lastChunkPos = this.chunkPosition();
-                if (random.nextInt(COLONY_SET_RAIDED_CHANCE) <= 0)
-                {
+                if (random.nextInt(COLONY_SET_RAIDED_CHANCE) <= 0) {
                     this.onEnterChunk(this.lastChunkPos);
                 }
             }
 
-            if (shouldDespawn())
-            {
+            if (shouldDespawn()) {
                 this.die(level().damageSources().source(DamageSourceKeys.DESPAWN));
                 this.remove(RemovalReason.DISCARDED);
                 return;
             }
 
-            if (!isRegistered)
-            {
+            if (!isRegistered) {
                 registerWithColony();
             }
 
-            if (currentCount <= 0)
-            {
+            if (currentCount <= 0) {
                 currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
 
                 if (!this.getMainHandItem().isEmpty() && this.getMainHandItem().getItem() instanceof IChiefSwordItem
-                      && MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
-                {
+                        && MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE) {
                     RaiderMobUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
-                      .stream().filter(entity -> !entity.hasEffect(MobEffects.MOVEMENT_SPEED))
-                      .forEach(entity -> entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
+                            .stream().filter(entity -> !entity.hasEffect(MobEffects.MOVEMENT_SPEED))
+                            .forEach(entity -> entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
                 }
-            }
-            else
-            {
+            } else {
                 --currentCount;
             }
         }
         currentTick++;
 
-        if (isRegistered && tickCount % ENTITY_AI_TICKRATE == 0)
-        {
+        if (isRegistered && tickCount % ENTITY_AI_TICKRATE == 0) {
             ai.tick();
         }
 
@@ -497,14 +450,13 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
 
     /**
      * Even on when a raider entered a new chunk.
+     *
      * @param newChunkPos the new chunk pos.
      */
-    private void onEnterChunk(final ChunkPos newChunkPos)
-    {
+    private void onEnterChunk(final ChunkPos newChunkPos) {
         final LevelChunk chunk = colony.getWorld().getChunk(newChunkPos.x, newChunkPos.z);
         final int owningColonyId = ColonyUtils.getOwningColony(chunk);
-        if (owningColonyId != NO_COLONY_ID && colony.getID() != owningColonyId)
-        {
+        if (owningColonyId != NO_COLONY_ID && colony.getID() != owningColonyId) {
             final IColony tempColony = IColonyManager.getInstance().getColonyByWorld(owningColonyId, level());
             tempColony.getRaiderManager().setPassThroughRaid();
         }
@@ -514,20 +466,17 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     @Override
     @SuppressWarnings("deprecation") // override-only
     public SpawnGroupData finalizeSpawn(
-      final ServerLevelAccessor worldIn,
-      final DifficultyInstance difficultyIn,
-      final MobSpawnType reason,
-      @Nullable final SpawnGroupData spawnDataIn)
-    {
+            final ServerLevelAccessor worldIn,
+            final DifficultyInstance difficultyIn,
+            final MobSpawnType reason,
+            @Nullable final SpawnGroupData spawnDataIn) {
         RaiderMobUtils.setEquipment(this);
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn);
     }
 
     @Override
-    public void remove(@NotNull final RemovalReason reason)
-    {
-        if (!level().isClientSide && colony != null && eventID > 0)
-        {
+    public void remove(@NotNull final RemovalReason reason) {
+        if (!level().isClientSide && colony != null && eventID > 0) {
             colony.getEventManager().unregisterEntity(this, eventID);
         }
         super.remove(reason);
@@ -538,18 +487,15 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @return the colony the barbarian is assigned to attack.e
      */
-    public IColony getColony()
-    {
+    public IColony getColony() {
         return colony;
     }
 
     /**
      * Registers the entity with the colony.
      */
-    public void registerWithColony()
-    {
-        if (colony == null || eventID == 0 || dead)
-        {
+    public void registerWithColony() {
+        if (colony == null || eventID == 0 || dead) {
             remove(RemovalReason.DISCARDED);
             return;
         }
@@ -559,69 +505,53 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     }
 
     @Override
-    public void die(@NotNull final DamageSource cause)
-    {
+    public void die(@NotNull final DamageSource cause) {
         super.die(cause);
-        if (!level().isClientSide && getColony() != null)
-        {
+        if (!level().isClientSide && getColony() != null) {
             getColony().getEventManager().onEntityDeath(this, eventID);
         }
     }
 
     @Override
-    public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
-    {
-        if (damageSource.getEntity() instanceof AbstractEntityRaiderMob)
-        {
+    public boolean hurt(@NotNull final DamageSource damageSource, final float damage) {
+        if (damageSource.getEntity() instanceof AbstractEntityRaiderMob) {
             return false;
         }
 
-        if (damageSource.getEntity() instanceof LivingEntity)
-        {
+        if (damageSource.getEntity() instanceof LivingEntity) {
             threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damage);
         }
 
-        if (damageSource.typeHolder().is(DamageTypes.FELL_OUT_OF_WORLD))
-        {
+        if (damageSource.typeHolder().is(DamageTypes.FELL_OUT_OF_WORLD)) {
             return super.hurt(damageSource, damage);
         }
 
-        if (damageSource.getDirectEntity() == null)
-        {
-            if (envDamageImmunity || tempEnvDamageImmunity)
-            {
+        if (damageSource.getDirectEntity() == null) {
+            if (envDamageImmunity || tempEnvDamageImmunity) {
                 return false;
             }
 
-            if (--envDmgCooldown <= 0)
-            {
+            if (--envDmgCooldown <= 0) {
                 envDmgCooldown = envDamageInterval;
-            }
-            else
-            {
+            } else {
                 return false;
             }
-        }
-        else if (!level().isClientSide())
-        {
+        } else if (!level().isClientSide()) {
             final IColonyEvent event = colony.getEventManager().getEventByID(eventID);
-            if (event instanceof IColonyCampFireRaidEvent)
-            {
+            if (event instanceof IColonyCampFireRaidEvent) {
                 ((IColonyCampFireRaidEvent) event).setCampFireTime(0);
             }
 
             final Entity source = damageSource.getEntity();
-            if (source instanceof final Player player)
-            {
-                if (damage > MIN_THORNS_DAMAGE && random.nextInt(THORNS_CHANCE) == 0)
-                {
+            if (source instanceof final Player player) {
+                if (damage > MIN_THORNS_DAMAGE && random.nextInt(THORNS_CHANCE) == 0) {
                     source.hurt(level().damageSources().thorns(this), damage * 0.5f);
                 }
 
                 // Up to 7 damage are converted to health scaling damage, 7 is the damage of a diamond sword
                 float baseScalingDamage = Math.min(damage, MAX_SCALED_DAMAGE);
                 float totalWithScaled =
-                  Math.max(damage, (damage - baseScalingDamage) + baseScalingDamage * HP_PERCENT_PER_DMG * this.getMaxHealth());
+                        Math.max(damage, (damage - baseScalingDamage) + baseScalingDamage * HP_PERCENT_PER_DMG * this.getMaxHealth());
                 return super.hurt(damageSource, totalWithScaled);
             }
         }
@@ -631,17 +561,17 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
 
     /**
      * Get the default attributes with their values.
+     *
      * @return the attribute modifier map.
      */
-    public static AttributeSupplier.Builder getDefaultAttributes()
-    {
+    public static AttributeSupplier.Builder getDefaultAttributes() {
         return LivingEntity.createLivingAttributes()
-                 .add(MOB_ATTACK_DAMAGE)
-                 .add(Attributes.MAX_HEALTH)
-                 .add(Attributes.ARMOR)
-                 .add(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
-                 .add(Attributes.FOLLOW_RANGE, FOLLOW_RANGE * 2)
-                 .add(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.value().getDefaultValue());
+                .add(MOB_ATTACK_DAMAGE)
+                .add(Attributes.MAX_HEALTH)
+                .add(Attributes.ARMOR)
+                .add(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
+                .add(Attributes.FOLLOW_RANGE, FOLLOW_RANGE * 2)
+                .add(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.value().getDefaultValue());
     }
 
     /**
@@ -649,21 +579,17 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @param colony the colony to set.
      */
-    public void setColony(final IColony colony)
-    {
-        if (colony != null)
-        {
+    public void setColony(final IColony colony) {
+        if (colony != null) {
             this.colony = colony;
         }
     }
 
-    public int getEventID()
-    {
+    public int getEventID() {
         return eventID;
     }
 
-    public void setEventID(final int eventID)
-    {
+    public void setEventID(final int eventID) {
         this.eventID = eventID;
     }
 
@@ -672,8 +598,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @param interval damage interval
      */
-    public void setEnvDamageInterval(final int interval)
-    {
+    public void setEnvDamageInterval(final int interval) {
         envDamageInterval = interval;
     }
 
@@ -682,8 +607,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @param immunity whether immune
      */
-    public void setEnvDamageImmunity(final boolean immunity)
-    {
+    public void setEnvDamageImmunity(final boolean immunity) {
         envDamageImmunity = immunity;
     }
 
@@ -693,8 +617,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @param immunity whether immune
      */
-    public void setTempEnvDamageImmunity(final boolean immunity)
-    {
+    public void setTempEnvDamageImmunity(final boolean immunity) {
         tempEnvDamageImmunity = immunity;
     }
 
@@ -705,8 +628,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      * @param difficulty difficulty
      * @param baseDamage basedamage for this raid/difficulty
      */
-    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
-    {
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage) {
         this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage);
 
         this.difficulty = difficulty;
@@ -714,8 +636,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
         this.getAttribute(Attributes.ARMOR).setBaseValue(armor);
         this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * difficulty));
 
-        if (difficulty >= 1.4d)
-        {
+        if (difficulty >= 1.4d) {
             this.setEnvDamageImmunity(true);
         }
 
@@ -728,8 +649,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @return difficulty
      */
-    public double getDifficulty()
-    {
+    public double getDifficulty() {
         return difficulty;
     }
 
@@ -738,14 +658,12 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @return
      */
-    public boolean isPushedByFluid()
-    {
+    public boolean isPushedByFluid() {
         return false;
     }
 
     @Override
-    public ThreatTable getThreatTable()
-    {
+    public ThreatTable getThreatTable() {
         return threatTable;
     }
 
@@ -754,14 +672,12 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      *
      * @return ai statemachine
      */
-    public ITickRateStateMachine<IState> getAI()
-    {
+    public ITickRateStateMachine<IState> getAI() {
         return ai;
     }
 
     @Override
-    public int getTeamId()
-    {
+    public int getTeamId() {
         // All raiders are in the same team. You're doomed!
         return -1;
     }

@@ -42,12 +42,11 @@ import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class NewBobberEntity extends Projectile implements IEntityWithComplexSpawn
-{
+public class NewBobberEntity extends Projectile implements IEntityWithComplexSpawn {
     public static final int XP_PER_CATCH = 2;
 
     private static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(NewBobberEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> DATA_BITING       = SynchedEntityData.defineId(NewBobberEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_BITING = SynchedEntityData.defineId(NewBobberEntity.class, EntityDataSerializers.BOOLEAN);
 
     private final RandomSource syncronizedRandom = RandomSource.create();
 
@@ -58,28 +57,25 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     private int timeUntilLured;
     private int timeUntilHooked;
     private float fishAngle;
-    private boolean     openWater = true;
+    private boolean openWater = true;
     @Nullable
-    private Entity      hookedEntity;
+    private Entity hookedEntity;
     private BobberState currentState = BobberState.FLYING;
     private final int luck;
     private final int lureSpeed;
 
-    private NewBobberEntity(EntityType<? extends Projectile> type, Level level, int luck, int lure)
-    {
+    private NewBobberEntity(EntityType<? extends Projectile> type, Level level, int luck, int lure) {
         super(type, level);
         this.noCulling = true;
         this.luck = Math.max(0, luck);
         this.lureSpeed = Math.max(0, lure);
     }
 
-    public NewBobberEntity(EntityType<? extends Projectile> type, Level level) 
-    {
+    public NewBobberEntity(EntityType<? extends Projectile> type, Level level) {
         this(type, level, 0, 0);
     }
 
-    public NewBobberEntity(EntityType<? extends Projectile> type, AbstractEntityCitizen citizen, Level level, int luck, int lure)
-    {
+    public NewBobberEntity(EntityType<? extends Projectile> type, AbstractEntityCitizen citizen, Level level, int luck, int lure) {
         this(type, level, luck, lure);
         this.setOwner(citizen);
         float f = citizen.getXRot();
@@ -88,26 +84,25 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
         float f3 = Mth.sin(-f1 * (float) (Math.PI / 180.0) - (float) Math.PI);
         float f4 = -Mth.cos(-f * (float) (Math.PI / 180.0));
         float f5 = Mth.sin(-f * (float) (Math.PI / 180.0));
-        double d0 = citizen.getX() - (double)f3 * 0.3;
+        double d0 = citizen.getX() - (double) f3 * 0.3;
         double d1 = citizen.getEyeY();
-        double d2 = citizen.getZ() - (double)f2 * 0.3;
+        double d2 = citizen.getZ() - (double) f2 * 0.3;
         this.moveTo(d0, d1, d2, f1, f);
-        Vec3 vec3 = new Vec3((double)(-f3), (double)Mth.clamp(-(f5 / f4), -5.0F, 5.0F), (double)(-f2));
+        Vec3 vec3 = new Vec3((double) (-f3), (double) Mth.clamp(-(f5 / f4), -5.0F, 5.0F), (double) (-f2));
         double d3 = vec3.length();
         vec3 = vec3.multiply(
-          0.6 / d3 + this.random.triangle(0.5, 0.0103365), 0.6 / d3 + this.random.triangle(0.5, 0.0103365), 0.6 / d3 + this.random.triangle(0.5, 0.0103365)
+                0.6 / d3 + this.random.triangle(0.5, 0.0103365), 0.6 / d3 + this.random.triangle(0.5, 0.0103365), 0.6 / d3 + this.random.triangle(0.5, 0.0103365)
         );
         this.setDeltaMovement(vec3);
-        this.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * 180.0F / (float)Math.PI));
-        this.setXRot((float)(Mth.atan2(vec3.y, vec3.horizontalDistance()) * 180.0F / (float)Math.PI));
+        this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * 180.0F / (float) Math.PI));
+        this.setXRot((float) (Mth.atan2(vec3.y, vec3.horizontalDistance()) * 180.0F / (float) Math.PI));
         this.yRotO = this.getYRot();
         this.xRotO = this.getXRot();
     }
 
 
     @Override
-    protected void defineSynchedData(final SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
         builder.define(DATA_HOOKED_ENTITY, 0);
         builder.define(DATA_BITING, false);
     }
@@ -122,7 +117,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
         if (DATA_BITING.equals(p_37153_)) {
             this.biting = this.getEntityData().get(DATA_BITING);
             if (this.biting) {
-                this.setDeltaMovement(this.getDeltaMovement().x, (double)(-0.4F * Mth.nextFloat(this.syncronizedRandom, 0.6F, 1.0F)), this.getDeltaMovement().z);
+                this.setDeltaMovement(this.getDeltaMovement().x, (double) (-0.4F * Mth.nextFloat(this.syncronizedRandom, 0.6F, 1.0F)), this.getDeltaMovement().z);
             }
         }
 
@@ -133,20 +128,20 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
      * Checks if the entity is in range to render.
      */
     @OnlyIn(Dist.CLIENT)
-    public boolean shouldRenderAtSqrDistance(final double distance)
-    {
+    public boolean shouldRenderAtSqrDistance(final double distance) {
         return distance < 4096.0D;
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
     public void lerpTo(
-      final double x,
-      final double y,
-      final double z,
-      final float yaw,
-      final float pitch,
-      final int posRotationIncrements) { }
+            final double x,
+            final double y,
+            final double z,
+            final float yaw,
+            final float pitch,
+            final int posRotationIncrements) {
+    }
 
     @Override
     public void tick() {
@@ -204,12 +199,12 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
 
                 if (this.currentState == BobberState.BOBBING) {
                     Vec3 vec3 = this.getDeltaMovement();
-                    double d0 = this.getY() + vec3.y - (double)blockpos.getY() - (double)f;
+                    double d0 = this.getY() + vec3.y - (double) blockpos.getY() - (double) f;
                     if (Math.abs(d0) < 0.01) {
                         d0 += Math.signum(d0) * 0.1;
                     }
 
-                    this.setDeltaMovement(vec3.x * 0.9, vec3.y - d0 * (double)this.random.nextFloat() * 0.2, vec3.z * 0.9);
+                    this.setDeltaMovement(vec3.x * 0.9, vec3.y - d0 * (double) this.random.nextFloat() * 0.2, vec3.z * 0.9);
                     if (this.nibble <= 0 && this.timeUntilHooked <= 0) {
                         this.openWater = true;
                     } else {
@@ -220,8 +215,8 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                         this.outOfWaterTime = Math.max(0, this.outOfWaterTime - 1);
                         if (this.biting) {
                             this.setDeltaMovement(
-                              this.getDeltaMovement()
-                                .add(0.0, -0.1 * (double)this.syncronizedRandom.nextFloat() * (double)this.syncronizedRandom.nextFloat(), 0.0)
+                                    this.getDeltaMovement()
+                                            .add(0.0, -0.1 * (double) this.syncronizedRandom.nextFloat() * (double) this.syncronizedRandom.nextFloat(), 0.0)
                             );
                         }
 
@@ -250,38 +245,32 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
         }
     }
 
-    public boolean shouldStopFishing(AbstractEntityCitizen citizen)
-    {
+    public boolean shouldStopFishing(AbstractEntityCitizen citizen) {
         ItemStack mainHandItem = citizen.getMainHandItem();
         ItemStack offHandItem = citizen.getOffhandItem();
         boolean flag = mainHandItem.canPerformAction(net.neoforged.neoforge.common.ItemAbilities.FISHING_ROD_CAST);
         boolean flag1 = offHandItem.canPerformAction(net.neoforged.neoforge.common.ItemAbilities.FISHING_ROD_CAST);
-        if (!citizen.isRemoved() && citizen.isAlive() && (flag || flag1) && !(this.distanceToSqr(citizen) > 1024.0))
-        {
+        if (!citizen.isRemoved() && citizen.isAlive() && (flag || flag1) && !(this.distanceToSqr(citizen) > 1024.0)) {
             return false;
-        }
-        else
-        {
+        } else {
             this.discard();
             return true;
         }
     }
 
-    private void checkCollision()
-    {
+    private void checkCollision() {
         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-        if (hitresult.getType() == HitResult.Type.MISS || !net.neoforged.neoforge.event.EventHooks.onProjectileImpact(this, hitresult)) this.onHit(hitresult);
+        if (hitresult.getType() == HitResult.Type.MISS || !net.neoforged.neoforge.event.EventHooks.onProjectileImpact(this, hitresult))
+            this.onHit(hitresult);
     }
 
     @Override
-    protected boolean canHitEntity(Entity hitEntity)
-    {
+    protected boolean canHitEntity(Entity hitEntity) {
         return super.canHitEntity(hitEntity) || hitEntity.isAlive() && hitEntity instanceof ItemEntity;
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult hitEntity)
-    {
+    protected void onHitEntity(EntityHitResult hitEntity) {
         super.onHitEntity(hitEntity);
         if (!this.level().isClientSide) {
             this.setHookedEntity(hitEntity.getEntity());
@@ -289,48 +278,38 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult hitBlock)
-    {
+    protected void onHitBlock(BlockHitResult hitBlock) {
         super.onHitBlock(hitBlock);
         this.setDeltaMovement(this.getDeltaMovement().normalize().scale(hitBlock.distanceTo(this)));
     }
 
-    private void setHookedEntity(@Nullable Entity hookedEntity)
-    {
+    private void setHookedEntity(@Nullable Entity hookedEntity) {
         this.hookedEntity = hookedEntity;
         this.getEntityData().set(DATA_HOOKED_ENTITY, hookedEntity == null ? 0 : hookedEntity.getId() + 1);
     }
 
-    private void catchingFish(BlockPos p_37146_)
-    {
+    private void catchingFish(BlockPos p_37146_) {
         ServerLevel serverlevel = (ServerLevel) this.level();
         int i = 1;
         BlockPos blockpos = p_37146_.above();
-        if (this.random.nextFloat() < 0.25F && this.level().isRainingAt(blockpos))
-        {
+        if (this.random.nextFloat() < 0.25F && this.level().isRainingAt(blockpos)) {
             i++;
         }
 
-        if (this.random.nextFloat() < 0.5F && !this.level().canSeeSky(blockpos))
-        {
+        if (this.random.nextFloat() < 0.5F && !this.level().canSeeSky(blockpos)) {
             i--;
         }
 
-        if (this.nibble > 0)
-        {
+        if (this.nibble > 0) {
             this.nibble--;
-            if (this.nibble <= 0)
-            {
+            if (this.nibble <= 0) {
                 this.timeUntilLured = 0;
                 this.timeUntilHooked = 0;
                 this.getEntityData().set(DATA_BITING, false);
             }
-        }
-        else if (this.timeUntilHooked > 0)
-        {
+        } else if (this.timeUntilHooked > 0) {
             this.timeUntilHooked -= i;
-            if (this.timeUntilHooked > 0)
-            {
+            if (this.timeUntilHooked > 0) {
                 this.fishAngle = this.fishAngle + (float) this.random.triangle(0.0, 9.188);
                 float f = this.fishAngle * (float) (Math.PI / 180.0);
                 float f1 = Mth.sin(f);
@@ -339,10 +318,8 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                 double d1 = (double) ((float) Mth.floor(this.getY()) + 1.0F);
                 double d2 = this.getZ() + (double) (f2 * (float) this.timeUntilHooked * 0.1F);
                 BlockState blockstate = serverlevel.getBlockState(BlockPos.containing(d0, d1 - 1.0, d2));
-                if (blockstate.is(Blocks.WATER))
-                {
-                    if (this.random.nextFloat() < 0.15F)
-                    {
+                if (blockstate.is(Blocks.WATER)) {
+                    if (this.random.nextFloat() < 0.15F) {
                         serverlevel.sendParticles(ParticleTypes.BUBBLE, d0, d1 - 0.1F, d2, 1, (double) f1, 0.1, (double) f2, 0.0);
                     }
 
@@ -351,99 +328,80 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                     serverlevel.sendParticles(ParticleTypes.FISHING, d0, d1, d2, 0, (double) f4, 0.01, (double) (-f3), 1.0);
                     serverlevel.sendParticles(ParticleTypes.FISHING, d0, d1, d2, 0, (double) (-f4), 0.01, (double) f3, 1.0);
                 }
-            }
-            else
-            {
+            } else {
                 this.playSound(SoundEvents.FISHING_BOBBER_SPLASH, 0.25F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
                 double d3 = this.getY() + 0.5;
                 serverlevel.sendParticles(
-                  ParticleTypes.BUBBLE,
-                  this.getX(),
-                  d3,
-                  this.getZ(),
-                  (int) (1.0F + this.getBbWidth() * 20.0F),
-                  (double) this.getBbWidth(),
-                  0.0,
-                  (double) this.getBbWidth(),
-                  0.2F
+                        ParticleTypes.BUBBLE,
+                        this.getX(),
+                        d3,
+                        this.getZ(),
+                        (int) (1.0F + this.getBbWidth() * 20.0F),
+                        (double) this.getBbWidth(),
+                        0.0,
+                        (double) this.getBbWidth(),
+                        0.2F
                 );
                 serverlevel.sendParticles(
-                  ParticleTypes.FISHING,
-                  this.getX(),
-                  d3,
-                  this.getZ(),
-                  (int) (1.0F + this.getBbWidth() * 20.0F),
-                  (double) this.getBbWidth(),
-                  0.0,
-                  (double) this.getBbWidth(),
-                  0.2F
+                        ParticleTypes.FISHING,
+                        this.getX(),
+                        d3,
+                        this.getZ(),
+                        (int) (1.0F + this.getBbWidth() * 20.0F),
+                        (double) this.getBbWidth(),
+                        0.0,
+                        (double) this.getBbWidth(),
+                        0.2F
                 );
                 this.nibble = Mth.nextInt(this.random, 20, 40);
                 this.getEntityData().set(DATA_BITING, true);
             }
-        }
-        else if (this.timeUntilLured > 0)
-        {
+        } else if (this.timeUntilLured > 0) {
             this.timeUntilLured -= i;
             float f5 = 0.15F;
-            if (this.timeUntilLured < 20)
-            {
+            if (this.timeUntilLured < 20) {
                 f5 += (float) (20 - this.timeUntilLured) * 0.05F;
-            }
-            else if (this.timeUntilLured < 40)
-            {
+            } else if (this.timeUntilLured < 40) {
                 f5 += (float) (40 - this.timeUntilLured) * 0.02F;
-            }
-            else if (this.timeUntilLured < 60)
-            {
+            } else if (this.timeUntilLured < 60) {
                 f5 += (float) (60 - this.timeUntilLured) * 0.01F;
             }
 
-            if (this.random.nextFloat() < f5)
-            {
+            if (this.random.nextFloat() < f5) {
                 float f6 = Mth.nextFloat(this.random, 0.0F, 360.0F) * (float) (Math.PI / 180.0);
                 float f7 = Mth.nextFloat(this.random, 25.0F, 60.0F);
                 double d4 = this.getX() + (double) (Mth.sin(f6) * f7) * 0.1;
                 double d5 = (double) ((float) Mth.floor(this.getY()) + 1.0F);
                 double d6 = this.getZ() + (double) (Mth.cos(f6) * f7) * 0.1;
                 BlockState blockstate1 = serverlevel.getBlockState(BlockPos.containing(d4, d5 - 1.0, d6));
-                if (blockstate1.is(Blocks.WATER))
-                {
+                if (blockstate1.is(Blocks.WATER)) {
                     serverlevel.sendParticles(ParticleTypes.SPLASH, d4, d5, d6, 2 + this.random.nextInt(2), 0.1F, 0.0, 0.1F, 0.0);
                 }
             }
 
-            if (this.timeUntilLured <= 0)
-            {
+            if (this.timeUntilLured <= 0) {
                 this.fishAngle = Mth.nextFloat(this.random, 0.0F, 360.0F);
                 this.timeUntilHooked = Mth.nextInt(this.random, 20, 80);
             }
-        }
-        else
-        {
+        } else {
             this.timeUntilLured = Mth.nextInt(this.random, 100, 600);
             this.timeUntilLured = this.timeUntilLured - this.lureSpeed;
         }
     }
 
-    private boolean calculateOpenWater(BlockPos p_37159_)
-    {
+    private boolean calculateOpenWater(BlockPos p_37159_) {
         OpenWaterType openWaterType = OpenWaterType.INVALID;
 
-        for (int i = -1; i <= 2; i++)
-        {
+        for (int i = -1; i <= 2; i++) {
             OpenWaterType localOpenWaterType = this.getOpenWaterTypeForArea(p_37159_.offset(-2, i, -2), p_37159_.offset(2, i, 2));
-            switch (localOpenWaterType)
-            {
+            switch (localOpenWaterType) {
                 case ABOVE_WATER:
-                    if (openWaterType == OpenWaterType.INVALID)
-                    {
+                    if (openWaterType == OpenWaterType.INVALID) {
                         return false;
                     }
                     break;
                 case INSIDE_WATER:
-                    if (openWaterType == OpenWaterType.ABOVE_WATER)
-                    {
+                    if (openWaterType == OpenWaterType.ABOVE_WATER) {
                         return false;
                     }
                     break;
@@ -457,68 +415,55 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
         return true;
     }
 
-    private OpenWaterType getOpenWaterTypeForArea(BlockPos p_37148_, BlockPos p_37149_)
-    {
+    private OpenWaterType getOpenWaterTypeForArea(BlockPos p_37148_, BlockPos p_37149_) {
         return BlockPos.betweenClosedStream(p_37148_, p_37149_)
-                 .map(this::getOpenWaterTypeForBlock)
-                 .reduce((p_37139_, p_37140_) -> p_37139_ == p_37140_ ? p_37139_ : OpenWaterType.INVALID)
-                 .orElse(OpenWaterType.INVALID);
+                .map(this::getOpenWaterTypeForBlock)
+                .reduce((p_37139_, p_37140_) -> p_37139_ == p_37140_ ? p_37139_ : OpenWaterType.INVALID)
+                .orElse(OpenWaterType.INVALID);
     }
 
-    private OpenWaterType getOpenWaterTypeForBlock(BlockPos p_37164_)
-    {
+    private OpenWaterType getOpenWaterTypeForBlock(BlockPos p_37164_) {
         BlockState blockstate = this.level().getBlockState(p_37164_);
-        if (!blockstate.isAir() && !blockstate.is(Blocks.LILY_PAD))
-        {
+        if (!blockstate.isAir() && !blockstate.is(Blocks.LILY_PAD)) {
             FluidState fluidstate = blockstate.getFluidState();
             return fluidstate.is(FluidTags.WATER) && fluidstate.isSource() && blockstate.getCollisionShape(this.level(), p_37164_).isEmpty()
-                     ? OpenWaterType.INSIDE_WATER
-                     : OpenWaterType.INVALID;
-        }
-        else
-        {
+                    ? OpenWaterType.INSIDE_WATER
+                    : OpenWaterType.INVALID;
+        } else {
             return OpenWaterType.ABOVE_WATER;
         }
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag)
-    {
+    public void addAdditionalSaveData(CompoundTag tag) {
 
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag)
-    {
+    public void readAdditionalSaveData(CompoundTag tag) {
 
     }
 
-    public int retrieve(ItemStack p_37157_)
-    {
+    public int retrieve(ItemStack p_37157_) {
         AbstractEntityCitizen citizen = (AbstractEntityCitizen) this.getOwner();
-        if (!this.level().isClientSide && citizen != null && !this.shouldStopFishing(citizen))
-        {
+        if (!this.level().isClientSide && citizen != null && !this.shouldStopFishing(citizen)) {
             int i = 0;
-            if (this.hookedEntity != null)
-            {
+            if (this.hookedEntity != null) {
                 this.pullEntity(this.hookedEntity);
                 this.level().broadcastEntityEvent(this, (byte) 31);
                 i = this.hookedEntity instanceof ItemEntity ? 3 : 5;
-            }
-            else if (this.nibble > 0)
-            {
+            } else if (this.nibble > 0) {
                 LootParams lootparams = new LootParams.Builder((ServerLevel) this.level())
-                                          .withParameter(LootContextParams.ORIGIN, this.position())
-                                          .withParameter(LootContextParams.TOOL, p_37157_)
-                                          .withParameter(LootContextParams.THIS_ENTITY, this)
-                                          .withParameter(LootContextParams.ATTACKING_ENTITY, this.getOwner())
-                                          .withLuck((float) this.luck)
-                                          .create(LootContextParamSets.FISHING);
+                        .withParameter(LootContextParams.ORIGIN, this.position())
+                        .withParameter(LootContextParams.TOOL, p_37157_)
+                        .withParameter(LootContextParams.THIS_ENTITY, this)
+                        .withParameter(LootContextParams.ATTACKING_ENTITY, this.getOwner())
+                        .withLuck((float) this.luck)
+                        .create(LootContextParamSets.FISHING);
                 LootTable loottable = this.level().getServer().reloadableRegistries().getLootTable(ModLootTables.FISHING);
                 List<ItemStack> list = loottable.getRandomItems(lootparams);
 
-                for (ItemStack itemstack : list)
-                {
+                for (ItemStack itemstack : list) {
                     ItemEntity itementity = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), itemstack);
                     double d0 = citizen.getX() - this.getX();
                     double d1 = citizen.getY() - this.getY();
@@ -531,33 +476,27 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                 i = 1;
             }
 
-            if (this.onGround())
-            {
+            if (this.onGround()) {
                 i = 2;
             }
 
             this.discard();
             return i;
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
     @Override
-    public void handleEntityEvent(byte b)
-    {
-        if (b == 31 && this.level().isClientSide && this.hookedEntity instanceof Player && ((Player)this.hookedEntity).isLocalPlayer())
-        {
+    public void handleEntityEvent(byte b) {
+        if (b == 31 && this.level().isClientSide && this.hookedEntity instanceof Player && ((Player) this.hookedEntity).isLocalPlayer()) {
             this.pullEntity(this.hookedEntity);
         }
 
         super.handleEntityEvent(b);
     }
 
-    protected void pullEntity(Entity entityToPull)
-    {
+    protected void pullEntity(Entity entityToPull) {
         Entity entity = this.getOwner();
         if (entity != null) {
             Vec3 vec3 = new Vec3(entity.getX() - this.getX(), entity.getY() - this.getY(), entity.getZ() - this.getZ()).scale(0.1);
@@ -581,32 +520,27 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     }
 
     @Override
-    public void writeSpawnData(final RegistryFriendlyByteBuf buffer)
-    {
+    public void writeSpawnData(final RegistryFriendlyByteBuf buffer) {
 
     }
 
     @Override
-    public void readSpawnData(final RegistryFriendlyByteBuf additionalData)
-    {
+    public void readSpawnData(final RegistryFriendlyByteBuf additionalData) {
 
     }
 
-    public boolean isReadyToCatch()
-    {
+    public boolean isReadyToCatch() {
         return biting;
     }
 
     /**
      * Sets tickRemove to 100 ticks to prevent bobber from staying in the water when Fisherman is not fishing.
      */
-    public void setInUse()
-    {
+    public void setInUse() {
         this.life = 100;
     }
 
-    enum BobberState
-    {
+    enum BobberState {
         FLYING,
         HOOKED_IN_ENTITY,
         BOBBING;

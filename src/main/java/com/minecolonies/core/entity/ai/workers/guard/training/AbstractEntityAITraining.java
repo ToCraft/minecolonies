@@ -14,8 +14,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
  * Abstract class for all training AIs.
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B extends AbstractBuilding> extends AbstractEntityAIInteract<J, B>
-{
+public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B extends AbstractBuilding> extends AbstractEntityAIInteract<J, B> {
     /**
      * Percentual chance for target search being chosen as target job.
      */
@@ -46,16 +45,15 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      *
      * @param job the job to fulfill
      */
-    public AbstractEntityAITraining(@NotNull final J job)
-    {
+    public AbstractEntityAITraining(@NotNull final J job) {
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, () -> START_WORKING, 1),
-          new AITarget(START_WORKING, () -> DECIDE, 1),
-          new AITarget(DECIDE, this::decide, 20),
-          new AITarget(TRAINING_WANDER, this::wander, 200),
-          new AITarget(GO_TO_TARGET, this::pathToTarget, 20)
+                new AITarget(IDLE, () -> START_WORKING, 1),
+                new AITarget(START_WORKING, () -> DECIDE, 1),
+                new AITarget(DECIDE, this::decide, 20),
+                new AITarget(TRAINING_WANDER, this::wander, 200),
+                new AITarget(GO_TO_TARGET, this::pathToTarget, 20)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -65,15 +63,12 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      *
      * @return the next state to go to.
      */
-    public IAIState decide()
-    {
-        if (!isSetup())
-        {
+    public IAIState decide() {
+        if (!isSetup()) {
             return DECIDE;
         }
 
-        if (worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < TARGET_SEARCH_CHANCE)
-        {
+        if (worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < TARGET_SEARCH_CHANCE) {
             return COMBAT_TRAINING;
         }
         return TRAINING_WANDER;
@@ -91,16 +86,13 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      *
      * @return the next state to go to.
      */
-    private IAIState wander()
-    {
-        if (currentPathingTarget == null)
-        {
+    private IAIState wander() {
+        if (currentPathingTarget == null) {
             currentPathingTarget = getWanderPosition();
             return getState();
         }
 
-        if (!walkToBlock(currentPathingTarget))
-        {
+        if (!walkToBlock(currentPathingTarget)) {
             currentPathingTarget = null;
             return DECIDE;
         }
@@ -113,10 +105,8 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      *
      * @return the next state to go to.
      */
-    private IAIState pathToTarget()
-    {
-        if (walkToBlock(currentPathingTarget, 2))
-        {
+    private IAIState pathToTarget() {
+        if (walkToBlock(currentPathingTarget, 2)) {
             return getState();
         }
         return stateAfterPathing;
@@ -127,16 +117,13 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      *
      * @return the position or the location of the hut chest if not found.
      */
-    private BlockPos getWanderPosition()
-    {
+    private BlockPos getWanderPosition() {
         final BlockPos pos = findRandomPositionToWalkTo(20);
-        if (pos == null)
-        {
+        if (pos == null) {
             return null;
         }
 
-        if (building.isInBuilding(pos))
-        {
+        if (building.isInBuilding(pos)) {
             return pos;
         }
 
@@ -146,10 +133,8 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
     /**
      * Reduces the attack delay by the given Tickrate
      */
-    protected void reduceAttackDelay()
-    {
-        if (currentAttackDelay > 0)
-        {
+    protected void reduceAttackDelay() {
+        if (currentAttackDelay > 0) {
             currentAttackDelay--;
         }
     }

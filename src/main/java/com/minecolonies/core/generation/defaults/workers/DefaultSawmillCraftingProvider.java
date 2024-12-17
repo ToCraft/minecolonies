@@ -12,24 +12,20 @@ import java.util.function.Consumer;
 /**
  * Datagen for Sawmill
  */
-public class DefaultSawmillCraftingProvider extends CustomRecipeProvider
-{
+public class DefaultSawmillCraftingProvider extends CustomRecipeProvider {
     private static final String SAWMILL = ModJobs.SAWMILL_ID.getPath();
 
-    public DefaultSawmillCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultSawmillCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "DefaultSawmillCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
     }
 }

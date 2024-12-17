@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.inventory.ModContainers;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,8 +22,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * Container for Mie
  */
-public class ContainerBuildingInventory extends AbstractContainerMenu
-{
+public class ContainerBuildingInventory extends AbstractContainerMenu {
     /**
      * Lower chest inventory.
      */
@@ -44,8 +43,7 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerBuildingInventory fromFriendlyByteBuf(final int windowId, final Inventory inv, final RegistryFriendlyByteBuf packetBuffer)
-    {
+    public static ContainerBuildingInventory fromFriendlyByteBuf(final int windowId, final Inventory inv, final RegistryFriendlyByteBuf packetBuffer) {
         final int colonyId = packetBuffer.readVarInt();
         final BlockPos tePos = packetBuffer.readBlockPos();
         return new ContainerBuildingInventory(windowId, inv, colonyId, tePos);
@@ -59,8 +57,7 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
      * @param colonyId colony id
      * @param pos      te world pos
      */
-    public ContainerBuildingInventory(final int windowId, final Inventory inv, final int colonyId, final BlockPos pos)
-    {
+    public ContainerBuildingInventory(final int windowId, final Inventory inv, final int colonyId, final BlockPos pos) {
         super(ModContainers.buildingInv.get(), windowId);
 
         tileEntityColonyBuilding = (TileEntityColonyBuilding) inv.player.level().getBlockEntity(pos);
@@ -72,32 +69,25 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
         final int extraOffset = inventorySize <= INVENTORY_BAR_SIZE ? 0 : 2;
         int index = 0;
 
-        for (int j = 0; j < Math.min(this.inventorySize, INVENTORY_BAR_SIZE); ++j)
-        {
-            for (int k = 0; k < columns; ++k)
-            {
-                if (index < size)
-                {
+        for (int j = 0; j < Math.min(this.inventorySize, INVENTORY_BAR_SIZE); ++j) {
+            for (int k = 0; k < columns; ++k) {
+                if (index < size) {
                     this.addSlot(
-                      new SlotItemHandler(buildingInventory, index,
-                        INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
-                        PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH)
-                      {
-                          @Override
-                          public void set(final ItemStack stack)
-                          {
-                              super.set(stack);
-                              if (!inv.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
-                              {
-                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level());
-                                  final IBuilding building = colony.getBuildingManager().getBuilding(pos);
-                                  if (building != null)
-                                  {
-                                      building.overruleNextOpenRequestWithStack(stack);
-                                  }
-                              }
-                          }
-                      });
+                            new SlotItemHandler(buildingInventory, index,
+                                    INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
+                                    PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH) {
+                                @Override
+                                public void set(final ItemStack stack) {
+                                    super.set(stack);
+                                    if (!inv.player.level().isClientSide && !ItemStackUtils.isEmpty(stack)) {
+                                        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level());
+                                        final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+                                        if (building != null) {
+                                            building.overruleNextOpenRequestWithStack(stack);
+                                        }
+                                    }
+                                }
+                            });
                     index++;
                 }
             }
@@ -106,27 +96,24 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
         int i;
-        for (i = 0; i < INVENTORY_ROWS; i++)
-        {
-            for (int j = 0; j < INVENTORY_COLUMNS; j++)
-            {
+        for (i = 0; i < INVENTORY_ROWS; i++) {
+            for (int j = 0; j < INVENTORY_COLUMNS; j++) {
                 addSlot(new Slot(
-                  inv,
-                  j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                  PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                  PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
-                    + i * PLAYER_INVENTORY_OFFSET_EACH
+                        inv,
+                        j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
+                                + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
 
-        for (i = 0; i < INVENTORY_COLUMNS; i++)
-        {
+        for (i = 0; i < INVENTORY_COLUMNS; i++) {
             addSlot(new Slot(
-              inv, i,
-              PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-              PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
-                INVENTORY_BAR_SIZE)
+                    inv, i,
+                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                    PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
+                            INVENTORY_BAR_SIZE)
             ));
         }
     }
@@ -138,12 +125,10 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
      * @param index    Index of the {@link Slot}. This index is relative to the list of slots in this {@code AbstractContainerMenu}, {@link #slots}.
      */
     @Override
-    public ItemStack quickMoveStack(final Player playerIn, final int index)
-    {
+    public ItemStack quickMoveStack(final Player playerIn, final int index) {
         final Slot slot = this.slots.get(index);
 
-        if (slot == null || !slot.hasItem())
-        {
+        if (slot == null || !slot.hasItem()) {
             return ItemStackUtils.EMPTY;
         }
 
@@ -151,24 +136,17 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
 
         final int maxIndex = this.inventorySize * INVENTORY_COLUMNS;
 
-        if (index < maxIndex)
-        {
-            if (!this.moveItemStackTo(stackCopy, maxIndex, this.slots.size(), true))
-            {
+        if (index < maxIndex) {
+            if (!this.moveItemStackTo(stackCopy, maxIndex, this.slots.size(), true)) {
                 return ItemStackUtils.EMPTY;
             }
-        }
-        else if (!this.moveItemStackTo(stackCopy, 0, maxIndex, false))
-        {
+        } else if (!this.moveItemStackTo(stackCopy, 0, maxIndex, false)) {
             return ItemStackUtils.EMPTY;
         }
 
-        if (ItemStackUtils.getSize(stackCopy) == 0)
-        {
+        if (ItemStackUtils.getSize(stackCopy) == 0) {
             slot.set(ItemStackUtils.EMPTY);
-        }
-        else
-        {
+        } else {
             slot.set(stackCopy);
         }
 
@@ -179,8 +157,7 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
      * Called when the container is closed.
      */
     @Override
-    public void removed(final Player playerIn)
-    {
+    public void removed(final Player playerIn) {
         super.removed(playerIn);
     }
 
@@ -188,8 +165,7 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
      * Determines whether supplied player can use this container
      */
     @Override
-    public boolean stillValid(@NotNull final Player playerIn)
-    {
+    public boolean stillValid(@NotNull final Player playerIn) {
         return this.tileEntityColonyBuilding.isUsableByPlayer(playerIn);
     }
 
@@ -198,8 +174,7 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
      *
      * @return the size.
      */
-    public int getSize()
-    {
+    public int getSize() {
         return inventorySize;
     }
 }

@@ -15,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message which handles the reset of items to filterable item lists.
  */
-public class ResetFilterableItemMessage extends AbstractBuildingServerMessage<AbstractBuilding>
-{
+public class ResetFilterableItemMessage extends AbstractBuildingServerMessage<AbstractBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "reset_filterable_item", ResetFilterableItemMessage::new);
 
     /**
@@ -30,30 +29,25 @@ public class ResetFilterableItemMessage extends AbstractBuildingServerMessage<Ab
      * @param id       the id of the list of filterables.
      * @param building the building we're executing on.
      */
-    public ResetFilterableItemMessage(final IBuildingView building, final int id)
-    {
+    public ResetFilterableItemMessage(final IBuildingView building, final int id) {
         super(TYPE, building);
         this.id = id;
     }
 
-    protected ResetFilterableItemMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ResetFilterableItemMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.id = buf.readInt();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(this.id);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
-    {
-        if (building.getModule(id) instanceof final ItemListModule module)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building) {
+        if (building.getModule(id) instanceof final ItemListModule module) {
             module.resetToDefaults();
         }
     }

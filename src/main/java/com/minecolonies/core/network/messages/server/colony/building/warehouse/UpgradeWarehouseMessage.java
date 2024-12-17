@@ -17,31 +17,26 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Issues the upgrade of the warehouse pos level 5.
  */
-public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<BuildingWareHouse>
-{
+public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<BuildingWareHouse> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "upgrade_warehouse", UpgradeWarehouseMessage::new);
 
-    protected UpgradeWarehouseMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected UpgradeWarehouseMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
     }
 
-    public UpgradeWarehouseMessage(final IBuildingView building)
-    {
+    public UpgradeWarehouseMessage(final IBuildingView building) {
         super(TYPE, building);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingWareHouse building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingWareHouse building) {
         building.upgradeContainers(player.level());
 
         final boolean isCreative = player.isCreative();
-        if (!isCreative)
-        {
+        if (!isCreative) {
             final int slot = InventoryUtils.
-                                             findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()),
-                                               itemStack -> ItemStack.isSameItem(itemStack, new ItemStack(Blocks.EMERALD_BLOCK)));
+                    findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()),
+                            itemStack -> ItemStack.isSameItem(itemStack, new ItemStack(Blocks.EMERALD_BLOCK)));
             player.getInventory().removeItem(slot, 1);
         }
     }

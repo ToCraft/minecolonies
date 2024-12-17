@@ -13,8 +13,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 /**
  * Message to open the plantation field build window on the client.
  */
-public class OpenPlantationFieldBuildWindowMessage extends OpenBuildWindowMessage
-{
+public class OpenPlantationFieldBuildWindowMessage extends OpenBuildWindowMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_plantation_field_build_window", OpenPlantationFieldBuildWindowMessage::new);
 
     /**
@@ -25,22 +24,19 @@ public class OpenPlantationFieldBuildWindowMessage extends OpenBuildWindowMessag
      * @param path     the path in the pack.
      */
     public OpenPlantationFieldBuildWindowMessage(
-      final BlockPos pos,
-      final String packName,
-      final String path,
-      final RotationMirror rotMir)
-    {
+            final BlockPos pos,
+            final String packName,
+            final String path,
+            final RotationMirror rotMir) {
         super(TYPE, pos, packName, path, rotMir);
     }
 
-    protected OpenPlantationFieldBuildWindowMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected OpenPlantationFieldBuildWindowMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
     }
 
     @Override
-    protected AbstractServerPlayMessage createWorkOrderMessage(final BlockPos builder)
-    {
+    protected AbstractServerPlayMessage createWorkOrderMessage(final BlockPos builder) {
         return new PlantationFieldBuildRequestMessage(WorkOrderType.BUILD, pos, packName, path, Minecraft.getInstance().level.dimension(), rotationMirror, builder);
     }
 }

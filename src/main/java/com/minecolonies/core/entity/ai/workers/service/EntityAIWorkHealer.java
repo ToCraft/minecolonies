@@ -21,9 +21,9 @@ import com.minecolonies.core.network.messages.client.CircleParticleEffectMessage
 import com.minecolonies.core.network.messages.client.StreamParticleEffectMessage;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,8 +33,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.PATIENT_FU
 /**
  * Healer AI class.
  */
-public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, BuildingHospital>
-{
+public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, BuildingHospital> {
     /**
      * Base xp gain for the smelter.
      */
@@ -75,18 +74,17 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      *
      * @param job a cook job to use.
      */
-    public EntityAIWorkHealer(@NotNull final JobHealer job)
-    {
+    public EntityAIWorkHealer(@NotNull final JobHealer job) {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, DECIDE, 1),
-          new AITarget(DECIDE, this::decide, 20),
-          new AITarget(CURE, this::cure, 20),
-          new AITarget(FREE_CURE, this::freeCure, 20),
-          new AITarget(CURE_PLAYER, this::curePlayer, 20),
-          new AITarget(REQUEST_CURE, this::requestCure, 20),
-          new AITarget(WANDER, this::wander, 20)
+                new AITarget(IDLE, START_WORKING, 1),
+                new AITarget(START_WORKING, DECIDE, 1),
+                new AITarget(DECIDE, this::decide, 20),
+                new AITarget(CURE, this::cure, 20),
+                new AITarget(FREE_CURE, this::freeCure, 20),
+                new AITarget(CURE_PLAYER, this::curePlayer, 20),
+                new AITarget(REQUEST_CURE, this::requestCure, 20),
+                new AITarget(WANDER, this::wander, 20)
 
         );
         worker.setCanPickUpLoot(true);
@@ -97,27 +95,22 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      *
      * @return the next state to go to.
      */
-    private IAIState decide()
-    {
-        if (walkToBuilding())
-        {
+    private IAIState decide() {
+        if (walkToBuilding()) {
             return DECIDE;
         }
 
         final BuildingHospital hospital = building;
         for (final AbstractEntityCitizen citizen : WorldUtil.getEntitiesWithinBuilding(world,
-          AbstractEntityCitizen.class,
-          building,
-            cit -> cit.getCitizenData().getCitizenDiseaseHandler().isSick()))
-        {
+                AbstractEntityCitizen.class,
+                building,
+                cit -> cit.getCitizenData().getCitizenDiseaseHandler().isSick())) {
             hospital.checkOrCreatePatientFile(citizen.getCivilianID());
         }
 
-        for (final Patient patient : hospital.getPatients())
-        {
+        for (final Patient patient : hospital.getPatients()) {
             final ICitizenData data = hospital.getColony().getCitizenManager().getCivilian(patient.getId());
-            if (data == null || !data.getEntity().isPresent() || (data.getEntity().isPresent() && !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick()))
-            {
+            if (data == null || !data.getEntity().isPresent() || (data.getEntity().isPresent() && !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick())) {
                 hospital.removePatientFile(patient);
                 continue;
             }
@@ -125,86 +118,67 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             final String diseaseName = citizen.getCitizenData().getCitizenDiseaseHandler().getDisease();
             @Nullable final Disease disease = diseaseName.isEmpty() ? null : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName);
 
-            if (patient.getState() == Patient.PatientState.NEW)
-            {
+            if (patient.getState() == Patient.PatientState.NEW) {
                 this.currentPatient = patient;
                 return REQUEST_CURE;
             }
 
-            if (patient.getState() == Patient.PatientState.REQUESTED)
-            {
-                if (disease == null)
-                {
+            if (patient.getState() == Patient.PatientState.REQUESTED) {
+                if (disease == null) {
                     this.currentPatient = patient;
                     return CURE;
                 }
 
-                if (testRandomCureChance())
-                {
+                if (testRandomCureChance()) {
                     this.currentPatient = patient;
                     return FREE_CURE;
                 }
 
-                if (!InventoryUtils.isItemHandlerFull(citizen.getInventoryCitizen()))
-                {
-                    if (hasCureInInventory(disease, worker.getInventoryCitizen()) || hasCureInInventory(disease, building.getItemHandlerCap()))
-                    {
+                if (!InventoryUtils.isItemHandlerFull(citizen.getInventoryCitizen())) {
+                    if (hasCureInInventory(disease, worker.getInventoryCitizen()) || hasCureInInventory(disease, building.getItemHandlerCap())) {
                         this.currentPatient = patient;
                         return CURE;
                     }
 
                     final ImmutableList<IRequest<? extends Stack>> list = building.getOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(Stack.class));
                     final ImmutableList<IRequest<? extends Stack>> completed = building.getCompletedRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
-                    for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure())
-                    {
-                        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> ItemStack.isSameItem(cure, stack)))
-                        {
-                            if (InventoryUtils.getItemCountInItemHandler(building.getItemHandlerCap(), stack -> ItemStack.isSameItem(stack, cure)) >= cure.getCount())
-                            {
+                    for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure()) {
+                        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> ItemStack.isSameItem(cure, stack))) {
+                            if (InventoryUtils.getItemCountInItemHandler(building.getItemHandlerCap(), stack -> ItemStack.isSameItem(stack, cure)) >= cure.getCount()) {
                                 needsCurrently = new Tuple<>(stack -> ItemStack.isSameItem(stack, cure), cure.getCount());
                                 return GATHERING_REQUIRED_MATERIALS;
                             }
                             boolean hasCureRequested = false;
-                            for (final IRequest<? extends Stack> request : list)
-                            {
-                                if (ItemStack.isSameItem(request.getRequest().getStack(), cure))
-                                {
+                            for (final IRequest<? extends Stack> request : list) {
+                                if (ItemStack.isSameItem(request.getRequest().getStack(), cure)) {
                                     hasCureRequested = true;
                                     break;
                                 }
                             }
-                            for (final IRequest<? extends Stack> request : completed)
-                            {
-                                if (ItemStack.isSameItem(request.getRequest().getStack(), cure))
-                                {
+                            for (final IRequest<? extends Stack> request : completed) {
+                                if (ItemStack.isSameItem(request.getRequest().getStack(), cure)) {
                                     hasCureRequested = true;
                                     break;
                                 }
                             }
-                            if (!hasCureRequested)
-                            {
+                            if (!hasCureRequested) {
                                 patient.setState(Patient.PatientState.NEW);
                                 break;
                             }
                         }
                     }
-                }
-                else
-                {
+                } else {
                     data.triggerInteraction(new StandardInteraction(Component.translatableEscape(PATIENT_FULL_INVENTORY), ChatPriority.BLOCKING));
                 }
             }
 
-            if (patient.getState() == Patient.PatientState.TREATED)
-            {
-                if (disease == null)
-                {
+            if (patient.getState() == Patient.PatientState.TREATED) {
+                if (disease == null) {
                     this.currentPatient = patient;
                     return CURE;
                 }
 
-                if (!hasCureInInventory(disease, citizen.getInventoryCitizen()))
-                {
+                if (!hasCureInInventory(disease, citizen.getInventoryCitizen())) {
                     patient.setState(Patient.PatientState.NEW);
                     return DECIDE;
                 }
@@ -212,18 +186,16 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         for (final Player player : WorldUtil.getEntitiesWithinBuilding(world,
-          Player.class,
-          building,
-          player -> player.getHealth() < player.getMaxHealth() - 10 - (2 * building.getBuildingLevel())))
-        {
+                Player.class,
+                building,
+                player -> player.getHealth() < player.getMaxHealth() - 10 - (2 * building.getBuildingLevel()))) {
             playerToHeal = player;
             return CURE_PLAYER;
         }
 
         final ICitizenData data = building.getColony().getCitizenManager().getRandomCitizen();
         if (data.getEntity().isPresent() && data.getEntity().get().getHealth() < 10.0
-              && BlockPosUtil.getDistance2D(data.getEntity().get().blockPosition(), building.getPosition()) < building.getBuildingLevel() * 40)
-        {
+                && BlockPosUtil.getDistance2D(data.getEntity().get().blockPosition(), building.getPosition()) < building.getBuildingLevel() * 40) {
             remotePatient = data;
             return WANDER;
         }
@@ -235,29 +207,24 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      *
      * @return the next state to go to.
      */
-    private IAIState requestCure()
-    {
-        if (currentPatient == null)
-        {
+    private IAIState requestCure() {
+        if (currentPatient == null) {
             return DECIDE;
         }
 
         final ICitizenData data = building.getColony().getCitizenManager().getCivilian(currentPatient.getId());
-        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick())
-        {
+        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick()) {
             currentPatient = null;
             return DECIDE;
         }
 
         final EntityCitizen citizen = (EntityCitizen) data.getEntity().get();
-        if (walkToBlock(citizen.blockPosition()))
-        {
+        if (walkToBlock(citizen.blockPosition())) {
             return REQUEST_CURE;
         }
 
         final String diseaseName = citizen.getCitizenData().getCitizenDiseaseHandler().getDisease();
-        if (diseaseName.isEmpty())
-        {
+        if (diseaseName.isEmpty()) {
             currentPatient.setState(Patient.PatientState.REQUESTED);
             currentPatient = null;
             return DECIDE;
@@ -266,30 +233,23 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         final ImmutableList<IRequest<? extends Stack>> list = building.getOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(Stack.class));
         final ImmutableList<IRequest<? extends Stack>> completed = building.getCompletedRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
 
-        for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure())
-        {
+        for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure()) {
             if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> ItemStack.isSameItem(cure, stack))
-                  && !InventoryUtils.hasItemInItemHandler(building.getItemHandlerCap(), stack -> ItemStack.isSameItem(cure, stack)))
-            {
+                    && !InventoryUtils.hasItemInItemHandler(building.getItemHandlerCap(), stack -> ItemStack.isSameItem(cure, stack))) {
                 boolean hasRequest = false;
-                for (final IRequest<? extends Stack> request : list)
-                {
-                    if (ItemStack.isSameItem(request.getRequest().getStack(), cure))
-                    {
+                for (final IRequest<? extends Stack> request : list) {
+                    if (ItemStack.isSameItem(request.getRequest().getStack(), cure)) {
                         hasRequest = true;
                         break;
                     }
                 }
-                for (final IRequest<? extends Stack> request : completed)
-                {
-                    if (ItemStack.isSameItem(request.getRequest().getStack(), cure))
-                    {
+                for (final IRequest<? extends Stack> request : completed) {
+                    if (ItemStack.isSameItem(request.getRequest().getStack(), cure)) {
                         hasRequest = true;
                         break;
                     }
                 }
-                if (!hasRequest)
-                {
+                if (!hasRequest) {
                     worker.getCitizenData().createRequestAsync(new Stack(cure, REQUEST_COUNT, 1));
                 }
             }
@@ -305,44 +265,35 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      *
      * @return the next state to go to.
      */
-    private IAIState cure()
-    {
-        if (currentPatient == null)
-        {
+    private IAIState cure() {
+        if (currentPatient == null) {
             return DECIDE;
         }
 
         final ICitizenData data = building.getColony().getCitizenManager().getCivilian(currentPatient.getId());
-        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick())
-        {
+        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick()) {
             currentPatient = null;
             return DECIDE;
         }
 
         final EntityCitizen citizen = (EntityCitizen) data.getEntity().get();
-        if (walkToBlock(data.getEntity().get().blockPosition()))
-        {
+        if (walkToBlock(data.getEntity().get().blockPosition())) {
             return CURE;
         }
 
         final String diseaseName = citizen.getCitizenData().getCitizenDiseaseHandler().getDisease();
         final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName);
-        if (diseaseName.isEmpty())
-        {
+        if (diseaseName.isEmpty()) {
             currentPatient = null;
             citizen.heal(10);
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
             return DECIDE;
         }
 
-        if (!hasCureInInventory(disease, worker.getInventoryCitizen()))
-        {
-            if (hasCureInInventory(disease, building.getItemHandlerCap()))
-            {
-                for (final ItemStack cure : disease.getCure())
-                {
-                    if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> ItemStack.isSameItem(stack, cure)) < cure.getCount())
-                    {
+        if (!hasCureInInventory(disease, worker.getInventoryCitizen())) {
+            if (hasCureInInventory(disease, building.getItemHandlerCap())) {
+                for (final ItemStack cure : disease.getCure()) {
+                    if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> ItemStack.isSameItem(stack, cure)) < cure.getCount()) {
                         needsCurrently = new Tuple<>(stack -> ItemStack.isSameItem(stack, cure), 1);
                         return GATHERING_REQUIRED_MATERIALS;
                     }
@@ -352,22 +303,18 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             return DECIDE;
         }
 
-        if (!hasCureInInventory(disease, citizen.getInventoryCitizen()))
-        {
-            for (final ItemStack cure : disease.getCure())
-            {
-                if (InventoryUtils.getItemCountInItemHandler(citizen.getInventoryCitizen(), stack -> ItemStack.isSameItem(stack, cure)) < cure.getCount())
-                {
-                    if (InventoryUtils.isItemHandlerFull(citizen.getInventoryCitizen()))
-                    {
+        if (!hasCureInInventory(disease, citizen.getInventoryCitizen())) {
+            for (final ItemStack cure : disease.getCure()) {
+                if (InventoryUtils.getItemCountInItemHandler(citizen.getInventoryCitizen(), stack -> ItemStack.isSameItem(stack, cure)) < cure.getCount()) {
+                    if (InventoryUtils.isItemHandlerFull(citizen.getInventoryCitizen())) {
                         data.triggerInteraction(new StandardInteraction(Component.translatableEscape(PATIENT_FULL_INVENTORY), ChatPriority.BLOCKING));
                         currentPatient = null;
                         return DECIDE;
                     }
                     InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                      worker.getInventoryCitizen(),
-                      stack -> ItemStack.isSameItem(cure, stack),
-                      cure.getCount(), citizen.getInventoryCitizen()
+                            worker.getInventoryCitizen(),
+                            stack -> ItemStack.isSameItem(cure, stack),
+                            cure.getCount(), citizen.getInventoryCitizen()
                     );
                 }
             }
@@ -384,35 +331,30 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      *
      * @return the next state to go to.
      */
-    private IAIState freeCure()
-    {
-        if (currentPatient == null)
-        {
+    private IAIState freeCure() {
+        if (currentPatient == null) {
             return DECIDE;
         }
 
         final ICitizenData data = building.getColony().getCitizenManager().getCivilian(currentPatient.getId());
-        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick())
-        {
+        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick()) {
             currentPatient = null;
             return DECIDE;
         }
 
         final EntityCitizen citizen = (EntityCitizen) data.getEntity().get();
-        if (walkToBlock(citizen.blockPosition()))
-        {
+        if (walkToBlock(citizen.blockPosition())) {
             progressTicks = 0;
             return FREE_CURE;
         }
 
         progressTicks++;
-        if (progressTicks < MAX_PROGRESS_TICKS)
-        {
+        if (progressTicks < MAX_PROGRESS_TICKS) {
             new StreamParticleEffectMessage(worker.position().add(0, 2, 0), citizen.position(), ParticleTypes.HEART, progressTicks % MAX_PROGRESS_TICKS, MAX_PROGRESS_TICKS)
-                .sendToTrackingEntity(worker);
+                    .sendToTrackingEntity(worker);
 
             new CircleParticleEffectMessage(worker.position().add(0, 2, 0), ParticleTypes.HEART, progressTicks)
-                .sendToTrackingEntity(worker);
+                    .sendToTrackingEntity(worker);
 
             return getState();
         }
@@ -430,15 +372,12 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      *
      * @return the next sate to go to.
      */
-    private IAIState curePlayer()
-    {
-        if (playerToHeal == null)
-        {
+    private IAIState curePlayer() {
+        if (playerToHeal == null) {
             return DECIDE;
         }
 
-        if (walkToBlock(playerToHeal.blockPosition()))
-        {
+        if (walkToBlock(playerToHeal.blockPosition())) {
             return getState();
         }
 
@@ -449,8 +388,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
     }
 
     @Override
-    public IAIState getStateAfterPickUp()
-    {
+    public IAIState getStateAfterPickUp() {
         return CURE;
     }
 
@@ -459,21 +397,18 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      *
      * @return the next state to go to.
      */
-    private IAIState wander()
-    {
-        if (remotePatient == null || !remotePatient.getEntity().isPresent())
-        {
+    private IAIState wander() {
+        if (remotePatient == null || !remotePatient.getEntity().isPresent()) {
             return DECIDE;
         }
 
         final EntityCitizen citizen = (EntityCitizen) remotePatient.getEntity().get();
-        if (walkToBlock(remotePatient.getEntity().get().blockPosition()))
-        {
+        if (walkToBlock(remotePatient.getEntity().get().blockPosition())) {
             return getState();
         }
 
         new CircleParticleEffectMessage(remotePatient.getEntity().get().position(), ParticleTypes.HEART, 1)
-            .sendToTrackingEntity(worker);
+                .sendToTrackingEntity(worker);
 
         citizen.heal(citizen.getMaxHealth() - citizen.getHealth() - 5 - building.getBuildingLevel());
         citizen.markDirty(10);
@@ -489,8 +424,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      *
      * @return true if so.
      */
-    private boolean testRandomCureChance()
-    {
+    private boolean testRandomCureChance() {
         return worker.getRandom().nextInt(60 * 60) <= Math.max(1, getSecondarySkillLevel() / 20);
     }
 
@@ -501,12 +435,9 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      * @param handler the inventory to check.
      * @return true if so.
      */
-    private boolean hasCureInInventory(final Disease disease, final IItemHandler handler)
-    {
-        for (final ItemStack cure : disease.getCure())
-        {
-            if (InventoryUtils.getItemCountInItemHandler(handler, stack -> ItemStack.isSameItem(cure, stack)) < cure.getCount())
-            {
+    private boolean hasCureInInventory(final Disease disease, final IItemHandler handler) {
+        for (final ItemStack cure : disease.getCure()) {
+            if (InventoryUtils.getItemCountInItemHandler(handler, stack -> ItemStack.isSameItem(cure, stack)) < cure.getCount()) {
                 return false;
             }
         }
@@ -514,8 +445,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
     }
 
     @Override
-    public Class<BuildingHospital> getExpectedBuildingClass()
-    {
+    public Class<BuildingHospital> getExpectedBuildingClass() {
         return BuildingHospital.class;
     }
 }

@@ -14,16 +14,14 @@ import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STA
 /**
  * The Shepherd job
  */
-public class JobShepherd extends AbstractJob<EntityAIWorkShepherd, JobShepherd>
-{
+public class JobShepherd extends AbstractJob<EntityAIWorkShepherd, JobShepherd> {
 
     /**
      * Instantiates the placeholder job.
      *
      * @param entity the entity.
      */
-    public JobShepherd(final ICitizenData entity)
-    {
+    public JobShepherd(final ICitizenData entity) {
         super(entity);
     }
 
@@ -34,8 +32,7 @@ public class JobShepherd extends AbstractJob<EntityAIWorkShepherd, JobShepherd>
      */
     @Nullable
     @Override
-    public EntityAIWorkShepherd generateAI()
-    {
+    public EntityAIWorkShepherd generateAI() {
         return new EntityAIWorkShepherd(this);
     }
 
@@ -46,17 +43,14 @@ public class JobShepherd extends AbstractJob<EntityAIWorkShepherd, JobShepherd>
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.SHEEP_FARMER_ID;
     }
 
     @Override
-    public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack)
-    {
+    public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack) {
         if (getCitizen().getWorkBuilding() != null && getCitizen().getEntity().isPresent() && getCitizen().getWorkBuilding()
-          .isInBuilding(getCitizen().getEntity().get().blockPosition()))
-        {
+                .isInBuilding(getCitizen().getEntity().get().blockPosition())) {
             getCitizen().getWorkBuilding().getModule(STATS_MODULE).incrementBy(ITEM_USED + ";" + pickedUpStack.getItem().getDescriptionId(), pickedUpStack.getCount());
         }
 

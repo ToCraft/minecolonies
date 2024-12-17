@@ -8,11 +8,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -23,8 +23,7 @@ import java.util.Optional;
 /**
  * ------------ Class not Documented ------------
  */
-public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCitizenInventory>
-{
+public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCitizenInventory> {
     /**
      * Texture res loc.
      */
@@ -65,8 +64,7 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
      */
     private final int inventoryRows;
 
-    public WindowCitizenInventory(final ContainerCitizenInventory container, final Inventory playerInventory, final Component iTextComponent)
-    {
+    public WindowCitizenInventory(final ContainerCitizenInventory container, final Inventory playerInventory, final Component iTextComponent) {
         super(container, playerInventory, iTextComponent);
         this.inventoryRows = (container.getItems().size() - 36) / 9;
 
@@ -75,8 +73,7 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
     }
 
     @Override
-    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
-    {
+    public void render(@NotNull final GuiGraphics stack, int x, int y, float z) {
         super.render(stack, x, y, z);
         this.renderTooltip(stack, x, y);
     }
@@ -85,8 +82,7 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void renderLabels(@NotNull final GuiGraphics stack, final int mouseX, final int mouseY)
-    {
+    protected void renderLabels(@NotNull final GuiGraphics stack, final int mouseX, final int mouseY) {
         stack.drawString(this.font, this.menu.getDisplayName(), 80, 9, 4210752, false);
         stack.drawString(this.font, this.playerInventoryTitle.getString(), 8, 25 + this.inventoryRows * SLOT_OFFSET, 4210752, false);
     }
@@ -95,13 +91,12 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final GuiGraphics stack, float partialTicks, int mouseX, int mouseY)
-    {
+    protected void renderBg(@NotNull final GuiGraphics stack, float partialTicks, int mouseX, int mouseY) {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
 
 
-        stack.blit(TEXT, i, j, 0, 0, this.imageWidth,  10 + this.inventoryRows * SLOT_OFFSET + 12, TEXTURE_SIZE, TEXTURE_SIZE);
+        stack.blit(TEXT, i, j, 0, 0, this.imageWidth, 10 + this.inventoryRows * SLOT_OFFSET + 12, TEXTURE_SIZE, TEXTURE_SIZE);
 
 
         stack.blit(TEXT, i, j + 10 + this.inventoryRows * SLOT_OFFSET + 12, 0, TEXTURE_OFFSET, this.imageWidth, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
@@ -112,19 +107,18 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
 
         stack.blit(TEXT, i + 172, j + 22, 0, 227, 49, 72, TEXTURE_SIZE, TEXTURE_SIZE);
 
-        for (int index = 0; index < 4; index++)
-        {
+        for (int index = 0; index < 4; index++) {
             stack.blit(TEXT, i + 222, j + 22 + index * 18, 0, 300, 18, 18, TEXTURE_SIZE, TEXTURE_SIZE);
         }
 
-        renderEntityInInventoryFollowsMouse(stack, i + 197, j + 88, 30, (float)(i + 51) - mouseX, (float)(j + 75 - 50) - mouseY, this.menu.getEntity());
+        renderEntityInInventoryFollowsMouse(stack, i + 197, j + 88, 30, (float) (i + 51) - mouseX, (float) (j + 75 - 50) - mouseY, this.menu.getEntity());
     }
 
 
     public static void renderEntityInInventoryFollowsMouse(GuiGraphics stack, int x, int y, int scale, float mouseX, float mouseY, Optional<? extends Entity> optionalEntity) {
         optionalEntity.ifPresent(entity -> {
-            float relativeMouseX = (float)Math.atan(mouseX / 40.0F);
-            float relativeMouseY = (float)Math.atan(mouseY / 40.0F);
+            float relativeMouseX = (float) Math.atan(mouseX / 40.0F);
+            float relativeMouseY = (float) Math.atan(mouseY / 40.0F);
             renderEntityInInventoryFollowsAngle(stack, x, y, scale, relativeMouseX, relativeMouseY, (LivingEntity) entity);
         });
     }
@@ -132,8 +126,8 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
     public static void renderEntityInInventoryFollowsAngle(GuiGraphics stack, int x, int y, int scale, float angleXComponent, float angleYComponent, LivingEntity entity) {
         float f = angleXComponent;
         float f1 = angleYComponent;
-        Quaternionf quaternionf = (new Quaternionf()).rotateZ((float)Math.PI);
-        Quaternionf quaternionf1 = (new Quaternionf()).rotateX(f1 * 20.0F * ((float)Math.PI / 180F));
+        Quaternionf quaternionf = (new Quaternionf()).rotateZ((float) Math.PI);
+        Quaternionf quaternionf1 = (new Quaternionf()).rotateX(f1 * 20.0F * ((float) Math.PI / 180F));
         quaternionf.mul(quaternionf1);
         float f2 = entity.yBodyRot;
         float f3 = entity.getYRot();
@@ -156,7 +150,7 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
     public static void renderEntityInInventory(GuiGraphics stack, int x, int y, int scale, Quaternionf quaternionf, @Nullable Quaternionf quaternionf1, LivingEntity entity) {
         stack.pose().pushPose();
         stack.pose().translate(x, y, 50.0D);
-        stack.pose().mulPose((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));
+        stack.pose().mulPose((new Matrix4f()).scaling((float) scale, (float) scale, (float) (-scale)));
         stack.pose().mulPose(quaternionf);
         Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityrenderdispatcher = Minecraft.getInstance().getEntityRenderDispatcher();

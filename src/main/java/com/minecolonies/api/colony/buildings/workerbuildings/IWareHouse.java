@@ -7,8 +7,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
-public interface IWareHouse extends IBuilding
-{
+public interface IWareHouse extends IBuilding {
     /**
      * Check if deliveryman is allowed to access warehouse.
      *

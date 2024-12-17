@@ -6,9 +6,9 @@ import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -18,8 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 
 @OnlyIn(Dist.CLIENT)
-public class WindowRack extends AbstractContainerScreen<ContainerRack>
-{
+public class WindowRack extends AbstractContainerScreen<ContainerRack> {
     /**
      * The resource LOCATION of the texture.
      */
@@ -65,22 +64,15 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
      */
     private final int inventoryRows;
 
-    public WindowRack(final ContainerRack container, final Inventory playerInventory, final Component iTextComponent)
-    {
+    public WindowRack(final ContainerRack container, final Inventory playerInventory, final Component iTextComponent) {
         super(container, playerInventory, iTextComponent);
-        if (container.neighborRack != null)
-        {
-            if (container.rack.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT) != RackType.NO_RENDER)
-            {
+        if (container.neighborRack != null) {
+            if (container.rack.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT) != RackType.NO_RENDER) {
                 this.jointChestInventory = new CombinedInvWrapper(container.rack.getInventory(), container.neighborRack.getInventory());
-            }
-            else
-            {
+            } else {
                 this.jointChestInventory = new CombinedInvWrapper(container.neighborRack.getInventory(), container.rack.getInventory());
             }
-        }
-        else
-        {
+        } else {
             this.jointChestInventory = container.rack.getInventory();
         }
 
@@ -90,8 +82,7 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
         final int columns = this.inventoryRows <= INVENTORY_BAR_SIZE ? INVENTORY_COLUMNS : ((size / INVENTORY_BAR_SIZE) + 1);
 
         this.imageHeight = Y_OFFSET + rows * PLAYER_INVENTORY_OFFSET_EACH;
-        if (columns > INVENTORY_COLUMNS)
-        {
+        if (columns > INVENTORY_COLUMNS) {
             this.imageWidth += (columns - INVENTORY_COLUMNS) * PLAYER_INVENTORY_OFFSET_EACH;
         }
     }
@@ -100,8 +91,7 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void renderLabels(@NotNull final GuiGraphics stack, int mouseX, int mouseY)
-    {
+    protected void renderLabels(@NotNull final GuiGraphics stack, int mouseX, int mouseY) {
         stack.drawString(this.font, this.title.getString(), 8, 6, 4210752, false);
         stack.drawString(this.font, this.playerInventoryTitle.getString(), 8, (this.imageHeight - 94), 4210752, false);
     }
@@ -110,19 +100,15 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
-    {
+    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY) {
         final ResourceLocation loc = getCorrectTextureForSlots(inventoryRows);
 
-        if (inventoryRows <= GOOD_SIZE)
-        {
+        if (inventoryRows <= GOOD_SIZE) {
             final int rowsHeight = this.inventoryRows * PLAYER_INVENTORY_OFFSET_EACH + PLAYER_INVENTORY_OFFSET_EACH - 1;
             stack.blit(loc, this.leftPos, this.topPos, 0, 0, this.imageWidth, rowsHeight, TEXTURE_SIZE, TEXTURE_SIZE);
             stack.blit(loc, this.leftPos, this.topPos + rowsHeight, 0,
-              TEXTURE_OFFSET, this.imageWidth, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
-        }
-        else
-        {
+                    TEXTURE_OFFSET, this.imageWidth, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
+        } else {
             stack.blit(loc, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, TEXTURE_SIZE, TEXTURE_SIZE);
         }
     }
@@ -133,21 +119,16 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
      * @param inventoryRows the amount of rows.
      * @return the correct LOCATION.
      */
-    private static ResourceLocation getCorrectTextureForSlots(final int inventoryRows)
-    {
-        if (inventoryRows <= GOOD_SIZE)
-        {
+    private static ResourceLocation getCorrectTextureForSlots(final int inventoryRows) {
+        if (inventoryRows <= GOOD_SIZE) {
             return CHEST_GUI_TEXTURE;
-        }
-        else
-        {
+        } else {
             return new ResourceLocation(Constants.MOD_ID, String.format(LOCATION, inventoryRows * INVENTORY_COLUMNS));
         }
     }
 
     @Override
-    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
-    {
+    public void render(@NotNull final GuiGraphics stack, int x, int y, float z) {
         super.render(stack, x, y, z);
         this.renderTooltip(stack, x, y);
     }

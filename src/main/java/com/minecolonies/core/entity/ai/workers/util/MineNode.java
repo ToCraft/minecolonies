@@ -9,7 +9,9 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ROTATION_MIRROR;
 
@@ -19,15 +21,14 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ROTATION_MI
  * When a node is completed we should add the surrounding nodes to level as AVAILABLE also note that we don't want node (0, -1) because there will be a ladder on the back wall of
  * the initial node, and we cant put the connection through the ladder
  */
-public class MineNode
-{
+public class MineNode {
     /**
      * Tags used to save and retrieve data from NBT.
      */
-    private static final String TAG_X       = "idX";
-    private static final String TAG_Z       = "idZ";
-    private static final String TAG_STYLE   = "Style";
-    private static final String TAG_STATUS  = "Status";
+    private static final String TAG_X = "idX";
+    private static final String TAG_Z = "idZ";
+    private static final String TAG_STYLE = "Style";
+    private static final String TAG_STATUS = "Status";
     private static final String TAG_PARENTX = "ParentX";
     private static final String TAG_PARENTZ = "ParentZ";
 
@@ -81,8 +82,7 @@ public class MineNode
      * @param z      Z-coordinate in the node
      * @param parent the parent of the node.
      */
-    public MineNode(final int x, final int z, @Nullable final Vec2i parent)
-    {
+    public MineNode(final int x, final int z, @Nullable final Vec2i parent) {
         this.x = x;
         this.z = z;
         this.style = NodeType.UNDEFINED;
@@ -97,55 +97,43 @@ public class MineNode
      * @return Node created from compound
      */
     @NotNull
-    public static MineNode createFromNBT(@NotNull final CompoundTag compound)
-    {
+    public static MineNode createFromNBT(@NotNull final CompoundTag compound) {
         // for backwards compatibility check if the types are doubles
         final boolean hasDoubles = compound.contains(TAG_X);
 
         final int x;
         final int z;
-        if (hasDoubles)
-        {
+        if (hasDoubles) {
             x = Mth.floor(compound.getDouble(TAG_X));
             z = Mth.floor(compound.getDouble(TAG_Z));
-        }
-        else
-        {
+        } else {
             x = compound.getInt(TAG_X);
             z = compound.getInt(TAG_Z);
         }
 
         NodeType style;
-        try
-        {
+        try {
             style = NodeType.valueOf(compound.getString(TAG_STYLE));
-        }
-        catch (final IllegalArgumentException ex)
-        {
+        } catch (final IllegalArgumentException ex) {
             style = NodeType.BEND_RIGHT;
         }
 
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
         Vec2i parent = null;
-        if (compound.contains(TAG_PARENTX))
-        {
-            if (hasDoubles)
-            {
+        if (compound.contains(TAG_PARENTX)) {
+            if (hasDoubles) {
                 parent = new Vec2i(
-                  Mth.floor(compound.getDouble(TAG_PARENTX)),
-                  Mth.floor(compound.getDouble(TAG_PARENTZ)));
-            }
-            else
-            {
+                        Mth.floor(compound.getDouble(TAG_PARENTX)),
+                        Mth.floor(compound.getDouble(TAG_PARENTZ)));
+            } else {
                 parent = new Vec2i(compound.getInt(TAG_PARENTX), compound.getInt(TAG_PARENTZ));
             }
         }
 
         //Set the node status in all directions.
         @NotNull final MineNode node = new MineNode(x, z, parent);
-        if (style == NodeType.UNDEFINED)
-        {
+        if (style == NodeType.UNDEFINED) {
             Log.getLogger().error("Minecolonies Node " + x + "," + z + " has an undefined style, please tell the mod author about this");
         }
         node.setStyle(style);
@@ -160,8 +148,7 @@ public class MineNode
      *
      * @param compound Compound to write to
      */
-    public void write(@NotNull final CompoundTag compound)
-    {
+    public void write(@NotNull final CompoundTag compound) {
         compound.putInt(TAG_X, x);
         compound.putInt(TAG_Z, z);
 
@@ -170,8 +157,7 @@ public class MineNode
         compound.putString(TAG_STYLE, style.name());
         compound.putString(TAG_STATUS, status.name());
 
-        if (parent != null)
-        {
+        if (parent != null) {
             compound.putInt(TAG_PARENTX, parent.getX());
             compound.putInt(TAG_PARENTZ, parent.getZ());
         }
@@ -183,8 +169,7 @@ public class MineNode
      * @return {@link NodeStatus}
      */
     @NotNull
-    public NodeStatus getStatus()
-    {
+    public NodeStatus getStatus() {
         return status;
     }
 
@@ -193,8 +178,7 @@ public class MineNode
      *
      * @param status {@link NodeStatus}
      */
-    public void setStatus(@NotNull final NodeStatus status)
-    {
+    public void setStatus(@NotNull final NodeStatus status) {
         this.status = status;
     }
 
@@ -204,20 +188,18 @@ public class MineNode
      * @return tuple of parent position.
      */
     @Nullable
-    public Vec2i getParent()
-    {
+    public Vec2i getParent() {
         return this.parent;
     }
 
     @NotNull
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Node{" + "x=" + x
-                 + ", z=" + z
-                 + ", style=" + style
-                 + ", status=" + status
-                 + '}';
+                + ", z=" + z
+                + ", style=" + style
+                + ", status=" + status
+                + '}';
     }
 
     /**
@@ -226,8 +208,7 @@ public class MineNode
      * @return {@link NodeType}
      */
     @NotNull
-    public NodeType getStyle()
-    {
+    public NodeType getStyle() {
         return style;
     }
 
@@ -236,8 +217,7 @@ public class MineNode
      *
      * @param style {@link NodeType}
      */
-    public void setStyle(@NotNull final NodeType style)
-    {
+    public void setStyle(@NotNull final NodeType style) {
         this.style = style;
     }
 
@@ -246,8 +226,7 @@ public class MineNode
      *
      * @return x-coordinate
      */
-    public int getX()
-    {
+    public int getX() {
         return x;
     }
 
@@ -256,8 +235,7 @@ public class MineNode
      *
      * @return z-coordinate
      */
-    public int getZ()
-    {
+    public int getZ() {
         return z;
     }
 
@@ -266,8 +244,7 @@ public class MineNode
      *
      * @return position of the new Node.
      */
-    public Vec2i getNorthNodeCenter()
-    {
+    public Vec2i getNorthNodeCenter() {
         return new Vec2i(getX(), getZ() - DISTANCE_TO_NEXT_NODE);
     }
 
@@ -276,8 +253,7 @@ public class MineNode
      *
      * @return position of the new Node.
      */
-    public Vec2i getSouthNodeCenter()
-    {
+    public Vec2i getSouthNodeCenter() {
         return new Vec2i(getX(), getZ() + DISTANCE_TO_NEXT_NODE);
     }
 
@@ -286,8 +262,7 @@ public class MineNode
      *
      * @return position of the new Node.
      */
-    public Vec2i getEastNodeCenter()
-    {
+    public Vec2i getEastNodeCenter() {
         return new Vec2i(getX() + DISTANCE_TO_NEXT_NODE, getZ());
     }
 
@@ -296,8 +271,7 @@ public class MineNode
      *
      * @return position of the new Node.
      */
-    public Vec2i getWestNodeCenter()
-    {
+    public Vec2i getWestNodeCenter() {
         return new Vec2i(getX() - DISTANCE_TO_NEXT_NODE, getZ());
     }
 
@@ -309,16 +283,13 @@ public class MineNode
      * @return the next node to go to.
      */
     @Nullable
-    public MineNode getRandomNextNode(final MinerLevel level, final int step)
-    {
-        if (step > 3)
-        {
+    public MineNode getRandomNextNode(final MinerLevel level, final int step) {
+        if (step > 3) {
             return null;
         }
 
         final MineNode nextNode;
-        switch (random.nextInt(3))
-        {
+        switch (random.nextInt(3)) {
             case 0:
                 nextNode = level.getOpenNode(getNorthNodeCenter());
                 break;
@@ -332,8 +303,7 @@ public class MineNode
                 nextNode = level.getOpenNode(getWestNodeCenter());
         }
 
-        if (nextNode == null || nextNode.style == NodeType.SHAFT)
-        {
+        if (nextNode == null || nextNode.style == NodeType.SHAFT) {
             final MineNode parent = level.getOpenNode(getParent());
             return parent == null ? null : parent.getRandomNextNode(level, step + 1);
         }
@@ -341,24 +311,20 @@ public class MineNode
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         final MineNode node = (MineNode) o;
         return x == node.x &&
-                 z == node.z;
+                z == node.z;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
 
         return Objects.hash(x, z);
     }
@@ -367,8 +333,7 @@ public class MineNode
      * Sets the status of the node. AVAILABLE means it can be mined IN_PROGRESS means it is currently being mined COMPLETED means it has been mined and all torches/wood structure
      * has been placed LADDER means this side has the ladder and must not be mined
      */
-    public enum NodeStatus
-    {
+    public enum NodeStatus {
         //Not built yet.
         AVAILABLE,
         //In building progress
@@ -380,8 +345,7 @@ public class MineNode
     /**
      * Sets the node style used.
      */
-    public enum NodeType
-    {
+    public enum NodeType {
         //Main shaft
         SHAFT("infrastructure/mineshafts/minermainshaft"),
         //Node on the back of the ladder (Don't mine the ladder)
@@ -404,7 +368,7 @@ public class MineNode
          * List of all valid types.
          */
         public static final ImmutableList<NodeType> SIDE_NODES =
-          ImmutableList.of(TUNNEL, CROSSROAD, BEND_RIGHT, BEND_LEFT, CROSS_THREE_LEFT_RIGHT, CROSS_THREE_TOP_LEFT, CROSS_THREE_TOP_RIGHT);
+                ImmutableList.of(TUNNEL, CROSSROAD, BEND_RIGHT, BEND_LEFT, CROSS_THREE_LEFT_RIGHT, CROSS_THREE_TOP_LEFT, CROSS_THREE_TOP_RIGHT);
 
         /**
          * The schematic string.
@@ -416,8 +380,7 @@ public class MineNode
          *
          * @param schemName the schematic name.
          */
-        NodeType(final String schemName)
-        {
+        NodeType(final String schemName) {
             this.schemName = schemName;
         }
 
@@ -426,8 +389,7 @@ public class MineNode
          *
          * @return the file name string.
          */
-        public String getSchematicName()
-        {
+        public String getSchematicName() {
             return schemName;
         }
     }
@@ -437,8 +399,7 @@ public class MineNode
      *
      * @return
      */
-    public Optional<RotationMirror> getRotationMirror()
-    {
+    public Optional<RotationMirror> getRotationMirror() {
         return rotMir;
     }
 
@@ -447,8 +408,7 @@ public class MineNode
      *
      * @param rot
      */
-    public void setRotationMirror(final RotationMirror rot)
-    {
+    public void setRotationMirror(final RotationMirror rot) {
         this.rotMir = Optional.ofNullable(rot);
     }
 }

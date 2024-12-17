@@ -65,8 +65,7 @@ import static com.minecolonies.api.util.constant.HappinessConstants.HADGREATFOOD
 /**
  * Utility methods for the inventories.
  */
-public final class ItemStackUtils
-{
+public final class ItemStackUtils {
     /**
      * Pattern for {@link #parseIdTemplate}.
      */
@@ -98,12 +97,12 @@ public final class ItemStackUtils
      * True if this stack is a standard food item (has at least some healing and some saturation, not purely for effects).
      */
     public static final Predicate<ItemStack> ISFOOD =
-      stack ->
-      {
-          final FoodProperties foodProperties = stack.getFoodProperties(null);
-          return ItemStackUtils.isNotEmpty(stack) && foodProperties != null && foodProperties.nutrition() > 0
-                     && foodProperties.saturation() > 0 && !stack.is(ModTags.excludedFood);
-      };
+            stack ->
+            {
+                final FoodProperties foodProperties = stack.getFoodProperties(null);
+                return ItemStackUtils.isNotEmpty(stack) && foodProperties != null && foodProperties.nutrition() > 0
+                        && foodProperties.saturation() > 0 && !stack.is(ModTags.excludedFood);
+            };
 
     /**
      * Predicate describing things which work in the furnace.
@@ -123,8 +122,7 @@ public final class ItemStackUtils
     /**
      * Private constructor to hide the implicit one.
      */
-    private ItemStackUtils()
-    {
+    private ItemStackUtils() {
         /*
          * Intentionally left empty.
          */
@@ -138,23 +136,17 @@ public final class ItemStackUtils
      * @return the output object or null.
      */
     @Nullable
-    public static Entity getEntityFromEntityInfoOrNull(final CompoundTag entityData, final Level world)
-    {
-        try
-        {
+    public static Entity getEntityFromEntityInfoOrNull(final CompoundTag entityData, final Level world) {
+        try {
             final Optional<EntityType<?>> type = EntityType.by(entityData);
-            if (type.isPresent())
-            {
+            if (type.isPresent()) {
                 final Entity entity = type.get().create(world);
-                if (entity != null)
-                {
+                if (entity != null) {
                     entity.load(entityData);
                     return entity;
                 }
             }
-        }
-        catch (final RuntimeException e)
-        {
+        } catch (final RuntimeException e) {
             Log.getLogger().info("Couldn't restore entitiy", e);
             return null;
         }
@@ -169,15 +161,11 @@ public final class ItemStackUtils
      * @param placer     the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundTag entityData, final Level world, final Entity placer)
-    {
-        if (entityData != null)
-        {
+    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundTag entityData, final Level world, final Entity placer) {
+        if (entityData != null) {
             final Entity entity = getEntityFromEntityInfoOrNull(entityData, world);
-            if (entity != null)
-            {
-                if (EntityUtils.isEntityAtPosition(entity, world, placer))
-                {
+            if (entity != null) {
+                if (EntityUtils.isEntityAtPosition(entity, world, placer)) {
                     return Collections.emptyList();
                 }
                 return getListOfStackForEntity(entity, placer);
@@ -194,10 +182,8 @@ public final class ItemStackUtils
      * @param placer     the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundTag entityData, final Level world, final AbstractEntityCitizen placer)
-    {
-        if (placer != null)
-        {
+    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundTag entityData, final Level world, final AbstractEntityCitizen placer) {
+        if (placer != null) {
             return getListOfStackForEntityInfo(entityData, world, (Entity) placer);
         }
 
@@ -211,23 +197,17 @@ public final class ItemStackUtils
      * @param placer the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStorage> getListOfStackForEntity(final Entity entity, final Entity placer)
-    {
-        if (entity != null)
-        {
+    public static List<ItemStorage> getListOfStackForEntity(final Entity entity, final Entity placer) {
+        if (entity != null) {
             final List<ItemStorage> request = new ArrayList<>();
-            if (entity instanceof ItemFrame)
-            {
+            if (entity instanceof ItemFrame) {
                 final ItemStack stack = ((ItemFrame) entity).getItem();
-                if (!ItemStackUtils.isEmpty(stack))
-                {
+                if (!ItemStackUtils.isEmpty(stack)) {
                     ItemStackUtils.setSize(stack, 1);
                     request.add(new ItemStorage(stack));
                 }
                 request.add(new ItemStorage(new ItemStack(Items.ITEM_FRAME, 1)));
-            }
-            else if (entity instanceof ArmorStand)
-            {
+            } else if (entity instanceof ArmorStand) {
                 request.add(new ItemStorage(entity.getPickedResult(new EntityHitResult(placer))));
                 ((ArmorStand) entity).getArmorSlots().forEach(item -> request.add(new ItemStorage(item)));
                 ((ArmorStand) entity).getHandSlots().forEach(item -> request.add(new ItemStorage(item)));
@@ -248,16 +228,14 @@ public final class ItemStackUtils
     /**
      * Verifies if there is equipment with an acceptable level in a worker's inventory.
      *
-     * @param stack        the stack to test.
-     * @param equipmentType     the type of equipment needed
-     * @param minimalLevel the minimum level for the equipment to find.
-     * @param maximumLevel the maximum level for the equipment to find.
+     * @param stack         the stack to test.
+     * @param equipmentType the type of equipment needed
+     * @param minimalLevel  the minimum level for the equipment to find.
+     * @param maximumLevel  the maximum level for the equipment to find.
      * @return true if equipment is acceptable
      */
-    public static boolean hasEquipmentLevel(@Nullable final ItemStack stack, final EquipmentTypeEntry equipmentType, final int minimalLevel, final int maximumLevel)
-    {
-        if (isEmpty(stack))
-        {
+    public static boolean hasEquipmentLevel(@Nullable final ItemStack stack, final EquipmentTypeEntry equipmentType, final int minimalLevel, final int maximumLevel) {
+        if (isEmpty(stack)) {
             return false;
         }
 
@@ -270,29 +248,25 @@ public final class ItemStackUtils
      * @param stack The stack to check.
      * @return True when the stack is empty, false when not.
      */
-    public static boolean isEmpty(@Nullable final ItemStack stack)
-    {
+    public static boolean isEmpty(@Nullable final ItemStack stack) {
         return stack == null || stack.isEmpty();
     }
 
-    public static boolean isNotEmpty(@Nullable final ItemStack stack)
-    {
+    public static boolean isNotEmpty(@Nullable final ItemStack stack) {
         return !isEmpty(stack);
     }
 
     /**
      * Verifies if an item has an appropriated grade.
      *
-     * @param itemStack    the equipment
-     * @param equipmentLevel    the equipment level
-     * @param minimalLevel the minimum level needed
-     * @param maximumLevel the maximum level needed (usually the worker's hut level)
+     * @param itemStack      the equipment
+     * @param equipmentLevel the equipment level
+     * @param minimalLevel   the minimum level needed
+     * @param maximumLevel   the maximum level needed (usually the worker's hut level)
      * @return true if equipment is acceptable
      */
-    public static boolean verifyEquipmentLevel(@NotNull final ItemStack itemStack, final int equipmentLevel, final int minimalLevel, final int maximumLevel)
-    {
-        if (equipmentLevel < minimalLevel)
-        {
+    public static boolean verifyEquipmentLevel(@NotNull final ItemStack itemStack, final int equipmentLevel, final int minimalLevel, final int maximumLevel) {
+        if (equipmentLevel < minimalLevel) {
             return false;
         }
         return (equipmentLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
@@ -304,16 +278,13 @@ public final class ItemStackUtils
      * @param itemStack the equipment to check.
      * @return max enchantment level.
      */
-    public static int getMaxEnchantmentLevel(final ItemStack itemStack)
-    {
-        if (itemStack == null)
-        {
+    public static int getMaxEnchantmentLevel(final ItemStack itemStack) {
+        if (itemStack == null) {
             return 0;
         }
         int maxLevel = 0;
 
-        for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemStack.getTagEnchantments().entrySet())
-        {
+        for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemStack.getTagEnchantments().entrySet()) {
             final int level = entry.getIntValue();
             maxLevel = Math.max(level, maxLevel);
         }
@@ -327,28 +298,18 @@ public final class ItemStackUtils
      * @param material type of material of the armor
      * @return armor level
      */
-    public static int getArmorLevel(final ArmorMaterial material)
-    {
+    public static int getArmorLevel(final ArmorMaterial material) {
         final float armorLevel = getArmorValue(material);
 
-        if (armorLevel <= getArmorValue(ArmorMaterials.LEATHER.value()))
-        {
+        if (armorLevel <= getArmorValue(ArmorMaterials.LEATHER.value())) {
             return 0;
-        }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.GOLD.value()))
-        {
+        } else if (armorLevel <= getArmorValue(ArmorMaterials.GOLD.value())) {
             return 1;
-        }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.CHAIN.value()))
-        {
+        } else if (armorLevel <= getArmorValue(ArmorMaterials.CHAIN.value())) {
             return 2;
-        }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.IRON.value()))
-        {
+        } else if (armorLevel <= getArmorValue(ArmorMaterials.IRON.value())) {
             return 3;
-        }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.DIAMOND.value()))
-        {
+        } else if (armorLevel <= getArmorValue(ArmorMaterials.DIAMOND.value())) {
             return 4;
         }
 
@@ -361,11 +322,9 @@ public final class ItemStackUtils
      * @param material type of material of the armor.
      * @return the armor value.
      */
-    private static float getArmorValue(final ArmorMaterial material)
-    {
+    private static float getArmorValue(final ArmorMaterial material) {
         int value = 0;
-        for (final ArmorItem.Type type : ArmorItem.Type.values())
-        {
+        for (final ArmorItem.Type type : ArmorItem.Type.values()) {
             value += Objects.requireNonNullElse(material.defense().get(type), 0);
         }
         return value + material.toughness() * 4;
@@ -378,12 +337,9 @@ public final class ItemStackUtils
      * @param stack2 the second to compare with.
      * @return true if better, false if worse or either of them are not equipment.
      */
-    public static boolean isBetterEquipment(final ItemStack stack1, final ItemStack stack2)
-    {
-        for (EquipmentTypeEntry equipmentType : ModEquipmentTypes.getRegistry())
-        {
-            if (equipmentType.checkIsEquipment(stack1) && equipmentType.checkIsEquipment(stack2) && equipmentType.getMiningLevel(stack1) > equipmentType.getMiningLevel(stack2))
-            {
+    public static boolean isBetterEquipment(final ItemStack stack1, final ItemStack stack2) {
+        for (EquipmentTypeEntry equipmentType : ModEquipmentTypes.getRegistry()) {
+            if (equipmentType.checkIsEquipment(stack1) && equipmentType.checkIsEquipment(stack2) && equipmentType.getMiningLevel(stack1) > equipmentType.getMiningLevel(stack2)) {
                 return true;
             }
         }
@@ -396,16 +352,13 @@ public final class ItemStackUtils
      * @param tool the tool to check.
      * @return fortune level.
      */
-    public static int getFortuneOf(@Nullable final ItemStack tool, final Level level)
-    {
-        if (tool == null)
-        {
+    public static int getFortuneOf(@Nullable final ItemStack tool, final Level level) {
+        if (tool == null) {
             return 0;
         }
         //calculate fortune enchantment
         int fortune = 0;
-        if (tool.isEnchanted())
-        {
+        if (tool.isEnchanted()) {
             return tool.getTagEnchantments().getLevel(Utils.getRegistryValue(Enchantments.FORTUNE, level));
         }
         return fortune;
@@ -417,8 +370,7 @@ public final class ItemStackUtils
      * @param stack the stack to analyze.
      * @return true if it is a tool or sword.
      */
-    public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack)
-    {
+    public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack) {
         return stack.getItem() instanceof SwordItem || stack.getItem() instanceof DiggerItem || Compatibility.isTinkersWeapon(stack);
     }
 
@@ -428,10 +380,8 @@ public final class ItemStackUtils
      * @param toolGrade the number of the grade of a tool
      * @return a string corresponding to the tool
      */
-    public static MutableComponent swapArmorGrade(final int toolGrade)
-    {
-        if (toolGrade >= 0 && toolGrade <= 4)
-        {
+    public static MutableComponent swapArmorGrade(final int toolGrade) {
+        if (toolGrade >= 0 && toolGrade <= 4) {
             return Component.translatableEscape("com.minecolonies.coremod.armorlevel." + toolGrade);
         }
 
@@ -445,10 +395,8 @@ public final class ItemStackUtils
      * @param toolGrade the number of the grade of an armor
      * @return a string corresponding to the armor
      */
-    public static MutableComponent swapToolGrade(final int toolGrade)
-    {
-        if (toolGrade >= 0 && toolGrade <= 4)
-        {
+    public static MutableComponent swapToolGrade(final int toolGrade) {
+        if (toolGrade >= 0 && toolGrade <= 4) {
             return Component.translatableEscape("com.minecolonies.coremod.toollevel." + toolGrade);
         }
 
@@ -463,10 +411,8 @@ public final class ItemStackUtils
      * @return True when they can be merged, false when not.
      */
     @NotNull
-    public static Boolean areItemStacksMergable(final ItemStack existingStack, final ItemStack mergingStack)
-    {
-        if (!compareItemStacksIgnoreStackSize(existingStack, mergingStack))
-        {
+    public static Boolean areItemStacksMergable(final ItemStack existingStack, final ItemStack mergingStack) {
+        if (!compareItemStacksIgnoreStackSize(existingStack, mergingStack)) {
             return false;
         }
 
@@ -481,8 +427,7 @@ public final class ItemStackUtils
      * @return True when they are equal except the stacksize, false when not.
      */
     @NotNull
-    public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2)
-    {
+    public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2) {
         return compareItemStacksIgnoreStackSize(itemStack1, itemStack2, true, true);
     }
 
@@ -492,8 +437,7 @@ public final class ItemStackUtils
      * @param stack to get the size from
      * @return the size of the stack
      */
-    public static int getSize(@NotNull final ItemStack stack)
-    {
+    public static int getSize(@NotNull final ItemStack stack) {
         return stack.getCount();
     }
 
@@ -503,10 +447,8 @@ public final class ItemStackUtils
      * @param stack to get the size from
      * @return the size of the stack
      */
-    public static int getDurability(@NotNull final ItemStack stack)
-    {
-        if (ItemStackUtils.isEmpty(stack))
-        {
+    public static int getDurability(@NotNull final ItemStack stack) {
+        if (ItemStackUtils.isEmpty(stack)) {
             return 0;
         }
 
@@ -522,8 +464,7 @@ public final class ItemStackUtils
      * @param matchNBT    Set to true to match nbt
      * @return True when they are equal except the stacksize, false when not.
      */
-    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchDamage, final boolean matchNBT)
-    {
+    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchDamage, final boolean matchNBT) {
         return compareItemStacksIgnoreStackSize(itemStack1, itemStack2, matchDamage, matchNBT, false);
     }
 
@@ -537,8 +478,7 @@ public final class ItemStackUtils
      * @param min         if the count of stack2 has to be at least the same as stack1.
      * @return True when they are equal except the stacksize, false when not.
      */
-    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchDamage, final boolean matchNBT, final boolean min)
-    {
+    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchDamage, final boolean matchNBT, final boolean min) {
         return compareItemStacksIgnoreStackSize(itemStack1, itemStack2, matchDamage, matchNBT, false, false);
     }
 
@@ -553,47 +493,38 @@ public final class ItemStackUtils
      * @return True when they are equal except the stacksize, false when not.
      */
     public static boolean compareItemStacksIgnoreStackSize(
-      final ItemStack itemStack1,
-      final ItemStack itemStack2,
-      final boolean matchDamage,
-      final boolean matchNBT,
-      final boolean min,
-      final boolean matchNBTExactly)
-    {
-        if (isEmpty(itemStack1) && isEmpty(itemStack2))
-        {
+            final ItemStack itemStack1,
+            final ItemStack itemStack2,
+            final boolean matchDamage,
+            final boolean matchNBT,
+            final boolean min,
+            final boolean matchNBTExactly) {
+        if (isEmpty(itemStack1) && isEmpty(itemStack2)) {
             return true;
         }
 
-        if (isEmpty(itemStack1) != isEmpty(itemStack2))
-        {
+        if (isEmpty(itemStack1) != isEmpty(itemStack2)) {
             return false;
         }
 
-        if (itemStack1.getItem() == itemStack2.getItem() && (!matchDamage || itemStack1.getDamageValue() == itemStack2.getDamageValue()))
-        {
-            if (!matchNBT)
-            {
+        if (itemStack1.getItem() == itemStack2.getItem() && (!matchDamage || itemStack1.getDamageValue() == itemStack2.getDamageValue())) {
+            if (!matchNBT) {
                 // Not comparing nbt
                 return true;
             }
 
-            if (min && itemStack1.getCount() > itemStack2.getCount())
-            {
+            if (min && itemStack1.getCount() > itemStack2.getCount()) {
                 return false;
             }
 
             final Set<DataComponentType<?>> checkedKeys = CHECKED_NBT_KEYS.get(itemStack1.getItem());
-            if (checkedKeys == null || checkedKeys.isEmpty())
-            {
+            if (checkedKeys == null || checkedKeys.isEmpty()) {
                 return true;
             }
 
-            for (final DataComponentType<?> key : checkedKeys)
-            {
+            for (final DataComponentType<?> key : checkedKeys) {
                 //todo double check this works, otherwise we might have to serialize it before comparison.
-                if (!Objects.equals(itemStack1.getComponents().get(key), itemStack2.getComponents().get(key)))
-                {
+                if (!Objects.equals(itemStack1.getComponents().get(key), itemStack2.getComponents().get(key))) {
                     return false;
                 }
             }
@@ -610,8 +541,7 @@ public final class ItemStackUtils
      * @param stack  the stack.
      * @return true if so.
      */
-    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack)
-    {
+    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack) {
         return compareItemStackListIgnoreStackSize(stacks, stack, true, true);
     }
 
@@ -624,12 +554,9 @@ public final class ItemStackUtils
      * @param matchNBT    if nbt has to match.
      * @return true if so.
      */
-    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack, final boolean matchDamage, final boolean matchNBT)
-    {
-        for (final ItemStack tempStack : stacks)
-        {
-            if (compareItemStacksIgnoreStackSize(tempStack, stack, matchDamage, matchNBT))
-            {
+    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack, final boolean matchDamage, final boolean matchNBT) {
+        for (final ItemStack tempStack : stacks) {
+            if (compareItemStacksIgnoreStackSize(tempStack, stack, matchDamage, matchNBT)) {
                 return true;
             }
         }
@@ -642,8 +569,7 @@ public final class ItemStackUtils
      * @param stack to set the size to
      * @param size  of the stack
      */
-    public static void setSize(@NotNull final ItemStack stack, final int size)
-    {
+    public static void setSize(@NotNull final ItemStack stack, final int size) {
         stack.setCount(size);
     }
 
@@ -653,8 +579,7 @@ public final class ItemStackUtils
      * @param stack  to set the size to
      * @param amount to increase the stack's size of (negative value to decrease)
      */
-    public static void changeSize(@NotNull final ItemStack stack, final int amount)
-    {
+    public static void changeSize(@NotNull final ItemStack stack, final int amount) {
         stack.setCount(stack.getCount() + amount);
     }
 
@@ -665,8 +590,7 @@ public final class ItemStackUtils
      * @return The ItemStack stored in the NBT Data.
      */
     @NotNull
-    public static ItemStack deserializeFromNBT(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public static ItemStack deserializeFromNBT(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         return ItemStack.parseOptional(provider, compound);
     }
 
@@ -676,10 +600,8 @@ public final class ItemStackUtils
      * @param stack the stack to check.
      * @return true if sapling.
      */
-    public static boolean isStackSapling(@Nullable final ItemStack stack)
-    {
-        if (ItemStackUtils.isEmpty(stack))
-        {
+    public static boolean isStackSapling(@Nullable final ItemStack stack) {
+        if (ItemStackUtils.isEmpty(stack)) {
             return false;
         }
 
@@ -692,10 +614,9 @@ public final class ItemStackUtils
      * @param entity the furnace.
      * @return true if so.
      */
-    public static boolean hasSmeltableInFurnaceAndNoFuel(final FurnaceBlockEntity entity)
-    {
+    public static boolean hasSmeltableInFurnaceAndNoFuel(final FurnaceBlockEntity entity) {
         return !ItemStackUtils.isEmpty(entity.getItem(SMELTABLE_SLOT))
-                 && ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
+                && ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
     }
 
     /**
@@ -704,10 +625,9 @@ public final class ItemStackUtils
      * @param entity the furnace.
      * @return true if so.
      */
-    public static boolean hasNeitherFuelNorSmeltAble(final FurnaceBlockEntity entity)
-    {
+    public static boolean hasNeitherFuelNorSmeltAble(final FurnaceBlockEntity entity) {
         return ItemStackUtils.isEmpty(entity.getItem(SMELTABLE_SLOT))
-                 && ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
+                && ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
     }
 
     /**
@@ -716,10 +636,9 @@ public final class ItemStackUtils
      * @param entity the furnace.
      * @return true if so.
      */
-    public static boolean hasFuelInFurnaceAndNoSmeltable(final FurnaceBlockEntity entity)
-    {
+    public static boolean hasFuelInFurnaceAndNoSmeltable(final FurnaceBlockEntity entity) {
         return ItemStackUtils.isEmpty(entity.getItem(SMELTABLE_SLOT))
-                 && !ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
+                && !ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
     }
 
     /**
@@ -728,10 +647,9 @@ public final class ItemStackUtils
      * @param entity the brewingStand.
      * @return true if so.
      */
-    public static boolean hasBrewableAndNoFuel(final BrewingStandBlockEntity entity)
-    {
+    public static boolean hasBrewableAndNoFuel(final BrewingStandBlockEntity entity) {
         return !ItemStackUtils.isEmpty(entity.getItem(INGREDIENT_SLOT))
-                 && ItemStackUtils.isEmpty(entity.getItem(BREWING_FUEL_SLOT));
+                && ItemStackUtils.isEmpty(entity.getItem(BREWING_FUEL_SLOT));
     }
 
     /**
@@ -740,10 +658,9 @@ public final class ItemStackUtils
      * @param entity the brewingStand.
      * @return true if so.
      */
-    public static boolean hasNeitherFuelNorBrewable(final BrewingStandBlockEntity entity)
-    {
+    public static boolean hasNeitherFuelNorBrewable(final BrewingStandBlockEntity entity) {
         return ItemStackUtils.isEmpty(entity.getItem(INGREDIENT_SLOT))
-                 && ItemStackUtils.isEmpty(entity.getItem(BREWING_FUEL_SLOT));
+                && ItemStackUtils.isEmpty(entity.getItem(BREWING_FUEL_SLOT));
     }
 
     /**
@@ -752,10 +669,9 @@ public final class ItemStackUtils
      * @param entity the brewingStand.
      * @return true if so.
      */
-    public static boolean hasFuelAndNoBrewable(final BrewingStandBlockEntity entity)
-    {
+    public static boolean hasFuelAndNoBrewable(final BrewingStandBlockEntity entity) {
         return ItemStackUtils.isEmpty(entity.getItem(INGREDIENT_SLOT))
-                 && !ItemStackUtils.isEmpty(entity.getItem(BREWING_FUEL_SLOT));
+                && !ItemStackUtils.isEmpty(entity.getItem(BREWING_FUEL_SLOT));
     }
 
     /**
@@ -764,37 +680,28 @@ public final class ItemStackUtils
      * @param itemData ie: minecraft:potion{"minecraft:potion_contents":{"potion":"minecraft:water"}}
      * @return stack with any defined NBT
      */
-    public static ItemStack idToItemStack(final String itemData, final HolderLookup.Provider provider)
-    {
+    public static ItemStack idToItemStack(final String itemData, final HolderLookup.Provider provider) {
         String itemId = itemData;
         final int tagIndex = itemId.indexOf("{");
         final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
         itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
         final Item item;
-        try
-        {
+        try {
             item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemId));
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             Log.getLogger().error("Unable to parse item definition: {}", itemData, t);
             return ItemStack.EMPTY;
         }
         final ItemStack stack = new ItemStack(item);
-        if (tag != null)
-        {
-            try
-            {
+        if (tag != null) {
+            try {
                 stack.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, JsonParser.parseString(tag)));
-            }
-            catch (Throwable t)
-            {
+            } catch (Throwable t) {
                 //Unable to parse tags, drop them.
                 Log.getLogger().error("Unable to parse item definition: {}", itemData, t);
             }
         }
-        if (stack.isEmpty())
-        {
+        if (stack.isEmpty()) {
             Log.getLogger().warn("Parsed item definition returned empty: {}", itemData);
         }
         return stack;
@@ -814,18 +721,15 @@ public final class ItemStackUtils
      */
     @NotNull
     public static Tuple<Boolean, String> parseIdTemplate(@Nullable String itemId,
-                                                         @NotNull final ResourceLocation baseItemId)
-    {
-        if (itemId == null)
-        {
+                                                         @NotNull final ResourceLocation baseItemId) {
+        if (itemId == null) {
             return new Tuple<>(false, null);
         }
 
         itemId = itemId.replace("[NS]", baseItemId.getNamespace());
         itemId = TEMPLATE_PATH_PATTERN.matcher(itemId).replaceAll(m ->
         {
-            if (m.group(1) != null && m.group(2) != null)
-            {
+            if (m.group(1) != null && m.group(2) != null) {
                 return baseItemId.getPath().replace(m.group(1), m.group(2));
             }
             return baseItemId.getPath();
@@ -836,11 +740,11 @@ public final class ItemStackUtils
 
     /**
      * Reports if this stack has a custom Tag value that is not purely a damage value.
+     *
      * @param stack the stack to inspect
-     * @return      true if the stack has a non-damage tag value
+     * @return true if the stack has a non-damage tag value
      */
-    public static boolean hasTag(@NotNull final ItemStack stack)
-    {
+    public static boolean hasTag(@NotNull final ItemStack stack) {
         return stack.getComponents() != null && stack.getComponents().size() > (stack.isDamageableItem() ? 1 : 0);
     }
 
@@ -851,23 +755,19 @@ public final class ItemStackUtils
      * @param player The player whose inventory to check.
      * @return The set of items.
      */
-    public static Set<ItemStack> allItemsPlusInventory(@NotNull final Player player)
-    {
+    public static Set<ItemStack> allItemsPlusInventory(@NotNull final Player player) {
         // get all known items first
         final Set<ItemStorage> allItems = new HashSet<>(IColonyManager.getInstance().getCompatibilityManager().getSetOfAllItems());
 
         // plus all items from the player's inventory not already listed (adds items with extra NBT)
-        for (final ItemStack stack : player.getInventory().items)
-        {
-            if (stack.isEmpty())
-            {
+        for (final ItemStack stack : player.getInventory().items) {
+            if (stack.isEmpty()) {
                 continue;
             }
 
             final ItemStack pristine = stack.copy();
             pristine.setCount(1);
-            if (stack.isDamageableItem() && stack.isDamaged())
-            {
+            if (stack.isDamageableItem() && stack.isDamaged()) {
                 pristine.setDamageValue(0);
                 // in case the item wasn't already in the set, we want to only store a pristine one!
             }
@@ -880,49 +780,41 @@ public final class ItemStackUtils
     /**
      * Consume food helper.
      *
-     * @param foodStack   the itemstack of food.
-     * @param citizen     the citizen entity.
-     * @param player      optional player providing the food.
+     * @param foodStack the itemstack of food.
+     * @param citizen   the citizen entity.
+     * @param player    optional player providing the food.
      */
-    public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, @Nullable final Player player)
-    {
+    public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, @Nullable final Player player) {
         final ICitizenData citizenData = citizen.getCitizenData();
         final double satIncrease = FoodUtils.getFoodValue(foodStack, citizen);
         ItemStack itemUseReturn = FoodUtils.consumeFoodStack(foodStack, citizen);
 
-        if (player != null && player.hasInfiniteMaterials())
-        {
+        if (player != null && player.hasInfiniteMaterials()) {
             itemUseReturn = ItemStack.EMPTY;
         }
 
         citizenData.increaseSaturation(satIncrease);
 
-        if (!itemUseReturn.isEmpty())
-        {
-            if (citizenData.getInventory().isFull() || (player != null && !player.getInventory().add(itemUseReturn)))
-            {
+        if (!itemUseReturn.isEmpty()) {
+            if (citizenData.getInventory().isFull() || (player != null && !player.getInventory().add(itemUseReturn))) {
                 InventoryUtils.spawnItemStack(
-                  citizen.level(),
-                  citizen.getX(),
-                  citizen.getY(),
-                  citizen.getZ(),
-                  itemUseReturn
+                        citizen.level(),
+                        citizen.getX(),
+                        citizen.getY(),
+                        citizen.getZ(),
+                        itemUseReturn
                 );
-            }
-            else
-            {
+            } else {
                 InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), itemUseReturn);
             }
         }
 
-        if (foodStack.getItem() instanceof IMinecoloniesFoodItem foodItem && foodItem.getTier() >= 3)
-        {
+        if (foodStack.getItem() instanceof IMinecoloniesFoodItem foodItem && foodItem.getTier() >= 3) {
             citizen.getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(HADGREATFOOD, 2.0, new StaticHappinessSupplier(2.0), 5));
         }
 
         IColony citizenColony = citizen.getCitizenColonyHandler().getColonyOrRegister();
-        if (citizenColony != null)
-        {
+        if (citizenColony != null) {
             AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.get().trigger(playerMP, foodStack));
         }
         citizenData.markDirty(60);
@@ -930,14 +822,13 @@ public final class ItemStackUtils
 
     /**
      * Given an {@link Ingredient}, tries to produce a reasonable friendly UI name for its contents.
+     *
      * @param ingredient the ingredient to check.
      * @return the friendly name.
      */
     @OnlyIn(Dist.CLIENT)
-    public static Component getTranslatedName(@NotNull final SizedIngredient ingredient)
-    {
-        if (ingredient.ingredient().hasNoItems())
-        {
+    public static Component getTranslatedName(@NotNull final SizedIngredient ingredient) {
+        if (ingredient.ingredient().hasNoItems()) {
             return Component.empty();
         }
 
@@ -952,8 +843,7 @@ public final class ItemStackUtils
                     : Component.translatable("com.minecolonies.coremod.research.tags.other", t.location().toString()));
         }).orElseGet(() ->
         {
-            if (items.length == 1)
-            {
+            if (items.length == 1) {
                 return items[0].getItem().getDescription();
             }
             return Component.translatable(String.join("/", Collections.nCopies(items.length, "%s")),
@@ -963,17 +853,16 @@ public final class ItemStackUtils
 
     /**
      * Attempts to find a tag that exactly matches the given list of item stacks.
+     *
      * @param stacks a list of item stacks.
      * @return a tag that seems to match it, if found.
      */
-    public static Optional<TagKey<Item>> getTagEquivalent(@NotNull final ItemStack[] stacks)
-    {
+    public static Optional<TagKey<Item>> getTagEquivalent(@NotNull final ItemStack[] stacks) {
         final List<Item> values = Arrays.stream(stacks)
                 .map(ItemStack::getItem)
                 .toList();
 
-        if (values.size() <= 1)
-        {
+        if (values.size() <= 1) {
             return Optional.empty();
         }
 
@@ -987,19 +876,15 @@ public final class ItemStackUtils
                 .findFirst();
     }
 
-    private static boolean areEquivalent(@NotNull final HolderSet.Named<Item> tag, @NotNull final List<Item> values)
-    {
+    private static boolean areEquivalent(@NotNull final HolderSet.Named<Item> tag, @NotNull final List<Item> values) {
         final int count = tag.size();
-        if (count != values.size())
-        {
+        if (count != values.size()) {
             return false;
         }
-        for (int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             final Item tagValue = tag.get(i).value();
             final Item value = values.get(i);
-            if (!value.equals(tagValue))
-            {
+            if (!value.equals(tagValue)) {
                 return false;
             }
         }

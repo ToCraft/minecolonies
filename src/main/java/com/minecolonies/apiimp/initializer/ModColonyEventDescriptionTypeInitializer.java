@@ -13,17 +13,14 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /**
  * Initializer for colony event types, register new event types here.
  */
-public final class ModColonyEventDescriptionTypeInitializer
-{
+public final class ModColonyEventDescriptionTypeInitializer {
     public final static DeferredRegister<ColonyEventDescriptionTypeRegistryEntry> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.COLONY_EVENT_DESC_TYPES, Constants.MOD_ID);
 
-    private ModColonyEventDescriptionTypeInitializer()
-    {
+    private ModColonyEventDescriptionTypeInitializer() {
         throw new IllegalStateException("Tried to initialize: ModColonyEventDescriptionTypeInitializer but this is a Utility class.");
     }
 
-    static
-    {
+    static {
         DEFERRED_REGISTER.register(CitizenBornEvent.CITIZEN_BORN_EVENT_ID.getPath(), () -> new ColonyEventDescriptionTypeRegistryEntry(CitizenBornEvent::loadFromNBT, CitizenBornEvent::loadFromFriendlyByteBuf, CitizenBornEvent.CITIZEN_BORN_EVENT_ID));
         DEFERRED_REGISTER.register(CitizenSpawnedEvent.CITIZEN_SPAWNED_EVENT_ID.getPath(), () -> new ColonyEventDescriptionTypeRegistryEntry(CitizenSpawnedEvent::loadFromNBT, CitizenSpawnedEvent::loadFromFriendlyByteBuf, CitizenSpawnedEvent.CITIZEN_SPAWNED_EVENT_ID));
         DEFERRED_REGISTER.register(VisitorSpawnedEvent.VISITOR_SPAWNED_EVENT_ID.getPath(), () -> new ColonyEventDescriptionTypeRegistryEntry(VisitorSpawnedEvent::loadFromNBT, VisitorSpawnedEvent::loadFromFriendlyByteBuf, VisitorSpawnedEvent.VISITOR_SPAWNED_EVENT_ID));

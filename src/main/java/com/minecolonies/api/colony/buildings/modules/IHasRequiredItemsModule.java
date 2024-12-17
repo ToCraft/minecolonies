@@ -13,8 +13,7 @@ import java.util.function.Predicate;
 /**
  * Module defining items to be left behind and not used otherwise.
  */
-public interface IHasRequiredItemsModule extends IBuildingModule
-{
+public interface IHasRequiredItemsModule extends IBuildingModule {
     /**
      * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this
      * method to hold some stacks back.
@@ -25,15 +24,16 @@ public interface IHasRequiredItemsModule extends IBuildingModule
 
     /**
      * Calculate the number of reserved stacks the resolver can't touch.
+     *
      * @return a list of itemstorages.
      */
-    default Map<ItemStorage, Integer> reservedStacks()
-    {
+    default Map<ItemStorage, Integer> reservedStacks() {
         return reservedStacksExcluding(null);
     }
 
     /**
      * Calculate the number of reserved stacks the resolver can't touch.
+     *
      * @param excluded ignore reservations that would exist for the current request.
      * @return a list of itemstorages.
      */

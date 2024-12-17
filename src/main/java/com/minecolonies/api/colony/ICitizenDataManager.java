@@ -9,11 +9,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Manages access to citizen data types.
  */
-public interface ICitizenDataManager
-{
+public interface ICitizenDataManager {
 
-    static ICitizenDataManager getInstance()
-    {
+    static ICitizenDataManager getInstance() {
         return IMinecoloniesAPI.getInstance().getCitizenDataManager();
     }
 

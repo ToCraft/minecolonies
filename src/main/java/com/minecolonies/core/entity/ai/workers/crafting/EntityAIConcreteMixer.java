@@ -8,12 +8,12 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingConcreteMixer;
 import com.minecolonies.core.colony.jobs.JobConcreteMixer;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ConcretePowderBlock;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ConcretePowderBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,33 +25,30 @@ import static com.minecolonies.api.util.constant.Constants.*;
 /**
  * Concrete mixer AI class.
  */
-public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteMixer, BuildingConcreteMixer>
-{
+public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteMixer, BuildingConcreteMixer> {
     /**
      * Predicate to check if concrete powder is in inv.
      */
     private static final Predicate<ItemStack> CONCRETE =
-      stack -> !stack.isEmpty()
-                 && stack.getItem() instanceof BlockItem
-                 && ((BlockItem) stack.getItem()).getBlock() instanceof ConcretePowderBlock;
+            stack -> !stack.isEmpty()
+                    && stack.getItem() instanceof BlockItem
+                    && ((BlockItem) stack.getItem()).getBlock() instanceof ConcretePowderBlock;
 
     /**
      * Constructor for the Concrete mason. Defines the tasks the Concrete mason executes.
      *
      * @param job a Concrete mason job to use.
      */
-    public EntityAIConcreteMixer(@NotNull final JobConcreteMixer job)
-    {
+    public EntityAIConcreteMixer(@NotNull final JobConcreteMixer job) {
         super(job);
         super.registerTargets(
-          new AITarget(CONCRETE_MIXER_PLACING, this::placePowder, TICKS_SECOND),
-          new AITarget(CONCRETE_MIXER_HARVESTING, this::harvestConcrete, TICKS_SECOND)
+                new AITarget(CONCRETE_MIXER_PLACING, this::placePowder, TICKS_SECOND),
+                new AITarget(CONCRETE_MIXER_HARVESTING, this::harvestConcrete, TICKS_SECOND)
         );
     }
 
     @Override
-    public Class<BuildingConcreteMixer> getExpectedBuildingClass()
-    {
+    public Class<BuildingConcreteMixer> getExpectedBuildingClass() {
         return BuildingConcreteMixer.class;
     }
 
@@ -60,19 +57,15 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
      *
      * @return the next AI state.
      */
-    private IAIState placePowder()
-    {
+    private IAIState placePowder() {
         final BlockPos posToPlace = building.getBlockToPlace();
-        if (posToPlace == null)
-        {
+        if (posToPlace == null) {
             return START_WORKING;
         }
 
         final int slot = getSlotWithPowder();
-        if (slot == -1)
-        {
-            if (InventoryUtils.hasItemInItemHandler(building.getItemHandlerCap(), CONCRETE))
-            {
+        if (slot == -1) {
+            if (InventoryUtils.hasItemInItemHandler(building.getItemHandlerCap(), CONCRETE)) {
                 needsCurrently = new Tuple<>(CONCRETE, STACKSIZE);
                 return GATHERING_REQUIRED_MATERIALS;
             }
@@ -80,15 +73,13 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             return START_WORKING;
         }
 
-        if (walkToBlock(posToPlace))
-        {
+        if (walkToBlock(posToPlace)) {
             return getState();
         }
 
         final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
         final Block block = ((BlockItem) stack.getItem()).getBlock();
-        if (InventoryUtils.attemptReduceStackInItemHandler(worker.getInventoryCitizen(), stack, 1))
-        {
+        if (InventoryUtils.attemptReduceStackInItemHandler(worker.getInventoryCitizen(), stack, 1)) {
             world.setBlock(posToPlace, block.defaultBlockState().updateShape(Direction.DOWN, block.defaultBlockState(), world, posToPlace, posToPlace), UPDATE_FLAG);
         }
 
@@ -100,31 +91,25 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
      *
      * @return the next AI state.
      */
-    private IAIState harvestConcrete()
-    {
+    private IAIState harvestConcrete() {
         final BlockPos posToMine = building.getBlockToMine();
-        if (posToMine == null)
-        {
+        if (posToMine == null) {
             this.resetActionsDone();
             return START_WORKING;
         }
 
-        if (walkToBlock(posToMine))
-        {
+        if (walkToBlock(posToMine)) {
             return getState();
         }
 
         final BlockState blockToMine = world.getBlockState(posToMine);
-        if (mineBlock(posToMine))
-        {
+        if (mineBlock(posToMine)) {
             incrementActionsDoneAndDecSaturation();
 
-            if (currentRequest != null && currentRecipeStorage != null && blockToMine.getBlock().asItem().equals(currentRecipeStorage.getPrimaryOutput().getItem()))
-            {
+            if (currentRequest != null && currentRecipeStorage != null && blockToMine.getBlock().asItem().equals(currentRecipeStorage.getPrimaryOutput().getItem())) {
                 currentRequest.addDelivery(new ItemStack(blockToMine.getBlock(), 1));
                 job.setCraftCounter(job.getCraftCounter() + 1);
-                if (job.getCraftCounter() >= job.getMaxCraftingCount())
-                {
+                if (job.getCraftCounter() >= job.getMaxCraftingCount()) {
                     job.finishRequest(true);
                     worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
                     currentRequest = null;
@@ -145,44 +130,34 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
      *
      * @return the slot number containing powder, or -1 if no slot contains any.
      */
-    private int getSlotWithPowder()
-    {
-        if (currentRequest != null && currentRecipeStorage != null)
-        {
+    private int getSlotWithPowder() {
+        if (currentRequest != null && currentRecipeStorage != null) {
             final ItemStack inputStack = currentRecipeStorage.getCleanedInput().get(0).getItemStack();
-            if (CONCRETE.test(inputStack))
-            {
+            if (CONCRETE.test(inputStack)) {
                 return InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, inputStack));
             }
             return -1;
-        }
-        else
-        {
+        } else {
             return InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), CONCRETE);
         }
     }
 
     @Override
-    protected IAIState decide()
-    {
-        if (job.getCurrentTask() == null)
-        {
+    protected IAIState decide() {
+        if (job.getCurrentTask() == null) {
             return performMixingWork();
         }
 
-        if (walkTo == null && walkToBuilding())
-        {
+        if (walkTo == null && walkToBuilding()) {
             return START_WORKING;
         }
 
-        if (job.getActionsDone() > 0)
-        {
+        if (job.getActionsDone() > 0) {
             // Wait to dump before continuing.
             return getState();
         }
 
-        if (currentRequest != null && currentRecipeStorage != null)
-        {
+        if (currentRequest != null && currentRecipeStorage != null) {
             return QUERY_ITEMS;
         }
 
@@ -190,33 +165,27 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     }
 
     @Override
-    protected int getExtendedCount(final ItemStack primaryOutput)
-    {
+    protected int getExtendedCount(final ItemStack primaryOutput) {
         return building.outputBlockCountInWorld(primaryOutput);
     }
 
     @Override
-    protected IAIState craft()
-    {
-        if (currentRecipeStorage == null)
-        {
+    protected IAIState craft() {
+        if (currentRecipeStorage == null) {
             return START_WORKING;
         }
 
-        if (currentRequest == null && job.getCurrentTask() != null)
-        {
+        if (currentRequest == null && job.getCurrentTask() != null) {
             return GET_RECIPE;
         }
 
-        if (walkTo == null && walkToBuilding())
-        {
+        if (walkTo == null && walkToBuilding()) {
             return getState();
         }
 
         currentRequest = job.getCurrentTask();
 
-        if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
-        {
+        if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED)) {
             incrementActionsDone(getActionRewardForCraftingSuccess());
             currentRequest = null;
             currentRecipeStorage = null;
@@ -224,8 +193,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         }
 
         final ItemStack concrete = currentRecipeStorage.getPrimaryOutput();
-        if (concrete.getItem() instanceof BlockItem && ((BlockItem) concrete.getItem()).getBlock() instanceof ConcretePowderBlock)
-        {
+        if (concrete.getItem() instanceof BlockItem && ((BlockItem) concrete.getItem()).getBlock() instanceof ConcretePowderBlock) {
             return super.craft();
         }
 
@@ -233,8 +201,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     }
 
     @Override
-    protected int getActionsDoneUntilDumping()
-    {
+    protected int getActionsDoneUntilDumping() {
         return getState().equals(CONCRETE_MIXER_HARVESTING) ? building.getMaxConcretePlaced() : super.getActionsDoneUntilDumping();
     }
 
@@ -243,11 +210,9 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
      *
      * @return the next AI state.
      */
-    private IAIState performMixingWork()
-    {
+    private IAIState performMixingWork() {
         final BlockPos blockToMine = building.getBlockToMine();
-        if (blockToMine != null)
-        {
+        if (blockToMine != null) {
             return CONCRETE_MIXER_HARVESTING;
         }
 

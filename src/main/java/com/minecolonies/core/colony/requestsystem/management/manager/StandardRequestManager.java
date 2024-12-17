@@ -25,9 +25,9 @@ import com.minecolonies.core.colony.requestsystem.management.IStandardRequestMan
 import com.minecolonies.core.colony.requestsystem.management.handlers.*;
 import com.minecolonies.core.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -47,19 +47,18 @@ import static com.minecolonies.api.util.constant.Suppression.BIG_CLASS;
  */
 
 @SuppressWarnings(BIG_CLASS)
-public class StandardRequestManager implements IStandardRequestManager
-{
-    ////---------------------------NBTTags-------------------------\\\\
-    private static final String NBT_DATASTORE                       = "DataStores";
-    private static final String NBT_ID_REQUEST_IDENTITIES           = "RequestIdentitiesStoreId";
-    private static final String NBT_ID_REQUEST_RESOLVER_IDENTITIES  = "RequestResolverIdentitiesStoreId";
-    private static final String NBT_ID_PROVIDER_ASSIGNMENTS         = "ProviderAssignmentsStoreId";
+public class StandardRequestManager implements IStandardRequestManager {
+    /// /---------------------------NBTTags-------------------------\\\\
+    private static final String NBT_DATASTORE = "DataStores";
+    private static final String NBT_ID_REQUEST_IDENTITIES = "RequestIdentitiesStoreId";
+    private static final String NBT_ID_REQUEST_RESOLVER_IDENTITIES = "RequestResolverIdentitiesStoreId";
+    private static final String NBT_ID_PROVIDER_ASSIGNMENTS = "ProviderAssignmentsStoreId";
     private static final String NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS = "RequestResolverAssignmentsStoreId";
     private static final String NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS = "RequestableTypeAssignmentsStoreId";
-    private static final String NBT_ID_PLAYER                       = "PlayerRequestResolverId";
-    private static final String NBT_ID_RETRYING                     = "RetryingRequestResolverId";
-    private static final String NBT_VERSION                         = "Version";
-    ////---------------------------NBTTags-------------------------\\\\
+    private static final String NBT_ID_PLAYER = "PlayerRequestResolverId";
+    private static final String NBT_ID_RETRYING = "RetryingRequestResolverId";
+    private static final String NBT_VERSION = "Version";
+    /// /---------------------------NBTTags-------------------------\\\\
 
     private IToken<?> requestIdentitiesDataStoreId;
 
@@ -113,15 +112,13 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     private boolean enableLogging;
 
-    public StandardRequestManager(@NotNull final IColony colony)
-    {
+    public StandardRequestManager(@NotNull final IColony colony) {
         this.colony = colony;
         this.logger = LogManager.getLogger(String.format("%s.requestsystem.%s", Constants.MOD_ID, colony.getID()));
         reset();
     }
 
-    private void setup()
-    {
+    private void setup() {
         dataStoreManager = StandardFactoryController.getInstance().getNewInstance(TypeConstants.DATA_STORE_MANAGER);
         enableLogging = IMinecoloniesAPI.getInstance().getConfig().getCommon().rsEnableDebugLogging.get();
 
@@ -141,10 +138,9 @@ public class StandardRequestManager implements IStandardRequestManager
         this.retryingRequestResolverId = retryingRequestResolver.getId();
     }
 
-    private IToken<?> registerDataStore(TypeToken<? extends IDataStore> typeToken)
-    {
+    private IToken<?> registerDataStore(TypeToken<? extends IDataStore> typeToken) {
         return dataStoreManager.get(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN), typeToken)
-                 .getId();
+                .getId();
     }
 
     /**
@@ -154,8 +150,7 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     @Override
-    public IColony getColony()
-    {
+    public IColony getColony() {
         return colony;
     }
 
@@ -166,8 +161,7 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     @Override
-    public IFactoryController getFactoryController()
-    {
+    public IFactoryController getFactoryController() {
         return StandardFactoryController.getInstance();
     }
 
@@ -181,8 +175,7 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object)
-    {
+    public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object) {
         final IRequest<T> request = getRequestHandler().createRequest(requester, object);
         markDirty();
         return request.getId();
@@ -192,8 +185,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * Mark the request manager and colony as dirty.
      */
     @Override
-    public void markDirty()
-    {
+    public void markDirty() {
         this.setDirty(true);
     }
 
@@ -203,18 +195,15 @@ public class StandardRequestManager implements IStandardRequestManager
      * @return true if so.
      */
     @Override
-    public boolean isDirty()
-    {
+    public boolean isDirty() {
         return dirty;
     }
 
     @Override
-    public void setDirty(final boolean isDirty)
-    {
+    public void setDirty(final boolean isDirty) {
         this.dirty = isDirty;
 
-        if (this.isDirty())
-        {
+        if (this.isDirty()) {
             colony.markDirty();
         }
     }
@@ -226,8 +215,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
     @Override
-    public void assignRequest(@NotNull final IToken<?> token)
-    {
+    public void assignRequest(@NotNull final IToken<?> token) {
         getRequestHandler().assignRequest(getRequestHandler().getRequest(token));
         markDirty();
     }
@@ -242,8 +230,7 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object)
-    {
+    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) {
         final IToken<?> token = createRequest(requester, object);
         assignRequest(token);
         return token;
@@ -251,8 +238,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @Override
     @Nullable
-    public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList)
-    {
+    public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList) {
         final IRequest<?> request = getRequestHandler().getRequest(token);
         markDirty();
         return getRequestHandler().reassignRequest(request, resolverTokenBlackList);
@@ -260,8 +246,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @Nullable
     @Override
-    public IRequest<?> getRequestForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
-    {
+    public IRequest<?> getRequestForToken(@NotNull final IToken<?> token) throws IllegalArgumentException {
         final IRequest<?> internalRequest = getRequestHandler().getRequestOrNull(token);
 
         return internalRequest;
@@ -269,15 +254,13 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @NotNull
     @Override
-    public IRequestResolver<?> getResolverForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
-    {
+    public IRequestResolver<?> getResolverForToken(@NotNull final IToken<?> token) throws IllegalArgumentException {
         return getResolverHandler().getResolver(token);
     }
 
     @Nullable
     @Override
-    public IRequestResolver<?> getResolverForRequest(@NotNull final IToken<?> requestToken) throws IllegalArgumentException
-    {
+    public IRequestResolver<?> getResolverForRequest(@NotNull final IToken<?> requestToken) throws IllegalArgumentException {
         final IRequest<?> request = getRequestHandler().getRequest(requestToken);
 
         return getResolverForToken(getResolverHandler().getResolverForRequest(request).getId());
@@ -291,8 +274,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * @throws IllegalArgumentException when the token is unknown to this manager.
      */
     @Override
-    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state)
-    {
+    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state) {
         final IRequest<?> request = getRequestHandler().getRequest(token);
 
         log("Updating request state from:" + token + ". With original state: " + request.getState() + " to : " + state);
@@ -300,8 +282,7 @@ public class StandardRequestManager implements IStandardRequestManager
         request.setState(new WrappedStaticStateRequestManager(this), state);
         markDirty();
 
-        switch (request.getState())
-        {
+        switch (request.getState()) {
             case RESOLVED:
                 log("Request resolved: " + token + ". Determining followup requests...");
                 getRequestHandler().onRequestResolved(token);
@@ -336,18 +317,15 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param provider The new provider.
      */
     @Override
-    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider)
-    {
+    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider) {
         getProviderHandler().registerProvider(provider);
     }
 
     @Override
-    public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack)
-    {
+    public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack) {
         final IRequest<?> request = getRequestHandler().getRequest(token);
 
-        if (!ItemStackUtils.isEmpty(stack))
-        {
+        if (!ItemStackUtils.isEmpty(stack)) {
             request.overrideCurrentDeliveries(ImmutableList.of(stack));
         }
 
@@ -360,14 +338,12 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param provider The removed provider.
      */
     @Override
-    public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
-    {
+    public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException {
         getProviderHandler().removeProvider(provider);
     }
 
     @Override
-    public void onRequesterRemovedFromColony(@NotNull final IRequester requester) throws IllegalArgumentException
-    {
+    public void onRequesterRemovedFromColony(@NotNull final IRequester requester) throws IllegalArgumentException {
         getRequestHandler().removeRequester(requester);
     }
 
@@ -377,8 +353,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param shouldTriggerReassign The predicate to determine if the request should be reassigned.
      */
     @Override
-    public void onColonyUpdate(@NotNull final Predicate<IRequest<?>> shouldTriggerReassign)
-    {
+    public void onColonyUpdate(@NotNull final Predicate<IRequest<?>> shouldTriggerReassign) {
         getResolverHandler().onColonyUpdate(shouldTriggerReassign);
     }
 
@@ -389,33 +364,28 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     @Override
-    public IPlayerRequestResolver getPlayerResolver()
-    {
+    public IPlayerRequestResolver getPlayerResolver() {
         return (IPlayerRequestResolver) getResolverHandler().getResolver(playerRequestResolverId);
     }
 
     @NotNull
     @Override
-    public IRetryingRequestResolver getRetryingRequestResolver()
-    {
+    public IRetryingRequestResolver getRetryingRequestResolver() {
         return (IRetryingRequestResolver) getResolverHandler().getResolver(retryingRequestResolverId);
     }
 
     @NotNull
     @Override
-    public IDataStoreManager getDataStoreManager()
-    {
+    public IDataStoreManager getDataStoreManager() {
         return dataStoreManager;
     }
 
     @Override
-    public void reset()
-    {
+    public void reset() {
         this.reset(UpdateType.RESET);
     }
 
-    private void reset(UpdateType type)
-    {
+    private void reset(UpdateType type) {
         setup();
 
         version = -1;
@@ -428,8 +398,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * @return The NBTData that describes the current request system
      */
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag systemCompound = new CompoundTag();
         systemCompound.putInt(NBT_VERSION, version);
 
@@ -452,51 +421,49 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param nbt The data to deserialize.
      */
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt) {
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_VERSION,
-          CompoundTag::getInt,
-          v -> version = v);
+                NBT_VERSION,
+                CompoundTag::getInt,
+                v -> version = v);
 
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_DATASTORE,
-          CompoundTag::getCompound,
-          c -> dataStoreManager = getFactoryController().deserializeTag(provider, c));
+                NBT_DATASTORE,
+                CompoundTag::getCompound,
+                c -> dataStoreManager = getFactoryController().deserializeTag(provider, c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_REQUEST_IDENTITIES,
-          CompoundTag::getCompound,
-          c -> requestIdentitiesDataStoreId = getFactoryController().deserializeTag(provider, c));
+                NBT_ID_REQUEST_IDENTITIES,
+                CompoundTag::getCompound,
+                c -> requestIdentitiesDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_REQUEST_RESOLVER_IDENTITIES,
-          CompoundTag::getCompound,
-          c -> requestResolverIdentitiesDataStoreId = getFactoryController().deserializeTag(provider, c));
+                NBT_ID_REQUEST_RESOLVER_IDENTITIES,
+                CompoundTag::getCompound,
+                c -> requestResolverIdentitiesDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_PROVIDER_ASSIGNMENTS,
-          CompoundTag::getCompound,
-          c -> providerRequestResolverAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
+                NBT_ID_PROVIDER_ASSIGNMENTS,
+                CompoundTag::getCompound,
+                c -> providerRequestResolverAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS,
-          CompoundTag::getCompound,
-          c -> requestResolverRequestAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
+                NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS,
+                CompoundTag::getCompound,
+                c -> requestResolverRequestAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS,
-          CompoundTag::getCompound,
-          c -> requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
+                NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS,
+                CompoundTag::getCompound,
+                c -> requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_PLAYER,
-          CompoundTag::getCompound,
-          c -> playerRequestResolverId = getFactoryController().deserializeTag(provider, c));
+                NBT_ID_PLAYER,
+                CompoundTag::getCompound,
+                c -> playerRequestResolverId = getFactoryController().deserializeTag(provider, c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
-          NBT_ID_RETRYING,
-          CompoundTag::getCompound,
-          c -> retryingRequestResolverId = getFactoryController().deserializeTag(provider, c));
+                NBT_ID_RETRYING,
+                CompoundTag::getCompound,
+                c -> retryingRequestResolverId = getFactoryController().deserializeTag(provider, c));
 
-        if (dataStoreManager == null)
-        {
+        if (dataStoreManager == null) {
             reset();
         }
 
@@ -504,8 +471,7 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     @Override
-    public void serialize(IFactoryController controller, RegistryFriendlyByteBuf buffer)
-    {
+    public void serialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(version);
         controller.serialize(buffer, dataStoreManager);
         controller.serialize(buffer, requestIdentitiesDataStoreId);
@@ -518,8 +484,7 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     @Override
-    public void deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer)
-    {
+    public void deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) {
         version = buffer.readInt();
         dataStoreManager = controller.deserialize(buffer);
         requestIdentitiesDataStoreId = controller.deserialize(buffer);
@@ -532,24 +497,19 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     private <T> void executeDeserializationStepOrMarkForUpdate(
-      @NotNull final CompoundTag nbt,
-      @NotNull final String key,
-      @NotNull final BiFunction<CompoundTag, String, T> extractor,
-      @NotNull final Consumer<T> valueConsumer)
-    {
-        if (!nbt.contains(key))
-        {
+            @NotNull final CompoundTag nbt,
+            @NotNull final String key,
+            @NotNull final BiFunction<CompoundTag, String, T> extractor,
+            @NotNull final Consumer<T> valueConsumer) {
+        if (!nbt.contains(key)) {
             markForUpdate();
             return;
         }
 
         T base;
-        try
-        {
+        try {
             base = extractor.apply(nbt, key);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             markForUpdate();
             return;
         }
@@ -557,109 +517,91 @@ public class StandardRequestManager implements IStandardRequestManager
         valueConsumer.accept(base);
     }
 
-    private void markForUpdate()
-    {
+    private void markForUpdate() {
         version = -1;
     }
-    
+
     @Override
-    public void log(final String message)
-    {
-        if (enableLogging)
-        {
+    public void log(final String message) {
+        if (enableLogging) {
             logger.debug(message);
         }
     }
 
     @Override
-    public void tick()
-    {
+    public void tick() {
         this.getRetryingRequestResolver().updateManager(this);
         this.getRetryingRequestResolver().tick();
     }
 
     @NotNull
     @Override
-    public IRequestIdentitiesDataStore getRequestIdentitiesDataStore()
-    {
+    public IRequestIdentitiesDataStore getRequestIdentitiesDataStore() {
         return dataStoreManager.get(requestIdentitiesDataStoreId, TypeConstants.REQUEST_IDENTITIES_DATA_STORE);
     }
 
     @NotNull
     @Override
-    public IRequestResolverIdentitiesDataStore getRequestResolverIdentitiesDataStore()
-    {
+    public IRequestResolverIdentitiesDataStore getRequestResolverIdentitiesDataStore() {
         return dataStoreManager.get(requestResolverIdentitiesDataStoreId, TypeConstants.REQUEST_RESOLVER_IDENTITIES_DATA_STORE);
     }
 
     @NotNull
     @Override
-    public IProviderResolverAssignmentDataStore getProviderResolverAssignmentDataStore()
-    {
+    public IProviderResolverAssignmentDataStore getProviderResolverAssignmentDataStore() {
         return dataStoreManager.get(providerRequestResolverAssignmentDataStoreId, TypeConstants.PROVIDER_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
     }
 
     @NotNull
     @Override
-    public IRequestResolverRequestAssignmentDataStore getRequestResolverRequestAssignmentDataStore()
-    {
+    public IRequestResolverRequestAssignmentDataStore getRequestResolverRequestAssignmentDataStore() {
         return dataStoreManager.get(requestResolverRequestAssignmentDataStoreId, TypeConstants.REQUEST_RESOLVER_REQUEST_ASSIGNMENT_DATA_STORE);
     }
 
     @NotNull
     @Override
-    public IRequestableTypeRequestResolverAssignmentDataStore getRequestableTypeRequestResolverAssignmentDataStore()
-    {
+    public IRequestableTypeRequestResolverAssignmentDataStore getRequestableTypeRequestResolverAssignmentDataStore() {
         return dataStoreManager.get(requestableTypeRequestResolverAssignmentDataStoreId, TypeConstants.REQUESTABLE_TYPE_REQUEST_RESOLVER_ASSIGNMENT_DATA_STORE);
     }
 
     @Override
-    public IProviderHandler getProviderHandler()
-    {
+    public IProviderHandler getProviderHandler() {
         return providerHandler;
     }
 
     @Override
-    public IRequestHandler getRequestHandler()
-    {
+    public IRequestHandler getRequestHandler() {
         return requestHandler;
     }
 
     @Override
-    public IResolverHandler getResolverHandler()
-    {
+    public IResolverHandler getResolverHandler() {
         return resolverHandler;
     }
 
     @Override
-    public ITokenHandler getTokenHandler()
-    {
+    public ITokenHandler getTokenHandler() {
         return tokenHandler;
     }
 
     @Override
-    public IUpdateHandler getUpdateHandler()
-    {
+    public IUpdateHandler getUpdateHandler() {
         return updateHandler;
     }
 
-    private void updateIfRequired()
-    {
-        if (version < updateHandler.getCurrentVersion())
-        {
+    private void updateIfRequired() {
+        if (version < updateHandler.getCurrentVersion()) {
             reset(UpdateType.DATA_LOAD);
         }
     }
 
     @Override
-    public int getCurrentVersion()
-    {
+    public int getCurrentVersion() {
         return version;
     }
 
     @Override
-    public void setCurrentVersion(final int currentVersion)
-    {
+    public void setCurrentVersion(final int currentVersion) {
         this.version = currentVersion;
     }
 }

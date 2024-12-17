@@ -7,13 +7,11 @@ import net.minecraft.world.entity.EquipmentSlot;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GuardGearBuilder
-{
+public final class GuardGearBuilder {
     /**
      * Private constructor to hide implicit one.
      */
-    private GuardGearBuilder()
-    {
+    private GuardGearBuilder() {
         /*
          * Intentionally left empty.
          */
@@ -29,11 +27,10 @@ public final class GuardGearBuilder
      * @return the list of items.
      */
     public static List<GuardGear> buildGearForLevel(
-      final int minArmorLevel,
-      final int maxArmorLevel,
-      final Tuple<Integer, Integer> levelRange,
-      final Tuple<Integer, Integer> buildingLevelRange)
-    {
+            final int minArmorLevel,
+            final int maxArmorLevel,
+            final Tuple<Integer, Integer> levelRange,
+            final Tuple<Integer, Integer> buildingLevelRange) {
         final List<GuardGear> armorList = new ArrayList<>();
         armorList.add(new GuardGear(ModEquipmentTypes.boots.get(), EquipmentSlot.FEET, minArmorLevel, maxArmorLevel, levelRange, buildingLevelRange));
         armorList.add(new GuardGear(ModEquipmentTypes.chestplate.get(), EquipmentSlot.CHEST, minArmorLevel, maxArmorLevel, levelRange, buildingLevelRange));

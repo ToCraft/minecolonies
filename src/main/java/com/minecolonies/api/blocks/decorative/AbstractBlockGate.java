@@ -37,8 +37,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Block as one big door
  */
-public abstract class AbstractBlockGate extends DoorBlock
-{
+public abstract class AbstractBlockGate extends DoorBlock {
     /**
      * Waterlogged property.
      */
@@ -47,7 +46,7 @@ public abstract class AbstractBlockGate extends DoorBlock
     /**
      * Variant reg names
      */
-    public static final String IRON_GATE   = "gate_iron";
+    public static final String IRON_GATE = "gate_iron";
     public static final String WOODEN_GATE = "gate_wood";
 
     /**
@@ -73,8 +72,7 @@ public abstract class AbstractBlockGate extends DoorBlock
      */
     private final String name;
 
-    public AbstractBlockGate(final String name, final float hardness, final int maxWidth, final int maxHeight)
-    {
+    public AbstractBlockGate(final String name, final float hardness, final int maxWidth, final int maxHeight) {
         super(BlockSetType.SPRUCE, Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(hardness, hardness * 5).noOcclusion());
         registerDefaultState(defaultBlockState());
         this.name = name;
@@ -83,30 +81,25 @@ public abstract class AbstractBlockGate extends DoorBlock
         this.hardness = hardness;
     }
 
-    public int getMaxWidth()
-    {
+    public int getMaxWidth() {
         return maxWidth;
     }
 
-    public int getMaxHeight()
-    {
+    public int getMaxHeight() {
         return maxHeight;
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level worldIn, final BlockPos pos, final Player player, final InteractionHand handIn, final BlockHitResult hit)
-    {
+    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level worldIn, final BlockPos pos, final Player player, final InteractionHand handIn, final BlockHitResult hit) {
         toggleGate(worldIn, pos, state.getValue(FACING).getClockWise());
         worldIn.levelEvent(player, state.getValue(OPEN) ? 1005 : 1011, pos, 0);
         return ItemInteractionResult.SUCCESS;
     }
 
     @Override
-    public BlockState playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player)
-    {
+    public BlockState playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
         int count = removeGate(worldIn, pos, state.getValue(FACING).getClockWise());
-        for (int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             Block.dropResources(state, worldIn, pos, null, player, player.getMainHandItem());
         }
         return super.playerWillDestroy(worldIn, pos, state, player);
@@ -120,29 +113,22 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param facing   gate facing
      * @return amount of removed blocks
      */
-    public int removeGate(final Level world, final BlockPos startPos, final Direction facing)
-    {
+    public int removeGate(final Level world, final BlockPos startPos, final Direction facing) {
         final BlockPos lowerLeftCorner = findLowerLeftCorner(world, facing, startPos);
         int amount = 0;
         // Remove gate
-        for (int hor = 0; hor < maxWidth; hor++)
-        {
+        for (int hor = 0; hor < maxWidth; hor++) {
             final BlockPos current = lowerLeftCorner.relative(facing, hor);
-            if (world.getBlockState(current).getBlock() != this)
-            {
+            if (world.getBlockState(current).getBlock() != this) {
                 break;
             }
 
-            for (int vert = 0; vert < maxHeight; vert++)
-            {
+            for (int vert = 0; vert < maxHeight; vert++) {
                 final BlockPos currentPos = current.above(vert);
-                if (world.getBlockState(currentPos).getBlock() == this)
-                {
+                if (world.getBlockState(currentPos).getBlock() == this) {
                     amount++;
                     world.setBlock(currentPos, Blocks.AIR.defaultBlockState(), 35);
-                }
-                else
-                {
+                } else {
                     break;
                 }
             }
@@ -152,10 +138,8 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Deprecated
-    public float getBlockHardness(BlockState blockState, BlockGetter worldIn, BlockPos pos)
-    {
-        if (worldIn == null)
-        {
+    public float getBlockHardness(BlockState blockState, BlockGetter worldIn, BlockPos pos) {
+        if (worldIn == null) {
             return 10f;
         }
 
@@ -164,25 +148,19 @@ public abstract class AbstractBlockGate extends DoorBlock
         final BlockPos start = findLowerLeftCorner(worldIn, facing, pos);
         int count = 0;
 
-        for (int hor = 0; hor < maxWidth; hor++)
-        {
+        for (int hor = 0; hor < maxWidth; hor++) {
             final BlockPos hPos = start.relative(facing, hor);
-            if (worldIn.getBlockState(hPos).getBlock() != this)
-            {
+            if (worldIn.getBlockState(hPos).getBlock() != this) {
                 break;
             }
 
-            for (int vert = 0; vert < maxHeight; vert++)
-            {
+            for (int vert = 0; vert < maxHeight; vert++) {
                 final BlockPos worldPos = hPos.offset(0, vert, 0);
 
                 final BlockState state = worldIn.getBlockState(worldPos);
-                if (state.getBlock() != this)
-                {
+                if (state.getBlock() != this) {
                     break;
-                }
-                else
-                {
+                } else {
                     count++;
                 }
             }
@@ -192,24 +170,18 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos)
-    {
+    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
         return stateIn;
     }
 
     @Override
-    public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos)
-    {
+    public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
         // Don't allow next to any existing gate
         BlockPos tPos = pos.offset(-1, -1, -1);
-        for (int x = 0; x < 3; x++)
-        {
-            for (int y = 0; y < 3; y++)
-            {
-                for (int z = 0; z < 3; z++)
-                {
-                    if (worldIn.getBlockState(tPos.offset(x, y, z)).getBlock() == this)
-                    {
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
+                for (int z = 0; z < 3; z++) {
+                    if (worldIn.getBlockState(tPos.offset(x, y, z)).getBlock() == this) {
                         return false;
                     }
                 }
@@ -222,8 +194,7 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public void setPlacedBy(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
-    {
+    public void setPlacedBy(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack) {
         // Fills the rest of the gate upon placement
         final Direction facing = state.getValue(FACING).getClockWise();
 
@@ -232,49 +203,38 @@ public abstract class AbstractBlockGate extends DoorBlock
 
         // Left of pos
         int canPlace = maxWidth - 1;
-        for (int hor = 1; hor < maxWidth; hor++)
-        {
+        for (int hor = 1; hor < maxWidth; hor++) {
             final BlockPos checkPos = pos.relative(facing.getOpposite(), hor);
             final BlockState checkState = worldIn.getBlockState(checkPos);
-            if (checkState.isAir() && canPlace > 0 && worldIn.getBlockState(checkPos.relative(facing.getOpposite())).getBlock() != this)
-            {
-                if (stack.getCount() > 1)
-                {
+            if (checkState.isAir() && canPlace > 0 && worldIn.getBlockState(checkPos.relative(facing.getOpposite())).getBlock() != this) {
+                if (stack.getCount() > 1) {
                     stack.setCount(stack.getCount() - 1);
                     worldIn.setBlockAndUpdate(checkPos, state);
                 }
                 fillYStates(worldIn, checkPos, state, stack);
                 canPlace--;
-            }
-            else
-            {
+            } else {
                 break;
             }
         }
 
-        if (canPlace <= 0)
-        {
+        if (canPlace <= 0) {
             return;
         }
 
         // Right of pos
-        for (int hor = 1; hor < maxWidth; hor++)
-        {
+        for (int hor = 1; hor < maxWidth; hor++) {
             final BlockPos checkPos = pos.relative(facing, hor);
             final BlockState checkState = worldIn.getBlockState(checkPos);
             if (checkState.getBlock() != this && checkState.isAir() && canPlace > 0
-                  && worldIn.getBlockState(checkPos.relative(facing)).getBlock() != this)
-            {
-                if (stack.getCount() > 1)
-                {
+                    && worldIn.getBlockState(checkPos.relative(facing)).getBlock() != this) {
+                if (stack.getCount() > 1) {
                     stack.setCount(stack.getCount() - 1);
                     worldIn.setBlockAndUpdate(checkPos, state);
                 }
                 fillYStates(worldIn, checkPos, state, stack);
                 canPlace--;
-            }
-            else
-            {
+            } else {
                 break;
             }
         }
@@ -287,22 +247,16 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param base  base block we start from
      * @param state state to put
      */
-    private void fillYStates(final Level world, final BlockPos base, final BlockState state, final ItemStack stack)
-    {
-        for (int vert = 1; vert < maxHeight; vert++)
-        {
+    private void fillYStates(final Level world, final BlockPos base, final BlockState state, final ItemStack stack) {
+        for (int vert = 1; vert < maxHeight; vert++) {
             final BlockPos checkPos = base.offset(0, vert, 0);
             final BlockState checkState = world.getBlockState(checkPos);
-            if (checkState.isAir() && world.getBlockState(checkPos.above()).getBlock() != this)
-            {
-                if (stack.getCount() > 1)
-                {
+            if (checkState.isAir() && world.getBlockState(checkPos.above()).getBlock() != this) {
+                if (stack.getCount() > 1) {
                     stack.setCount(stack.getCount() - 1);
                     world.setBlockAndUpdate(checkPos, state);
                 }
-            }
-            else
-            {
+            } else {
                 break;
             }
         }
@@ -310,8 +264,7 @@ public abstract class AbstractBlockGate extends DoorBlock
 
     @NotNull
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context)
-    {
+    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return getShapeForState(state);
     }
 
@@ -321,11 +274,9 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param state state to check
      * @return shape
      */
-    private VoxelShape getShapeForState(final BlockState state)
-    {
+    private VoxelShape getShapeForState(final BlockState state) {
         final Direction direction = state.getValue(FACING);
-        switch (direction)
-        {
+        switch (direction) {
             case EAST:
             case WEST:
                 return E_W_SHAPE;
@@ -337,37 +288,29 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context)
-    {
-        if (state.getValue(OPEN))
-        {
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+        if (state.getValue(OPEN)) {
             return Shapes.empty();
         }
         return getShapeForState(state);
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter worldIn, BlockPos pos)
-    {
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter worldIn, BlockPos pos) {
         return getShapeForState(state);
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state)
-    {
-        if (state.getValue(OPEN))
-        {
+    public RenderShape getRenderShape(BlockState state) {
+        if (state.getValue(OPEN)) {
             return RenderShape.INVISIBLE;
-        }
-        else
-        {
+        } else {
             return RenderShape.MODEL;
         }
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
-    {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(HALF, FACING, OPEN, HINGE, POWERED, WATERLOGGED);
     }
 
@@ -378,26 +321,21 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param blockPos start pos
      * @return bottom left corner pos
      */
-    private BlockPos findLowerLeftCorner(final BlockGetter world, final Direction facing, final BlockPos blockPos)
-    {
+    private BlockPos findLowerLeftCorner(final BlockGetter world, final Direction facing, final BlockPos blockPos) {
         BlockPos tePos = blockPos;
 
-        for (int vert = 0; vert < maxHeight; vert++)
-        {
+        for (int vert = 0; vert < maxHeight; vert++) {
             final BlockPos tempPos = tePos.offset(0, -vert, 0);
 
-            if (world.getBlockState(tempPos.below()).getBlock() != this)
-            {
+            if (world.getBlockState(tempPos.below()).getBlock() != this) {
                 tePos = tempPos;
                 break;
             }
         }
 
-        for (int hor = 0; hor < maxWidth; hor++)
-        {
+        for (int hor = 0; hor < maxWidth; hor++) {
 
-            if (world.getBlockState(tePos.relative(facing.getOpposite(), hor + 1)).getBlock() != this)
-            {
+            if (world.getBlockState(tePos.relative(facing.getOpposite(), hor + 1)).getBlock() != this) {
                 tePos = tePos.relative(facing.getOpposite(), hor);
                 break;
             }
@@ -407,11 +345,9 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public void setOpen(@Nullable final Entity p_153166_, final Level worldIn, final BlockState state, final BlockPos pos, final boolean open)
-    {
+    public void setOpen(@Nullable final Entity p_153166_, final Level worldIn, final BlockState state, final BlockPos pos, final boolean open) {
         BlockState blockstate = worldIn.getBlockState(pos);
-        if (blockstate.getBlock() == this && blockstate.getValue(OPEN) != open)
-        {
+        if (blockstate.getBlock() == this && blockstate.getValue(OPEN) != open) {
             toggleGate(worldIn, pos, blockstate.getValue(FACING).getClockWise());
         }
     }
@@ -423,37 +359,29 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param clickedBlock block thats clicked/used
      * @param facing       facing to check
      */
-    public void toggleGate(final Level world, final BlockPos clickedBlock, final Direction facing)
-    {
+    public void toggleGate(final Level world, final BlockPos clickedBlock, final Direction facing) {
         final BlockPos lowerLeftCorner = findLowerLeftCorner(world, facing, clickedBlock);
         // State to put the gate into, all replicate the corner's state
         final boolean opening = !world.getBlockState(lowerLeftCorner).getValue(BlockStateProperties.OPEN);
 
-        for (int hor = 0; hor < maxWidth; hor++)
-        {
+        for (int hor = 0; hor < maxWidth; hor++) {
             final BlockPos hPos = lowerLeftCorner.relative(facing, hor);
-            if (world.getBlockState(hPos).getBlock() != this)
-            {
+            if (world.getBlockState(hPos).getBlock() != this) {
                 break;
             }
 
-            for (int vert = 0; vert < maxHeight; vert++)
-            {
+            for (int vert = 0; vert < maxHeight; vert++) {
                 final BlockPos worldPos = hPos.offset(0, vert, 0);
 
                 final BlockState state = world.getBlockState(worldPos);
-                if (state.getBlock() != this)
-                {
+                if (state.getBlock() != this) {
                     break;
                 }
 
                 // Set top blocks to spikes
-                if (world.getBlockState(worldPos.above()).getBlock() != this)
-                {
+                if (world.getBlockState(worldPos.above()).getBlock() != this) {
                     WorldUtil.setBlockState(world, worldPos, state.setValue(DoorBlock.HINGE, opening ? DoorHingeSide.RIGHT : DoorHingeSide.LEFT), 2);
-                }
-                else
-                {
+                } else {
                     WorldUtil.setBlockState(world, worldPos, state.setValue(BlockStateProperties.OPEN, opening), 2);
                 }
             }
@@ -464,26 +392,20 @@ public abstract class AbstractBlockGate extends DoorBlock
      * Mostly redstone stuff for opening
      */
     @Override
-    public void neighborChanged(final BlockState state, final Level worldIn, @NotNull final BlockPos pos, Block blockIn, final BlockPos fromPos, boolean isMoving)
-    {
+    public void neighborChanged(final BlockState state, final Level worldIn, @NotNull final BlockPos pos, Block blockIn, final BlockPos fromPos, boolean isMoving) {
         boolean powered = worldIn.hasNeighborSignal(pos);
-        if (powered != state.getValue(OPEN))
-        {
+        if (powered != state.getValue(OPEN)) {
             setOpen(null, worldIn, state, pos, powered);
         }
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context)
-    {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos blockpos = context.getClickedPos();
 
-        if (blockpos.getY() < 255 && context.getLevel().getBlockState(blockpos.above()).canBeReplaced(context))
-        {
+        if (blockpos.getY() < 255 && context.getLevel().getBlockState(blockpos.above()).canBeReplaced(context)) {
             return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection());
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
@@ -495,8 +417,7 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param registry the registry to use.
      * @return the block itself.
      */
-    public AbstractBlockGate registerBlock(final Registry<Block> registry)
-    {
+    public AbstractBlockGate registerBlock(final Registry<Block> registry) {
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, this.name), this);
         return this;
     }
@@ -507,8 +428,7 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param registry   the registry to use.
      * @param properties the item properties.
      */
-    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
-    {
+    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties) {
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, this.name), new BlockItem(this, properties));
     }
 }

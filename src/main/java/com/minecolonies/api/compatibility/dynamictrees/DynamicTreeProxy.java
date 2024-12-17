@@ -14,15 +14,13 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * This is the fallback for when dynamictrees is not present!
  */
-public class DynamicTreeProxy
-{
+public class DynamicTreeProxy {
     /**
      * Default method for when dynamic Tree's mod is not present, returns false
      *
      * @return true if so.
      */
-    public boolean isDynamicTreePresent()
-    {
+    public boolean isDynamicTreePresent() {
         return false;
     }
 
@@ -31,8 +29,7 @@ public class DynamicTreeProxy
      *
      * @return damageType
      */
-    public ResourceKey<DamageType> getDynamicTreeDamage()
-    {
+    public ResourceKey<DamageType> getDynamicTreeDamage() {
         return null;
     }
 
@@ -42,8 +39,7 @@ public class DynamicTreeProxy
      * @param block Block to check
      * @return false
      */
-    public boolean checkForDynamicTreeBlock(final Block block)
-    {
+    public boolean checkForDynamicTreeBlock(final Block block) {
         return false;
     }
 
@@ -53,8 +49,7 @@ public class DynamicTreeProxy
      * @param block Block to check
      * @return false
      */
-    public boolean checkForDynamicLeavesBlock(final Block block)
-    {
+    public boolean checkForDynamicLeavesBlock(final Block block) {
         return false;
     }
 
@@ -64,8 +59,7 @@ public class DynamicTreeProxy
      * @param block Block to check
      * @return false
      */
-    public boolean checkForDynamicTrunkShellBlock(final Block block)
-    {
+    public boolean checkForDynamicTrunkShellBlock(final Block block) {
         return false;
     }
 
@@ -80,12 +74,13 @@ public class DynamicTreeProxy
      * @return {@link NonNullList} of {@link ItemStack} Drops
      */
     public NonNullList<ItemStack> getDropsForLeaf(
-      final LevelAccessor world,
-      final BlockPos pos,
-      final BlockState blockstate,
-      final int fortune,
-      final Block leaf)
-    {return NonNullList.create();}
+            final LevelAccessor world,
+            final BlockPos pos,
+            final BlockState blockstate,
+            final int fortune,
+            final Block leaf) {
+        return NonNullList.create();
+    }
 
     /**
      * Default method for when dynamic Tree's mod is not present, returns false
@@ -93,8 +88,7 @@ public class DynamicTreeProxy
      * @param item Block to check
      * @return false
      */
-    public boolean checkForDynamicSapling(final Item item)
-    {
+    public boolean checkForDynamicSapling(final Item item) {
         return false;
     }
 
@@ -107,7 +101,9 @@ public class DynamicTreeProxy
      * @param workerPos    the pos of the worker
      * @return Null
      */
-    public Runnable getTreeBreakActionCompat(final Level world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos) {return null;}
+    public Runnable getTreeBreakActionCompat(final Level world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos) {
+        return null;
+    }
 
     /**
      * Default method for trying to plant a dynamic sapling when the mod isnt present.
@@ -117,7 +113,9 @@ public class DynamicTreeProxy
      * @param sapling  the sapling stack.
      * @return false
      */
-    public boolean plantDynamicSaplingCompat(final Level world, final BlockPos location, final ItemStack sapling) {return false;}
+    public boolean plantDynamicSaplingCompat(final Level world, final BlockPos location, final ItemStack sapling) {
+        return false;
+    }
 
     /**
      * Default method to check if two given blocks have the same Tree family
@@ -127,5 +125,7 @@ public class DynamicTreeProxy
      * @param world  the world it is in.
      * @return if compat exists.
      */
-    public boolean hasFittingTreeFamilyCompat(final BlockPos block1, final BlockPos block2, final LevelAccessor world) {return false;}
+    public boolean hasFittingTreeFamilyCompat(final BlockPos block1, final BlockPos block2, final LevelAccessor world) {
+        return false;
+    }
 }

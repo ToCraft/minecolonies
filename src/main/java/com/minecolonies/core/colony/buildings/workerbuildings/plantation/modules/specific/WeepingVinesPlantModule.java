@@ -22,8 +22,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NE
  *     <li>All requirements from {@link DownwardsGrowingPlantModule}</li>
  * </ol>
  */
-public class WeepingVinesPlantModule extends DownwardsGrowingPlantModule
-{
+public class WeepingVinesPlantModule extends DownwardsGrowingPlantModule {
     /**
      * The minimum height twisting vines can grow to.
      */
@@ -42,38 +41,32 @@ public class WeepingVinesPlantModule extends DownwardsGrowingPlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public WeepingVinesPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
-    {
+    public WeepingVinesPlantModule(final IField field, final String fieldTag, final String workTag, final Item item) {
         super(field, fieldTag, workTag, item);
     }
 
     @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
+    protected boolean isValidHarvestBlock(final BlockState blockState) {
         return blockState.getBlock() == Blocks.WEEPING_VINES || blockState.getBlock() == Blocks.WEEPING_VINES_PLANT;
     }
 
     @Override
-    protected int getMinimumPlantLength()
-    {
+    protected int getMinimumPlantLength() {
         return MIN_HEIGHT;
     }
 
     @Override
-    protected @Nullable Integer getMaximumPlantLength()
-    {
+    protected @Nullable Integer getMaximumPlantLength() {
         return MAX_HEIGHT;
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
-    {
+    public ResourceLocation getRequiredResearchEffect() {
         return PLANTATION_NETHER;
     }
 
     @Override
-    public EquipmentTypeEntry getRequiredTool()
-    {
+    public EquipmentTypeEntry getRequiredTool() {
         return ModEquipmentTypes.none.get();
     }
 }

@@ -4,8 +4,7 @@ import com.minecolonies.core.tileentities.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-public class MinecoloniesTileEntities
-{
+public class MinecoloniesTileEntities {
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityScarecrow>> SCARECROW;
 
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityPlantationField>> PLANTATION_FIELD;

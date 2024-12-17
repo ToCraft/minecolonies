@@ -28,8 +28,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_SE
  *     </li>
  * </ol>
  */
-public class KelpPlantModule extends UpwardsGrowingPlantModule
-{
+public class KelpPlantModule extends UpwardsGrowingPlantModule {
     /**
      * The minimum height kelp can grow to.
      */
@@ -48,44 +47,36 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public KelpPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
-    {
+    public KelpPlantModule(final IField field, final String fieldTag, final String workTag, final Item item) {
         super(field, fieldTag, workTag, item);
     }
 
     @Override
-    protected boolean isValidPlantingBlock(final BlockState blockState)
-    {
+    protected boolean isValidPlantingBlock(final BlockState blockState) {
         return blockState.getBlock() == Blocks.WATER;
     }
 
     @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
+    protected boolean isValidHarvestBlock(final BlockState blockState) {
         return blockState.getBlock() == Blocks.KELP || blockState.getBlock() == Blocks.KELP_PLANT;
     }
 
     @Override
-    protected int getMinimumPlantLength()
-    {
+    protected int getMinimumPlantLength() {
         return MIN_HEIGHT;
     }
 
     @Override
-    protected @NotNull Integer getMaximumPlantLength()
-    {
+    protected @NotNull Integer getMaximumPlantLength() {
         return MAX_HEIGHT;
     }
 
     @Override
-    public BlockPos getPositionToWalkTo(final Level world, final BlockPos workingPosition)
-    {
+    public BlockPos getPositionToWalkTo(final Level world, final BlockPos workingPosition) {
         // Attempt to initially find an air block somewhere above the kelp planting position, so that we have a valid position
         // that the AI can actually walk to.
-        for (int i = 0; i < getMaximumPlantLength() + 1; i++)
-        {
-            if (world.getBlockState(workingPosition.above(i)).isAir())
-            {
+        for (int i = 0; i < getMaximumPlantLength() + 1; i++) {
+            if (world.getBlockState(workingPosition.above(i)).isAir()) {
                 return workingPosition.above(i);
             }
         }
@@ -94,14 +85,12 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
-    {
+    public ResourceLocation getRequiredResearchEffect() {
         return PLANTATION_SEA;
     }
 
     @Override
-    public EquipmentTypeEntry getRequiredTool()
-    {
+    public EquipmentTypeEntry getRequiredTool() {
         return ModEquipmentTypes.none.get();
     }
 }

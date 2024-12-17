@@ -22,14 +22,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MAXIMUM_NUMBER_RECIPES;
+import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 
 /**
  * Furnace crafting gui.
  */
-public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraftingFurnace>
-{
+public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraftingFurnace> {
     private static final ResourceLocation CRAFTING_FURNACE = new ResourceLocation(Constants.MOD_ID, "textures/gui/furnace.png");
 
     /**
@@ -74,23 +73,20 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
      * @param playerInventory the player inv.
      * @param iTextComponent  the display text component.
      */
-    public WindowFurnaceCrafting(final ContainerCraftingFurnace container, final Inventory playerInventory, final Component iTextComponent)
-    {
+    public WindowFurnaceCrafting(final ContainerCraftingFurnace container, final Inventory playerInventory, final Component iTextComponent) {
         super(container, playerInventory, iTextComponent);
         this.container = container;
         this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level().dimension(), container.getPos());
-        this.module =(CraftingModuleView) building.getModuleView(container.getModuleId());
+        this.module = (CraftingModuleView) building.getModuleView(container.getModuleId());
     }
 
     @NotNull
-    public AbstractBuildingView getBuildingView()
-    {
+    public AbstractBuildingView getBuildingView() {
         return building;
     }
 
     @Override
-    protected void init()
-    {
+    protected void init() {
         super.init();
         final Component buttonDisplay = Component.translatableEscape(module.canLearn(ModCraftingTypes.SMELTING.get()) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
         /*
@@ -98,25 +94,20 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
          */
         final Button doneButton = new Button.Builder(buttonDisplay, new OnButtonPress()).pos(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS).size(BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(doneButton);
-        if (!module.canLearn(ModCraftingTypes.SMELTING.get()))
-        {
+        if (!module.canLearn(ModCraftingTypes.SMELTING.get())) {
             doneButton.active = false;
         }
     }
 
-    public class OnButtonPress implements Button.OnPress
-    {
+    public class OnButtonPress implements Button.OnPress {
         @Override
-        public void onPress(@NotNull final Button button)
-        {
-            if (module.canLearn(ModCraftingTypes.SMELTING.get()))
-            {
+        public void onPress(@NotNull final Button button) {
+            if (module.canLearn(ModCraftingTypes.SMELTING.get())) {
                 final List<ItemStorage> input = new ArrayList<>();
                 input.add(new ItemStorage(container.slots.get(0).getItem()));
                 final ItemStack primaryOutput = container.slots.get(1).getItem().copy();
 
-                if (!ItemStackUtils.isEmpty(primaryOutput))
-                {
+                if (!ItemStackUtils.isEmpty(primaryOutput)) {
                     new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false, Blocks.FURNACE, module.getProducer().getRuntimeID()).sendToServer();
                 }
             }
@@ -127,14 +118,12 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
-    {
+    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY) {
         stack.blit(CRAFTING_FURNACE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override
-    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
-    {
+    public void render(@NotNull final GuiGraphics stack, int x, int y, float z) {
         super.render(stack, x, y, z);
         this.renderTooltip(stack, x, y);
     }

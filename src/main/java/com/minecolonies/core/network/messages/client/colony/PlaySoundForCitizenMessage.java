@@ -15,8 +15,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static com.minecolonies.api.util.SoundUtils.PITCH;
@@ -25,8 +23,7 @@ import static com.minecolonies.api.util.SoundUtils.VOLUME;
 /**
  * Play sounds at a citizen for a certain amount of time, sequentially
  */
-public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
-{
+public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "play_sound_for_citizen", PlaySoundForCitizenMessage::new);
 
     /**
@@ -76,58 +73,58 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
 
     /**
      * Play a sound for a certain citizen.
+     *
      * @param entityID the entity id.
-     * @param event the sound event to place.
-     * @param pos the position to play it at.
-     * @param world the world to play it in.
+     * @param event    the sound event to place.
+     * @param pos      the position to play it at.
+     * @param world    the world to play it in.
      */
-    public PlaySoundForCitizenMessage(final int entityID, final SoundEvent event, final BlockPos pos, final Level world)
-    {
+    public PlaySoundForCitizenMessage(final int entityID, final SoundEvent event, final BlockPos pos, final Level world) {
         this(entityID, event, SoundSource.NEUTRAL, pos, world, (float) VOLUME, (float) PITCH, 1, 1);
     }
 
     /**
      * Play a sound for a certain citizen.
-     * @param entityID the entity id.
-     * @param event the sound event to place.
+     *
+     * @param entityID    the entity id.
+     * @param event       the sound event to place.
      * @param soundSource the type of source.
-     * @param pos the position to play it at.
-     * @param world the world to play it in.
+     * @param pos         the position to play it at.
+     * @param world       the world to play it in.
      */
-    public PlaySoundForCitizenMessage(final int entityID, final SoundEvent event, final SoundSource soundSource, final BlockPos pos, final Level world)
-    {
+    public PlaySoundForCitizenMessage(final int entityID, final SoundEvent event, final SoundSource soundSource, final BlockPos pos, final Level world) {
         this(entityID, event, soundSource, pos, world, (float) VOLUME, (float) PITCH, 1, 1);
     }
 
     /**
      * Play a sound for a certain citizen.
-     * @param entityID the entity id.
-     * @param event the sound event to place.
+     *
+     * @param entityID    the entity id.
+     * @param event       the sound event to place.
      * @param soundSource the type of source.
-     * @param pos the position to play it at.
-     * @param world the world to play it in.
-     * @param length the length of the music.
+     * @param pos         the position to play it at.
+     * @param world       the world to play it in.
+     * @param length      the length of the music.
      * @param repetitions the number of repetitions.
      */
-    public PlaySoundForCitizenMessage(final int entityID, final SoundEvent event, final SoundSource soundSource, final BlockPos pos, final Level world, final int length, final int repetitions)
-    {
+    public PlaySoundForCitizenMessage(final int entityID, final SoundEvent event, final SoundSource soundSource, final BlockPos pos, final Level world, final int length, final int repetitions) {
         this(entityID, event, soundSource, pos, world, (float) VOLUME, (float) PITCH, length, repetitions);
     }
 
     /**
      * Play a sound for a certain citizen.
-     * @param entityID the entity id.
-     * @param event the sound event to place.
+     *
+     * @param entityID    the entity id.
+     * @param event       the sound event to place.
      * @param soundSource the type of source.
-     * @param pos the position to play it at.
-     * @param world the world to play it in.
-     * @param volume the volume.
-     * @param pitch the pitch.
-     * @param length the length of the music.
+     * @param pos         the position to play it at.
+     * @param world       the world to play it in.
+     * @param volume      the volume.
+     * @param pitch       the pitch.
+     * @param length      the length of the music.
      * @param repetitions the number of repetitions.
      */
-    public PlaySoundForCitizenMessage(final int entityID, final SoundEvent event, final SoundSource soundSource, final BlockPos pos, final Level world, final float volume, final float pitch, final int length, final int repetitions)
-    {
+    public PlaySoundForCitizenMessage(final int entityID, final SoundEvent event, final SoundSource soundSource, final BlockPos pos, final Level world, final float volume, final float pitch, final int length, final int repetitions) {
         super(TYPE);
         this.entityid = entityID;
         this.soundEvent = event;
@@ -141,8 +138,7 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         buf.writeResourceLocation(this.soundEvent.getLocation());
         buf.writeInt(soundSource.ordinal());
         buf.writeBlockPos(pos);
@@ -154,8 +150,7 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
         buf.writeInt(entityid);
     }
 
-    public PlaySoundForCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public PlaySoundForCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.soundEvent = BuiltInRegistries.SOUND_EVENT.get(buf.readResourceLocation());
         this.soundSource = SoundSource.values()[buf.readInt()];
@@ -168,12 +163,10 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
         this.entityid = buf.readInt();
     }
 
-    
+
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
-        if (player.level().getEntity(this.entityid) instanceof final AbstractCivilianEntity citizen)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
+        if (player.level().getEntity(this.entityid) instanceof final AbstractCivilianEntity citizen) {
             SoundManager.addToQueue(citizen.getUUID(), this.soundEvent, this.soundSource, this.repetitions, this.length, this.pos, this.volume, this.pitch);
         }
     }

@@ -10,24 +10,20 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 /**
  * Utility class for handling add/removal of attribute modifiers.
  */
-public abstract class AttributeModifierUtils
-{
+public abstract class AttributeModifierUtils {
     /**
      * Remove all healthmodifiers from a citizen
      *
      * @param entity the entity to remove the modifiers from
      */
-    public static void removeAllHealthModifiers(final LivingEntity entity)
-    {
-        if (entity == null)
-        {
+    public static void removeAllHealthModifiers(final LivingEntity entity) {
+        if (entity == null) {
             return;
         }
 
         entity.getAttribute(Attributes.MAX_HEALTH).removeModifiers();
 
-        if (entity.getHealth() > entity.getMaxHealth())
-        {
+        if (entity.getHealth() > entity.getMaxHealth()) {
             entity.setHealth(entity.getMaxHealth());
         }
     }
@@ -38,16 +34,13 @@ public abstract class AttributeModifierUtils
      * @param entity       the entity to remove the modifier from
      * @param modifierName Name of the modifier to remove, see e.g. GUARD_HEALTH_MOD_LEVEL_NAME
      */
-    public static void removeHealthModifier(final LivingEntity entity, final ResourceLocation modifierName)
-    {
-        if (entity == null)
-        {
+    public static void removeHealthModifier(final LivingEntity entity, final ResourceLocation modifierName) {
+        if (entity == null) {
             return;
         }
 
         entity.getAttribute(Attributes.MAX_HEALTH).removeModifier(modifierName);
-        if (entity.getHealth() > entity.getMaxHealth())
-        {
+        if (entity.getHealth() > entity.getMaxHealth()) {
             entity.setHealth(entity.getMaxHealth());
         }
     }
@@ -58,10 +51,8 @@ public abstract class AttributeModifierUtils
      * @param entity   entity to add a healthmodifier to
      * @param modifier the modifier to add.
      */
-    public static void addHealthModifier(final LivingEntity entity, final AttributeModifier modifier)
-    {
-        if (entity == null)
-        {
+    public static void addHealthModifier(final LivingEntity entity, final AttributeModifier modifier) {
+        if (entity == null) {
             return;
         }
 
@@ -75,14 +66,13 @@ public abstract class AttributeModifierUtils
 
     /**
      * Remove a specific modifier from an entity.
-     * @param entity the entity.
+     *
+     * @param entity       the entity.
      * @param modifierName the name of the modifier.
-     * @param attribute the type of attribute.
+     * @param attribute    the type of attribute.
      */
-    public static void removeModifier(final LivingEntity entity, final ResourceLocation modifierName, final Holder<Attribute> attribute)
-    {
-        if (entity == null)
-        {
+    public static void removeModifier(final LivingEntity entity, final ResourceLocation modifierName, final Holder<Attribute> attribute) {
+        if (entity == null) {
             return;
         }
 
@@ -91,14 +81,13 @@ public abstract class AttributeModifierUtils
 
     /**
      * Add a specific new modifier.
-     * @param entity the entity to add it to.
-     * @param modifier the modifier to add.
+     *
+     * @param entity    the entity to add it to.
+     * @param modifier  the modifier to add.
      * @param attribute the type of the attribute.
      */
-    public static void addModifier(final LivingEntity entity, final AttributeModifier modifier, final Holder<Attribute> attribute)
-    {
-        if (entity == null)
-        {
+    public static void addModifier(final LivingEntity entity, final AttributeModifier modifier, final Holder<Attribute> attribute) {
+        if (entity == null) {
             return;
         }
 

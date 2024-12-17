@@ -8,27 +8,23 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Block of the Barracks.
  */
-public class BlockHutBarracks extends AbstractBlockHut<BlockHutBarracks>
-{
+public class BlockHutBarracks extends AbstractBlockHut<BlockHutBarracks> {
     /**
      * Default constructor.
      */
-    public BlockHutBarracks()
-    {
+    public BlockHutBarracks() {
         //No different from Abstract parent
         super();
     }
 
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhutbarracks";
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.barracks.get();
     }
 }

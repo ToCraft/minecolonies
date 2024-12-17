@@ -18,21 +18,16 @@ import java.util.Optional;
  *
  * @param <R> The type of request that they handle
  */
-public abstract class AbstractBuildingDependentRequestResolver<R extends IRequestable> extends AbstractRequestResolver<R> implements IBuildingBasedRequester
-{
-    public AbstractBuildingDependentRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
-    {
+public abstract class AbstractBuildingDependentRequestResolver<R extends IRequestable> extends AbstractRequestResolver<R> implements IBuildingBasedRequester {
+    public AbstractBuildingDependentRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token) {
         super(location, token);
     }
 
     @Override
-    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends R> requestToCheck)
-    {
-        if (!manager.getColony().getWorld().isClientSide)
-        {
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends R> requestToCheck) {
+        if (!manager.getColony().getWorld().isClientSide) {
             final ILocation requesterLocation = requestToCheck.getRequester().getLocation();
-            if (requesterLocation.equals(getLocation()))
-            {
+            if (requesterLocation.equals(getLocation())) {
                 final Optional<AbstractBuilding> building = getBuilding(manager, requestToCheck.getId()).map(r -> (AbstractBuilding) r);
                 return building.map(b -> canResolveForBuilding(manager, requestToCheck, b)).orElse(false);
             }
@@ -44,21 +39,19 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
-    {
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request) {
         final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         return attemptResolveForBuilding(manager, request, building);
     }
 
     @Nullable
     public abstract List<IToken<?>> attemptResolveForBuilding(
-      @NotNull final IRequestManager manager,
-      @NotNull final IRequest<? extends R> request,
-      @NotNull final AbstractBuilding building);
+            @NotNull final IRequestManager manager,
+            @NotNull final IRequest<? extends R> request,
+            @NotNull final AbstractBuilding building);
 
     @Override
-    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
-    {
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request) {
         final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         resolveForBuilding(manager, request, building);
     }
@@ -66,8 +59,7 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
     public abstract void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
 
     @Override
-    public boolean isValid()
-    {
+    public boolean isValid() {
         // Always valid.
         return true;
     }

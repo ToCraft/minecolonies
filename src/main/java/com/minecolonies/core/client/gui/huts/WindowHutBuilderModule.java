@@ -9,13 +9,12 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.HUT_BUILDER_RESOURCE_SUFFIX;
 
 /**
  * BOWindow for the builder hut.
  */
-public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<BuildingBuilder.View>
-{
+public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<BuildingBuilder.View> {
     /**
      * The advancement location.
      */
@@ -32,8 +31,7 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
      *
      * @param building {@link BuildingBuilder.View}.
      */
-    public WindowHutBuilderModule(final BuildingBuilder.View building)
-    {
+    public WindowHutBuilderModule(final BuildingBuilder.View building) {
         this(building, true);
     }
 
@@ -43,20 +41,16 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
      * @param needGuide if the guide should be opened.
      * @param building  {@link BuildingBuilder.View}.
      */
-    public WindowHutBuilderModule(final BuildingBuilder.View building, final boolean needGuide)
-    {
+    public WindowHutBuilderModule(final BuildingBuilder.View building, final boolean needGuide) {
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
         this.needGuide = needGuide;
     }
 
     @Override
-    public void onOpened()
-    {
-        if (needGuide)
-        {
+    public void onOpened() {
+        if (needGuide) {
             final AdvancementHolder ad = Minecraft.getInstance().player.connection.getAdvancements().get(GUIDE_ADVANCEMENT);
-            if (ad == null || !Minecraft.getInstance().player.connection.getAdvancements().progress.getOrDefault(ad, new AdvancementProgress()).isDone())
-            {
+            if (ad == null || !Minecraft.getInstance().player.connection.getAdvancements().progress.getOrDefault(ad, new AdvancementProgress()).isDone()) {
                 close();
                 new WindowHutGuide(building).open();
                 return;

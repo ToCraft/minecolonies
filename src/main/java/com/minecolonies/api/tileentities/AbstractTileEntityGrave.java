@@ -13,8 +13,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 /**
  * Abstract class for minecolonies graves.
  */
-public abstract class AbstractTileEntityGrave extends TileEntityRack implements MenuProvider
-{
+public abstract class AbstractTileEntityGrave extends TileEntityRack implements MenuProvider {
     /**
      * default duration of the countdown before the grave disapear, in ticks (20 ticks / seconds)
      */
@@ -36,8 +35,7 @@ public abstract class AbstractTileEntityGrave extends TileEntityRack implements 
     @Nullable
     protected IGraveData graveData;
 
-    public AbstractTileEntityGrave(final BlockEntityType<? extends AbstractTileEntityGrave> tileEntityTypeIn, final BlockPos pos, final BlockState state)
-    {
+    public AbstractTileEntityGrave(final BlockEntityType<? extends AbstractTileEntityGrave> tileEntityTypeIn, final BlockPos pos, final BlockState state) {
         super(tileEntityTypeIn, pos, state, DEFAULT_SIZE * 2);
         decay_timer = DEFAULT_DECAY_TIMER;
         decayed = false;
@@ -45,27 +43,26 @@ public abstract class AbstractTileEntityGrave extends TileEntityRack implements 
 
     /**
      * Delay the decay timer by minutes
+     *
      * @param minutes number of minutes to delay the time by
      */
-    public void delayDecayTimer(final double minutes)
-    {
+    public void delayDecayTimer(final double minutes) {
         decay_timer += minutes * TICKS_SECOND * 60;
     }
 
     /**
      * Get the graveData of the saved citizen
      */
-    public IGraveData getGraveData()
-    {
+    public IGraveData getGraveData() {
         return graveData;
     }
 
     /**
      * Set the graveData of the saved citizen
+     *
      * @param graveData
      */
-    public void setGraveData(IGraveData graveData)
-    {
+    public void setGraveData(IGraveData graveData) {
         this.graveData = graveData;
         setChanged();
     }

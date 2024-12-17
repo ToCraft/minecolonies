@@ -8,8 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Interface for the Event structure manager The manager takes care of structures spawned for events, takes a backup before spawning and loads the backup when the event is done.
  */
-public interface IEventStructureManager
-{
+public interface IEventStructureManager {
     /**
      * Spawns a temporary structure to place in the world, saves a backup of the previous blocks and restores them after the event ends.
      *

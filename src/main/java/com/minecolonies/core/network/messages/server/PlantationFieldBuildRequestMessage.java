@@ -34,8 +34,7 @@ import java.util.Optional;
 /**
  * Message to request a work order for a plantation field.
  */
-public class PlantationFieldBuildRequestMessage extends AbstractServerPlayMessage
-{
+public class PlantationFieldBuildRequestMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "plantation_field_build_request", PlantationFieldBuildRequestMessage::new);
 
     /**
@@ -82,14 +81,13 @@ public class PlantationFieldBuildRequestMessage extends AbstractServerPlayMessag
      * @param dimension the dimension we're executing on.
      */
     public PlantationFieldBuildRequestMessage(
-      final WorkOrderType workOrderType,
-      @NotNull final BlockPos pos,
-      final String packName,
-      final String path,
-      final ResourceKey<Level> dimension,
-      final RotationMirror rotationMirror,
-      final BlockPos builder)
-    {
+            final WorkOrderType workOrderType,
+            @NotNull final BlockPos pos,
+            final String packName,
+            final String path,
+            final ResourceKey<Level> dimension,
+            final RotationMirror rotationMirror,
+            final BlockPos builder) {
         super(TYPE);
         this.workOrderType = workOrderType;
         this.pos = pos;
@@ -101,8 +99,7 @@ public class PlantationFieldBuildRequestMessage extends AbstractServerPlayMessag
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(this.workOrderType.ordinal());
         buf.writeBlockPos(this.pos);
         buf.writeUtf(this.packName);
@@ -112,8 +109,7 @@ public class PlantationFieldBuildRequestMessage extends AbstractServerPlayMessag
         buf.writeBlockPos(this.builder);
     }
 
-    protected PlantationFieldBuildRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected PlantationFieldBuildRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.workOrderType = WorkOrderType.values()[buf.readInt()];
         this.pos = buf.readBlockPos();
@@ -125,65 +121,58 @@ public class PlantationFieldBuildRequestMessage extends AbstractServerPlayMessag
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player) {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromDim(dimension, pos);
-        if (colony == null)
-        {
+        if (colony == null) {
             return;
         }
 
         //Verify player has permission to change this hut its settings
-        if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
-        {
+        if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)) {
             return;
         }
 
         final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
-                                                              .filter(entry -> entry.getValue() instanceof WorkOrderPlantationField)
-                                                              .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
+                .filter(entry -> entry.getValue() instanceof WorkOrderPlantationField)
+                .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
 
-        if (wo.isPresent())
-        {
+        if (wo.isPresent()) {
             colony.getWorkManager().removeWorkOrder(wo.get().getKey());
             return;
         }
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(packName, path, colony.getWorld().registryAccess()),
-          player.level(),
-          (blueprint -> {
-              if (blueprint == null)
-              {
-                  Log.getLogger().error(String.format("Schematic %s doesn't exist on the server.", path));
-                  return;
-              }
+                player.level(),
+                (blueprint -> {
+                    if (blueprint == null) {
+                        Log.getLogger().error(String.format("Schematic %s doesn't exist on the server.", path));
+                        return;
+                    }
 
-              final String[] split = path.split("/");
-              final String displayName = split[split.length - 1].replace(".blueprint", "");
+                    final String[] split = path.split("/");
+                    final String displayName = split[split.length - 1].replace(".blueprint", "");
 
-              final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
-              final WorkOrderType type = structureState != null && !(structureState.getBlock() instanceof BlockPlantationField)
-                                           ? WorkOrderType.BUILD : workOrderType;
+                    final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
+                    final WorkOrderType type = structureState != null && !(structureState.getBlock() instanceof BlockPlantationField)
+                            ? WorkOrderType.BUILD : workOrderType;
 
-              final WorkOrderPlantationField order = WorkOrderPlantationField.create(
-                type,
-                packName,
-                path,
-                WordUtils.capitalizeFully(displayName),
-                pos,
-                rotationMirror,
-                0);
+                    final WorkOrderPlantationField order = WorkOrderPlantationField.create(
+                            type,
+                            packName,
+                            path,
+                            WordUtils.capitalizeFully(displayName),
+                            pos,
+                            rotationMirror,
+                            0);
 
-              if (!builder.equals(BlockPos.ZERO))
-              {
-                  final IBuilding building = colony.getBuildingManager().getBuilding(builder);
-                  if (building instanceof AbstractBuildingStructureBuilder)
-                  {
-                      order.setClaimedBy(builder);
-                  }
-              }
+                    if (!builder.equals(BlockPos.ZERO)) {
+                        final IBuilding building = colony.getBuildingManager().getBuilding(builder);
+                        if (building instanceof AbstractBuildingStructureBuilder) {
+                            order.setClaimedBy(builder);
+                        }
+                    }
 
-              colony.getWorkManager().addWorkOrder(order, false);
-          })));
+                    colony.getWorkManager().addWorkOrder(order, false);
+                })));
     }
 }

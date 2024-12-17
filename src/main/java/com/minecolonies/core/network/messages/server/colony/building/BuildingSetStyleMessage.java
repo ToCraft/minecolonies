@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to set the style of a building.
  */
-public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "building_set_style", BuildingSetStyleMessage::new);
 
     /**
@@ -26,33 +25,28 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
     /**
      * Creates object for the style of a building.
      *
-     * @param building View of the building to read data from.
-     * @param structurePack    style of the building.
+     * @param building      View of the building to read data from.
+     * @param structurePack style of the building.
      */
-    public BuildingSetStyleMessage(@NotNull final IBuildingView building, final String structurePack)
-    {
+    public BuildingSetStyleMessage(@NotNull final IBuildingView building, final String structurePack) {
         super(TYPE, building);
         this.structurePack = structurePack;
     }
 
-    protected BuildingSetStyleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected BuildingSetStyleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         structurePack = buf.readUtf(32767);
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeUtf(structurePack);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (building.getBuildingLevel() > 0 && !building.isDeconstructed())
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (building.getBuildingLevel() > 0 && !building.isDeconstructed()) {
             return;
         }
 

@@ -11,30 +11,25 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Miner guard assignment module.
  */
-public class MinerGuardAssignModuleView extends AbstractBuildingModuleView
-{
+public class MinerGuardAssignModuleView extends AbstractBuildingModuleView {
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
 
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new WindowMineGuardModule(buildingView);
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return "sword";
     }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return "com.minecolonies.coremod.gui.miner.guardassign";
     }
 }

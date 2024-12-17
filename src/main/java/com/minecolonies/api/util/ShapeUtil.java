@@ -10,8 +10,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 /**
  * Utility methods for dealing with voxel shapes
  */
-public class ShapeUtil
-{
+public class ShapeUtil {
     /**
      * Fast shape max for normal blocks
      *
@@ -19,16 +18,13 @@ public class ShapeUtil
      * @param axis
      * @return
      */
-    public static double max(final VoxelShape shape, final Direction.Axis axis)
-    {
-        if (shape == Shapes.block())
-        {
+    public static double max(final VoxelShape shape, final Direction.Axis axis) {
+        if (shape == Shapes.block()) {
             return 1.0;
         }
 
         // Note: in vanilla this is -infinity
-        if (shape == Shapes.empty())
-        {
+        if (shape == Shapes.empty()) {
             return 0;
         }
 
@@ -42,16 +38,13 @@ public class ShapeUtil
      * @param axis
      * @return
      */
-    public static double min(final VoxelShape shape, final Direction.Axis axis)
-    {
-        if (shape == Shapes.block())
-        {
+    public static double min(final VoxelShape shape, final Direction.Axis axis) {
+        if (shape == Shapes.block()) {
             return 0.0;
         }
 
         // Note: in vanilla this is +infinity
-        if (shape == Shapes.empty())
-        {
+        if (shape == Shapes.empty()) {
             return 0;
         }
 
@@ -64,15 +57,12 @@ public class ShapeUtil
      * @param shape
      * @return
      */
-    public static boolean isEmpty(final VoxelShape shape)
-    {
-        if (shape == Shapes.block())
-        {
+    public static boolean isEmpty(final VoxelShape shape) {
+        if (shape == Shapes.block()) {
             return false;
         }
 
-        if (shape == Shapes.empty())
-        {
+        if (shape == Shapes.empty()) {
             return true;
         }
 
@@ -86,8 +76,7 @@ public class ShapeUtil
      * @param def the default if empty.
      * @return the start y.
      */
-    public static double getStartY(final VoxelShape bb, final double def)
-    {
+    public static double getStartY(final VoxelShape bb, final double def) {
         return isEmpty(bb) ? def : min(bb, Direction.Axis.Y);
     }
 
@@ -98,8 +87,7 @@ public class ShapeUtil
      * @param def the default if empty.
      * @return the end y.
      */
-    public static double getEndY(final VoxelShape bb, final double def)
-    {
+    public static double getEndY(final VoxelShape bb, final double def) {
         return isEmpty(bb) ? def : max(bb, Direction.Axis.Y);
     }
 
@@ -111,10 +99,8 @@ public class ShapeUtil
      * @param state
      * @return
      */
-    public static boolean hasCollision(final BlockGetter world, final BlockPos pos, final BlockState state)
-    {
-        if (!state.getBlock().hasCollision)
-        {
+    public static boolean hasCollision(final BlockGetter world, final BlockPos pos, final BlockState state) {
+        if (!state.getBlock().hasCollision) {
             return false;
         }
 
@@ -129,10 +115,8 @@ public class ShapeUtil
      * @param state
      * @return
      */
-    public static boolean hasCollision(final BlockGetter world, final int x, final int y, final int z, final BlockState state)
-    {
-        if (!state.getBlock().hasCollision)
-        {
+    public static boolean hasCollision(final BlockGetter world, final int x, final int y, final int z, final BlockState state) {
+        if (!state.getBlock().hasCollision) {
             return false;
         }
 
@@ -146,10 +130,8 @@ public class ShapeUtil
      * @param collisionShape
      * @return
      */
-    public static boolean hasCollision(final BlockState state, final VoxelShape collisionShape)
-    {
-        if (!state.getBlock().hasCollision)
-        {
+    public static boolean hasCollision(final BlockState state, final VoxelShape collisionShape) {
+        if (!state.getBlock().hasCollision) {
             return false;
         }
 

@@ -11,15 +11,15 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.core.colony.jobs.JobArcherTraining;
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.util.WorkerUtil;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.InteractionHand;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -30,8 +30,7 @@ import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining, BuildingArchery>
-{
+public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining, BuildingArchery> {
     /**
      * Xp per successful shot.
      */
@@ -66,7 +65,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      * Shooting icon
      */
     private final static VisibleCitizenStatus ARCHER_TRAIN =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/archer_uni.png"), "com.minecolonies.gui.visiblestatus.archer_uni");
+            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/archer_uni.png"), "com.minecolonies.gui.visiblestatus.archer_uni");
 
     /**
      * Current target to shoot at.
@@ -88,15 +87,14 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      *
      * @param job the job to fulfill
      */
-    public EntityAIArcherTraining(@NotNull final JobArcherTraining job)
-    {
+    public EntityAIArcherTraining(@NotNull final JobArcherTraining job) {
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(COMBAT_TRAINING, this::findShootingStandPosition, STANDARD_DELAY),
-          new AITarget(ARCHER_SELECT_TARGET, this::selectTarget, STANDARD_DELAY),
-          new AITarget(ARCHER_CHECK_SHOT, this::checkShot, CHECK_SHOT_DELAY),
-          new AITarget(ARCHER_SHOOT, this::shoot, STANDARD_DELAY)
+                new AITarget(COMBAT_TRAINING, this::findShootingStandPosition, STANDARD_DELAY),
+                new AITarget(ARCHER_SELECT_TARGET, this::selectTarget, STANDARD_DELAY),
+                new AITarget(ARCHER_CHECK_SHOT, this::checkShot, CHECK_SHOT_DELAY),
+                new AITarget(ARCHER_SHOOT, this::shoot, STANDARD_DELAY)
 
         );
     }
@@ -106,18 +104,15 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      *
      * @return the next state to go to.
      */
-    private IAIState selectTarget()
-    {
+    private IAIState selectTarget() {
         final BuildingArchery archeryBuilding = building;
-        if (targetCounter >= archeryBuilding.getBuildingLevel() * BUILDING_LEVEL_TARGET_MULTIPLIER)
-        {
+        if (targetCounter >= archeryBuilding.getBuildingLevel() * BUILDING_LEVEL_TARGET_MULTIPLIER) {
             targetCounter = 0;
             return DECIDE;
         }
         final BlockPos targetPos = archeryBuilding.getRandomShootingTarget(worker.getRandom());
         if (targetPos == null || !WorldUtil.isBlockLoaded(world, targetPos) ||
-              !world.clip(new ClipContext(new Vec3(worker.getX(), worker.getEyeY(), worker.getZ()), new Vec3(targetPos.getX() + HALF_BLOCK, targetPos.getY() + HALF_BLOCK, targetPos.getZ() + HALF_BLOCK), ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, worker)).getBlockPos().equals(targetPos))
-        {
+                !world.clip(new ClipContext(new Vec3(worker.getX(), worker.getEyeY(), worker.getZ()), new Vec3(targetPos.getX() + HALF_BLOCK, targetPos.getY() + HALF_BLOCK, targetPos.getZ() + HALF_BLOCK), ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, worker)).getBlockPos().equals(targetPos)) {
             return DECIDE;
         }
 
@@ -132,13 +127,11 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      *
      * @return the next state to go to.
      */
-    private IAIState findShootingStandPosition()
-    {
+    private IAIState findShootingStandPosition() {
         final BuildingArchery archeryBuilding = building;
         final BlockPos shootingPos = archeryBuilding.getRandomShootingStandPosition(worker.getRandom());
 
-        if (shootingPos == null)
-        {
+        if (shootingPos == null) {
             return DECIDE;
         }
 
@@ -152,16 +145,13 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      *
      * @return the next state to go to.
      */
-    protected IAIState shoot()
-    {
-        if (currentShootingTarget == null || !isSetup())
-        {
+    protected IAIState shoot() {
+        if (currentShootingTarget == null || !isSetup()) {
             worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
             return START_WORKING;
         }
 
-        if (worker.isUsingItem())
-        {
+        if (worker.isUsingItem()) {
             WorkerUtil.faceBlock(currentShootingTarget, worker);
             worker.swing(InteractionHand.MAIN_HAND);
 
@@ -186,20 +176,16 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
             worker.move(MoverType.SELF, new Vec3(goToX, 0, goToZ));
 
-            if (worker.getRandom().nextBoolean())
-            {
+            if (worker.getRandom().nextBoolean()) {
                 CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
             }
             worker.stopUsingItem();
             this.incrementActionsDoneAndDecSaturation();
             arrowInProgress = arrow;
             currentAttackDelay = RANGED_ATTACK_DELAY_BASE;
-        }
-        else
-        {
+        } else {
             reduceAttackDelay();
-            if (currentAttackDelay <= 0)
-            {
+            if (currentAttackDelay <= 0) {
                 worker.startUsingItem(InteractionHand.MAIN_HAND);
             }
             return ARCHER_SHOOT;
@@ -208,14 +194,10 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         return ARCHER_CHECK_SHOT;
     }
 
-    private IAIState checkShot()
-    {
-        if (arrowInProgress.distanceToSqr(new Vec3(currentShootingTarget.getX(), currentShootingTarget.getY(), currentShootingTarget.getZ())) < MIN_DISTANCE_FOR_SUCCESS)
-        {
+    private IAIState checkShot() {
+        if (arrowInProgress.distanceToSqr(new Vec3(currentShootingTarget.getX(), currentShootingTarget.getY(), currentShootingTarget.getZ())) < MIN_DISTANCE_FOR_SUCCESS) {
             worker.getCitizenExperienceHandler().addExperience(XP_PER_SUCCESSFUL_SHOT);
-        }
-        else
-        {
+        } else {
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
         }
 
@@ -224,10 +206,8 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     }
 
     @Override
-    protected boolean isSetup()
-    {
-        if (checkForToolOrWeapon(ModEquipmentTypes.bow.get()))
-        {
+    protected boolean isSetup() {
+        if (checkForToolOrWeapon(ModEquipmentTypes.bow.get())) {
             setDelay(REQUEST_DELAY);
             return false;
         }
@@ -238,8 +218,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     }
 
     @Override
-    public Class<BuildingArchery> getExpectedBuildingClass()
-    {
+    public Class<BuildingArchery> getExpectedBuildingClass() {
         return BuildingArchery.class;
     }
 }

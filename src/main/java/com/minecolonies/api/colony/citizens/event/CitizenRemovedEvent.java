@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Event for when a citizen was removed from the colony.
  */
-public class CitizenRemovedEvent extends AbstractCitizenEvent
-{
+public class CitizenRemovedEvent extends AbstractCitizenEvent {
     /**
      * The damage source that caused a citizen to die.
      */
@@ -20,8 +19,7 @@ public class CitizenRemovedEvent extends AbstractCitizenEvent
      * @param citizen the citizen related to the event.
      * @param source  the way the citizen went out of the colony.
      */
-    public CitizenRemovedEvent(final @NotNull ICitizenData citizen, final @NotNull DamageSource source)
-    {
+    public CitizenRemovedEvent(final @NotNull ICitizenData citizen, final @NotNull DamageSource source) {
         super(citizen);
         this.source = source;
     }
@@ -32,8 +30,7 @@ public class CitizenRemovedEvent extends AbstractCitizenEvent
      * @return the damage source.
      */
     @NotNull
-    public DamageSource getDamageSource()
-    {
+    public DamageSource getDamageSource() {
         return source;
     }
 }

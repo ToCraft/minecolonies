@@ -9,8 +9,7 @@ import java.util.List;
 /**
  * Stores the follow mode setting.
  */
-public class GuardFollowModeSetting extends StringSettingWithDesc
-{
+public class GuardFollowModeSetting extends StringSettingWithDesc {
     /**
      * Different setting possibilities.
      */
@@ -20,8 +19,7 @@ public class GuardFollowModeSetting extends StringSettingWithDesc
     /**
      * Create a new follow mode setting.
      */
-    public GuardFollowModeSetting()
-    {
+    public GuardFollowModeSetting() {
         super(TIGHT, LOOSE);
     }
 
@@ -31,26 +29,22 @@ public class GuardFollowModeSetting extends StringSettingWithDesc
      * @param settings     the overall list of settings.
      * @param currentIndex the current selected index.
      */
-    public GuardFollowModeSetting(final List<String> settings, final int currentIndex)
-    {
+    public GuardFollowModeSetting(final List<String> settings, final int currentIndex) {
         super(settings, currentIndex);
     }
 
     @Override
-    public boolean isActive(final ISettingsModule module)
-    {
+    public boolean isActive(final ISettingsModule module) {
         return module.getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW);
     }
 
     @Override
-    public boolean isActive(final ISettingsModuleView module)
-    {
+    public boolean isActive(final ISettingsModuleView module) {
         return module.getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW);
     }
 
     @Override
-    public boolean shouldHideWhenInactive()
-    {
+    public boolean shouldHideWhenInactive() {
         return true;
     }
 }

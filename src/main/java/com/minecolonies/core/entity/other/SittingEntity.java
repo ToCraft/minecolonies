@@ -21,16 +21,14 @@ import java.util.List;
 /**
  * Entity used to sit on, for animation purposes.
  */
-public class SittingEntity extends Entity
-{
+public class SittingEntity extends Entity {
     /**
      * The lifetime in ticks of the entity, auto-dismounts after.
      */
     int maxLifeTime = 100;
     private BlockPos sittingpos = BlockPos.ZERO;
 
-    public SittingEntity(final EntityType<?> type, final Level worldIn)
-    {
+    public SittingEntity(final EntityType<?> type, final Level worldIn) {
         super(type, worldIn);
 
         this.setInvisible(true);
@@ -38,8 +36,7 @@ public class SittingEntity extends Entity
         this.setNoGravity(true);
     }
 
-    public SittingEntity(final EntityType<?> type, final Level worldIn, double x, double y, double z, int lifeTime)
-    {
+    public SittingEntity(final EntityType<?> type, final Level worldIn, double x, double y, double z, int lifeTime) {
         super(type, worldIn);
 
         this.setPos(x, y, z);
@@ -53,51 +50,42 @@ public class SittingEntity extends Entity
     /**
      * Do not let the entity be destroyed
      */
-    public boolean hurt(DamageSource source, float amount)
-    {
+    public boolean hurt(DamageSource source, float amount) {
         return false;
     }
 
     /**
      * No Collision
      */
-    public boolean isPickable()
-    {
+    public boolean isPickable() {
         return false;
     }
 
     @Override
-    protected void readAdditionalSaveData(final CompoundTag compound)
-    {
+    protected void readAdditionalSaveData(final CompoundTag compound) {
 
     }
 
     @Override
-    protected void addAdditionalSaveData(final CompoundTag compound)
-    {
+    protected void addAdditionalSaveData(final CompoundTag compound) {
 
     }
 
     @Override
-    protected void defineSynchedData(final SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
 
     }
 
     @Override
-    public void tick()
-    {
-        if (this.level().isClientSide)
-        {
+    public void tick() {
+        if (this.level().isClientSide) {
             return;
         }
 
-        if (!this.isVehicle() || maxLifeTime-- < 0)
-        {
+        if (!this.isVehicle() || maxLifeTime-- < 0) {
             // Upsizes entity again
 
-            if (getPassengers().size() > 0)
-            {
+            if (getPassengers().size() > 0) {
                 this.ejectPassengers();
             }
 
@@ -106,11 +94,9 @@ public class SittingEntity extends Entity
     }
 
     @Override
-    protected void addPassenger(Entity passenger)
-    {
+    protected void addPassenger(Entity passenger) {
         super.addPassenger(passenger);
-        if (this.level().isClientSide)
-        {
+        if (this.level().isClientSide) {
             return;
         }
 
@@ -118,28 +104,23 @@ public class SittingEntity extends Entity
     }
 
     @Override
-    protected void removePassenger(Entity passenger)
-    {
+    protected void removePassenger(Entity passenger) {
         super.removePassenger(passenger);
-        if (this.level().isClientSide)
-        {
+        if (this.level().isClientSide) {
             return;
         }
 
-        if (passenger instanceof LivingEntity)
-        {
+        if (passenger instanceof LivingEntity) {
             passenger.dimensions = ((LivingEntity) passenger).isBaby() ? passenger.getType().getDimensions().scale(0.5f) : passenger.getType().getDimensions();
         }
     }
 
     @NotNull
     @Override
-    public Vec3 getDismountLocationForPassenger(@NotNull final LivingEntity passenger)
-    {
+    public Vec3 getDismountLocationForPassenger(@NotNull final LivingEntity passenger) {
         final BlockPos start = sittingpos == BlockPos.ZERO ? blockPosition().above() : sittingpos;
         final BlockPos spawn = EntityUtils.getSpawnPoint(this.level(), start);
-        if (spawn == null)
-        {
+        if (spawn == null) {
             return super.getDismountLocationForPassenger(passenger);
         }
         return new Vec3(spawn.getX() + 0.5, spawn.getY() + 0.2, spawn.getZ() + 0.5);
@@ -150,8 +131,7 @@ public class SittingEntity extends Entity
      *
      * @param maxLifeTime the max life span of the entity.
      */
-    public void setMaxLifeTime(final int maxLifeTime)
-    {
+    public void setMaxLifeTime(final int maxLifeTime) {
         this.maxLifeTime = maxLifeTime;
     }
 
@@ -160,8 +140,7 @@ public class SittingEntity extends Entity
      *
      * @param pos
      */
-    public void setSittingPos(final BlockPos pos)
-    {
+    public void setSittingPos(final BlockPos pos) {
         sittingpos = pos;
     }
 
@@ -172,10 +151,8 @@ public class SittingEntity extends Entity
      * @param entity      entity to sit down
      * @param maxLifeTime max time to sit
      */
-    public static void sitDown(final BlockPos pos, final Mob entity, final int maxLifeTime)
-    {
-        if (entity.getVehicle() != null)
-        {
+    public static void sitDown(final BlockPos pos, final Mob entity, final int maxLifeTime) {
+        if (entity.getVehicle() != null) {
             // Already riding an entity, abort
             return;
         }
@@ -187,16 +164,13 @@ public class SittingEntity extends Entity
         double minY = 1;
 
         final List<AABB> shapes = state.getCollisionShape(entity.level(), pos).toAabbs();
-        for (final AABB box : shapes)
-        {
-            if (box.maxY < minY)
-            {
+        for (final AABB box : shapes) {
+            if (box.maxY < minY) {
                 minY = box.maxY;
             }
         }
 
-        if (shapes.isEmpty())
-        {
+        if (shapes.isEmpty()) {
             minY = 0;
         }
 

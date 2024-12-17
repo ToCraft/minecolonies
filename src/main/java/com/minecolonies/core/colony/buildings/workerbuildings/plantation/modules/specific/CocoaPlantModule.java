@@ -28,8 +28,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JU
  *     <li>All requirements from {@link TreeSidePlantModule}</li>
  * </ol>
  */
-public class CocoaPlantModule extends TreeSidePlantModule
-{
+public class CocoaPlantModule extends TreeSidePlantModule {
     /**
      * Default constructor.
      *
@@ -38,48 +37,41 @@ public class CocoaPlantModule extends TreeSidePlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public CocoaPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
-    {
+    public CocoaPlantModule(final IField field, final String fieldTag, final String workTag, final Item item) {
         super(field, fieldTag, workTag, item);
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
-    {
+    public ResourceLocation getRequiredResearchEffect() {
         return PLANTATION_JUNGLE;
     }
 
     @Override
-    public BlockState getPlantingBlockState(final Level world, final BlockPos workPosition, final BlockState blockState)
-    {
+    public BlockState getPlantingBlockState(final Level world, final BlockPos workPosition, final BlockState blockState) {
         return Stream.of(workPosition.north(), workPosition.south(), workPosition.west(), workPosition.east())
-                 .filter(position -> world.getBlockState(position).getBlock() == Blocks.JUNGLE_LOG)
-                 .map(position -> BlockPosUtil.directionFromDelta(position.subtract(workPosition).getX(),
-                   position.subtract(workPosition).getY(),
-                   position.subtract(workPosition).getZ()))
-                 .map(direction -> blockState.setValue(HorizontalDirectionalBlock.FACING, direction))
-                 .findFirst()
-                 .orElse(blockState);
+                .filter(position -> world.getBlockState(position).getBlock() == Blocks.JUNGLE_LOG)
+                .map(position -> BlockPosUtil.directionFromDelta(position.subtract(workPosition).getX(),
+                        position.subtract(workPosition).getY(),
+                        position.subtract(workPosition).getZ()))
+                .map(direction -> blockState.setValue(HorizontalDirectionalBlock.FACING, direction))
+                .findFirst()
+                .orElse(blockState);
     }
 
     @Override
-    public EquipmentTypeEntry getRequiredTool()
-    {
+    public EquipmentTypeEntry getRequiredTool() {
         return ModEquipmentTypes.axe.get();
     }
 
     @Override
-    protected boolean isValidClearingBlock(final BlockState blockState)
-    {
+    protected boolean isValidClearingBlock(final BlockState blockState) {
         return blockState.getBlock() != Blocks.COCOA;
     }
 
     @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
+    protected boolean isValidHarvestBlock(final BlockState blockState) {
         Block block = blockState.getBlock();
-        if (block instanceof CocoaBlock cocoa)
-        {
+        if (block instanceof CocoaBlock cocoa) {
             return blockState.getValue(CocoaBlock.AGE) >= 2;
         }
         return false;

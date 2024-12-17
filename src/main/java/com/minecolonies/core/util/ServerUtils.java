@@ -16,14 +16,12 @@ import java.util.*;
  *
  * @since 0.2
  */
-public final class ServerUtils
-{
+public final class ServerUtils {
 
     /**
      * Private constructor to hide the implicit public one.
      */
-    private ServerUtils()
-    {
+    private ServerUtils() {
     }
 
     /**
@@ -34,12 +32,9 @@ public final class ServerUtils
      * @return the Player
      */
     @Nullable
-    public static Player getPlayerFromUUID(@NotNull final Level world, @NotNull final UUID id)
-    {
-        for (int i = 0; i < world.players().size(); ++i)
-        {
-            if (id.equals((world.players().get(i)).getGameProfile().getId()))
-            {
+    public static Player getPlayerFromUUID(@NotNull final Level world, @NotNull final UUID id) {
+        for (int i = 0; i < world.players().size(); ++i) {
+            if (id.equals((world.players().get(i)).getGameProfile().getId())) {
                 return world.players().get(i);
             }
         }
@@ -54,24 +49,18 @@ public final class ServerUtils
      * @return list of PlayerEntitys
      */
     @NotNull
-    public static List<Player> getPlayersFromUUID(@Nullable final Level world, @NotNull final Collection<UUID> ids)
-    {
-        if (world == null)
-        {
+    public static List<Player> getPlayersFromUUID(@Nullable final Level world, @NotNull final Collection<UUID> ids) {
+        if (world == null) {
             return Collections.emptyList();
         }
         @NotNull final List<Player> players = new ArrayList<>();
 
-        for (final Object o : world.players())
-        {
-            if (o instanceof Player)
-            {
+        for (final Object o : world.players()) {
+            if (o instanceof Player) {
                 @NotNull final Player player = (Player) o;
-                if (ids.contains(player.getGameProfile().getId()))
-                {
+                if (ids.contains(player.getGameProfile().getId())) {
                     players.add(player);
-                    if (players.size() == ids.size())
-                    {
+                    if (players.size() == ids.size()) {
                         return players;
                     }
                 }
@@ -92,12 +81,10 @@ public final class ServerUtils
      * @return A list of {@link Player}s
      */
     @NotNull
-    public static List<Player> getPlayersFromPermPlayer(@NotNull final List<Player> players, @NotNull final Level world)
-    {
+    public static List<Player> getPlayersFromPermPlayer(@NotNull final List<Player> players, @NotNull final Level world) {
         @NotNull final List<Player> playerList = new ArrayList<>();
 
-        for (@NotNull final Player player : players)
-        {
+        for (@NotNull final Player player : players) {
             playerList.add(ServerUtils.getPlayerFromPermPlayer(player, world));
         }
 
@@ -116,8 +103,7 @@ public final class ServerUtils
      * @return The {@link Player} reference.
      */
     @Nullable
-    public static Player getPlayerFromPermPlayer(@NotNull final Player player, @NotNull final Level world)
-    {
+    public static Player getPlayerFromPermPlayer(@NotNull final Player player, @NotNull final Level world) {
         return ServerUtils.getPlayerFromUUID(player.getUUID(), world);
     }
 
@@ -131,17 +117,13 @@ public final class ServerUtils
      * @return The player the player if found or null
      */
     @Nullable
-    public static Player getPlayerFromUUID(@Nullable final UUID uuid, @NotNull final Level world)
-    {
-        if (uuid == null)
-        {
+    public static Player getPlayerFromUUID(@Nullable final UUID uuid, @NotNull final Level world) {
+        if (uuid == null) {
             return null;
         }
         final List<ServerPlayer> allPlayers = world.getServer().getPlayerList().getPlayers();
-        for (@NotNull final ServerPlayer player : allPlayers)
-        {
-            if (player.getUUID().equals(uuid))
-            {
+        for (@NotNull final ServerPlayer player : allPlayers) {
+            if (player.getUUID().equals(uuid)) {
                 return player;
             }
         }

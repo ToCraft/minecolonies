@@ -6,8 +6,7 @@ import java.util.Map;
 /**
  * Represents a bucket of items the builder workers will pick up with them to go to the buildsite.
  */
-public class BuilderBucket
-{
+public class BuilderBucket {
     /**
      * The required resources (String identifier, and int count).
      */
@@ -23,8 +22,7 @@ public class BuilderBucket
      *
      * @return the map with the identifiers and count.
      */
-    public Map<String, Integer> getResourceMap()
-    {
+    public Map<String, Integer> getResourceMap() {
         return requiredResources;
     }
 
@@ -33,8 +31,7 @@ public class BuilderBucket
      *
      * @return the total stacks.
      */
-    public int getTotalStacks()
-    {
+    public int getTotalStacks() {
         return totalStacks;
     }
 
@@ -43,8 +40,7 @@ public class BuilderBucket
      *
      * @param totalStacks the total stucks.
      */
-    public void setTotalStacks(final int totalStacks)
-    {
+    public void setTotalStacks(final int totalStacks) {
         this.totalStacks = totalStacks;
     }
 
@@ -54,8 +50,7 @@ public class BuilderBucket
      * @param key the key to add.
      * @param qty the quantity to add.
      */
-    public void addOrAdjustResource(final String key, final int qty)
-    {
+    public void addOrAdjustResource(final String key, final int qty) {
         this.requiredResources.put(key, qty);
     }
 
@@ -64,8 +59,7 @@ public class BuilderBucket
      *
      * @param name the key.
      */
-    public void removeResources(final String name)
-    {
+    public void removeResources(final String name) {
         this.requiredResources.remove(name);
     }
 }

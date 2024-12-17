@@ -5,7 +5,8 @@
 
     <button id="cancel" size="14 15" pos="375 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
 
-    <text id="title" size="200 15" color="black" pos="130 15" label="$(com.minecolonies.core.settlementcovenant.title)" textscale="1.4"/>
+    <text id="title" size="200 15" color="black" pos="130 15" label="$(com.minecolonies.core.settlementcovenant.title)"
+          textscale="1.4"/>
     <image size="128 16" pos="135 28" source="minecolonies:textures/gui/citizen/colonist_text_decor_down_wide.png"/>
 
     <text id="text1" size="300 30" color="black" pos="60 40"/>
@@ -19,10 +20,10 @@
     <text id="text4" size="300 30" color="black" pos="60 170" label="$(com.minecolonies.core.settlementcovenant4)"/>
 
     <image size="25 49" pos="355 200" source="minecolonies:textures/gui/citizen/colonist_decor_up_ribbon_smaller.png"/>
-    <image  size="45 45" pos="345 185" source="minecolonies:textures/gui/citizen/colonist_wax_indetermined.png"/>
+    <image size="45 45" pos="345 185" source="minecolonies:textures/gui/citizen/colonist_wax_indetermined.png"/>
 
     <button id="create" size="169 17" pos="115 210" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_large_disabled.png"
-                 label="$(com.minecolonies.coremod.gui.colony.create)"/>
+            source="minecolonies:textures/gui/builderhut/builder_button_large.png"
+            disabled="minecolonies:textures/gui/builderhut/builder_button_large_disabled.png"
+            label="$(com.minecolonies.coremod.gui.colony.create)"/>
 </window>

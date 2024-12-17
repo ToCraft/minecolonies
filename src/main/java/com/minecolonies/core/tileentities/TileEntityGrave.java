@@ -40,8 +40,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DECAY_TIMER
 /**
  * Tile entity for the graves.
  */
-public class TileEntityGrave extends AbstractTileEntityGrave
-{
+public class TileEntityGrave extends AbstractTileEntityGrave {
     /**
      * The content of the chest.
      */
@@ -52,13 +51,11 @@ public class TileEntityGrave extends AbstractTileEntityGrave
      */
     private static final String TAG_GRAVE_DATA = "gravedata";
 
-    public TileEntityGrave(final BlockEntityType<? extends TileEntityGrave> type, final BlockPos pos, final BlockState state)
-    {
+    public TileEntityGrave(final BlockEntityType<? extends TileEntityGrave> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
     }
 
-    public TileEntityGrave(final BlockPos pos, final BlockState state)
-    {
+    public TileEntityGrave(final BlockPos pos, final BlockState state) {
         super(MinecoloniesTileEntities.GRAVE.get(), pos, state);
     }
 
@@ -67,21 +64,17 @@ public class TileEntityGrave extends AbstractTileEntityGrave
      *
      * @return the map of content.
      */
-    public Map<ItemStorage, Integer> getAllContent()
-    {
+    public Map<ItemStorage, Integer> getAllContent() {
         return content;
     }
 
     @Override
-    public void updateItemStorage()
-    {
-        if (level != null && !level.isClientSide)
-        {
+    public void updateItemStorage() {
+        if (level != null && !level.isClientSide) {
             final boolean empty = content.isEmpty();
             updateContent();
 
-            if ((empty && !content.isEmpty()) || !empty && content.isEmpty())
-            {
+            if ((empty && !content.isEmpty()) || !empty && content.isEmpty()) {
                 updateBlockState();
             }
             setChanged();
@@ -91,22 +84,18 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     /**
      * Just do the content update.
      */
-    private void updateContent()
-    {
+    private void updateContent() {
         content.clear();
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
+        for (int slot = 0; slot < inventory.getSlots(); slot++) {
             final ItemStack stack = inventory.getStackInSlot(slot);
 
-            if (ItemStackUtils.isEmpty(stack))
-            {
+            if (ItemStackUtils.isEmpty(stack)) {
                 continue;
             }
 
             final ItemStorage storage = new ItemStorage(stack.copy());
             int amount = ItemStackUtils.getSize(stack);
-            if (content.containsKey(storage))
-            {
+            if (content.containsKey(storage)) {
                 amount += content.remove(storage);
             }
             content.put(storage, amount);
@@ -114,99 +103,82 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     }
 
     @Override
-    public void updateBlockState()
-    {
-        if (level != null && level.getBlockState(worldPosition).getBlock() instanceof AbstractBlockMinecoloniesGrave)
-        {
+    public void updateBlockState() {
+        if (level != null && level.getBlockState(worldPosition).getBlock() instanceof AbstractBlockMinecoloniesGrave) {
             final BlockState state = level.getBlockState(worldPosition).setValue(AbstractBlockMinecoloniesGrave.VARIANT, decayed ? GraveType.DECAYED : GraveType.DEFAULT);
-            if (!level.getBlockState(worldPosition).equals(state))
-            {
+            if (!level.getBlockState(worldPosition).equals(state)) {
                 level.setBlockAndUpdate(worldPosition, state);
             }
         }
     }
 
     @Override
-    public ItemStackHandler createInventory(final int slots)
-    {
+    public ItemStackHandler createInventory(final int slots) {
         return new AbstractTileEntityRack.RackInventory(slots);
     }
 
     @Override
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         updateContent();
         return content.isEmpty();
     }
 
     @Override
-    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.loadAdditional(compound, provider);
 
-        decay_timer         = compound.contains(TAG_DECAY_TIMER) ? compound.getInt(TAG_DECAY_TIMER) : DEFAULT_DECAY_TIMER;
-        decayed             = compound.contains(TAG_DECAYED) ? compound.getBoolean(TAG_DECAYED) :false;
+        decay_timer = compound.contains(TAG_DECAY_TIMER) ? compound.getInt(TAG_DECAY_TIMER) : DEFAULT_DECAY_TIMER;
+        decayed = compound.contains(TAG_DECAYED) ? compound.getBoolean(TAG_DECAYED) : false;
 
-        if (compound.contains(TAG_GRAVE_DATA))
-        {
+        if (compound.contains(TAG_GRAVE_DATA)) {
             graveData = new GraveData();
             graveData.read(compound.getCompound(TAG_GRAVE_DATA));
-        }
-        else graveData = null;
+        } else graveData = null;
     }
 
     @Override
-    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.saveAdditional(compound, provider);
 
         compound.putInt(TAG_DECAY_TIMER, decay_timer);
         compound.putBoolean(TAG_DECAYED, decayed);
 
-        if(graveData != null)
-        {
+        if (graveData != null) {
             compound.put(TAG_GRAVE_DATA, graveData.write());
         }
     }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket()
-    {
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider) {
         return this.saveWithId(provider);
     }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
-    {
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider) {
         this.loadAdditional(packet.getTag(), provider);
     }
 
     @Override
-    public void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider)
-    {
+    public void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider) {
         this.loadAdditional(tag, provider);
     }
 
     @Override
-    public void setChanged()
-    {
-        if (level != null)
-        {
+    public void setChanged() {
+        if (level != null) {
             WorldUtil.markChunkDirty(level, worldPosition);
         }
     }
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
-    {
+    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player) {
         final RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), player.level().registryAccess());
         buffer.writeBlockPos(this.getBlockPos());
 
@@ -215,8 +187,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
 
     @NotNull
     @Override
-    public Component getDisplayName()
-    {
+    public Component getDisplayName() {
         return Component.literal("Grave");
     }
 
@@ -227,21 +198,15 @@ public class TileEntityGrave extends AbstractTileEntityGrave
      * @param delay number of tick between each call
      * @return true if the grave still exist, false otherwise
      **/
-    public boolean onColonyTick(final double delay)
-    {
-        if (this.hasLevel() && !level.isClientSide && decay_timer != -1)
-        {
+    public boolean onColonyTick(final double delay) {
+        if (this.hasLevel() && !level.isClientSide && decay_timer != -1) {
             decay_timer -= delay;
-            if (decay_timer <= 0)
-            {
-                if (!decayed)
-                {
+            if (decay_timer <= 0) {
+                if (!decayed) {
                     decayed = true;
                     decay_timer = DEFAULT_DECAY_TIMER;
                     updateBlockState();
-                }
-                else
-                {
+                } else {
                     InventoryUtils.dropItemHandler(inventory, level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ());
                     level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
                     return false;

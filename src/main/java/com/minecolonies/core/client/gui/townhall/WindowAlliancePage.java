@@ -23,8 +23,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for the town hall ally list.
  */
-public class WindowAlliancePage extends AbstractWindowTownHall
-{
+public class WindowAlliancePage extends AbstractWindowTownHall {
     /**
      * The ScrollingList of all feuds.
      */
@@ -39,8 +38,7 @@ public class WindowAlliancePage extends AbstractWindowTownHall
      *
      * @param building {@link BuildingTownHall.View}.
      */
-    public WindowAlliancePage(final BuildingTownHall.View building)
-    {
+    public WindowAlliancePage(final BuildingTownHall.View building) {
         super(building, "layoutalliance.xml");
 
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
@@ -55,62 +53,51 @@ public class WindowAlliancePage extends AbstractWindowTownHall
      *
      * @param button the clicked button.
      */
-    private void teleportToColony(@NotNull final Button button)
-    {
+    private void teleportToColony(@NotNull final Button button) {
         final int row = alliesList.getListElementIndexByPane(button);
         final CompactColonyReference ally = building.getColony().getAllies().get(row);
 
         MessageUtils.format(DO_REALLY_WANNA_TP, ally.name)
-          .withPriority(MessagePriority.IMPORTANT)
-          .withClickEvent(new ClickEventWithExecutable(() -> new TeleportToColonyMessage(ally.dimension, ally.id).sendToServer()))
-          .sendTo(Minecraft.getInstance().player);
+                .withPriority(MessagePriority.IMPORTANT)
+                .withClickEvent(new ClickEventWithExecutable(() -> new TeleportToColonyMessage(ally.dimension, ally.id).sendToServer()))
+                .sendTo(Minecraft.getInstance().player);
         this.close();
     }
 
     /**
      * Fills the allies and feuds lists.
      */
-    private void fillAlliesAndFeudsList()
-    {
-        alliesList.setDataProvider(new ScrollingList.DataProvider()
-        {
+    private void fillAlliesAndFeudsList() {
+        alliesList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return building.getColony().getAllies().size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final CompactColonyReference colonyReference = building.getColony().getAllies().get(index);
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(colonyReference.name));
                 final long distance = BlockPosUtil.getDistance2D(colonyReference.center, building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Text.class).setText(Component.literal((int) distance + "b"));
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
-                if (colonyReference.hasTownHall && (building.getBuildingLevel() < MineColonies.getConfig().getServer().minThLevelToTeleport.get() || !building.canPlayerUseTP()))
-                {
+                if (colonyReference.hasTownHall && (building.getBuildingLevel() < MineColonies.getConfig().getServer().minThLevelToTeleport.get() || !building.canPlayerUseTP())) {
                     button.setText(Component.translatableEscape(TH_TOO_LOW));
                     button.disable();
-                }
-                else
-                {
+                } else {
                     button.enable();
                 }
             }
         });
 
-        feudsList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        feudsList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return building.getColony().getFeuds().size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final CompactColonyReference colonyReference = building.getColony().getFeuds().get(index);
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(colonyReference.name));
                 final long distance = BlockPosUtil.getDistance2D(colonyReference.center, building.getPosition());
@@ -120,8 +107,7 @@ public class WindowAlliancePage extends AbstractWindowTownHall
     }
 
     @Override
-    protected String getWindowId()
-    {
+    protected String getWindowId() {
         return BUTTON_ALLIANCE;
     }
 }

@@ -13,14 +13,13 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for the town hall.
  */
-public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
-{
+public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuilding<ITownHallView> {
     /**
      * Color constants for builder list.
      */
-    public static final int RED       = Color.getByName("red", 0);
+    public static final int RED = Color.getByName("red", 0);
     public static final int DARKGREEN = Color.getByName("darkgreen", 0);
-    public static final int ORANGE    = Color.getByName("orange", 0);
+    public static final int ORANGE = Color.getByName("orange", 0);
     public static final int YELLOW = Color.getByName("yellow", 0);
 
     /**
@@ -28,8 +27,7 @@ public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuildin
      *
      * @param townHall {@link BuildingTownHall.View}.
      */
-    public AbstractWindowTownHall(final BuildingTownHall.View townHall, final String page)
-    {
+    public AbstractWindowTownHall(final BuildingTownHall.View townHall, final String page) {
         super(townHall, Constants.MOD_ID + ":gui/townhall/" + page);
 
         registerButton(BUTTON_ACTIONS, () -> new WindowMainPage(townHall).open());
@@ -48,6 +46,7 @@ public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuildin
 
     /**
      * Get the id that identifies the window.
+     *
      * @return the string id.
      */
     protected abstract String getWindowId();
@@ -58,8 +57,7 @@ public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuildin
      * @return Name of a building.
      */
     @Override
-    public String getBuildingName()
-    {
+    public String getBuildingName() {
         return building.getColony().getName();
     }
 }

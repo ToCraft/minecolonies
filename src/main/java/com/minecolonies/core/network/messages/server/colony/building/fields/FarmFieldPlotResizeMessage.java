@@ -15,8 +15,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Message to change the farmer field plot size.
  */
-public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
-{
+public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "farm_field_plot_resize", FarmFieldPlotResizeMessage::new);
 
     /**
@@ -39,8 +38,7 @@ public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
      * @param direction the specified direction for the new radius
      * @param position  the field position.
      */
-    public FarmFieldPlotResizeMessage(final IColony colony, final int size, final Direction direction, final BlockPos position)
-    {
+    public FarmFieldPlotResizeMessage(final IColony colony, final int size, final Direction direction, final BlockPos position) {
         super(TYPE, colony);
         this.size = size;
         this.direction = direction;
@@ -48,25 +46,22 @@ public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         colony.getBuildingManager()
-          .getField(f -> f.getFieldType().equals(FieldRegistries.farmField.get()) && f.getPosition().equals(position))
-          .map(m -> (FarmField) m)
-          .ifPresent(field -> field.setRadius(direction, size));
+                .getField(f -> f.getFieldType().equals(FieldRegistries.farmField.get()) && f.getPosition().equals(position))
+                .map(m -> (FarmField) m)
+                .ifPresent(field -> field.setRadius(direction, size));
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(size);
         buf.writeInt(direction.get2DDataValue());
         buf.writeBlockPos(position);
     }
 
-    protected FarmFieldPlotResizeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected FarmFieldPlotResizeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         size = buf.readInt();
         direction = Direction.from2DDataValue(buf.readInt());

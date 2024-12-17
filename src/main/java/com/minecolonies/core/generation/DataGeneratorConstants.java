@@ -4,8 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.minecolonies.api.util.constant.Constants;
 
-public class DataGeneratorConstants
-{
+public class DataGeneratorConstants {
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 

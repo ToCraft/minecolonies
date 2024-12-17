@@ -38,36 +38,31 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 /**
  * Datagen for Nether Worker
  */
-public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTableProvider
-{
+public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTableProvider {
     public static final String NETHERWORKER = ModJobs.NETHERWORKER_ID.getPath();
     private static final int MAX_BUILDING_LEVEL = 5;
 
     private final List<LootTable.Builder> levels;
 
     public DefaultNetherWorkerLootProvider(@NotNull final PackOutput packOutput,
-                                           @NotNull final CompletableFuture<HolderLookup.Provider> providerFuture)
-    {
+                                           @NotNull final CompletableFuture<HolderLookup.Provider> providerFuture) {
         super(packOutput, providerFuture);
 
         levels = new ArrayList<>();
 
-        for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
-        {
+        for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel) {
             levels.add(createTripLoot(buildingLevel));
         }
     }
 
-    private LootTable.Builder createTripLoot(final int buildingLevel)
-    {
+    private LootTable.Builder createTripLoot(final int buildingLevel) {
         return new LootTable.Builder()
                 .withPool(createBlocksPool(buildingLevel))
                 .withPool(createMobsPool(buildingLevel));
     }
 
     @NotNull
-    private LootPool.Builder createBlocksPool(final int buildingLevel)
-    {
+    private LootPool.Builder createBlocksPool(final int buildingLevel) {
         final LootPool.Builder blocks = new LootPool.Builder()
                 .setRolls(UniformGenerator.between(3, 10))
                 .setBonusRolls(UniformGenerator.between(0.3F, 0.3F));
@@ -92,8 +87,7 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
                 .setWeight(15)
                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 4))));
 
-        if (buildingLevel >= 2)
-        {
+        if (buildingLevel >= 2) {
             blocks.add(LootItem.lootTableItem(Items.GLOWSTONE)
                     .setWeight(5)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4))));
@@ -123,8 +117,7 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))));
         }
 
-        if (buildingLevel >= 3)
-        {
+        if (buildingLevel >= 3) {
             blocks.add(LootItem.lootTableItem(Items.BASALT)
                     .setWeight(5)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))));
@@ -151,8 +144,7 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
                     .setWeight(1));
         }
 
-        if (buildingLevel >= 4)
-        {
+        if (buildingLevel >= 4) {
             blocks.add(LootItem.lootTableItem(Items.NETHER_GOLD_ORE)
                     .setWeight(5)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))));
@@ -162,8 +154,7 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))));
         }
 
-        if (buildingLevel >= 5)
-        {
+        if (buildingLevel >= 5) {
             blocks.add(LootItem.lootTableItem(Items.ANCIENT_DEBRIS)
                     .setWeight(1)
                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))));
@@ -173,14 +164,13 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
     }
 
     @NotNull
-    private LootPool.Builder createMobsPool(final int buildingLevel)
-    {
+    private LootPool.Builder createMobsPool(final int buildingLevel) {
         final LootPool.Builder mobs = new LootPool.Builder()
                 .setRolls(UniformGenerator.between(2, 6))
                 .setBonusRolls(UniformGenerator.between(0.1F, 0.1F));
 
         mobs.add(createAdventureToken(EntityType.ZOMBIFIED_PIGLIN, 5, 5)
-                   .setWeight(5500).setQuality(-10));
+                .setWeight(5500).setQuality(-10));
 
         mobs.add(createAdventureToken(EntityType.MAGMA_CUBE, 3, 4)
                 .setWeight(300).setQuality(10));
@@ -200,8 +190,7 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
         return mobs;
     }
 
-    private LootPoolSingletonContainer.Builder<?> createAdventureToken(@NotNull final EntityType<?> mob, final int damage_done, final int xp_gained)
-    {
+    private LootPoolSingletonContainer.Builder<?> createAdventureToken(@NotNull final EntityType<?> mob, final int damage_done, final int xp_gained) {
         final ItemStack stack = new ItemStack(ModItems.adventureToken);
         new AdventureData(mob, damage_done, xp_gained).writeToItemStack(stack);
 
@@ -210,22 +199,19 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "NetherWorkerLootProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
         final List<ItemStorage> inputs = Arrays.asList(
                 new ItemStorage(new ItemStack(Items.COBBLESTONE, 64)),
                 new ItemStorage(new ItemStack(Items.TORCH, 32)),
                 new ItemStorage(new ItemStack(Items.LADDER, 16))
         );
 
-        for (int i = 0; i < levels.size(); ++i)
-        {
+        for (int i = 0; i < levels.size(); ++i) {
             final int buildingLevel = i + 1;
 
             final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(provider, Holder.direct(levels.get(i).build()));
@@ -251,12 +237,10 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
 
     @NotNull
     @Override
-    protected List<LootTableProvider.SubProviderEntry> registerTables()
-    {
+    protected List<LootTableProvider.SubProviderEntry> registerTables() {
         return List.of(new LootTableProvider.SubProviderEntry(provider -> builder ->
         {
-            for (int i = 0; i < levels.size(); ++i)
-            {
+            for (int i = 0; i < levels.size(); ++i) {
                 final int buildingLevel = i + 1;
                 builder.accept(table(new ResourceLocation(MOD_ID, "recipes/" + NETHERWORKER + "/trip" + buildingLevel)), levels.get(i));
             }

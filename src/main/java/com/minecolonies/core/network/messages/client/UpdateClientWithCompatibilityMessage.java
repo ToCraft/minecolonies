@@ -19,8 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to update the recipes on the client side.
  */
-public class UpdateClientWithCompatibilityMessage extends AbstractClientPlayMessage
-{
+public class UpdateClientWithCompatibilityMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "update_client_with_compatibility", UpdateClientWithCompatibilityMessage::new, true, false);
 
     private final RegistryFriendlyByteBuf buffer;
@@ -28,37 +27,30 @@ public class UpdateClientWithCompatibilityMessage extends AbstractClientPlayMess
     /**
      * Message creation.
      */
-    public UpdateClientWithCompatibilityMessage(@NotNull RegistryAccess provider)
-    {
+    public UpdateClientWithCompatibilityMessage(@NotNull RegistryAccess provider) {
         super(TYPE);
         this.buffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), provider);
         IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().serialize(this.buffer);
     }
 
-    protected UpdateClientWithCompatibilityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected UpdateClientWithCompatibilityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.buffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeByteArray(this.buffer.array());
         this.buffer.resetWriterIndex();
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         final ClientLevel world = Minecraft.getInstance().level;
         FurnaceRecipes.getInstance().loadUtilityPredicates();
-        try
-        {
+        try {
             IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().deserialize(this.buffer, world);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.getLogger().error("Failed to load compatibility manager", e);
         }
     }

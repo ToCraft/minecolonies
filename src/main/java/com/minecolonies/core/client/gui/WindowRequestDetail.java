@@ -14,12 +14,12 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.citizen.RequestWindowCitizen;
 import com.minecolonies.core.network.messages.server.ClickGuiButtonTriggerMessage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,8 +32,7 @@ import static com.minecolonies.core.colony.requestsystem.requests.AbstractReques
 /**
  * BOWindow for the request detail.
  */
-public class WindowRequestDetail extends BOWindow implements ButtonHandler
-{
+public class WindowRequestDetail extends BOWindow implements ButtonHandler {
     /**
      * Id of the request detail box.
      */
@@ -76,11 +75,11 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
     /**
      * The colony id.
      */
-    private final int         colonyId;
+    private final int colonyId;
     /**
      * Life count.
      */
-    private       int         lifeCount = 0;
+    private int lifeCount = 0;
 
     /**
      * The previous window.
@@ -94,8 +93,7 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
      * @param request    the request.
      * @param colonyId   the colony id.
      */
-    public WindowRequestDetail(@Nullable final BOWindow prevWindow, final IRequest<?> request, final int colonyId)
-    {
+    public WindowRequestDetail(@Nullable final BOWindow prevWindow, final IRequest<?> request, final int colonyId) {
         super(ResourceLocation.parse(Constants.MOD_ID + CITIZEN_REQ_DETAIL_SUFFIX));
         this.prevWindow = prevWindow;
         this.request = request;
@@ -103,23 +101,18 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
-        if (!Screen.hasShiftDown())
-        {
+        if (!Screen.hasShiftDown()) {
             lifeCount++;
         }
 
         final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
         final List<ItemStack> displayStacks = request.getDisplayStacks();
 
-        if (!displayStacks.isEmpty())
-        {
+        if (!displayStacks.isEmpty()) {
             exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
-        }
-        else
-        {
+        } else {
             exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
         }
     }
@@ -128,19 +121,15 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
      * Called when the GUI has been opened. Will fill the fields and lists.
      */
     @Override
-    public void onOpened()
-    {
-        if (request instanceof IStackBasedTask)
-        {
+    public void onOpened() {
+        if (request instanceof IStackBasedTask) {
             final ItemIcon icon = findPaneOfTypeByID("detailIcon", ItemIcon.class);
             final ItemStack copyStack = ((IStackBasedTask) request).getTaskStack().copy();
             copyStack.setCount(((IStackBasedTask) request).getDisplayCount());
             icon.setItem(copyStack);
             icon.setVisible(true);
             findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(((IStackBasedTask) request).getDisplayPrefix().withStyle(ChatFormatting.BLACK));
-        }
-        else
-        {
+        } else {
             findPaneOfTypeByID("detailIcon", ItemIcon.class).setVisible(false);
             findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getLongDisplayString().getString().replace("§f", "")).withStyle(ChatFormatting.BLACK));
         }
@@ -151,12 +140,9 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
         final List<ItemStack> displayStacks = request.getDisplayStacks();
         final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
 
-        if (!displayStacks.isEmpty())
-        {
+        if (!displayStacks.isEmpty()) {
             exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
-        }
-        else if (!request.getDisplayIcon().equals(MISSING))
-        {
+        } else if (!request.getDisplayIcon().equals(MISSING)) {
             logo.setVisible(true);
             logo.setImage(request.getDisplayIcon(), false);
             PaneBuilders.tooltipBuilder().hoverPane(logo).build().setText(request.getResolverToolTip(colony));
@@ -165,25 +151,21 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
         findPaneOfTypeByID(REQUESTER, Text.class).setText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request));
         findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Text.class).setText(Component.literal(request.getRequester().getLocation().toString()));
 
-        if (colony == null)
-        {
+        if (colony == null) {
             Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
             return;
         }
 
-        try
-        {
+        try {
             final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(request.getId());
-            if (resolver == null)
-            {
+            if (resolver == null) {
                 Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---");
                 return;
             }
 
             findPaneOfTypeByID(RESOLVER, Text.class).setText(Component.literal("Resolver: " + resolver.getRequesterDisplayName(colony.getRequestManager(), request).getString()));
-        }
-        catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
-        {
+        } catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final
+        IllegalArgumentException e) {
             /*
              * Do nothing we just need to know if it has a resolver or not.
              */
@@ -192,14 +174,12 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
 
         //Checks if fulfill button should be displayed
         Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
-        if ((this.prevWindow instanceof RequestWindowCitizen && !((RequestWindowCitizen) prevWindow).fulfillable(request)) || this.prevWindow instanceof WindowClipBoard)
-        {
+        if ((this.prevWindow instanceof RequestWindowCitizen && !((RequestWindowCitizen) prevWindow).fulfillable(request)) || this.prevWindow instanceof WindowClipBoard) {
             fulfillButton.hide();
         }
         //Checks if cancel button should be displayed
         Pane cancelButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_CANCEL)).findFirst().get();
-        if (this.prevWindow instanceof RequestWindowCitizen && !((RequestWindowCitizen) prevWindow).cancellable(request))
-        {
+        if (this.prevWindow instanceof RequestWindowCitizen && !((RequestWindowCitizen) prevWindow).cancellable(request)) {
             cancelButton.hide();
         }
     }
@@ -210,28 +190,20 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
      * @param button the clicked button.
      */
     @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        if (button.getID().equals(REQUEST_FULLFIL))
-        {
-            if (this.prevWindow instanceof RequestWindowCitizen)
-            {
+    public void onButtonClicked(@NotNull final Button button) {
+        if (button.getID().equals(REQUEST_FULLFIL)) {
+            if (this.prevWindow instanceof RequestWindowCitizen) {
                 ((RequestWindowCitizen) this.prevWindow).fulfill(request);
                 // because this isn't an AbstractWindowSkeleton, and we want to trigger an advancement...
                 new ClickGuiButtonTriggerMessage(button.getID(), Constants.MOD_ID + CITIZEN_REQ_DETAIL_SUFFIX).sendToServer();
             }
             this.window.close();
-        }
-        else if (button.getID().equals(REQUEST_CANCEL))
-        {
-            if (this.prevWindow instanceof RequestWindowCitizen)
-            {
+        } else if (button.getID().equals(REQUEST_CANCEL)) {
+            if (this.prevWindow instanceof RequestWindowCitizen) {
                 ((RequestWindowCitizen) this.prevWindow).cancel(request);
             }
             this.window.close();
-        }
-        else
-        {
+        } else {
             prevWindow.open();
         }
     }

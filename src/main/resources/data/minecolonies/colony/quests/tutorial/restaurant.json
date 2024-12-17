@@ -17,7 +17,7 @@
     },
     {
       "type": "minecolonies:citizen",
-      "state": { }
+      "state": {}
     }
   ],
   "triggerOrder": "1 || 2",
@@ -139,7 +139,9 @@
       }
     },
     {
-      "unlocks-rewards": [0],
+      "unlocks-rewards": [
+        0
+      ],
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Neat, soon your cook will hand out food to your citizens, just make sure the restaurant is supplied with food and make sure to select some fuel the restaurant is allowed to use in the hut menu. Come back in a bit and I'll help you with the next steps! Here, have some coal to serve as initial fuel!",

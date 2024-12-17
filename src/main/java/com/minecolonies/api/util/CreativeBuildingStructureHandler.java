@@ -40,8 +40,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PACK;
 /**
  * Minecolonies specific creative structure handler. Main difference related to registering blocks to colonies.
  */
-public final class CreativeBuildingStructureHandler extends CreativeStructureHandler
-{
+public final class CreativeBuildingStructureHandler extends CreativeStructureHandler {
     /**
      * The building associated with this placement.
      */
@@ -53,11 +52,10 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      * @param world          the world.
      * @param pos            the pos it is placed at.
      * @param blueprint      the blueprint of the structure.
-     * @param rotMir       the placement settings.
+     * @param rotMir         the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final RotationMirror rotMir, final boolean fancyPlacement)
-    {
+    public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final RotationMirror rotMir, final boolean fancyPlacement) {
         super(world, pos, blueprint, rotMir, fancyPlacement);
         setupBuilding();
     }
@@ -68,11 +66,10 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      * @param world          the world.
      * @param pos            the pos it is placed at.
      * @param blueprint      the blueprint of the structure.
-     * @param rotMir       the placement settings.
+     * @param rotMir         the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprint, final RotationMirror rotMir, final boolean fancyPlacement)
-    {
+    public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprint, final RotationMirror rotMir, final boolean fancyPlacement) {
         super(world, pos, blueprint, rotMir, fancyPlacement);
         setupBuilding();
     }
@@ -80,28 +77,23 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     /**
      * Setup the building to register things to.
      */
-    private void setupBuilding()
-    {
+    private void setupBuilding() {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), getWorldPos());
-        if (colony != null)
-        {
+        if (colony != null) {
             this.building = colony.getBuildingManager().getBuilding(getWorldPos());
         }
     }
 
     @Override
-    public void triggerSuccess(final BlockPos pos, final List<ItemStack> list, final boolean placement)
-    {
+    public void triggerSuccess(final BlockPos pos, final List<ItemStack> list, final boolean placement) {
         super.triggerSuccess(pos, list, placement);
         final BlockPos worldPos = getProgressPosInWorld(pos);
 
         final Blueprint blueprint = getBluePrint();
         final CompoundTag teData = blueprint.getTileEntityData(worldPos, pos);
-        if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
-        {
+        if (teData != null && teData.contains(TAG_BLUEPRINTDATA)) {
             final BlockEntity te = getWorld().getBlockEntity(worldPos);
-            if (te instanceof IBlueprintDataProviderBE blueprintDataProviderBE)
-            {
+            if (te instanceof IBlueprintDataProviderBE blueprintDataProviderBE) {
                 final CompoundTag tagData = teData.getCompound(TAG_BLUEPRINTDATA);
                 final String schematicPath = tagData.getString(TAG_NAME);
                 final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), schematicPath));
@@ -109,8 +101,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
                 tagData.putString(TAG_NAME, location);
                 tagData.putString(TAG_PACK, blueprint.getPackName());
 
-                if (te instanceof AbstractTileEntityColonyBuilding colonyBuilding && colonyBuilding.getBuilding() != null)
-                {
+                if (te instanceof AbstractTileEntityColonyBuilding colonyBuilding && colonyBuilding.getBuilding() != null) {
                     colonyBuilding.getBuilding().setDeconstructed();
                 }
 
@@ -120,25 +111,21 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
             }
         }
 
-        if (building != null)
-        {
+        if (building != null) {
             building.registerBlockPosition(blueprint.getBlockState(pos), worldPos, this.getWorld());
         }
     }
 
     @Override
-    public boolean shouldBlocksBeConsideredEqual(final BlockState state1, final BlockState state2)
-    {
+    public boolean shouldBlocksBeConsideredEqual(final BlockState state1, final BlockState state2) {
         final Block block1 = state1.getBlock();
         final Block block2 = state2.getBlock();
 
-        if (block1 == Blocks.FLOWER_POT || block2 == Blocks.FLOWER_POT)
-        {
+        if (block1 == Blocks.FLOWER_POT || block2 == Blocks.FLOWER_POT) {
             return block1 == block2;
         }
 
-        if (block1 == Blocks.GRASS_BLOCK && block2 == Blocks.DIRT || block2 == Blocks.GRASS_BLOCK && block1 == Blocks.DIRT)
-        {
+        if (block1 == Blocks.GRASS_BLOCK && block2 == Blocks.DIRT || block2 == Blocks.GRASS_BLOCK && block1 == Blocks.DIRT) {
             return true;
         }
 
@@ -147,12 +134,11 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     }
 
     @Override
-    public boolean isStackFree(@Nullable final ItemStack itemStack)
-    {
+    public boolean isStackFree(@Nullable final ItemStack itemStack) {
         return itemStack == null
-                 || itemStack.isEmpty()
-                 || itemStack.is(ItemTags.LEAVES)
-                 || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
+                || itemStack.isEmpty()
+                || itemStack.is(ItemTags.LEAVES)
+                || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
     }
 
     /**
@@ -167,34 +153,27 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      * @return the placed blueprint.
      */
     public static Blueprint loadAndPlaceStructureWithRotation(
-      final Level worldObj, @NotNull final Future<Blueprint> future,
-      @NotNull final BlockPos pos, final RotationMirror rotMir,
-      final boolean fancyPlacement,
-      @Nullable final ServerPlayer player)
-    {
-        try
-        {
+            final Level worldObj, @NotNull final Future<Blueprint> future,
+            @NotNull final BlockPos pos, final RotationMirror rotMir,
+            final boolean fancyPlacement,
+            @Nullable final ServerPlayer player) {
+        try {
             @NotNull final IStructureHandler structure = new CreativeBuildingStructureHandler(worldObj, pos, future, rotMir, fancyPlacement);
-            if (structure.hasBluePrint())
-            {
+            if (structure.hasBluePrint()) {
                 @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);
                 Manager.addToQueue(new PlaceStructureOperation(instantPlacer, player));
             }
             return structure.getBluePrint();
-        }
-        catch (final IllegalStateException e)
-        {
+        } catch (final IllegalStateException e) {
             Log.getLogger().warn("Could not load structure!", e);
         }
         return null;
     }
 
     @Override
-    public void onCompletion()
-    {
+    public void onCompletion() {
         super.onCompletion();
-        if (building != null)
-        {
+        if (building != null) {
             ConstructionTapeHelper.removeConstructionTape(building.getCorners(), getWorld());
         }
     }

@@ -18,8 +18,7 @@ import static com.minecolonies.api.util.constant.Constants.HALF_ROTATION;
 /**
  * Moves the entity and triggers the attack
  */
-public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T>
-{
+public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T> {
     /**
      * Time after which we ignore the target
      */
@@ -37,8 +36,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
 
     private int pathAttempts = 0;
 
-    public AttackMoveAI(final T owner, final ITickRateStateMachine stateMachine)
-    {
+    public AttackMoveAI(final T owner, final ITickRateStateMachine stateMachine) {
         super(owner, 80, stateMachine);
 
         stateMachine.addTransition(new TickingTransition<>(CombatAIStates.ATTACKING, () -> true, this::tryAttack, 5));
@@ -50,52 +48,42 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      *
      * @return true if no more targets
      */
-    private IState move()
-    {
-        if (!checkForTarget())
-        {
+    private IState move() {
+        if (!checkForTarget()) {
             return CombatAIStates.NO_TARGET;
         }
 
         final ThreatTableEntry nextTarget = user.getThreatTable().getTarget();
-        if (nextTarget == null)
-        {
+        if (nextTarget == null) {
             return CombatAIStates.NO_TARGET;
         }
 
         final boolean canSeeTarget = user.getSensing().hasLineOfSight(target);
-        if (canSeeTarget)
-        {
+        if (canSeeTarget) {
             nextTarget.setLastSeen(user.level().getGameTime());
-        }
-        else if ((user.level().getGameTime() - nextTarget.getLastSeen()) > STOP_PERSECUTION_AFTER)
-        {
+        } else if ((user.level().getGameTime() - nextTarget.getLastSeen()) > STOP_PERSECUTION_AFTER) {
             resetTarget();
             return null;
         }
 
-        if (!isInAttackDistance(target) || !canSeeTarget)
-        {
+        if (!isInAttackDistance(target) || !canSeeTarget) {
             user.lookAt(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
             user.getLookControl().setLookAt(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
 
-            if (pathAttempts > 5 || (targetPath != null && targetPath.isDone() && targetPath.failedToReachDestination()))
-            {
+            if (pathAttempts > 5 || (targetPath != null && targetPath.isDone() && targetPath.failedToReachDestination())) {
                 pathAttempts = 0;
                 targetPath = null;
 
                 user.getThreatTable().addThreat(target, -1);
-                if (nextTarget.getThreat() < 5)
-                {
+                if (nextTarget.getThreat() < 5) {
                     resetTarget();
                     return null;
                 }
             }
 
             if (targetPath == null ||
-                  user.getNavigation().isDone() ||
-                  (targetPath.isDone() && targetPath.hasPath() && targetPath.getPath().getTarget().distSqr(target.blockPosition()) > Math.pow(getAttackDistance(), 2) - 1))
-            {
+                    user.getNavigation().isDone() ||
+                    (targetPath.isDone() && targetPath.hasPath() && targetPath.getPath().getTarget().distSqr(target.blockPosition()) > Math.pow(getAttackDistance(), 2) - 1)) {
                 targetPath = moveInAttackPosition(target);
                 pathAttempts++;
             }
@@ -105,8 +93,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
     }
 
     @Override
-    public void resetTarget()
-    {
+    public void resetTarget() {
         super.resetTarget();
         targetPath = null;
         pathAttempts = 0;
@@ -118,8 +105,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      * @param target
      * @return
      */
-    protected boolean isInAttackDistance(final LivingEntity target)
-    {
+    protected boolean isInAttackDistance(final LivingEntity target) {
         return user.distanceTo(target) <= getAttackDistance();
     }
 
@@ -128,20 +114,16 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      *
      * @return
      */
-    protected IState tryAttack()
-    {
-        if (!checkForTarget() || !canAttack())
-        {
+    protected IState tryAttack() {
+        if (!checkForTarget() || !canAttack()) {
             return CombatAIStates.NO_TARGET;
         }
 
-        if (nextAttackTime >= user.level().getGameTime() || !isInDistanceForAttack(target))
-        {
+        if (nextAttackTime >= user.level().getGameTime() || !isInDistanceForAttack(target)) {
             return null;
         }
 
-        if (user.getSensing().hasLineOfSight(target))
-        {
+        if (user.getSensing().hasLineOfSight(target)) {
             pathAttempts = 0;
             user.getLookControl().setLookAt(target);
             doAttack(target);
@@ -156,8 +138,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      *
      * @return
      */
-    public boolean canAttack()
-    {
+    public boolean canAttack() {
         return true;
     }
 
@@ -167,8 +148,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      * @param target target to check
      * @return true if we do attack
      */
-    protected boolean isInDistanceForAttack(final LivingEntity target)
-    {
+    protected boolean isInDistanceForAttack(final LivingEntity target) {
         return isInAttackDistance(target);
     }
 
@@ -177,8 +157,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      *
      * @param target
      */
-    protected void doAttack(final LivingEntity target)
-    {
+    protected void doAttack(final LivingEntity target) {
         target.hurt(target.level().damageSources().source(DamageSourceKeys.DEFAULT, user), 5);
         user.swing(InteractionHand.MAIN_HAND);
     }
@@ -188,8 +167,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      *
      * @return distance in blocks
      */
-    protected double getAttackDistance()
-    {
+    protected double getAttackDistance() {
         return 5;
     }
 
@@ -198,8 +176,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      *
      * @return default 40 ticks
      */
-    protected int getAttackDelay()
-    {
+    protected int getAttackDelay() {
         return 40;
     }
 
@@ -209,8 +186,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      * @param target target to move towards
      * @return path result
      */
-    protected PathResult moveInAttackPosition(final LivingEntity target)
-    {
+    protected PathResult moveInAttackPosition(final LivingEntity target) {
         return ((AbstractAdvancedPathNavigate) user.getNavigation()).moveToLivingEntity(target, 1d);
     }
 }

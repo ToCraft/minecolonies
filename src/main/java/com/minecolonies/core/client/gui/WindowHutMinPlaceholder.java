@@ -8,8 +8,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
  *
  * @param <B> Object extending {@link AbstractBuildingView}.
  */
-public class WindowHutMinPlaceholder<B extends AbstractBuildingView> extends AbstractWindowModuleBuilding<B>
-{
+public class WindowHutMinPlaceholder<B extends AbstractBuildingView> extends AbstractWindowModuleBuilding<B> {
     private static final String WORKER_PLACEHOLDER_RESOURCE_SUFFIX = ":gui/layouthuts/layouthutpageactionsmin.xml";
 
     /**
@@ -17,8 +16,7 @@ public class WindowHutMinPlaceholder<B extends AbstractBuildingView> extends Abs
      *
      * @param building AbstractBuilding extending {@link AbstractBuildingView}.
      */
-    public WindowHutMinPlaceholder(final B building)
-    {
+    public WindowHutMinPlaceholder(final B building) {
         super(building, Constants.MOD_ID + WORKER_PLACEHOLDER_RESOURCE_SUFFIX);
     }
 }

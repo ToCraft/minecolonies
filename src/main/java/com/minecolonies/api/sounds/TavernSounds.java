@@ -5,8 +5,7 @@ import net.minecraft.sounds.SoundEvent;
 /**
  * Sounds for the tavern
  */
-public class TavernSounds
-{
+public class TavernSounds {
     /**
      * Tavern theme
      */

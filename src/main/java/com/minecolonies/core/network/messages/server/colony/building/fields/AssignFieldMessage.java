@@ -18,14 +18,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message which handles the assignment of fields to farmers.
  */
-public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "assign_field", AssignFieldMessage::new);
 
     /**
      * The modules ID
      */
-    private final int       moduleID;
+    private final int moduleID;
 
     /**
      * The field to (un)assign.
@@ -44,8 +43,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param field    the field.
      * @param building the building we're executing on.
      */
-    public AssignFieldMessage(final IBuildingView building, final IField field, final boolean assign, final int moduleID)
-    {
+    public AssignFieldMessage(final IBuildingView building, final IField field, final boolean assign, final int moduleID) {
         super(TYPE, building);
         this.assign = assign;
         this.fieldData = FieldDataManager.fieldToBuffer(field, building.getColony().getWorld().registryAccess());
@@ -53,8 +51,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         fieldData.resetReaderIndex();
         buf.writeBoolean(assign);
@@ -62,8 +59,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
         buf.writeByteArray(fieldData.array());
     }
 
-    protected AssignFieldMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected AssignFieldMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         assign = buf.readBoolean();
         moduleID = buf.readInt();
@@ -71,19 +67,14 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
         final IField parsedField = FieldDataManager.bufferToField(fieldData);
         colony.getBuildingManager().getField(otherField -> otherField.equals(parsedField)).ifPresent(field -> {
 
-            if (building.getModule(moduleID) instanceof final FieldsModule fieldsModule)
-            {
-                if (assign)
-                {
+            if (building.getModule(moduleID) instanceof final FieldsModule fieldsModule) {
+                if (assign) {
                     fieldsModule.assignField(field);
-                }
-                else
-                {
+                } else {
                     fieldsModule.freeField(field);
                 }
             }

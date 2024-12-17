@@ -24,7 +24,6 @@ import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleVi
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.HutRenameMessage;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -47,8 +46,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
  * The AbstractBuilding View is the client-side representation of a AbstractBuilding. Views contain the AbstractBuilding's data that is relevant to a Client, in a more
  * client-friendly form. Mutable operations on a View result in a message to the server to perform the operation.
  */
-public abstract class AbstractBuildingView implements IBuildingView
-{
+public abstract class AbstractBuildingView implements IBuildingView {
     /**
      * The colony of the building.
      */
@@ -158,8 +156,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @param c ColonyView the building is in.
      * @param l The location of the building.
      */
-    protected AbstractBuildingView(final IColonyView c, @NotNull final BlockPos l)
-    {
+    protected AbstractBuildingView(final IColonyView c, @NotNull final BlockPos l) {
         colony = c;
         location = new BlockPos(l);
     }
@@ -171,8 +168,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      */
     @Override
     @NotNull
-    public BlockPos getID()
-    {
+    public BlockPos getID() {
         // Location doubles as ID
         return location;
     }
@@ -184,15 +180,13 @@ public abstract class AbstractBuildingView implements IBuildingView
      */
     @Override
     @NotNull
-    public BlockPos getPosition()
-    {
+    public BlockPos getPosition() {
         return location;
     }
 
     @Override
     @NotNull
-    public BlockPos getParent()
-    {
+    public BlockPos getParent() {
         return parent;
     }
 
@@ -202,8 +196,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return AbstractBuilding current level.
      */
     @Override
-    public int getBuildingLevel()
-    {
+    public int getBuildingLevel() {
         return buildingLevel;
     }
 
@@ -213,8 +206,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return AbstractBuilding max level.
      */
     @Override
-    public int getBuildingMaxLevel()
-    {
+    public int getBuildingMaxLevel() {
         return buildingMaxLevel;
     }
 
@@ -224,8 +216,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return true if the building is at its max level.
      */
     @Override
-    public boolean isBuildingMaxLevel()
-    {
+    public boolean isBuildingMaxLevel() {
         return buildingLevel >= buildingMaxLevel;
     }
 
@@ -235,8 +226,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return 0 if none, othewise the current level worked on
      */
     @Override
-    public int getCurrentWorkOrderLevel()
-    {
+    public int getCurrentWorkOrderLevel() {
         return workOrderLevel;
     }
 
@@ -246,8 +236,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return the schematic name.
      */
     @Override
-    public String getStructurePath()
-    {
+    public String getStructurePath() {
         return path;
     }
 
@@ -257,8 +246,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return the name.
      */
     @Override
-    public String getCustomName()
-    {
+    public String getCustomName() {
         return this.customName;
     }
 
@@ -268,8 +256,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return the style string.
      */
     @Override
-    public String getStructurePack()
-    {
+    public String getStructurePack() {
         return pack;
     }
 
@@ -279,8 +266,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return the rotation.
      */
     @Override
-    public RotationMirror getRotationMirror()
-    {
+    public RotationMirror getRotationMirror() {
         return rotationMirror;
     }
 
@@ -290,26 +276,22 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return 0 if none, othewise the current level worked on
      */
     @Override
-    public boolean hasWorkOrder()
-    {
+    public boolean hasWorkOrder() {
         return workOrderLevel != NO_WORK_ORDER;
     }
 
     @Override
-    public boolean isBuilding()
-    {
+    public boolean isBuilding() {
         return workOrderLevel != 0 && workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
     }
 
     @Override
-    public boolean isRepairing()
-    {
+    public boolean isRepairing() {
         return workOrderLevel != 0 && workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
     }
 
     @Override
-    public boolean isDeconstructing()
-    {
+    public boolean isDeconstructing() {
         return workOrderLevel == 0;
     }
 
@@ -319,8 +301,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return the radius.
      */
     @Override
-    public int getClaimRadius()
-    {
+    public int getClaimRadius() {
         return this.claimRadius;
     }
 
@@ -328,8 +309,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * Returns the Container List
      */
     @Override
-    public List<BlockPos> getContainerList()
-    {
+    public List<BlockPos> getContainerList() {
         return new ArrayList<>(containerlist);
     }
 
@@ -339,17 +319,12 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @param shouldOpenInv if the player is sneaking.
      */
     @Override
-    public void openGui(final boolean shouldOpenInv)
-    {
-        if (shouldOpenInv)
-        {
+    public void openGui(final boolean shouldOpenInv) {
+        if (shouldOpenInv) {
             new OpenInventoryMessage(this).sendToServer();
-        }
-        else
-        {
+        } else {
             @Nullable final BOWindow window = getWindow();
-            if (window != null)
-            {
+            if (window != null) {
                 window.open();
             }
         }
@@ -362,10 +337,8 @@ public abstract class AbstractBuildingView implements IBuildingView
      */
     @Override
     @Nullable
-    public BOWindow getWindow()
-    {
-        if (!getModuleViews(WorkerBuildingModuleView.class).isEmpty())
-        {
+    public BOWindow getWindow() {
+        if (!getModuleViews(WorkerBuildingModuleView.class).isEmpty()) {
             return new WindowHutWorkerModulePlaceholder<>(this);
         }
         return new WindowHutMinPlaceholder<>(this);
@@ -377,8 +350,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @param buf The buffer to read this view from.
      */
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         buildingLevel = buf.readInt();
         buildingMaxLevel = buf.readInt();
         buildingDmPrio = buf.readInt();
@@ -393,38 +365,32 @@ public abstract class AbstractBuildingView implements IBuildingView
 
         final List<IToken<?>> list = new ArrayList<>();
         final int resolverSize = buf.readInt();
-        for (int i = 0; i < resolverSize; i++)
-        {
+        for (int i = 0; i < resolverSize; i++) {
             final CompoundTag compound = buf.readNbt();
-            if (compound != null)
-            {
+            if (compound != null) {
                 list.add(StandardFactoryController.getInstance().deserializeTag(buf.registryAccess(), compound));
             }
         }
 
         resolvers = ImmutableList.copyOf(list);
         final CompoundTag compound = buf.readNbt();
-        if (compound != null)
-        {
+        if (compound != null) {
             requesterId = StandardFactoryController.getInstance().deserializeTag(buf.registryAccess(), compound);
         }
         containerlist.clear();
         final int racks = buf.readInt();
-        for (int i = 0; i < racks; i++)
-        {
+        for (int i = 0; i < racks; i++) {
             containerlist.add(buf.readBlockPos());
         }
         loadRequestSystemFromNBT(buf.registryAccess(), buf.readNbt());
         isDeconstructed = buf.readBoolean();
         isAssignmentAllowed = buf.readBoolean();
 
-        for (int i = 0, size = buf.readInt(); i < size; i++)
-        {
+        for (int i = 0, size = buf.readInt(); i < size; i++) {
             int id = buf.readInt();
             final IBuildingModuleView moduleView = moduleViews.get(id);
 
-            if (moduleView == null)
-            {
+            if (moduleView == null) {
                 Log.getLogger().error("Problem during sync: Client side does not have matching module views to sent module data, missing:" + BuildingEntry.getProducer(id).key);
                 return;
             }
@@ -433,70 +399,60 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
     }
 
-    private void loadRequestSystemFromNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    private void loadRequestSystemFromNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         this.rsDataStoreToken = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompound(TAG_RS_BUILDING_DATASTORE));
     }
 
-    private IRequestSystemBuildingDataStore getDataStore()
-    {
+    private IRequestSystemBuildingDataStore getDataStore() {
         return colony.getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE);
     }
 
     @Override
-    public Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen()
-    {
+    public Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen() {
         return getDataStore().getOpenRequestsByCitizen();
     }
 
-    protected Map<IToken<?>, Integer> getCitizensByRequest()
-    {
+    protected Map<IToken<?>, Integer> getCitizensByRequest() {
         return getDataStore().getCitizensByRequest();
     }
 
     @Override
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
-    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final ICitizenDataView citizenData, final Class<R> requestType)
-    {
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final ICitizenDataView citizenData, final Class<R> requestType) {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .filter(request ->  request.getType().isSubtypeOf(requestType))
-                                      .map(request -> (IRequest<? extends R>) request)
-                                      .iterator());
+                .filter(request -> request.getType().isSubtypeOf(requestType))
+                .map(request -> (IRequest<? extends R>) request)
+                .iterator());
     }
 
     @Override
-    public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final ICitizenDataView data)
-    {
-        if (data == null || getColony() == null || getColony().getRequestManager() == null)
-        {
+    public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final ICitizenDataView data) {
+        if (data == null || getColony() == null || getColony().getRequestManager() == null) {
             return ImmutableList.of();
         }
 
-        if (!getOpenRequestsByCitizen().containsKey(data.getId()))
-        {
+        if (!getOpenRequestsByCitizen().containsKey(data.getId())) {
             return ImmutableList.of();
         }
 
         final Collection<IToken<?>> list = getOpenRequestsByCitizen().get(data.getId());
 
-        if (list == null || list.isEmpty())
-        {
+        if (list == null || list.isEmpty()) {
             return ImmutableList.of();
         }
 
         return ImmutableList.copyOf(list
-                                      .stream().filter(Objects::nonNull)
-                                      .map(getColony().getRequestManager()::getRequestForToken)
-                                      .filter(Objects::nonNull).iterator());
+                .stream().filter(Objects::nonNull)
+                .map(getColony().getRequestManager()::getRequestForToken)
+                .filter(Objects::nonNull).iterator());
     }
 
     @Override
-    public ImmutableList<IRequest<?>> getOpenRequestsOfBuilding()
-    {
+    public ImmutableList<IRequest<?>> getOpenRequestsOfBuilding() {
         return ImmutableList.copyOf(getOpenRequestsByCitizen().values().stream().flatMap(Collection::stream)
-                                      .filter(Objects::nonNull)
-                                      .map(getColony().getRequestManager()::getRequestForToken)
-                                      .filter(Objects::nonNull).iterator());
+                .filter(Objects::nonNull)
+                .map(getColony().getRequestManager()::getRequestForToken)
+                .filter(Objects::nonNull).iterator());
     }
 
     /**
@@ -505,53 +461,45 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return ColonyView, client side interpretations of Colony.
      */
     @Override
-    public IColonyView getColony()
-    {
+    public IColonyView getColony() {
         return colony;
     }
 
     @Override
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
-      @NotNull final ICitizenDataView citizenData,
-      final Class<R> requestType,
-      final Predicate<IRequest<? extends R>> filter)
-    {
+            @NotNull final ICitizenDataView citizenData,
+            final Class<R> requestType,
+            final Predicate<IRequest<? extends R>> filter) {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .filter(request ->  request.getType().isSubtypeOf(requestType))
-                                      .map(request -> (IRequest<? extends R>) request)
-                                      .filter(filter)
-                                      .iterator());
+                .filter(request -> request.getType().isSubtypeOf(requestType))
+                .map(request -> (IRequest<? extends R>) request)
+                .filter(filter)
+                .iterator());
     }
 
     @Override
-    public IToken<?> getId()
-    {
+    public IToken<?> getId() {
         return requesterId;
     }
 
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
         final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
         getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
-        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
-        {
+        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty()) {
             getOpenRequestsByCitizen().remove(citizenThatRequested);
         }
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
-        if (getOpenRequestsOfBuilding().contains(request))
-        {
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
+        if (getOpenRequestsOfBuilding().contains(request)) {
             final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
             getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
-            if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
-            {
+            if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty()) {
                 getOpenRequestsByCitizen().remove(citizenThatRequested);
             }
         }
@@ -559,29 +507,23 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @NotNull
     @Override
-    public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
-        try
-        {
+    public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
+        try {
             final MutableComponent component = Component.literal("");
             component.append(Component.translatableEscape(this.getCustomName().isEmpty() ? this.getBuildingType().getTranslationKey() : this.getCustomName()));
-            if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()))
-            {
+            if (getColony() == null || !getCitizensByRequest().containsKey(request.getId())) {
                 return component;
             }
 
             final int citizenId = getCitizensByRequest().get(request.getId());
-            if (citizenId == -1 || getColony().getCitizen(citizenId) == null)
-            {
+            if (citizenId == -1 || getColony().getCitizen(citizenId) == null) {
                 return component;
             }
 
             component.append(Component.literal(": "));
             component.append(Component.literal(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName()));
             return component;
-        }
-        catch (final Exception ex)
-        {
+        } catch (final Exception ex) {
             Log.getLogger().warn(ex);
             return Component.literal("");
         }
@@ -589,62 +531,51 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @NotNull
     @Override
-    public ILocation getLocation()
-    {
+    public ILocation getLocation() {
         return null;
     }
 
     @Override
-    public int getBuildingDmPrio()
-    {
+    public int getBuildingDmPrio() {
         return buildingDmPrio;
     }
 
     @Override
-    public ImmutableCollection<IToken<?>> getResolverIds()
-    {
+    public ImmutableCollection<IToken<?>> getResolverIds() {
         return resolvers;
     }
 
     @Override
-    public void setCustomName(final String name)
-    {
+    public void setCustomName(final String name) {
         this.customName = name;
         new HutRenameMessage(this, name).sendToServer();
     }
 
     @Override
-    public boolean isDeconstructed()
-    {
+    public boolean isDeconstructed() {
         return isDeconstructed;
     }
 
     @Override
-    public IBuildingModuleView getModuleView(final int id)
-    {
+    public IBuildingModuleView getModuleView(final int id) {
         return moduleViews.get(id);
     }
 
     @Override
-    public <M extends IBuildingModule, V extends IBuildingModuleView> V getModuleView(final BuildingEntry.ModuleProducer<M, V> producer)
-    {
+    public <M extends IBuildingModule, V extends IBuildingModuleView> V getModuleView(final BuildingEntry.ModuleProducer<M, V> producer) {
         return (V) moduleViews.get(producer.getRuntimeID());
     }
 
     @Override
-    public boolean hasModuleView(final BuildingEntry.ModuleProducer producer)
-    {
+    public boolean hasModuleView(final BuildingEntry.ModuleProducer producer) {
         return moduleViews.containsKey(producer.getRuntimeID());
     }
 
     @NotNull
     @Override
-    public <T extends IBuildingModuleView> T getModuleViewByType(final Class<T> clazz)
-    {
-        for (final IBuildingModuleView view : moduleViews.values())
-        {
-            if (clazz.isInstance(view))
-            {
+    public <T extends IBuildingModuleView> T getModuleViewByType(final Class<T> clazz) {
+        for (final IBuildingModuleView view : moduleViews.values()) {
+            if (clazz.isInstance(view)) {
                 return (T) view;
             }
         }
@@ -652,12 +583,9 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     @Override
-    public <T extends IBuildingModuleView> T getModuleViewMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
-    {
-        for (final IBuildingModuleView module : moduleViews.values())
-        {
-            if (clazz.isInstance(module) && modulePredicate.test(clazz.cast(module)))
-            {
+    public <T extends IBuildingModuleView> T getModuleViewMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate) {
+        for (final IBuildingModuleView module : moduleViews.values()) {
+            if (clazz.isInstance(module) && modulePredicate.test(clazz.cast(module))) {
                 return (T) module;
             }
         }
@@ -666,53 +594,45 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @NotNull
     @Override
-    public <T extends IBuildingModuleView> List<T> getModuleViews(final Class<T> clazz)
-    {
+    public <T extends IBuildingModuleView> List<T> getModuleViews(final Class<T> clazz) {
         return this.moduleViews.values().stream()
-                 .filter(clazz::isInstance)
-                 .map(c -> (T) c)
-                 .collect(Collectors.toList());
+                .filter(clazz::isInstance)
+                .map(c -> (T) c)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void registerModule(final IBuildingModuleView iModuleView)
-    {
+    public void registerModule(final IBuildingModuleView iModuleView) {
         iModuleView.setBuildingView(this);
-        this.moduleViews.put(iModuleView.getProducer().getRuntimeID(),iModuleView);
+        this.moduleViews.put(iModuleView.getProducer().getRuntimeID(), iModuleView);
     }
 
     @Override
-    public List<IBuildingModuleView> getAllModuleViews()
-    {
+    public List<IBuildingModuleView> getAllModuleViews() {
         return Collections.unmodifiableList(new ArrayList<>(this.moduleViews.values()));
     }
 
     @Override
-    public final BuildingEntry getBuildingType()
-    {
+    public final BuildingEntry getBuildingType() {
         return buildingType;
     }
 
     @Override
-    public void setBuildingType(final BuildingEntry buildingType)
-    {
+    public void setBuildingType(final BuildingEntry buildingType) {
         this.buildingType = buildingType;
     }
 
     @Override
-    public Set<Integer> getAllAssignedCitizens()
-    {
+    public Set<Integer> getAllAssignedCitizens() {
         final Set<Integer> assignees = new HashSet<>();
-        for (final WorkerBuildingModuleView view : getModuleViews(WorkerBuildingModuleView.class))
-        {
+        for (final WorkerBuildingModuleView view : getModuleViews(WorkerBuildingModuleView.class)) {
             assignees.addAll(view.getAssignedCitizens());
         }
         return assignees;
     }
 
     @Override
-    public boolean allowsAssignment()
-    {
+    public boolean allowsAssignment() {
         return isAssignmentAllowed;
     }
 }

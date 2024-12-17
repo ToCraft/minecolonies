@@ -9,15 +9,12 @@ import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 
-public class ModModelTypeInitializer
-{
-    private ModModelTypeInitializer()
-    {
+public class ModModelTypeInitializer {
+    private ModModelTypeInitializer() {
         throw new IllegalStateException("Tried to initialize: ModModelTypeInitializer but this is a Utility class.");
     }
 
-    public static void init(final EntityRendererProvider.Context context)
-    {
+    public static void init(final EntityRendererProvider.Context context) {
         final IModelTypeRegistry reg = IModelTypeRegistry.getInstance();
 
         ModModelTypes.SETTLER = new SimpleModelType(ModModelTypes.SETTLER_ID, 3, new MaleSettlerModel(context.bakeLayer(ClientRegistryHandler.MALE_SETTLER)), new FemaleSettlerModel(context.bakeLayer(ClientRegistryHandler.FEMALE_SETTLER)));

@@ -10,11 +10,9 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.requestable.SmeltableOre;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
 
-public class RequestSystemInitializer
-{
+public class RequestSystemInitializer {
 
-    public static void onPostInit()
-    {
+    public static void onPostInit() {
         Log.getLogger().warn("Register mappings");
         RequestMappingHandler.registerRequestableTypeMapping(Stack.class, StandardRequests.ItemStackRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(Burnable.class, StandardRequests.BurnableRequest.class);

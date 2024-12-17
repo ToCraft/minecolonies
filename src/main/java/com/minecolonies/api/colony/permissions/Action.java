@@ -3,8 +3,7 @@ package com.minecolonies.api.colony.permissions;
 /**
  * Actions that can be performed in a colony.
  */
-public enum Action
-{
+public enum Action {
     //counts for citizen and huts.
     ACCESS_HUTS(0),
     //If guards can attack, player can attack back
@@ -52,13 +51,11 @@ public enum Action
      *
      * @param bit how many bits should be shifted and set
      */
-    Action(final int bit)
-    {
+    Action(final int bit) {
         this.flag = 0x1L << bit;
     }
 
-    public long getFlag()
-    {
+    public long getFlag() {
         return flag;
     }
 }

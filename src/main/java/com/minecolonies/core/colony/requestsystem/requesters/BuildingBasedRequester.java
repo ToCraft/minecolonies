@@ -19,13 +19,12 @@ import java.util.Optional;
 /**
  * A class that functions as the connection between a building and the request system.
  */
-public class BuildingBasedRequester implements IBuildingBasedRequester
-{
+public class BuildingBasedRequester implements IBuildingBasedRequester {
 
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_LOCATION = "Location";
-    private static final String NBT_ID       = "Id";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_ID = "Id";
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
 
     private final ILocation location;
 
@@ -33,22 +32,19 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
 
     private IRequester building = null;
 
-    public BuildingBasedRequester(final ILocation location, final IToken<?> requesterId)
-    {
+    public BuildingBasedRequester(final ILocation location, final IToken<?> requesterId) {
         this.location = location;
         this.requesterId = requesterId;
     }
 
-    public static BuildingBasedRequester deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
-    {
+    public static BuildingBasedRequester deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound) {
         final ILocation location = controller.deserializeTag(provider, compound.getCompound(NBT_LOCATION));
         final IToken<?> token = controller.deserializeTag(provider, compound.getCompound(NBT_ID));
 
         return new BuildingBasedRequester(location, token);
     }
 
-    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller)
-    {
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller) {
         final CompoundTag compound = new CompoundTag();
 
         compound.put(NBT_LOCATION, controller.serializeTag(provider, getLocation()));
@@ -57,67 +53,56 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         return compound;
     }
 
-    public void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
-    {
+    public void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer) {
         controller.serialize(buffer, getLocation());
         controller.serialize(buffer, getId());
     }
 
-    public static BuildingBasedRequester deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
-    {
+    public static BuildingBasedRequester deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer) {
         final ILocation location = controller.deserialize(buffer);
         final IToken<?> id = controller.deserialize(buffer);
         return new BuildingBasedRequester(location, id);
     }
 
     @Override
-    public IToken<?> getId()
-    {
+    public IToken<?> getId() {
         return requesterId;
     }
 
     @NotNull
     @Override
-    public ILocation getLocation()
-    {
+    public ILocation getLocation() {
         return location;
     }
 
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
         getBuilding(manager, request.getId()).ifPresent(requester -> requester.onRequestedRequestComplete(manager, request));
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
         getBuilding(manager, request.getId()).ifPresent(requester -> requester.onRequestedRequestCancelled(manager, request));
     }
 
     @NotNull
     @Override
-    public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
         return getBuilding(manager, request.getId()).map(requester -> requester.getRequesterDisplayName(manager, request)).orElseGet(() -> Component.literal("<UNKNOWN>"));
     }
 
     @Override
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
+    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token) {
         updateBuilding(manager.getColony());
         return Optional.ofNullable(building);
     }
 
-    private void updateBuilding(IColony colony)
-    {
-        if (building != null || location == null)
-        {
+    private void updateBuilding(IColony colony) {
+        if (building != null || location == null) {
             return;
         }
 
-        if (colony == null)
-        {
+        if (colony == null) {
             return;
         }
 

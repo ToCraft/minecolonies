@@ -9,15 +9,12 @@ import com.minecolonies.api.colony.jobs.IJobView;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface IJobDataManager
-{
+public interface IJobDataManager {
 
-    static IJobDataManager getInstance()
-    {
+    static IJobDataManager getInstance() {
         return IMinecoloniesAPI.getInstance().getJobDataManager();
     }
 
@@ -33,9 +30,10 @@ public interface IJobDataManager
 
     /**
      * Create a job view from the saved network buffer.
-     * @param colony the colony.
+     *
+     * @param colony          the colony.
      * @param citizenDataView the the citizen data view..
-     * @param networkBuffer the buffer/
+     * @param networkBuffer   the buffer/
      * @return the new job view.
      */
     IJobView createViewFrom(final IColonyView colony, final ICitizenDataView citizenDataView, final RegistryFriendlyByteBuf networkBuffer);

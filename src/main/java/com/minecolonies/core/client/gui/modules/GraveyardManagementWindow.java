@@ -4,23 +4,22 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.GraveyardManagementModuleView;
+import com.minecolonies.core.tileentities.TileEntityGrave;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * BOWindow for the Graveyard building.
  */
-public class GraveyardManagementWindow extends AbstractModuleWindow
-{
+public class GraveyardManagementWindow extends AbstractModuleWindow {
     /**
      * Resource suffix of the GUI.
      */
@@ -71,42 +70,36 @@ public class GraveyardManagementWindow extends AbstractModuleWindow
      *
      * @param moduleView {@link GraveyardManagementModuleView}.
      */
-    public GraveyardManagementWindow(final IBuildingView building, GraveyardManagementModuleView moduleView)
-    {
+    public GraveyardManagementWindow(final IBuildingView building, GraveyardManagementModuleView moduleView) {
         super(building, Constants.MOD_ID + HUT_GRAVEYARD_RESOURCE_SUFFIX);
         this.moduleView = moduleView;
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
 
         /*
          * ScrollList with the graves.
          */
         final ScrollingList graveList = findPaneOfTypeByID(LIST_GRAVES, ScrollingList.class);
-        graveList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        graveList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return moduleView.getGraves().size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final BlockPos grave = moduleView.getGraves().get(index);
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(grave, buildingView.getPosition())));
                 final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), grave).getLongText();
                 final BlockEntity entity = world.getBlockEntity(grave);
-                if (entity instanceof TileEntityGrave)
-                {
+                if (entity instanceof TileEntityGrave) {
                     rowPane.findPaneOfTypeByID(TAG_NAME, Text.class).setText(Component.literal("Grave of " +
                             ((((TileEntityGrave) entity).getGraveData() != null) ?
-                             ((TileEntityGrave) entity).getGraveData().getCitizenName() :
-                             "Unknown Citizen")));
+                                    ((TileEntityGrave) entity).getGraveData().getCitizenName() :
+                                    "Unknown Citizen")));
                     rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(Component.literal(distance + "m"));
                     rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
                 }
@@ -117,17 +110,14 @@ public class GraveyardManagementWindow extends AbstractModuleWindow
          * ScrollList with the resting citizen.
          */
         final ScrollingList ripList = findPaneOfTypeByID(LIST_CITIZEN, ScrollingList.class);
-        ripList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        ripList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return moduleView.getRestingCitizen().size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final String citizenName = moduleView.getRestingCitizen().get(index);
                 rowPane.findPaneOfTypeByID(TAG_CITIZEN_NAME, Text.class).setText(Component.literal(citizenName));
             }
@@ -135,8 +125,7 @@ public class GraveyardManagementWindow extends AbstractModuleWindow
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
         moduleView.cleanGraves();
     }

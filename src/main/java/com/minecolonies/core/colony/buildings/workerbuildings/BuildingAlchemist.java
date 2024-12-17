@@ -15,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
@@ -31,14 +30,13 @@ import java.util.List;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Class of the alchemist building. Crafts potions and grows netherwart.
  */
-public class BuildingAlchemist extends AbstractBuilding
-{
+public class BuildingAlchemist extends AbstractBuilding {
     /**
      * Description string of the building.
      */
@@ -65,89 +63,72 @@ public class BuildingAlchemist extends AbstractBuilding
      * @param c the colony.
      * @param l the location
      */
-    public BuildingAlchemist(final IColony c, final BlockPos l)
-    {
+    public BuildingAlchemist(final IColony c, final BlockPos l) {
         super(c, l);
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.shears.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
-        keepX.put(itemStack ->  itemStack.getItem() == Items.NETHER_WART, new Tuple<>(16, false));
+        keepX.put(itemStack -> itemStack.getItem() == Items.NETHER_WART, new Tuple<>(16, false));
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.axe.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return ALCHEMIST;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final BlockState block, @NotNull final BlockPos pos, @NotNull final Level world)
-    {
+    public void registerBlockPosition(@NotNull final BlockState block, @NotNull final BlockPos pos, @NotNull final Level world) {
         super.registerBlockPosition(block, pos, world);
-        if (block.getBlock() == Blocks.SOUL_SAND)
-        {
+        if (block.getBlock() == Blocks.SOUL_SAND) {
             soulsand.add(pos);
-        }
-        else if (block.is(BlockTags.LEAVES))
-        {
+        } else if (block.is(BlockTags.LEAVES)) {
             leaves.add(pos);
-        }
-        else if (block.getBlock() == Blocks.BREWING_STAND)
-        {
+        } else if (block.getBlock() == Blocks.BREWING_STAND) {
             brewingStands.add(pos);
         }
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         final ListTag sandPos = compound.getList(TAG_PLANTGROUND, CompoundTag.TAG_INT_ARRAY);
-        for (int i = 0; i < sandPos.size(); ++i)
-        {
+        for (int i = 0; i < sandPos.size(); ++i) {
             soulsand.add(NBTUtils.readBlockPos(sandPos.get(i)));
         }
 
         final ListTag leavesPos = compound.getList(TAG_LEAVES, CompoundTag.TAG_INT_ARRAY);
-        for (int i = 0; i < leavesPos.size(); ++i)
-        {
+        for (int i = 0; i < leavesPos.size(); ++i) {
             leaves.add(NBTUtils.readBlockPos(leavesPos.get(i)));
         }
 
         final ListTag brewingStandPos = compound.getList(TAG_BREWING_STAND, CompoundTag.TAG_INT_ARRAY);
-        for (int i = 0; i < brewingStandPos.size(); ++i)
-        {
+        for (int i = 0; i < brewingStandPos.size(); ++i) {
             brewingStands.add(NBTUtils.readBlockPos(brewingStandPos.get(i)));
         }
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
         @NotNull final ListTag sandCompoundList = new ListTag();
-        for (@NotNull final BlockPos entry : soulsand)
-        {
+        for (@NotNull final BlockPos entry : soulsand) {
             sandCompoundList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_PLANTGROUND, sandCompoundList);
 
         @NotNull final ListTag leavesCompoundList = new ListTag();
-        for (@NotNull final BlockPos entry : leaves)
-        {
+        for (@NotNull final BlockPos entry : leaves) {
             leavesCompoundList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_LEAVES, leavesCompoundList);
 
         @NotNull final ListTag brewingStandCompoundList = new ListTag();
-        for (@NotNull final BlockPos entry : brewingStands)
-        {
+        for (@NotNull final BlockPos entry : brewingStands) {
             brewingStandCompoundList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_BREWING_STAND, brewingStandCompoundList);
@@ -160,8 +141,7 @@ public class BuildingAlchemist extends AbstractBuilding
      *
      * @return copy of the list of positions.
      */
-    public List<BlockPos> getAllSoilPositions()
-    {
+    public List<BlockPos> getAllSoilPositions() {
         return new ArrayList<>(soulsand);
     }
 
@@ -170,8 +150,7 @@ public class BuildingAlchemist extends AbstractBuilding
      *
      * @return copy of the list of positions.
      */
-    public List<BlockPos> getAllLeavePositions()
-    {
+    public List<BlockPos> getAllLeavePositions() {
         return new ArrayList<>(leaves);
     }
 
@@ -180,66 +159,60 @@ public class BuildingAlchemist extends AbstractBuilding
      *
      * @return copy of the list of positions.
      */
-    public List<BlockPos> getAllBrewingStandPositions()
-    {
+    public List<BlockPos> getAllBrewingStandPositions() {
         return new ArrayList<>(brewingStands);
     }
 
     /**
      * Remove a vanished brewing stand.
+     *
      * @param pos the position of it.
      */
-    public void removeBrewingStand(final BlockPos pos)
-    {
+    public void removeBrewingStand(final BlockPos pos) {
         brewingStands.remove(pos);
     }
 
     /**
      * Remove soil position.
+     *
      * @param pos the position of it.
      */
-    public void removeSoilPosition(final BlockPos pos)
-    {
+    public void removeSoilPosition(final BlockPos pos) {
         soulsand.remove(pos);
     }
 
     /**
      * Remove leaf position.
+     *
      * @param pos the position of it.
      */
-    public void removeLeafPosition(final BlockPos pos)
-    {
+    public void removeLeafPosition(final BlockPos pos) {
         leaves.remove(pos);
     }
 
-    public static class BrewingModule extends AbstractCraftingBuildingModule.Brewing
-    {
+    public static class BrewingModule extends AbstractCraftingBuildingModule.Brewing {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public BrewingModule(final JobEntry jobEntry)
-        {
+        public BrewingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
     }
 
-    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
-    {
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public CraftingModule(final JobEntry jobEntry)
-        {
+        public CraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         @Override
-        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-        {
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) {
             if (!super.isRecipeCompatible(recipe))
                 return false;
 
@@ -247,14 +220,12 @@ public class BuildingAlchemist extends AbstractBuilding
         }
 
         @Override
-        public Set<CraftingType> getSupportedCraftingTypes()
-        {
+        public Set<CraftingType> getSupportedCraftingTypes() {
             return Collections.emptySet();
         }
 
         @Override
-        public @NotNull List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull final Level world)
-        {
+        public @NotNull List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull final Level world) {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
             // growing mistletoe

@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job that handles moving away from something.
  */
-public class PathJobMoveAwayFromLocation extends AbstractPathJob implements IDestinationPathJob
-{
+public class PathJobMoveAwayFromLocation extends AbstractPathJob implements IDestinationPathJob {
     /**
      * Position to run to, in order to avoid something.
      */
@@ -26,7 +25,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob implements IDes
     /**
      * Required avoidDistance.
      */
-    protected final int      avoidDistance;
+    protected final int avoidDistance;
 
     /**
      * The blockposition we're trying to move away to
@@ -44,24 +43,21 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob implements IDes
      * @param entity        the entity.
      */
     public PathJobMoveAwayFromLocation(
-      final Level world,
-      @NotNull final BlockPos start,
-      @NotNull final BlockPos avoid,
-      final int avoidDistance,
-      final int range,
-      final Mob entity)
-    {
+            final Level world,
+            @NotNull final BlockPos start,
+            @NotNull final BlockPos avoid,
+            final int avoidDistance,
+            final int range,
+            final Mob entity) {
         super(world, start, range, new PathResult<PathJobMoveAwayFromLocation>(), entity);
 
         this.avoid = new BlockPos(avoid);
         this.avoidDistance = avoidDistance;
 
         preferredDirection = entity.blockPosition().offset(entity.blockPosition().subtract(avoid).multiply(range));
-        if (entity instanceof AbstractEntityCitizen)
-        {
+        if (entity instanceof AbstractEntityCitizen) {
             final IColony colony = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getColonyOrRegister();
-            if (colony != null)
-            {
+            if (colony != null) {
                 preferredDirection = colony.getCenter();
             }
         }
@@ -73,24 +69,21 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob implements IDes
      * @return heuristic as a double - Manhatten Distance with tie-breaker.
      */
     @Override
-    protected double computeHeuristic(final int x, final int y, final int z)
-    {
+    protected double computeHeuristic(final int x, final int y, final int z) {
         return BlockPosUtil.dist(preferredDirection, x, y, z);
     }
 
     @Override
     protected double modifyCost(
-      final double cost,
-      final MNode parent,
-      final boolean swimstart,
-      final boolean swimming,
-      final int x,
-      final int y,
-      final int z,
-      final BlockState state, final BlockState below)
-    {
-        if (BlockPosUtil.dist(avoid, x, y, z) < 3)
-        {
+            final double cost,
+            final MNode parent,
+            final boolean swimstart,
+            final boolean swimming,
+            final int x,
+            final int y,
+            final int z,
+            final BlockState state, final BlockState below) {
+        if (BlockPosUtil.dist(avoid, x, y, z) < 3) {
             return cost + 100;
         }
 
@@ -104,11 +97,10 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob implements IDes
      * @return true if so.
      */
     @Override
-    protected boolean isAtDestination(@NotNull final MNode n)
-    {
+    protected boolean isAtDestination(@NotNull final MNode n) {
         return BlockPosUtil.dist(avoid, n.x, n.y, n.z) > avoidDistance
-                 && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
-                      == SurfaceType.WALKABLE;
+                && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                == SurfaceType.WALKABLE;
     }
 
     /**
@@ -118,21 +110,18 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob implements IDes
      * @return double amount.
      */
     @Override
-    protected double getEndNodeScore(@NotNull final MNode n)
-    {
+    protected double getEndNodeScore(@NotNull final MNode n) {
         return -BlockPosUtil.dist(avoid, n.x, n.y, n.z);
     }
 
     @Override
-    public void setPathingOptions(final PathingOptions pathingOptions)
-    {
+    public void setPathingOptions(final PathingOptions pathingOptions) {
         super.setPathingOptions(pathingOptions);
         pathingOptions.dropCost = 5;
     }
 
     @Override
-    public BlockPos getDestination()
-    {
+    public BlockPos getDestination() {
         return preferredDirection;
     }
 }

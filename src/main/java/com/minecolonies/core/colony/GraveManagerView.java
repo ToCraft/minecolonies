@@ -19,8 +19,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Client-side read-only copy of the {@link com.minecolonies.core.colony.managers.GraveManager}.
  */
-public class GraveManagerView implements IGraveManager
-{
+public class GraveManagerView implements IGraveManager {
     private Map<BlockPos, Boolean> graves = ImmutableMap.of();
 
     /**
@@ -29,16 +28,13 @@ public class GraveManagerView implements IGraveManager
      * @param compound the compound.
      */
     @Override
-    public void read(@NotNull CompoundTag compound)
-    {
+    public void read(@NotNull CompoundTag compound) {
         final ImmutableMap.Builder<BlockPos, Boolean> graves = ImmutableMap.builder();
 
         final ListTag gravesTagList = compound.getList(TAG_GRAVE, Tag.TAG_COMPOUND);
-        for (int i = 0; i < gravesTagList.size(); ++i)
-        {
+        for (int i = 0; i < gravesTagList.size(); ++i) {
             final CompoundTag graveCompound = gravesTagList.getCompound(i);
-            if (graveCompound.contains(TAG_POS) && graveCompound.contains(TAG_RESERVED))
-            {
+            if (graveCompound.contains(TAG_POS) && graveCompound.contains(TAG_RESERVED)) {
                 graves.put(BlockPosUtil.read(graveCompound, TAG_POS), graveCompound.getBoolean(TAG_RESERVED));
             }
         }
@@ -47,53 +43,44 @@ public class GraveManagerView implements IGraveManager
     }
 
     @Override
-    public void write(@NotNull CompoundTag compound)
-    {
+    public void write(@NotNull CompoundTag compound) {
     }
 
     @Override
-    public void onColonyTick(IColony colony)
-    {
+    public void onColonyTick(IColony colony) {
     }
 
     @Override
-    public boolean reserveGrave(BlockPos pos)
-    {
+    public boolean reserveGrave(BlockPos pos) {
         return false;
     }
 
     @Override
-    public void unReserveGrave(BlockPos pos)
-    {
+    public void unReserveGrave(BlockPos pos) {
     }
 
     @Override
-    public BlockPos reserveNextFreeGrave()
-    {
+    public BlockPos reserveNextFreeGrave() {
         return null;
     }
 
     @Override
-    public boolean createCitizenGrave(Level world, BlockPos pos, ICitizenData citizenData)
-    {
+    public boolean createCitizenGrave(Level world, BlockPos pos, ICitizenData citizenData) {
         return false;
     }
 
     @NotNull
     @Override
-    public Map<BlockPos, Boolean> getGraves()
-    {
+    public Map<BlockPos, Boolean> getGraves() {
         return this.graves;
     }
 
     @Override
-    public boolean addNewGrave(@NotNull BlockPos pos)
-    {
+    public boolean addNewGrave(@NotNull BlockPos pos) {
         return false;
     }
 
     @Override
-    public void removeGrave(@NotNull BlockPos pos)
-    {
+    public void removeGrave(@NotNull BlockPos pos) {
     }
 }

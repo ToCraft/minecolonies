@@ -23,8 +23,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_CI
 /**
  * Recalls the citizen to the location.
  */
-public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "recall_single_citizen", RecallSingleCitizenMessage::new);
 
     /**
@@ -38,47 +37,40 @@ public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IB
      * @param building  View of the building the citizen should be teleported to.
      * @param citizenid the id of the citizen.
      */
-    public RecallSingleCitizenMessage(final IBuildingView building, final int citizenid)
-    {
+    public RecallSingleCitizenMessage(final IBuildingView building, final int citizenid) {
         super(TYPE, building);
         this.citizenId = citizenid;
     }
 
-    protected RecallSingleCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected RecallSingleCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
 
         citizenId = buf.readInt();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
 
         buf.writeInt(citizenId);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
         citizenData.setLastPosition(building.getPosition());
         Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
-        if (!optionalEntityCitizen.isPresent())
-        {
+        if (!optionalEntityCitizen.isPresent()) {
             citizenData.updateEntityIfNecessary();
             optionalEntityCitizen = citizenData.getEntity();
         }
 
-        if (optionalEntityCitizen.isPresent() && optionalEntityCitizen.get().getTicksExisted() == 0)
-        {
+        if (optionalEntityCitizen.isPresent() && optionalEntityCitizen.get().getTicksExisted() == 0) {
             citizenData.updateEntityIfNecessary();
         }
 
         final BlockPos loc = building.getID();
-        if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
-        {
+        if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc)) {
             MessageUtils.format(WARNING_CITIZEN_RECALL_FAILED).sendTo(player);
         }
     }

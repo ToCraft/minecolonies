@@ -14,8 +14,7 @@ import java.util.Random;
 /**
  * The interface for the citizen skill handler.
  */
-public interface ICitizenSkillHandler
-{
+public interface ICitizenSkillHandler {
     /**
      * Initiate a citizen skill handler with a level cap.
      *
@@ -27,8 +26,8 @@ public interface ICitizenSkillHandler
      * Initiate a citizen with parent citizen data.
      *
      * @param firstParent  the first parent data.
-     * @param secondParent  the second parent data.
-     * @param rand random var.
+     * @param secondParent the second parent data.
+     * @param rand         random var.
      */
     void init(@NotNull final IColony colony, @Nullable final ICitizenData firstParent, @Nullable final ICitizenData secondParent, Random rand);
 

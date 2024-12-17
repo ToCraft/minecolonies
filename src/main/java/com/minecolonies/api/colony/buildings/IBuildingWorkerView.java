@@ -6,8 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface IBuildingWorkerView extends IBuildingView
-{
+public interface IBuildingWorkerView extends IBuildingView {
     /**
      * Returns the id of the worker.
      *

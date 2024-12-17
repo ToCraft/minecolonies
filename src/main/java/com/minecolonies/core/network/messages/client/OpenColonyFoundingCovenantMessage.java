@@ -12,30 +12,27 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Message to open the colony founding covenant.
  */
-public class OpenColonyFoundingCovenantMessage  extends AbstractClientPlayMessage
-{
+public class OpenColonyFoundingCovenantMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_colony_founding_covenant", OpenColonyFoundingCovenantMessage::new);
 
     /**
      * Info on the closest colony.
      */
     private String closestName;
-    private int      closestDistance;
+    private int closestDistance;
     private BlockPos townHallPos;
 
     /**
      * Default constructor
      **/
-    public OpenColonyFoundingCovenantMessage(RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public OpenColonyFoundingCovenantMessage(RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(type);
         this.closestName = buf.readUtf(32767);
         this.closestDistance = buf.readInt();
         this.townHallPos = buf.readBlockPos();
     }
 
-    public OpenColonyFoundingCovenantMessage(final String closestName, final int closestDistance, final BlockPos townHallPos)
-    {
+    public OpenColonyFoundingCovenantMessage(final String closestName, final int closestDistance, final BlockPos townHallPos) {
         super(TYPE);
         this.closestName = closestName;
         this.closestDistance = closestDistance;
@@ -43,14 +40,12 @@ public class OpenColonyFoundingCovenantMessage  extends AbstractClientPlayMessag
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         new WindowTownHallColonyManage(townHallPos, closestName, closestDistance, "", false).open();
     }
 
     @Override
-    public void toBytes(RegistryFriendlyByteBuf buf)
-    {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         buf.writeUtf(closestName);
         buf.writeInt(closestDistance);
         buf.writeBlockPos(townHallPos);

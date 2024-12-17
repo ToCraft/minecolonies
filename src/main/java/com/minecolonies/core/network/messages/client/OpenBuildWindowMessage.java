@@ -13,8 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Message to open the build window, for example for decorations.
  */
-public abstract class OpenBuildWindowMessage extends AbstractClientPlayMessage
-{
+public abstract class OpenBuildWindowMessage extends AbstractClientPlayMessage {
     /**
      * Town hall position to create building on.
      */
@@ -42,8 +41,7 @@ public abstract class OpenBuildWindowMessage extends AbstractClientPlayMessage
      * @param packName the pack of the deco.
      * @param path     the path in the pack.
      */
-    protected OpenBuildWindowMessage(final PlayMessageType<?> type, final BlockPos pos, final String packName, final String path, final RotationMirror rotMir)
-    {
+    protected OpenBuildWindowMessage(final PlayMessageType<?> type, final BlockPos pos, final String packName, final String path, final RotationMirror rotMir) {
         super(type);
         this.pos = pos;
         this.path = path;
@@ -52,16 +50,14 @@ public abstract class OpenBuildWindowMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(this.pos);
         buf.writeUtf(this.path);
         buf.writeUtf(this.packName);
         buf.writeByte(this.rotationMirror.ordinal());
     }
 
-    protected OpenBuildWindowMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected OpenBuildWindowMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.pos = buf.readBlockPos();
         this.path = buf.readUtf(32767);
@@ -70,8 +66,7 @@ public abstract class OpenBuildWindowMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    public final void onExecute(final IPayloadContext context, final Player player)
-    {
+    public final void onExecute(final IPayloadContext context, final Player player) {
         new WindowBuildDecoration(this.pos, this.packName, this.path, this.rotationMirror, this::createWorkOrderMessage).open();
     }
 

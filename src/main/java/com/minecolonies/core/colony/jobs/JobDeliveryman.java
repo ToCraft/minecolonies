@@ -1,14 +1,9 @@
 package com.minecolonies.core.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.core.colony.buildings.modules.BuildingModules;
-import com.minecolonies.core.colony.buildings.modules.WarehouseRequestQueueModule;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJobDataStore;
@@ -26,14 +21,19 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.CourierAssignmentModule;
+import com.minecolonies.core.colony.buildings.modules.WarehouseRequestQueueModule;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkDeliveryman;
 import com.minecolonies.core.util.AttributeModifierUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -47,8 +47,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 /**
  * Class of the deliveryman job.
  */
-public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeliveryman>
-{
+public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeliveryman> {
     private IToken<?> rsDataStoreToken;
 
     /**
@@ -66,66 +65,55 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      *
      * @param entity the citizen who becomes a deliveryman
      */
-    public JobDeliveryman(final ICitizenData entity)
-    {
+    public JobDeliveryman(final ICitizenData entity) {
         super(entity);
-        if (entity != null)
-        {
+        if (entity != null) {
             setupRsDataStore();
         }
     }
 
-    private void setupRsDataStore()
-    {
+    private void setupRsDataStore() {
         rsDataStoreToken = this.getCitizen()
-                             .getColony()
-                             .getRequestManager()
-                             .getDataStoreManager()
-                             .get(
-                               StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                               TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE
-                             )
-                             .getId();
+                .getColony()
+                .getRequestManager()
+                .getDataStoreManager()
+                .get(
+                        StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                        TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE
+                )
+                .getId();
     }
 
     @Override
-    public void onLevelUp()
-    {
-        if (getCitizen().getEntity().isPresent())
-        {
+    public void onLevelUp() {
+        if (getCitizen().getEntity().isPresent()) {
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
             final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD_NAME, getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(
-              BuildingModules.COURIER_WORK).getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADD_VALUE);
+                    BuildingModules.COURIER_WORK).getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADD_VALUE);
             AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED);
         }
     }
 
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.COURIER_ID;
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
         compound.put(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serializeTag(provider, rsDataStoreToken));
         return compound;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
 
-        if (compound.contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
-        {
+        if (compound.contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE)) {
             rsDataStoreToken = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
-        }
-        else
-        {
+        } else {
             setupRsDataStore();
         }
         this.ongoingDeliveries = compound.getInt(TAG_ONGOING);
@@ -138,50 +126,38 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      */
     @NotNull
     @Override
-    public EntityAIWorkDeliveryman generateAI()
-    {
+    public EntityAIWorkDeliveryman generateAI() {
         return new EntityAIWorkDeliveryman(this);
     }
 
-    private IRequestSystemDeliveryManJobDataStore getDataStore()
-    {
+    private IRequestSystemDeliveryManJobDataStore getDataStore() {
         return getCitizen().getColony().getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE);
     }
 
     @Override
-    public void serializeToView(final RegistryFriendlyByteBuf buffer)
-    {
+    public void serializeToView(final RegistryFriendlyByteBuf buffer) {
         super.serializeToView(buffer);
         StandardFactoryController.getInstance().serialize(buffer, rsDataStoreToken);
     }
 
-    private LinkedList<IToken<?>> getTaskQueueFromDataStore()
-    {
+    private LinkedList<IToken<?>> getTaskQueueFromDataStore() {
         return getDataStore().getQueue();
     }
 
     @Override
-    public int getInactivityLimit()
-    {
+    public int getInactivityLimit() {
         return 60 * 10;
     }
 
     @Override
-    public void triggerActivityChangeAction(final boolean newState)
-    {
-        try
-        {
-            if (newState)
-            {
+    public void triggerActivityChangeAction(final boolean newState) {
+        try {
+            if (newState) {
                 getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof Delivery || request.getRequest() instanceof Pickup);
-            }
-            else
-            {
+            } else {
                 cancelAssignedRequests();
             }
-        }
-        catch (final Exception ex)
-        {
+        } catch (final Exception ex) {
             Log.getLogger().warn("Active Triggered resulted in exception", ex);
         }
     }
@@ -192,49 +168,39 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @return {@link IRequest} of the current Task.
      */
     @SuppressWarnings(UNCHECKED)
-    public IRequest<IDeliverymanRequestable> getCurrentTask()
-    {
+    public IRequest<IDeliverymanRequestable> getCurrentTask() {
         IToken<?> request = getTaskQueueFromDataStore().peekFirst();
-        if (request == null)
-        {
+        if (request == null) {
             IBuilding wareHouse = findWareHouse();
-            if (wareHouse == null)
-            {
+            if (wareHouse == null) {
                 return null;
             }
 
             final WarehouseRequestQueueModule module = wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE);
-            if (module.getMutableRequestList().isEmpty())
-            {
+            if (module.getMutableRequestList().isEmpty()) {
                 return null;
             }
 
             final List<IToken<?>> reqsToRemove = new ArrayList<>();
             int extendedReqs = 0;
-            for (final IToken<?> reqId : module.getMutableRequestList())
-            {
+            for (final IToken<?> reqId : module.getMutableRequestList()) {
                 final IRequest localRequest = getColony().getRequestManager().getRequestForToken(reqId);
-                if (localRequest == null)
-                {
+                if (localRequest == null) {
                     reqsToRemove.add(reqId);
                     continue;
                 }
 
-                if (request == null)
-                {
+                if (request == null) {
                     addRequest(reqId, 0);
                     request = reqId;
                     reqsToRemove.add(reqId);
-                }
-                else if (localRequest instanceof StandardRequests.DeliveryRequest && hasSameDestinationDelivery(localRequest))
-                {
+                } else if (localRequest instanceof StandardRequests.DeliveryRequest && hasSameDestinationDelivery(localRequest)) {
                     addRequest(reqId, 0);
                     extendedReqs++;
                     reqsToRemove.add(reqId);
                 }
 
-                if (extendedReqs > 5)
-                {
+                if (extendedReqs > 5) {
                     break;
                 }
 
@@ -243,8 +209,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             module.getMutableRequestList().removeAll(reqsToRemove);
             module.markDirty();
 
-            if (request == null)
-            {
+            if (request == null) {
                 return null;
             }
 
@@ -258,26 +223,21 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      *
      * @param token The token of the requests to add.
      */
-    public void addRequest(@NotNull final IToken<?> token, final int insertionIndex)
-    {
+    public void addRequest(@NotNull final IToken<?> token, final int insertionIndex) {
         final IRequestManager requestManager = getColony().getRequestManager();
         IRequest<? extends IDeliverymanRequestable> newRequest = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(token));
 
         LinkedList<IToken<?>> taskQueue = getTaskQueueFromDataStore();
 
         int offset = 0;
-        for (int i = insertionIndex; i < taskQueue.size(); i++)
-        {
+        for (int i = insertionIndex; i < taskQueue.size(); i++) {
             final IToken theToken = taskQueue.get(i);
             final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(theToken));
-            if (request == null || request.getState() == RequestState.COMPLETED)
-            {
+            if (request == null || request.getState() == RequestState.COMPLETED) {
                 taskQueue.remove(theToken);
                 i--;
                 offset--;
-            }
-            else
-            {
+            } else {
                 request.getRequest().incrementPriorityDueToAging();
             }
         }
@@ -290,10 +250,8 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      *
      * @param successful True when the processing was successful, false when not.
      */
-    public void finishRequest(final boolean successful)
-    {
-        if (getTaskQueueFromDataStore().isEmpty())
-        {
+    public void finishRequest(final boolean successful) {
+        if (getTaskQueueFromDataStore().isEmpty()) {
             return;
         }
 
@@ -301,55 +259,39 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
         final IRequest<?> request = getColony().getRequestManager().getRequestForToken(current);
 
-        if (request == null)
-        {
-            if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
-            {
+        if (request == null) {
+            if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst()) {
                 getTaskQueueFromDataStore().removeFirst();
             }
             return;
-        }
-        else if (request.getRequest() instanceof Delivery)
-        {
+        } else if (request.getRequest() instanceof Delivery) {
             final List<IRequest<? extends Delivery>> taskList = getTaskListWithSameDestination((IRequest<? extends Delivery>) request);
-            if (ongoingDeliveries != 0)
-            {
-                for (int i = 0; i < Math.max(1, Math.min(ongoingDeliveries, taskList.size())); i++)
-                {
+            if (ongoingDeliveries != 0) {
+                for (int i = 0; i < Math.max(1, Math.min(ongoingDeliveries, taskList.size())); i++) {
                     final IRequest<? extends Delivery> req = taskList.get(i);
-                    if (req.getState() == RequestState.IN_PROGRESS)
-                    {
+                    if (req.getState() == RequestState.IN_PROGRESS) {
                         getColony().getRequestManager().updateRequestState(req.getId(), successful ? RequestState.RESOLVED : RequestState.FAILED);
                     }
                     getTaskQueueFromDataStore().remove(req.getId());
                 }
-            }
-            else
-            {
-                for (final IToken<?> token : new ArrayList<>(getDataStore().getOngoingDeliveries()))
-                {
+            } else {
+                for (final IToken<?> token : new ArrayList<>(getDataStore().getOngoingDeliveries())) {
                     final IRequest<?> req = getColony().getRequestManager().getRequestForToken(token);
-                    if (req != null && req.getState() == RequestState.IN_PROGRESS)
-                    {
+                    if (req != null && req.getState() == RequestState.IN_PROGRESS) {
                         getColony().getRequestManager().updateRequestState(req.getId(), successful ? RequestState.RESOLVED : RequestState.FAILED);
                     }
                     getTaskQueueFromDataStore().remove(token);
                     getDataStore().getOngoingDeliveries().remove(token);
                 }
             }
-        }
-        else if (request.getRequest() instanceof Pickup)
-        {
+        } else if (request.getRequest() instanceof Pickup) {
             getTaskQueueFromDataStore().remove(request.getId());
             getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
-        }
-        else
-        {
+        } else {
             getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
 
             //Just to be sure lets delete them!
-            if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
-            {
+            if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst()) {
                 getTaskQueueFromDataStore().removeFirst();
             }
         }
@@ -362,15 +304,12 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      *
      * @param token token of the task to be deleted.
      */
-    public void onTaskDeletion(@NotNull final IToken<?> token)
-    {
-        if (getTaskQueueFromDataStore().contains(token))
-        {
+    public void onTaskDeletion(@NotNull final IToken<?> token) {
+        if (getTaskQueueFromDataStore().contains(token)) {
             getTaskQueueFromDataStore().remove(token);
         }
 
-        if (getCitizen().getWorkBuilding() != null)
-        {
+        if (getCitizen().getWorkBuilding() != null) {
             getCitizen().getWorkBuilding().markDirty();
         }
     }
@@ -380,22 +319,16 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      *
      * @return The task queue.
      */
-    public List<IToken<?>> getTaskQueue()
-    {
+    public List<IToken<?>> getTaskQueue() {
         return ImmutableList.copyOf(getTaskQueueFromDataStore());
     }
 
-    private void cancelAssignedRequests()
-    {
-        for (final IToken<?> t : getTaskQueue())
-        {
+    private void cancelAssignedRequests() {
+        for (final IToken<?> t : getTaskQueue()) {
             final IRequest<?> r = getColony().getRequestManager().getRequestForToken(t);
-            if (r != null)
-            {
+            if (r != null) {
                 getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
-            }
-            else
-            {
+            } else {
                 Log.getLogger().warn("Oops, the request with ID: " + t.toString() + " couldn't be cancelled by the deliveryman because it doesn't exist");
             }
             getTaskQueueFromDataStore().remove(t);
@@ -403,15 +336,11 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     }
 
     @Override
-    public void onRemoval()
-    {
+    public void onRemoval() {
         getCitizen().setWorking(false);
-        try
-        {
+        try {
             cancelAssignedRequests();
-        }
-        catch (final Exception ex)
-        {
+        } catch (final Exception ex) {
             Log.getLogger().warn("Active Triggered resulted in exception", ex);
         }
         super.onRemoval();
@@ -424,17 +353,13 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param request the incoming request.
      * @return 0 if so, and 1 if not.
      */
-    public boolean hasSameDestinationDelivery(@NotNull final IRequest<? extends Delivery> request)
-    {
-        for (final IToken<?> requestToken : getTaskQueue())
-        {
+    public boolean hasSameDestinationDelivery(@NotNull final IRequest<? extends Delivery> request) {
+        for (final IToken<?> requestToken : getTaskQueue()) {
             final IRequest<?> compareRequest = getColony().getRequestManager().getRequestForToken(requestToken);
-            if (compareRequest != null && compareRequest.getRequest() instanceof Delivery)
-            {
+            if (compareRequest != null && compareRequest.getRequest() instanceof Delivery) {
                 final Delivery current = (Delivery) compareRequest.getRequest();
                 final Delivery newDev = request.getRequest();
-                if (haveTasksSameSourceAndDest(current, newDev))
-                {
+                if (haveTasksSameSourceAndDest(current, newDev)) {
                     return true;
                 }
             }
@@ -450,18 +375,13 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param requestB the second request.
      * @return true if so.
      */
-    private boolean haveTasksSameSourceAndDest(@NotNull final Delivery requestA, @NotNull final Delivery requestB)
-    {
-        if (requestA.getTarget().equals(requestB.getTarget()))
-        {
-            if (requestA.getStart().equals(requestB.getStart()))
-            {
+    private boolean haveTasksSameSourceAndDest(@NotNull final Delivery requestA, @NotNull final Delivery requestB) {
+        if (requestA.getTarget().equals(requestB.getTarget())) {
+            if (requestA.getStart().equals(requestB.getStart())) {
                 return true;
             }
-            for (final IWareHouse wareHouse : getColony().getBuildingManager().getWareHouses())
-            {
-                if (wareHouse.hasContainerPosition(requestA.getStart().getInDimensionLocation()) && wareHouse.hasContainerPosition(requestB.getStart().getInDimensionLocation()))
-                {
+            for (final IWareHouse wareHouse : getColony().getBuildingManager().getWareHouses()) {
+                if (wareHouse.hasContainerPosition(requestA.getStart().getInDimensionLocation()) && wareHouse.hasContainerPosition(requestB.getStart().getInDimensionLocation())) {
                     return true;
                 }
             }
@@ -475,21 +395,16 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param request the first request.
      * @return a list.
      */
-    public List<IRequest<? extends Delivery>> getTaskListWithSameDestination(final IRequest<? extends Delivery> request)
-    {
+    public List<IRequest<? extends Delivery>> getTaskListWithSameDestination(final IRequest<? extends Delivery> request) {
         final List<IRequest<? extends Delivery>> deliveryList = new ArrayList<>();
         deliveryList.add(request);
-        for (final IToken<?> requestToken : getTaskQueue())
-        {
-            if (!requestToken.equals(request.getId()))
-            {
+        for (final IToken<?> requestToken : getTaskQueue()) {
+            if (!requestToken.equals(request.getId())) {
                 final IRequest<?> compareRequest = getColony().getRequestManager().getRequestForToken(requestToken);
-                if (compareRequest != null && compareRequest.getRequest() instanceof Delivery)
-                {
+                if (compareRequest != null && compareRequest.getRequest() instanceof Delivery) {
                     final Delivery current = (Delivery) compareRequest.getRequest();
                     final Delivery newDev = request.getRequest();
-                    if (haveTasksSameSourceAndDest(current, newDev))
-                    {
+                    if (haveTasksSameSourceAndDest(current, newDev)) {
                         deliveryList.add((IRequest<? extends Delivery>) compareRequest);
                     }
                 }
@@ -505,38 +420,32 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @return tuple of score and index to place at.
      */
     @NotNull
-    public Tuple<Double, Integer> getScoreForDelivery(final IRequest<?> newRequest)
-    {
+    public Tuple<Double, Integer> getScoreForDelivery(final IRequest<?> newRequest) {
         final List<IToken<?>> requestTokens = getTaskQueueFromDataStore();
 
         double totalScore = 10000;
         int bestRequestIndex = Math.max(0, requestTokens.size());
 
-        if (requestTokens.isEmpty())
-        {
+        if (requestTokens.isEmpty()) {
             // No task, compare with dman pos
             totalScore = getClosenessFactorTo(getSource(newRequest),
-              getTarget(newRequest),
-              getCitizen().getLastPosition(),
-              getTarget(newRequest));
+                    getTarget(newRequest),
+                    getCitizen().getLastPosition(),
+                    getTarget(newRequest));
 
             totalScore -= ((AbstractDeliverymanRequestable) newRequest.getRequest()).getPriority();
         }
 
-        for (int i = 0; i < requestTokens.size(); i++)
-        {
+        for (int i = 0; i < requestTokens.size(); i++) {
             final IRequest<?> compareRequest = getColony().getRequestManager().getRequestForToken(requestTokens.get(i));
-            if (compareRequest == null)
-            {
+            if (compareRequest == null) {
                 continue;
             }
 
-            if (compareRequest.getRequest() instanceof AbstractDeliverymanRequestable)
-            {
+            if (compareRequest.getRequest() instanceof AbstractDeliverymanRequestable) {
                 double score = getScoreOfRequestComparedTo(newRequest, compareRequest, i);
 
-                if (score <= totalScore)
-                {
+                if (score <= totalScore) {
                     bestRequestIndex = i + getPickupOrRequestOffset(newRequest, compareRequest);
                     totalScore = score;
                 }
@@ -556,11 +465,9 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param comparingIndex index of the comparing request in our taskque. Use taskque size when comparing a request not on the que.
      * @return compare score of the two requests, lower is better.
      */
-    public double getScoreOfRequestComparedTo(final IRequest<?> source, final IRequest<?> comparing, final int comparingIndex)
-    {
+    public double getScoreOfRequestComparedTo(final IRequest<?> source, final IRequest<?> comparing, final int comparingIndex) {
         if (!(comparing != null && comparing.getRequest() instanceof AbstractDeliverymanRequestable && source != null
-                && source.getRequest() instanceof AbstractDeliverymanRequestable))
-        {
+                && source.getRequest() instanceof AbstractDeliverymanRequestable)) {
             return 100;
         }
 
@@ -586,10 +493,8 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param existing   the existing request
      * @return 1 for inserting after existing, 0 for infront
      */
-    private static int getPickupOrRequestOffset(final IRequest<?> newRequest, final IRequest<?> existing)
-    {
-        if (newRequest.getRequest() instanceof Delivery && existing.getRequest() instanceof Pickup)
-        {
+    private static int getPickupOrRequestOffset(final IRequest<?> newRequest, final IRequest<?> existing) {
+        if (newRequest.getRequest() instanceof Delivery && existing.getRequest() instanceof Pickup) {
             return 0;
         }
 
@@ -603,11 +508,9 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param existing   existing request
      * @return better score for when alternating deliveries and pickups nicely
      */
-    private static int getPickUpRequestScore(final IRequest<?> newRequest, final IRequest<?> existing)
-    {
+    private static int getPickUpRequestScore(final IRequest<?> newRequest, final IRequest<?> existing) {
         if (newRequest.getRequest() instanceof Pickup && existing.getRequest() instanceof Delivery
-              || newRequest.getRequest() instanceof Delivery && existing.getRequest() instanceof Pickup)
-        {
+                || newRequest.getRequest() instanceof Delivery && existing.getRequest() instanceof Pickup) {
             return 0;
         }
 
@@ -623,11 +526,9 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param target2 target of second request
      * @return closeness factor, representing how close these positions are to eachother. The lower the closer they are.
      */
-    public static double getClosenessFactorTo(final BlockPos source1, final BlockPos target1, final BlockPos source2, final BlockPos target2)
-    {
+    public static double getClosenessFactorTo(final BlockPos source1, final BlockPos target1, final BlockPos source2, final BlockPos target2) {
         final double newLength = BlockPosUtil.getDistance(target1, source1);
-        if (newLength <= 0)
-        {
+        if (newLength <= 0) {
             // Return a relatively high value(bad) when the distance is bad.
             return 10;
         }
@@ -644,18 +545,14 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param request
      * @return
      */
-    private BlockPos getSource(final IRequest<?> request)
-    {
-        if (request.getRequest() instanceof Delivery)
-        {
+    private BlockPos getSource(final IRequest<?> request) {
+        if (request.getRequest() instanceof Delivery) {
             return ((Delivery) request.getRequest()).getStart().getInDimensionLocation();
         }
 
-        if (request.getRequest() instanceof Pickup)
-        {
+        if (request.getRequest() instanceof Pickup) {
             final IWareHouse wareHouse = findWareHouse();
-            if (wareHouse != null)
-            {
+            if (wareHouse != null) {
                 return wareHouse.getID();
             }
         }
@@ -669,15 +566,12 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param request
      * @return
      */
-    private BlockPos getTarget(final IRequest<?> request)
-    {
-        if (request.getRequest() instanceof Delivery)
-        {
+    private BlockPos getTarget(final IRequest<?> request) {
+        if (request.getRequest() instanceof Delivery) {
             return ((Delivery) request.getRequest()).getTarget().getInDimensionLocation();
         }
 
-        if (request.getRequest() instanceof Pickup)
-        {
+        if (request.getRequest() instanceof Pickup) {
             return request.getRequester().getLocation().getInDimensionLocation();
         }
 
@@ -689,12 +583,9 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      *
      * @return warehouse building or null
      */
-    public IWareHouse findWareHouse()
-    {
-        for (final IWareHouse building : getColony().getBuildingManager().getWareHouses())
-        {
-            if (building.getFirstModuleOccurance(CourierAssignmentModule.class).hasAssignedCitizen(getCitizen()))
-            {
+    public IWareHouse findWareHouse() {
+        for (final IWareHouse building : getColony().getBuildingManager().getWareHouses()) {
+            if (building.getFirstModuleOccurance(CourierAssignmentModule.class).hasAssignedCitizen(getCitizen())) {
                 return building;
             }
         }
@@ -704,19 +595,19 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
     /**
      * Add a concurrent delivery that is going on.
+     *
      * @param requestToken the token of the request.
      */
-    public void addConcurrentDelivery(final IToken<?> requestToken)
-    {
+    public void addConcurrentDelivery(final IToken<?> requestToken) {
         getDataStore().getOngoingDeliveries().add(requestToken);
     }
 
     /**
      * Remove a concurrent delivery that is going on.
+     *
      * @param requestToken the token of the request.
      */
-    public void removeConcurrentDelivery(final IToken<?> requestToken)
-    {
+    public void removeConcurrentDelivery(final IToken<?> requestToken) {
         getDataStore().getOngoingDeliveries().remove(requestToken);
     }
 }

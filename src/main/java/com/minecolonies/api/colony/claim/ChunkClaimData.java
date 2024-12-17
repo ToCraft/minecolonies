@@ -23,8 +23,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The implementation of the colonyTagCapability.
  */
-public class ChunkClaimData implements IChunkClaimData, INBTSerializable<CompoundTag>
-{
+public class ChunkClaimData implements IChunkClaimData, INBTSerializable<CompoundTag> {
     /**
      * The set of all close colonies. Only relevant in non dynamic claiming.
      */
@@ -40,30 +39,25 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
      */
     private final Map<Integer, Set<BlockPos>> claimingBuildings;
 
-    public ChunkClaimData()
-    {
+    public ChunkClaimData() {
         this(new HashSet<>(), NO_COLONY_ID, new HashMap<>());
     }
 
-    private ChunkClaimData(final Set<Integer> colonies, final int owningColony, final Map<Integer, Set<BlockPos>> claimingBuildings)
-    {
+    private ChunkClaimData(final Set<Integer> colonies, final int owningColony, final Map<Integer, Set<BlockPos>> claimingBuildings) {
         this.colonies = colonies;
         this.owningColony = owningColony;
         this.claimingBuildings = claimingBuildings;
     }
 
     @Override
-    public void addColony(final int id, final LevelChunk chunk)
-    {
+    public void addColony(final int id, final LevelChunk chunk) {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, chunk.getLevel().dimension());
-        if (colony == null)
-        {
+        if (colony == null) {
             return;
         }
 
         colonies.add(id);
-        if (owningColony == NO_COLONY_ID || IColonyManager.getInstance().getColonyByDimension(owningColony, chunk.getLevel().dimension()) == null)
-        {
+        if (owningColony == NO_COLONY_ID || IColonyManager.getInstance().getColonyByDimension(owningColony, chunk.getLevel().dimension()) == null) {
             colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
             owningColony = id;
         }
@@ -71,22 +65,15 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
     }
 
     @Override
-    public void removeColony(final int id, final LevelChunk chunk)
-    {
+    public void removeColony(final int id, final LevelChunk chunk) {
         colonies.remove(id);
         claimingBuildings.remove(id);
-        if (owningColony == id)
-        {
-            if (!claimingBuildings.isEmpty())
-            {
+        if (owningColony == id) {
+            if (!claimingBuildings.isEmpty()) {
                 owningColony = claimingBuildings.keySet().iterator().next();
-            }
-            else if (!colonies.isEmpty())
-            {
+            } else if (!colonies.isEmpty()) {
                 owningColony = colonies.iterator().next();
-            }
-            else
-            {
+            } else {
                 owningColony = NO_COLONY_ID;
             }
         }
@@ -95,14 +82,12 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
     }
 
     @Override
-    public void setStaticColonyClaim(final List<Integer> colonies)
-    {
+    public void setStaticColonyClaim(final List<Integer> colonies) {
         this.colonies = new HashSet<>(colonies);
     }
 
     @Override
-    public void reset(final LevelChunk chunk)
-    {
+    public void reset(final LevelChunk chunk) {
         colonies.clear();
         owningColony = NO_COLONY_ID;
         claimingBuildings.clear();
@@ -110,33 +95,25 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
     }
 
     @Override
-    public void addBuildingClaim(final int colonyId, final BlockPos pos, final LevelChunk chunk)
-    {
-        if (chunk.getPos().equals(ChunkPos.ZERO))
-        {
+    public void addBuildingClaim(final int colonyId, final BlockPos pos, final LevelChunk chunk) {
+        if (chunk.getPos().equals(ChunkPos.ZERO)) {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, chunk.getLevel().dimension());
-            if (colony == null || BlockPosUtil.getDistance2D(colony.getCenter(), BlockPos.ZERO) > 200)
-            {
+            if (colony == null || BlockPosUtil.getDistance2D(colony.getCenter(), BlockPos.ZERO) > 200) {
                 Log.getLogger().warn("Claiming id:" + colonyId + " building at zero pos!" + pos, new Exception());
             }
         }
 
-        if (owningColony == NO_COLONY_ID)
-        {
+        if (owningColony == NO_COLONY_ID) {
             setOwningColony(colonyId, chunk);
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, chunk.getLevel().dimension());
-            if (colony != null)
-            {
+            if (colony != null) {
                 colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
             }
         }
 
-        if (claimingBuildings.containsKey(colonyId))
-        {
+        if (claimingBuildings.containsKey(colonyId)) {
             claimingBuildings.get(colonyId).add(pos);
-        }
-        else
-        {
+        } else {
             final Set<BlockPos> newList = new HashSet<>();
             newList.add(pos);
             claimingBuildings.put(colonyId, newList);
@@ -145,10 +122,8 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
     }
 
     @Override
-    public void removeBuildingClaim(final int colonyId, final BlockPos pos, final LevelChunk chunk)
-    {
-        if (!claimingBuildings.containsKey(colonyId))
-        {
+    public void removeBuildingClaim(final int colonyId, final BlockPos pos, final LevelChunk chunk) {
+        if (!claimingBuildings.containsKey(colonyId)) {
             return;
         }
 
@@ -156,51 +131,36 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
         final Set<BlockPos> buildings = claimingBuildings.get(colonyId);
         buildings.remove(pos);
 
-        if (buildings.isEmpty())
-        {
+        if (buildings.isEmpty()) {
             claimingBuildings.remove(colonyId);
 
-            if (owningColony == colonyId && !colonies.contains(owningColony))
-            {
-                if (claimingBuildings.isEmpty())
-                {
-                    if (colonies.isEmpty())
-                    {
+            if (owningColony == colonyId && !colonies.contains(owningColony)) {
+                if (claimingBuildings.isEmpty()) {
+                    if (colonies.isEmpty()) {
                         owningColony = NO_COLONY_ID;
-                    }
-                    else
-                    {
+                    } else {
                         owningColony = colonies.iterator().next();
                     }
-                }
-                else
-                {
-                    for (final Iterator<Map.Entry<Integer, Set<BlockPos>>> colonyIt = claimingBuildings.entrySet().iterator(); colonyIt.hasNext(); )
-                    {
+                } else {
+                    for (final Iterator<Map.Entry<Integer, Set<BlockPos>>> colonyIt = claimingBuildings.entrySet().iterator(); colonyIt.hasNext(); ) {
                         final Map.Entry<Integer, Set<BlockPos>> colonyEntry = colonyIt.next();
                         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyEntry.getKey(), chunk.getLevel().dimension());
-                        if (colony == null)
-                        {
+                        if (colony == null) {
                             continue;
                         }
 
-                        for (final Iterator<BlockPos> buildingIt = colonyEntry.getValue().iterator(); buildingIt.hasNext(); )
-                        {
+                        for (final Iterator<BlockPos> buildingIt = colonyEntry.getValue().iterator(); buildingIt.hasNext(); ) {
                             final BlockPos buildingPos = buildingIt.next();
-                            if (colony.getBuildingManager().getBuilding(buildingPos) != null)
-                            {
+                            if (colony.getBuildingManager().getBuilding(buildingPos) != null) {
                                 colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
                                 setOwningColony(colonyEntry.getKey(), chunk);
                                 return;
-                            }
-                            else
-                            {
+                            } else {
                                 buildingIt.remove();
                             }
                         }
 
-                        if (colonyEntry.getValue().isEmpty())
-                        {
+                        if (colonyEntry.getValue().isEmpty()) {
                             colonyIt.remove();
                         }
                     }
@@ -210,54 +170,46 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
     }
 
     @Override
-    public void setOwningColony(final int id, final LevelChunk chunk)
-    {
+    public void setOwningColony(final int id, final LevelChunk chunk) {
         this.owningColony = id;
         chunk.setUnsaved(true);
     }
 
     @Override
-    public int getOwningColony()
-    {
+    public int getOwningColony() {
         return owningColony;
     }
 
     @NotNull
     @Override
-    public List<Integer> getStaticClaimColonies()
-    {
+    public List<Integer> getStaticClaimColonies() {
         return new ArrayList<>(colonies);
     }
 
     @NotNull
     @Override
-    public Map<Integer, Set<BlockPos>> getAllClaimingBuildings()
-    {
+    public Map<Integer, Set<BlockPos>> getAllClaimingBuildings() {
         return claimingBuildings;
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = new CompoundTag();
         compound.putInt(TAG_ID, owningColony);
 
         final ListTag colonyClaimTag = new ListTag();
-        for (final int colonyId : colonies)
-        {
+        for (final int colonyId : colonies) {
             colonyClaimTag.add(IntTag.valueOf(colonyId));
         }
         compound.put(TAG_COLONIES, colonyClaimTag);
 
         final ListTag buildingsClaimTag = new ListTag();
-        for (final Map.Entry<Integer, Set<BlockPos>> entry : claimingBuildings.entrySet())
-        {
+        for (final Map.Entry<Integer, Set<BlockPos>> entry : claimingBuildings.entrySet()) {
             final CompoundTag perColonyEntry = new CompoundTag();
             perColonyEntry.putInt(TAG_ID, entry.getKey());
 
             final ListTag buildingListTag = new ListTag();
-            for (final BlockPos pos : entry.getValue())
-            {
+            for (final BlockPos pos : entry.getValue()) {
                 BlockPosUtil.writeToListNBT(buildingListTag, pos);
             }
             perColonyEntry.put(TAG_BUILDING_CLAIM, buildingListTag);
@@ -269,33 +221,28 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         // Set owning
         owningColony = compound.getInt(TAG_ID);
 
         final ListTag colonyClaim = compound.getList(TAG_COLONIES, Tag.TAG_INT);
-        for (int i = 0; i < colonyClaim.size(); i++)
-        {
+        for (int i = 0; i < colonyClaim.size(); i++) {
             colonies.add(colonyClaim.getInt(i));
         }
 
         final ListTag buildingClaim = compound.getList(TAG_BUILDING_LIST_CLAIM, Tag.TAG_COMPOUND);
-        for (int i = 0; i < buildingClaim.size(); i++)
-        {
+        for (int i = 0; i < buildingClaim.size(); i++) {
             final CompoundTag perColonyCompound = buildingClaim.getCompound(i);
             final int id = perColonyCompound.getInt(TAG_ID);
             final Set<BlockPos> buildings = claimingBuildings.computeIfAbsent(id, HashSet::new);
 
             final ListTag buildingList = perColonyCompound.getList(TAG_BUILDING_CLAIM, Tag.TAG_COMPOUND);
-            for (int j = 0; j < buildingList.size(); j++)
-            {
+            for (int j = 0; j < buildingList.size(); j++) {
                 buildings.add(BlockPosUtil.readFromListNBT(buildingList, j));
             }
         }
 
-        if (owningColony == NO_COLONY_ID && !getStaticClaimColonies().isEmpty())
-        {
+        if (owningColony == NO_COLONY_ID && !getStaticClaimColonies().isEmpty()) {
             owningColony = getStaticClaimColonies().get(0);
         }
     }

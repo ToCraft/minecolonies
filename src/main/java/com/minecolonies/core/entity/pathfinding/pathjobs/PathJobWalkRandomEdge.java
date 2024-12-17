@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Walks to a random edge block nearby, a block next to air. Does not use ladders
  */
-public class PathJobWalkRandomEdge extends AbstractPathJob implements ISearchPathJob
-{
+public class PathJobWalkRandomEdge extends AbstractPathJob implements ISearchPathJob {
     /**
      * The chance to check if the node is an edge, determines the random edge behaviour
      */
@@ -27,33 +26,26 @@ public class PathJobWalkRandomEdge extends AbstractPathJob implements ISearchPat
     private final BlockPos searchAroundPos;
 
     public PathJobWalkRandomEdge(
-      final Level world,
-      @NotNull final BlockPos searchAroundPos, final int range, final Mob entity)
-    {
+            final Level world,
+            @NotNull final BlockPos searchAroundPos, final int range, final Mob entity) {
         super(world, PathfindingUtils.prepareStart(entity), range, new PathResult<PathJobWalkRandomEdge>(), entity);
         this.searchAroundPos = searchAroundPos;
     }
 
     @Override
-    protected double computeHeuristic(final int x, final int y, final int z)
-    {
+    protected double computeHeuristic(final int x, final int y, final int z) {
         return BlockPosUtil.distManhattan(searchAroundPos, x, y, z);
     }
 
     @Override
-    protected boolean isAtDestination(final MNode n)
-    {
-        if (searchAroundPos.getY() - n.y > 3)
-        {
+    protected boolean isAtDestination(final MNode n) {
+        if (searchAroundPos.getY() - n.y > 3) {
             return false;
         }
 
-        if (ColonyConstants.rand.nextInt(NODE_EDGE_CHANCE) == 0)
-        {
-            for (final Direction direction : Direction.Plane.HORIZONTAL)
-            {
-                if (cachedBlockLookup.getBlockState(n.x + direction.getStepX(), n.y - 1 + direction.getStepY(), n.z + direction.getStepZ()).isAir())
-                {
+        if (ColonyConstants.rand.nextInt(NODE_EDGE_CHANCE) == 0) {
+            for (final Direction direction : Direction.Plane.HORIZONTAL) {
+                if (cachedBlockLookup.getBlockState(n.x + direction.getStepX(), n.y - 1 + direction.getStepY(), n.z + direction.getStepZ()).isAir()) {
                     return true;
                 }
             }
@@ -63,8 +55,7 @@ public class PathJobWalkRandomEdge extends AbstractPathJob implements ISearchPat
     }
 
     @Override
-    public double getEndNodeScore(final MNode n)
-    {
+    public double getEndNodeScore(final MNode n) {
         return BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
     }
 }

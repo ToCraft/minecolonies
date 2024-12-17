@@ -16,21 +16,18 @@ import java.util.function.Function;
 /**
  * The worker module for citizen where they are assigned to if they work at it.
  */
-public class NoPrivateCrafterWorkerModule extends WorkerBuildingModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
-{
+public class NoPrivateCrafterWorkerModule extends WorkerBuildingModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule {
     public NoPrivateCrafterWorkerModule(
-      final JobEntry entry,
-      final Skill primary,
-      final Skill secondary,
-      final boolean canWorkingDuringRain,
-      final Function<IBuilding, Integer> sizeLimit)
-    {
+            final JobEntry entry,
+            final Skill primary,
+            final Skill secondary,
+            final boolean canWorkingDuringRain,
+            final Function<IBuilding, Integer> sizeLimit) {
         super(entry, primary, secondary, canWorkingDuringRain, sizeLimit);
     }
 
     @Override
-    public List<IRequestResolver<?>> createResolvers()
-    {
+    public List<IRequestResolver<?>> createResolvers() {
         return ImmutableList.of(new BuildingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
     }
 }

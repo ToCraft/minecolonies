@@ -3,8 +3,7 @@ package com.minecolonies.api.entity.ai.statemachine.states;
 /**
  * Basic state enclosing states all ai's use. Please extend this class with the states your ai needs. And please document each state on what it does.
  */
-public enum AIWorkerState implements IAIState
-{
+public enum AIWorkerState implements IAIState {
 
     /*
 ###GENERAL###
@@ -679,8 +678,7 @@ public enum AIWorkerState implements IAIState
      *
      * @param okayToEat if okay.
      */
-    AIWorkerState(final boolean okayToEat)
-    {
+    AIWorkerState(final boolean okayToEat) {
         this.isOkayToEat = okayToEat;
     }
 
@@ -689,8 +687,7 @@ public enum AIWorkerState implements IAIState
      *
      * @return true if so.
      */
-    public boolean isOkayToEat()
-    {
+    public boolean isOkayToEat() {
         return isOkayToEat;
     }
 }

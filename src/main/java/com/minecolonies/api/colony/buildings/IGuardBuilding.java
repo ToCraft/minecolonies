@@ -6,8 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
-public interface IGuardBuilding extends IBuilding
-{
+public interface IGuardBuilding extends IBuilding {
     /**
      * Worker gets this distance times building level away from his/her hut to patrol.
      */
@@ -20,15 +19,12 @@ public interface IGuardBuilding extends IBuilding
      * @param player  the player.
      * @return false if in follow mode and following the player.
      */
-    static boolean checkIfGuardShouldTakeDamage(final AbstractEntityCitizen citizen, final Player player)
-    {
+    static boolean checkIfGuardShouldTakeDamage(final AbstractEntityCitizen citizen, final Player player) {
         final IBuilding buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
-        if (!(buildingWorker instanceof IGuardBuilding))
-        {
+        if (!(buildingWorker instanceof IGuardBuilding)) {
             return true;
         }
-        if (player.equals(((IGuardBuilding) buildingWorker).getPlayerToFollowOrRally()))
-        {
+        if (player.equals(((IGuardBuilding) buildingWorker).getPlayerToFollowOrRally())) {
             return false;
         }
         return true;
@@ -70,6 +66,7 @@ public interface IGuardBuilding extends IBuilding
      * @return if so.
      */
     boolean shallRetrieveOnLowHealth();
+
     /**
      * Get whether the guard should patrol manually.
      *

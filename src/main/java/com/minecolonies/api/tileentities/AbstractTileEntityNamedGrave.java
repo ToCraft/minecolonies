@@ -20,46 +20,39 @@ import java.util.ArrayList;
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CONTENT;
 
-public class AbstractTileEntityNamedGrave extends BlockEntity
-{
+public class AbstractTileEntityNamedGrave extends BlockEntity {
     /**
      * The position it faces.
      */
-    public static final DirectionProperty FACING       = HorizontalDirectionalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     /**
      * The text displayed on the name plate
      */
     private ArrayList<String> textLines = new ArrayList<>();
 
-    public AbstractTileEntityNamedGrave(BlockEntityType<?> tileEntityTypeIn, final BlockPos pos, final BlockState state)
-    {
+    public AbstractTileEntityNamedGrave(BlockEntityType<?> tileEntityTypeIn, final BlockPos pos, final BlockState state) {
         super(tileEntityTypeIn, pos, state);
         textLines.add("Unknown Citizen");
     }
 
-    public ArrayList<String> getTextLines()
-    {
+    public ArrayList<String> getTextLines() {
         return textLines;
     }
 
-    public void setTextLines(final ArrayList<String> content)
-    {
+    public void setTextLines(final ArrayList<String> content) {
         this.textLines = content;
         setChanged();
     }
 
     @Override
-    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.loadAdditional(compound, provider);
 
         textLines.clear();
-        if (compound.contains(TAG_CONTENT))
-        {
+        if (compound.contains(TAG_CONTENT)) {
             final ListTag lines = compound.getList(TAG_CONTENT, TAG_STRING);
-            for (int i = 0; i < lines.size(); i++)
-            {
+            for (int i = 0; i < lines.size(); i++) {
                 final String line = lines.getString(i);
                 textLines.add(line);
             }
@@ -67,48 +60,40 @@ public class AbstractTileEntityNamedGrave extends BlockEntity
     }
 
     @Override
-    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.saveAdditional(compound, provider);
 
         @NotNull final ListTag lines = new ListTag();
-        for (@NotNull final String line : textLines)
-        {
+        for (@NotNull final String line : textLines) {
             lines.add(StringTag.valueOf(line));
         }
         compound.put(TAG_CONTENT, lines);
     }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket()
-    {
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider) {
         return this.saveWithId(provider);
     }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
-    {
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider) {
         this.loadAdditional(packet.getTag(), provider);
     }
 
     @Override
-    public void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider)
-    {
+    public void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider) {
         this.loadAdditional(tag, provider);
     }
 
     @Override
-    public void setChanged()
-    {
-        if (level != null)
-        {
+    public void setChanged() {
+        if (level != null) {
             WorldUtil.markChunkDirty(level, worldPosition);
         }
     }

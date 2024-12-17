@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for spearman amazons.
  */
-public class RendererAmazonSpearman extends AbstractRendererAmazon<AbstractEntityAmazon, ModelAmazonSpearman>
-{
+public class RendererAmazonSpearman extends AbstractRendererAmazon<AbstractEntityAmazon, ModelAmazonSpearman> {
     /**
      * Texture of the entity.
      */
@@ -22,15 +21,13 @@ public class RendererAmazonSpearman extends AbstractRendererAmazon<AbstractEntit
      *
      * @param context the renderManager
      */
-    public RendererAmazonSpearman(final EntityRendererProvider.Context context)
-    {
+    public RendererAmazonSpearman(final EntityRendererProvider.Context context) {
         super(context, new ModelAmazonSpearman(context.bakeLayer(ClientRegistryHandler.AMAZON_SPEARMAN)), 0.5F);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(@NotNull final AbstractEntityAmazon entity)
-    {
+    public ResourceLocation getTextureLocation(@NotNull final AbstractEntityAmazon entity) {
         return TEXTURE;
     }
 }

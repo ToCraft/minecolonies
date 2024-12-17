@@ -29,8 +29,7 @@ import java.util.List;
  *     <li>All working positions must have water directly overhead of them, else the seagrass won't be able to grow.</li>
  * </ol>
  */
-public class SeapicklePlantModule extends BoneMealedPlantModule
-{
+public class SeapicklePlantModule extends BoneMealedPlantModule {
     /**
      * The maximum amount of sea pickles that can be planted.
      */
@@ -44,39 +43,31 @@ public class SeapicklePlantModule extends BoneMealedPlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public SeapicklePlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
-    {
+    public SeapicklePlantModule(final IField field, final String fieldTag, final String workTag, final Item item) {
         super(field, fieldTag, workTag, item);
     }
 
     @Override
-    public EquipmentTypeEntry getRequiredTool()
-    {
+    public EquipmentTypeEntry getRequiredTool() {
         return ModEquipmentTypes.none.get();
     }
 
     @Override
-    public PlantationModuleResult.Builder decideFieldWork(final Level world, final @NotNull BlockPos workPosition)
-    {
+    public PlantationModuleResult.Builder decideFieldWork(final Level world, final @NotNull BlockPos workPosition) {
         // Sea pickles do not work entirely the same as regular bonemeal fields,
         // because they actually require having manually planted the pickles and then continue to grow them
         // by applying additional bonemeal.
         BlockState state = world.getBlockState(workPosition.above());
-        if (state.getBlock().equals(Blocks.WATER))
-        {
+        if (state.getBlock().equals(Blocks.WATER)) {
             return new PlantationModuleResult.Builder().plant(workPosition.above()).pickNewPosition();
-        }
-        else
-        {
+        } else {
             return super.decideFieldWork(world, workPosition);
         }
     }
 
     @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
-        if (blockState.getBlock() instanceof SeaPickleBlock)
-        {
+    protected boolean isValidHarvestBlock(final BlockState blockState) {
+        if (blockState.getBlock() instanceof SeaPickleBlock) {
             final Integer value = blockState.getValue(SeaPickleBlock.PICKLES);
             return value >= SeaPickleBlock.MAX_PICKLES;
         }
@@ -84,10 +75,8 @@ public class SeapicklePlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    protected boolean isValidBonemealLocation(final BlockState blockState)
-    {
-        if (blockState.getBlock() instanceof SeaPickleBlock)
-        {
+    protected boolean isValidBonemealLocation(final BlockState blockState) {
+        if (blockState.getBlock() instanceof SeaPickleBlock) {
             final Integer value = blockState.getValue(SeaPickleBlock.PICKLES);
             return value < SeaPickleBlock.MAX_PICKLES;
         }
@@ -95,22 +84,19 @@ public class SeapicklePlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    protected int getMaxWorkingPositions()
-    {
+    protected int getMaxWorkingPositions() {
         return MAX_PLANTS;
     }
 
     @Override
-    public @NonNull List<Item> getValidBonemeal()
-    {
+    public @NonNull List<Item> getValidBonemeal() {
         // Only base minecraft bonemeal has water growing capabilities.
         // Compost (by design) should not inherit this functionality.
         return List.of(Items.BONE_MEAL);
     }
 
     @Override
-    public void applyBonemeal(final AbstractEntityCitizen worker, final BlockPos workPosition, final ItemStack stackInSlot, final Player fakePlayer)
-    {
+    public void applyBonemeal(final AbstractEntityCitizen worker, final BlockPos workPosition, final ItemStack stackInSlot, final Player fakePlayer) {
         BoneMealItem.applyBonemeal(stackInSlot, worker.level(), workPosition.above(), fakePlayer);
         BoneMealItem.addGrowthParticles(worker.level(), workPosition.above(), 1);
     }

@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Interface that describes an object that can be located in the Minecraft universe and can request objects inside a colony.
  */
-public interface IRequester
-{
+public interface IRequester {
     /**
      * Method to get the ID of a given requester.
      *

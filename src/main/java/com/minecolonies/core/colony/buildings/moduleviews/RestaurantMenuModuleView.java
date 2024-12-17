@@ -20,54 +20,47 @@ import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCoo
 /**
  * Client side version of food menu.
  */
-public class RestaurantMenuModuleView extends AbstractBuildingModuleView
-{
+public class RestaurantMenuModuleView extends AbstractBuildingModuleView {
     /**
      * The menu.
      */
     private final List<ItemStorage> menu = new ArrayList<>();
 
     @Override
-    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf) {
         menu.clear();
         final int size = buf.readInt();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             menu.add(new ItemStorage(Utils.deserializeCodecMess(buf)));
         }
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new RestaurantMenuModuleWindow(buildingView, this);
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return FOOD_EXCLUSION_LIST;
     }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return RequestSystemTranslationConstants.REQUESTS_TYPE_FOOD;
     }
 
     /**
      * Get the menu for the restaurant.
+     *
      * @return the menu.
      */
-    public List<ItemStorage> getMenu()
-    {
+    public List<ItemStorage> getMenu() {
         return menu;
     }
 
-    public boolean hasReachedLimit()
-    {
+    public boolean hasReachedLimit() {
         return menu.size() >= buildingView.getBuildingLevel() * STOCK_PER_LEVEL;
     }
 }

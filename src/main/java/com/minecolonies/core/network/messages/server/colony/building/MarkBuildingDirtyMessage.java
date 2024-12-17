@@ -15,23 +15,19 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  *
  * @author xavierh
  */
-public class MarkBuildingDirtyMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class MarkBuildingDirtyMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "mark_building_dirty", MarkBuildingDirtyMessage::new);
 
-    protected MarkBuildingDirtyMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected MarkBuildingDirtyMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
     }
 
-    public MarkBuildingDirtyMessage(final IBuildingView building)
-    {
+    public MarkBuildingDirtyMessage(final IBuildingView building) {
         super(TYPE, building);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
         building.markDirty();
     }
 }

@@ -9,18 +9,15 @@ import org.jetbrains.annotations.NotNull;
  * Hut for the plantation. No different from {@link AbstractBlockHut}
  */
 
-public class BlockHutPlantation extends AbstractBlockHut<BlockHutPlantation>
-{
+public class BlockHutPlantation extends AbstractBlockHut<BlockHutPlantation> {
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhutplantation";
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.plantation.get();
     }
 }

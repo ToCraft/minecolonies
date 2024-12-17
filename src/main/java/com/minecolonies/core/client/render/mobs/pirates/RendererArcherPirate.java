@@ -1,17 +1,16 @@
 package com.minecolonies.core.client.render.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Renderer used for Barbarians And Archer Barbarians.
  */
-public class RendererArcherPirate extends AbstractRendererPirate<AbstractEntityPirate, HumanoidModel<AbstractEntityPirate>>
-{
+public class RendererArcherPirate extends AbstractRendererPirate<AbstractEntityPirate, HumanoidModel<AbstractEntityPirate>> {
     /**
      * Texture of the entity.
      */
@@ -25,17 +24,14 @@ public class RendererArcherPirate extends AbstractRendererPirate<AbstractEntityP
      *
      * @param context the renderManager
      */
-    public RendererArcherPirate(final EntityRendererProvider.Context context)
-    {
+    public RendererArcherPirate(final EntityRendererProvider.Context context) {
         super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)), 0.5F);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityPirate entity)
-    {
-        switch (entity.getTextureId())
-        {
+    public ResourceLocation getTextureLocation(final AbstractEntityPirate entity) {
+        switch (entity.getTextureId()) {
             case 0:
                 return TEXTURE1;
             case 1:

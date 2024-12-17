@@ -12,8 +12,7 @@ import java.util.List;
 /**
  * Capability for the colony tag for chunks
  */
-public interface IServerColonySaveData
-{
+public interface IServerColonySaveData {
     /**
      * Create a colony and return it.
      *
@@ -63,6 +62,7 @@ public interface IServerColonySaveData
 
     /**
      * Set as overworld.
+     *
      * @param b if overworld.
      * @return itself.
      */
@@ -70,16 +70,15 @@ public interface IServerColonySaveData
 
     /**
      * Get the save data for a given server level.
+     *
      * @param level the server level to get it from.
      * @return the savedata.
      */
-    static IServerColonySaveData getOrComputeSaveData(final ServerLevel level)
-    {
+    static IServerColonySaveData getOrComputeSaveData(final ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(ServerColonySaveData.FACTORY, ServerColonySaveData.NAME).setOverworld(level.dimension() == Level.OVERWORLD);
     }
 
-    static IServerColonySaveData getSaveData(final ServerLevel level)
-    {
+    static IServerColonySaveData getSaveData(final ServerLevel level) {
         return level.getDataStorage().get(ServerColonySaveData.FACTORY, ServerColonySaveData.NAME);
     }
 }

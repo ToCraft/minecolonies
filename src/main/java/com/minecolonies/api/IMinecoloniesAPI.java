@@ -21,8 +21,8 @@ import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
-import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
+import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
@@ -32,11 +32,9 @@ import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import net.minecraft.core.Registry;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
-public interface IMinecoloniesAPI
-{
+public interface IMinecoloniesAPI {
 
-    static IMinecoloniesAPI getInstance()
-    {
+    static IMinecoloniesAPI getInstance() {
         return MinecoloniesAPIProxy.getInstance();
     }
 

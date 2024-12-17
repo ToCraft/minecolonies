@@ -24,30 +24,24 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class TileEntityDecoControllerRenderer implements BlockEntityRenderer<BlockEntity>
-{
+public class TileEntityDecoControllerRenderer implements BlockEntityRenderer<BlockEntity> {
     private BlockRenderDispatcher blockRenderer;
 
-    public TileEntityDecoControllerRenderer(BlockEntityRendererProvider.Context p_173623_)
-    {
+    public TileEntityDecoControllerRenderer(BlockEntityRendererProvider.Context p_173623_) {
         this.blockRenderer = p_173623_.getBlockRenderDispatcher();
     }
 
     @Override
-    public void render(@NotNull BlockEntity blockEntity, float partialTick, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource bufferSource, int lightA, int lightB)
-    {
-        if (blockEntity instanceof TileEntityDecorationController decorationController)
-        {
+    public void render(@NotNull BlockEntity blockEntity, float partialTick, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource bufferSource, int lightA, int lightB) {
+        if (blockEntity instanceof TileEntityDecorationController decorationController) {
             Level level = blockEntity.getLevel();
-            if (level != null)
-            {
+            if (level != null) {
                 final BlockState decoController = decorationController.getBlockState();
                 final Direction direction = decoController.getValue(BlockDecorationController.FACING);
                 final BlockPos offsetPos = blockEntity.getBlockPos().relative(direction);
                 final BlockState state = level.getBlockState(offsetPos);
                 final VoxelShape shape = state.getShape(level, offsetPos);
-                if (shape.isEmpty() || Block.isShapeFullBlock(shape))
-                {
+                if (shape.isEmpty() || Block.isShapeFullBlock(shape)) {
                     ModelBlockRenderer.enableCaching();
                     matrixStack.pushPose();
 
@@ -58,18 +52,16 @@ public class TileEntityDecoControllerRenderer implements BlockEntityRenderer<Blo
                     return;
                 }
 
-                final Vec3 translateVec = switch (direction)
-                {
+                final Vec3 translateVec = switch (direction) {
                     case UP -> new Vec3(0, shape.min(Direction.Axis.Y), 0);
-                    case DOWN -> new Vec3(0, shape.max(Direction.Axis.Y)-1, 0);
-                    case NORTH -> new Vec3(0, 0, shape.max(Direction.Axis.Z)-1);
+                    case DOWN -> new Vec3(0, shape.max(Direction.Axis.Y) - 1, 0);
+                    case NORTH -> new Vec3(0, 0, shape.max(Direction.Axis.Z) - 1);
                     case SOUTH -> new Vec3(0, 0, shape.min(Direction.Axis.Z));
-                    case EAST -> new Vec3( shape.min(Direction.Axis.X), 0, 0);
-                    case WEST -> new Vec3(shape.max(Direction.Axis.X)-1, 0, 0);
+                    case EAST -> new Vec3(shape.min(Direction.Axis.X), 0, 0);
+                    case WEST -> new Vec3(shape.max(Direction.Axis.X) - 1, 0, 0);
                 };
 
-                if (!decoController.isAir())
-                {
+                if (!decoController.isAir()) {
                     ModelBlockRenderer.enableCaching();
                     matrixStack.pushPose();
                     matrixStack.translate(translateVec.x, translateVec.y, translateVec.z);
@@ -83,10 +75,9 @@ public class TileEntityDecoControllerRenderer implements BlockEntityRenderer<Blo
         }
     }
 
-    private void renderBlock(BlockPos pos, BlockState state, PoseStack poseStack, MultiBufferSource buffer, Level level, int light)
-    {
+    private void renderBlock(BlockPos pos, BlockState state, PoseStack poseStack, MultiBufferSource buffer, Level level, int light) {
         VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.cutout());
         this.blockRenderer.getModelRenderer()
-          .tesselateBlock(level, this.blockRenderer.getBlockModel(state), state, pos, poseStack, vertexconsumer, false, RandomSource.create(), state.getSeed(pos), light);
+                .tesselateBlock(level, this.blockRenderer.getBlockModel(state), state, pos, poseStack, vertexconsumer, false, RandomSource.create(), state.getSeed(pos), light);
     }
 }

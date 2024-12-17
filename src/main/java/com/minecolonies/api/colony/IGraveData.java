@@ -6,8 +6,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Data to store in a citizen grave
  */
-public interface IGraveData
-{
+public interface IGraveData {
     /**
      * get the data NBT of the citizen .
      */
@@ -43,12 +42,14 @@ public interface IGraveData
 
     /**
      * Read this CitizenData from the compoundNBT
+     *
      * @param compoundNBT
      */
     void read(CompoundTag compoundNBT);
 
     /**
      * Write this CitizenData to a coumpoundNBT
+     *
      * @return
      */
     CompoundTag write();

@@ -93,7 +93,10 @@
       }
     },
     {
-      "unlocks-rewards": [0, 1],
+      "unlocks-rewards": [
+        0,
+        1
+      ],
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Oh, this was great! Thanks a lot!",

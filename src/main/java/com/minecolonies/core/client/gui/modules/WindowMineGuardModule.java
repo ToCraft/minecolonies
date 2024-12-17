@@ -21,14 +21,13 @@ import java.util.stream.Collectors;
 /**
  * BOWindow for the miner hut.
  */
-public class WindowMineGuardModule  extends AbstractModuleWindow
-{
-    private static final String                        LIST_GUARDS               = "guards";
-    private static final String                        BUTTON_ASSIGNGUARD        = "assignGuard";
-    private static final String                        HUT_MINER_RESOURCE_SUFFIX = ":gui/layouthuts/layoutguardlist.xml";
+public class WindowMineGuardModule extends AbstractModuleWindow {
+    private static final String LIST_GUARDS = "guards";
+    private static final String BUTTON_ASSIGNGUARD = "assignGuard";
+    private static final String HUT_MINER_RESOURCE_SUFFIX = ":gui/layouthuts/layoutguardlist.xml";
 
-    private              ScrollingList                 guardsList;
-    private              List<ICitizenDataView>        guardsInfo = new ArrayList<>();
+    private ScrollingList guardsList;
+    private List<ICitizenDataView> guardsInfo = new ArrayList<>();
     private int assignedGuards;
 
     /**
@@ -36,33 +35,26 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
      *
      * @param building {@link IBuildingView}.
      */
-    public WindowMineGuardModule(final IBuildingView building)
-    {
+    public WindowMineGuardModule(final IBuildingView building) {
         super(building, Constants.MOD_ID + HUT_MINER_RESOURCE_SUFFIX);
         pullGuardsFromHut();
 
         registerButton(BUTTON_ASSIGNGUARD, this::assignGuardClicked);
     }
 
-    private void assignGuardClicked(final Button button)
-    {
+    private void assignGuardClicked(final Button button) {
         final int guardRow = guardsList.getListElementIndexByPane(button);
         final ICitizenDataView guard = guardsInfo.get(guardRow);
-        if (guard != null)
-        {
+        if (guard != null) {
             final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) buildingView.getColony().getBuilding(guard.getWorkBuilding());
-            if (guardbuilding.getMinePos() == null)
-            {
-                if (assignedGuards < getMaxGuards())
-                {
+            if (guardbuilding.getMinePos() == null) {
+                if (assignedGuards < getMaxGuards()) {
                     new GuardSetMinePosMessage(guardbuilding, buildingView.getPosition()).sendToServer();
                     button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonunassign"));
                     guardbuilding.setMinePos(buildingView.getPosition());
                     assignedGuards++;
                 }
-            }
-            else if (guardbuilding.getMinePos().equals(buildingView.getPosition()))
-            {
+            } else if (guardbuilding.getMinePos().equals(buildingView.getPosition())) {
                 new GuardSetMinePosMessage(guardbuilding).sendToServer();
                 button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonassign"));
                 guardbuilding.setMinePos(null);
@@ -75,34 +67,26 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
     /**
      * Retrieve guards from the building to display in GUI.
      */
-    private void pullGuardsFromHut()
-    {
-        if (buildingView.getColony().getBuilding(buildingView.getID()) != null)
-        {
+    private void pullGuardsFromHut() {
+        if (buildingView.getColony().getBuilding(buildingView.getID()) != null) {
             guardsInfo.clear();
             assignedGuards = 0;
             final List<IBuildingView> buildings = buildingView.getColony().getBuildings().stream().filter(entry -> entry instanceof AbstractBuildingGuards.View && entry.getModuleViewByType(
-              SettingsModuleView.class).getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(
-              GuardTaskSetting.PATROL_MINE)).collect(Collectors.toList());
-            for (final IBuildingView building : buildings)
-            {
+                    SettingsModuleView.class).getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(
+                    GuardTaskSetting.PATROL_MINE)).collect(Collectors.toList());
+            for (final IBuildingView building : buildings) {
                 final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) building;
-                if (guardbuilding.getMinePos() != null && guardbuilding.getMinePos().equals(buildingView.getPosition()))
-                {
+                if (guardbuilding.getMinePos() != null && guardbuilding.getMinePos().equals(buildingView.getPosition())) {
                     assignedGuards++;
                 }
-                for (final Integer citizenId : guardbuilding.getGuards())
-                {
+                for (final Integer citizenId : guardbuilding.getGuards()) {
                     guardsInfo.add(buildingView.getColony().getCitizen(citizenId));
                 }
             }
 
-            if (guardsInfo.isEmpty())
-            {
+            if (guardsInfo.isEmpty()) {
                 findPaneOfTypeByID("noguardwarning", Text.class).setVisible(true);
-            }
-            else
-            {
+            } else {
                 findPaneOfTypeByID("noguardwarning", Text.class).setVisible(false);
             }
         }
@@ -113,12 +97,11 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
      * 1 guard for mine level 1 and 2
      * 2 guards for mine level 3 and 4
      * 3 guards for mine level 5
+     *
      * @return maximum number of guards
      */
-    public int getMaxGuards()
-    {
-        switch (buildingView.getBuildingLevel())
-        {
+    public int getMaxGuards() {
+        switch (buildingView.getBuildingLevel()) {
             case 1:
             case 2:
                 return 1;
@@ -133,54 +116,39 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         guardsList = findPaneOfTypeByID(LIST_GUARDS, ScrollingList.class);
         guardsList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return guardsInfo.size();
             }
 
             @Override
-            public void updateElement(final int i, final Pane pane)
-            {
+            public void updateElement(final int i, final Pane pane) {
                 final ICitizenDataView citizen = guardsInfo.get(i);
-                if (citizen != null)
-                {
+                if (citizen != null) {
                     final IBuildingView building = buildingView.getColony().getBuilding(citizen.getWorkBuilding());
-                    if (building instanceof AbstractBuildingGuards.View)
-                    {
+                    if (building instanceof AbstractBuildingGuards.View) {
                         pane.findPaneOfTypeByID("guardName", Text.class).setText(Component.literal(citizen.getName()));
                         final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) building;
                         final Button button = pane.findPaneOfTypeByID("assignGuard", Button.class);
-                        if (guardbuilding.getMinePos() == null)
-                        {
+                        if (guardbuilding.getMinePos() == null) {
                             button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonassign"));
-                            if (assignedGuards >= getMaxGuards())
-                            {
+                            if (assignedGuards >= getMaxGuards()) {
                                 button.setEnabled(false);
-                            }
-                            else
-                            {
+                            } else {
                                 button.setEnabled(true);
                             }
-                        }
-                        else if (guardbuilding.getMinePos().equals(buildingView.getPosition()))
-                        {
+                        } else if (guardbuilding.getMinePos().equals(buildingView.getPosition())) {
                             button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonunassign"));
-                        }
-                        else
-                        {
+                        } else {
                             button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonassign"));
                             button.setEnabled(false);
                         }
                     }
-                }
-                else
-                {
+                } else {
                     final Button button = pane.findPaneOfTypeByID("assignGuard", Button.class);
                     button.setEnabled(false);
                 }
@@ -189,8 +157,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
         pullGuardsFromHut();
     }

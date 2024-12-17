@@ -19,19 +19,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLORS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TYPE;
 
 /**
  * Utility class for summoning in fireworks.
  */
 
-public final class FireworkUtils
-{
+public final class FireworkUtils {
     /**
      * Private constructor to hide the public one
      */
-    private FireworkUtils()
-    {
+    private FireworkUtils() {
 
     }
 
@@ -42,8 +41,7 @@ public final class FireworkUtils
      * @param world          which world to spawn it in from
      * @param explosionLevel how many fireworks to spawn in each corner
      */
-    public static void spawnFireworksAtAABBCorners(final Tuple<BlockPos, BlockPos> realaabb, final Level world, final int explosionLevel)
-    {
+    public static void spawnFireworksAtAABBCorners(final Tuple<BlockPos, BlockPos> realaabb, final Level world, final int explosionLevel) {
         fireRocket(world, new BlockPos(realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getB().getZ()), explosionLevel);
         fireRocket(world, new BlockPos(realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getA().getZ()), explosionLevel);
         fireRocket(world, new BlockPos(realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getB().getZ()), explosionLevel);
@@ -57,10 +55,8 @@ public final class FireworkUtils
      * @param position       the position to fire the rocket from.
      * @param explosionLevel how many fireworks to spawn in each corner.
      */
-    private static void fireRocket(final Level world, final BlockPos position, final int explosionLevel)
-    {
-        if (world.canSeeSky(position))
-        {
+    private static void fireRocket(final Level world, final BlockPos position, final int explosionLevel) {
+        if (world.canSeeSky(position)) {
             final FireworkRocketEntity firework = new FireworkRocketEntity(world, position.getX(), position.getY(), position.getZ(), genFireworkItemStack(explosionLevel));
             world.addFreshEntity(firework);
         }
@@ -72,16 +68,14 @@ public final class FireworkUtils
      * @param explosionAmount the amount of explosions.
      * @return ItemStack of random firework.
      */
-    private static ItemStack genFireworkItemStack(final int explosionAmount)
-    {
+    private static ItemStack genFireworkItemStack(final int explosionAmount) {
         final Random rand = new Random();
         final ItemStack fireworkItem = new ItemStack(Items.FIREWORK_ROCKET);
         List<FireworkExplosion> list = new ArrayList<>();
 
         final int[] dyeColors = Arrays.stream(DyeColor.values()).mapToInt(DyeColor::getFireworkColor).toArray();
 
-        for (int i = 0; i < explosionAmount; i++)
-        {
+        for (int i = 0; i < explosionAmount; i++) {
             final CompoundTag explosionTag = new CompoundTag();
 
             explosionTag.putInt(TAG_TYPE, rand.nextInt(5));
@@ -89,8 +83,7 @@ public final class FireworkUtils
             final int numberOfColours = rand.nextInt(3) + 1;
             final IntList colors = new IntArrayList();
 
-            for (int ia = 0; ia < numberOfColours; ia++)
-            {
+            for (int ia = 0; ia < numberOfColours; ia++) {
                 colors.add(dyeColors[rand.nextInt(15)]);
             }
             explosionTag.putIntArray(TAG_COLORS, colors);

@@ -14,8 +14,7 @@ import java.util.function.Predicate;
 /**
  * Utility class to store all validator predicates for the chat handling.
  */
-public final class InteractionValidatorRegistry
-{
+public final class InteractionValidatorRegistry {
     /**
      * Map of all validator predicates.
      */
@@ -37,8 +36,7 @@ public final class InteractionValidatorRegistry
      * @param key the key of it.
      * @return the predicate.
      */
-    public static Predicate<ICitizenData> getStandardInteractionValidatorPredicate(final Component key)
-    {
+    public static Predicate<ICitizenData> getStandardInteractionValidatorPredicate(final Component key) {
         return map.get(key);
     }
 
@@ -48,8 +46,7 @@ public final class InteractionValidatorRegistry
      * @param key the key of it.
      * @return the predicate.
      */
-    public static BiPredicate<ICitizenData, BlockPos> getPosBasedInteractionValidatorPredicate(final Component key)
-    {
+    public static BiPredicate<ICitizenData, BlockPos> getPosBasedInteractionValidatorPredicate(final Component key) {
         return posMap.get(key);
     }
 
@@ -59,8 +56,7 @@ public final class InteractionValidatorRegistry
      * @param key the key of it.
      * @return the predicate.
      */
-    public static BiPredicate<ICitizenData, IToken<?>> getTokenBasedInteractionValidatorPredicate(final Component key)
-    {
+    public static BiPredicate<ICitizenData, IToken<?>> getTokenBasedInteractionValidatorPredicate(final Component key) {
         return tokenMap.get(key);
     }
 
@@ -70,8 +66,7 @@ public final class InteractionValidatorRegistry
      * @param key       it's key.
      * @param predicate it's predicate.
      */
-    public static void registerStandardPredicate(final Component key, final Predicate<ICitizenData> predicate)
-    {
+    public static void registerStandardPredicate(final Component key, final Predicate<ICitizenData> predicate) {
         map.put(key, predicate);
     }
 
@@ -81,8 +76,7 @@ public final class InteractionValidatorRegistry
      * @param key       it's key.
      * @param predicate it's predicate.
      */
-    public static void registerPosBasedPredicate(final Component key, final BiPredicate<ICitizenData, BlockPos> predicate)
-    {
+    public static void registerPosBasedPredicate(final Component key, final BiPredicate<ICitizenData, BlockPos> predicate) {
         posMap.put(key, predicate);
     }
 
@@ -92,8 +86,7 @@ public final class InteractionValidatorRegistry
      * @param key       it's key.
      * @param predicate it's predicate.
      */
-    public static void registerTokenBasedPredicate(final Component key, final BiPredicate<ICitizenData, IToken<?>> predicate)
-    {
+    public static void registerTokenBasedPredicate(final Component key, final BiPredicate<ICitizenData, IToken<?>> predicate) {
         tokenMap.put(key, predicate);
     }
 
@@ -103,16 +96,14 @@ public final class InteractionValidatorRegistry
      * @param component the key to check.
      * @return true if so.
      */
-    public static boolean hasValidator(final MutableComponent component)
-    {
+    public static boolean hasValidator(final MutableComponent component) {
         return map.containsKey(component) || posMap.containsKey(component) || tokenMap.containsKey(component);
     }
 
     /**
      * Private constructor to hide public one.
      */
-    private InteractionValidatorRegistry()
-    {
+    private InteractionValidatorRegistry() {
         /*
          * Intentionally left empty.
          */

@@ -12,9 +12,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -27,8 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * Class to render the scarecrow.
  */
 @OnlyIn(Dist.CLIENT)
-public class TileEntityScarecrowRenderer implements BlockEntityRenderer<AbstractTileEntityScarecrow>
-{
+public class TileEntityScarecrowRenderer implements BlockEntityRenderer<AbstractTileEntityScarecrow> {
     /**
      * Offset to the block middle.
      */
@@ -71,34 +70,32 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
     private ScarecrowModel model;
 
     public static final Material SCARECROW_A;
-    public static final Material       SCARECROW_B;
-    static
-    {
+    public static final Material SCARECROW_B;
+
+    static {
         SCARECROW_A = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Constants.MOD_ID, "block/blockscarecrowpumpkin"));
         SCARECROW_B = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(Constants.MOD_ID, "block/blockscarecrownormal"));
     }
+
     /**
      * The public constructor for the renderer.
      *
      * @param context the render context.
      */
-    public TileEntityScarecrowRenderer(final BlockEntityRendererProvider.Context context)
-    {
+    public TileEntityScarecrowRenderer(final BlockEntityRendererProvider.Context context) {
         super();
         this.model = new ScarecrowModel(context.bakeLayer(ClientRegistryHandler.SCARECROW));
     }
 
     @Override
     public void render(
-      final AbstractTileEntityScarecrow te,
-      final float partialTicks,
-      final PoseStack matrixStack,
-      @NotNull final MultiBufferSource iRenderTypeBuffer,
-      final int lightA,
-      final int lightB)
-    {
-        if (te.getBlockState().getValue(BlockScarecrow.HALF) == DoubleBlockHalf.UPPER)
-        {
+            final AbstractTileEntityScarecrow te,
+            final float partialTicks,
+            final PoseStack matrixStack,
+            @NotNull final MultiBufferSource iRenderTypeBuffer,
+            final int lightA,
+            final int lightB) {
+        if (te.getBlockState().getValue(BlockScarecrow.HALF) == DoubleBlockHalf.UPPER) {
             return;
         }
         //Store the transformation
@@ -108,11 +105,9 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
         matrixStack.mulPose(Axis.ZP.rotationDegrees(ROTATION));
 
         //In the case of worldLags tileEntities may sometimes disappear.
-        if (te.getLevel().getBlockState(te.getBlockPos()).getBlock() instanceof BlockScarecrow)
-        {
+        if (te.getLevel().getBlockState(te.getBlockPos()).getBlock() instanceof BlockScarecrow) {
             final Direction facing = te.getLevel().getBlockState(te.getBlockPos()).getValue(AbstractBlockMinecoloniesDefault.FACING);
-            switch (facing)
-            {
+            switch (facing) {
                 case EAST:
                     matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
                     break;
@@ -139,14 +134,10 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
      * @return the material.
      */
     @NotNull
-    private static Material getMaterial(@NotNull final AbstractTileEntityScarecrow tileEntity)
-    {
-        if (tileEntity.getScarecrowType() == ScareCrowType.PUMPKINHEAD)
-        {
+    private static Material getMaterial(@NotNull final AbstractTileEntityScarecrow tileEntity) {
+        if (tileEntity.getScarecrowType() == ScareCrowType.PUMPKINHEAD) {
             return SCARECROW_A;
-        }
-        else
-        {
+        } else {
             return SCARECROW_B;
         }
     }

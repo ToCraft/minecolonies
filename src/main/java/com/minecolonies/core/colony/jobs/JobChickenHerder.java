@@ -3,7 +3,6 @@ package com.minecolonies.core.colony.jobs;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
-import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.entity.ai.workers.production.herders.EntityAIWorkChickenHerder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -17,15 +16,13 @@ import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STA
 /**
  * The Chicken Herder job
  */
-public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, JobChickenHerder>
-{
+public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, JobChickenHerder> {
     /**
      * Instantiates the placeholder job.
      *
      * @param entity the entity.
      */
-    public JobChickenHerder(final ICitizenData entity)
-    {
+    public JobChickenHerder(final ICitizenData entity) {
         super(entity);
     }
 
@@ -36,18 +33,15 @@ public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, Job
      */
     @Nullable
     @Override
-    public EntityAIWorkChickenHerder generateAI()
-    {
+    public EntityAIWorkChickenHerder generateAI() {
         return new EntityAIWorkChickenHerder(this);
     }
 
     @Override
-    public boolean pickupSuccess(@NotNull final ItemStack pickedUpStack)
-    {
-        if (pickedUpStack.getItem() == Items.FEATHER || pickedUpStack.getItem() == Items.EGG)
-        {
+    public boolean pickupSuccess(@NotNull final ItemStack pickedUpStack) {
+        if (pickedUpStack.getItem() == Items.FEATHER || pickedUpStack.getItem() == Items.EGG) {
             return getCitizen().getRandom()
-              .nextInt((getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(BuildingModules.CHICKENHERDER_WORK).getPrimarySkill()))) > 1;
+                    .nextInt((getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(BuildingModules.CHICKENHERDER_WORK).getPrimarySkill()))) > 1;
         }
         return true;
     }
@@ -59,17 +53,14 @@ public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, Job
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.CHICKEN_FARMER_ID;
     }
 
     @Override
-    public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack)
-    {
+    public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack) {
         if (getCitizen().getWorkBuilding() != null && getCitizen().getEntity().isPresent() && getCitizen().getWorkBuilding()
-          .isInBuilding(getCitizen().getEntity().get().blockPosition()))
-        {
+                .isInBuilding(getCitizen().getEntity().get().blockPosition())) {
             getCitizen().getWorkBuilding().getModule(STATS_MODULE).incrementBy(ITEM_USED + ";" + pickedUpStack.getItem().getDescriptionId(), pickedUpStack.getCount());
         }
 

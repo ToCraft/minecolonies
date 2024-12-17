@@ -24,8 +24,7 @@ import java.util.Set;
 /**
  * Sends visitor data to the client
  */
-public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
-{
+public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_visitor_view_data", ColonyVisitorViewDataMessage::new);
 
     /**
@@ -58,8 +57,7 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
      *
      * @param colony Colony of the citizen
      */
-    public ColonyVisitorViewDataMessage(@NotNull final IColony colony, @NotNull final Set<IVisitorData> visitors, final boolean refresh)
-    {
+    public ColonyVisitorViewDataMessage(@NotNull final IColony colony, @NotNull final Set<IVisitorData> visitors, final boolean refresh) {
         super(TYPE);
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
@@ -68,15 +66,13 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
 
         visitorBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), colony.getWorld().registryAccess());
         visitorBuf.writeInt(visitors.size());
-        for (final IVisitorData data : visitors)
-        {
+        for (final IVisitorData data : visitors) {
             visitorBuf.writeInt(data.getId());
             data.serializeViewNetworkData(visitorBuf);
         }
     }
 
-    public ColonyVisitorViewDataMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public ColonyVisitorViewDataMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
@@ -85,8 +81,7 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         visitorBuf.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
@@ -95,16 +90,12 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, dimension);
 
-        if (colony == null)
-        {
+        if (colony == null) {
             Log.getLogger().warn("Received visitor data for nonexisting colony:" + colonyId + " dim:" + dimension);
-        }
-        else
-        {
+        } else {
             colony.handleColonyViewVisitorMessage(visitorBuf, refresh);
         }
     }

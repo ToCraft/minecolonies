@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Updates the request state of a request.
  */
-public class UpdateRequestStateMessage extends AbstractColonyServerMessage
-{
+public class UpdateRequestStateMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "update_request_state", UpdateRequestStateMessage::new);
 
     /**
@@ -44,16 +43,14 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
      * @param itemStack the involved itemStack.
      * @param colony    the colony of the network message
      */
-    public UpdateRequestStateMessage(final IColony colony, final IToken<?> requestId, final RequestState state, final ItemStack itemStack)
-    {
+    public UpdateRequestStateMessage(final IColony colony, final IToken<?> requestId, final RequestState state, final ItemStack itemStack) {
         super(TYPE, colony);
         this.token = requestId;
         this.state = state;
         this.itemStack = itemStack;
     }
 
-    protected UpdateRequestStateMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected UpdateRequestStateMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         token = StandardFactoryController.getInstance().deserialize(buf);
         state = RequestState.values()[buf.readInt()];
@@ -61,22 +58,18 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         StandardFactoryController.getInstance().serialize(buf, token);
         buf.writeInt(state.ordinal());
-        if (state == RequestState.OVERRULED)
-        {
+        if (state == RequestState.OVERRULED) {
             Utils.serializeCodecMess(buf, itemStack);
         }
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
-        if (state == RequestState.OVERRULED)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
+        if (state == RequestState.OVERRULED) {
             colony.getRequestManager().overruleRequest(token, itemStack);
             return;
         }

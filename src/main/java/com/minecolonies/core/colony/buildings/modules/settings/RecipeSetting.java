@@ -21,14 +21,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Stores a recipe based setting.
  */
-public class RecipeSetting implements ICraftingSetting
-{
+public class RecipeSetting implements ICraftingSetting {
     /**
      * Current index of the setting.
      */
@@ -41,33 +41,29 @@ public class RecipeSetting implements ICraftingSetting
 
     /**
      * Create a new crafting setting.
+     *
      * @param craftingModuleId the crafting module id.
      */
-    public RecipeSetting(final String craftingModuleId)
-    {
+    public RecipeSetting(final String craftingModuleId) {
         this.craftingModuleId = craftingModuleId;
     }
 
     /**
      * Create a new string list setting.
      *
-     * @param selectedRecipe the current selected recipe.
+     * @param selectedRecipe   the current selected recipe.
      * @param craftingModuleId the crafting module id.
      */
-    public RecipeSetting(final IToken<?> selectedRecipe, final String craftingModuleId)
-    {
+    public RecipeSetting(final IToken<?> selectedRecipe, final String craftingModuleId) {
         this.selectedRecipe = selectedRecipe;
         this.craftingModuleId = craftingModuleId;
     }
 
     @Override
-    public IRecipeStorage getValue(final IBuilding building)
-    {
+    public IRecipeStorage getValue(final IBuilding building) {
         final ICraftingBuildingModule craftingModule = building.getModuleMatching(ICraftingBuildingModule.class, m -> m.getId().equals(craftingModuleId));
-        for (final IToken<?> token : craftingModule.getRecipes())
-        {
-            if (token.equals(selectedRecipe))
-            {
+        for (final IToken<?> token : craftingModule.getRecipes()) {
+            if (token.equals(selectedRecipe)) {
                 return IColonyManager.getInstance().getRecipeManager().getRecipe(selectedRecipe);
             }
         }
@@ -77,14 +73,11 @@ public class RecipeSetting implements ICraftingSetting
     }
 
     @Override
-    public IRecipeStorage getValue(final IBuildingView building)
-    {
+    public IRecipeStorage getValue(final IBuildingView building) {
         final CraftingModuleView craftingModule = building.getModuleViewMatching(CraftingModuleView.class, m -> m.getId().equals(craftingModuleId));
 
-        for (final IRecipeStorage recipe : craftingModule.getRecipes())
-        {
-            if (recipe.getToken().equals(selectedRecipe))
-            {
+        for (final IRecipeStorage recipe : craftingModule.getRecipes()) {
+            if (recipe.getToken().equals(selectedRecipe)) {
                 return recipe;
             }
         }
@@ -94,59 +87,50 @@ public class RecipeSetting implements ICraftingSetting
     }
 
     @Override
-    public List<ItemStack> getSettings(final IBuilding building)
-    {
+    public List<ItemStack> getSettings(final IBuilding building) {
         final List<ItemStack> settings = new ArrayList<>();
-        for (final IToken<?> token : building.getFirstModuleOccurance(ICraftingBuildingModule.class).getRecipes())
-        {
+        for (final IToken<?> token : building.getFirstModuleOccurance(ICraftingBuildingModule.class).getRecipes()) {
             settings.add(IColonyManager.getInstance().getRecipeManager().getRecipe(token).getPrimaryOutput());
         }
         return new ArrayList<>(settings);
     }
 
     @Override
-    public List<ItemStack> getSettings(final IBuildingView building)
-    {
+    public List<ItemStack> getSettings(final IBuildingView building) {
         final List<ItemStack> settings = new ArrayList<>();
-        for (final IRecipeStorage recipe : building.getModuleViewByType(CraftingModuleView.class).getRecipes())
-        {
+        for (final IRecipeStorage recipe : building.getModuleViewByType(CraftingModuleView.class).getRecipes()) {
             settings.add(recipe.getPrimaryOutput());
         }
         return new ArrayList<>(settings);
     }
 
     @Override
-    public ResourceLocation getLayoutItem()
-    {
+    public ResourceLocation getLayoutItem() {
         return new ResourceLocation("minecolonies", "gui/layouthuts/layoutcraftingsetting.xml");
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
     public void setupHandler(
-      final ISettingKey<?> key,
-      final Pane pane,
-      final ISettingsModuleView settingsModuleView,
-      final IBuildingView building,
-      final BOWindow window)
-    {
+            final ISettingKey<?> key,
+            final Pane pane,
+            final ISettingsModuleView settingsModuleView,
+            final IBuildingView building,
+            final BOWindow window) {
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(input -> {
             final List<IRecipeStorage> list = building.getModuleViewByType(CraftingModuleView.class).getRecipes();
             int currentIntIndex = 0;
 
             int index = 0;
-            for (final IRecipeStorage recipe : list)
-            {
-                if (recipe.getToken().equals(selectedRecipe))
-                {
+            for (final IRecipeStorage recipe : list) {
+                if (recipe.getToken().equals(selectedRecipe)) {
                     currentIntIndex = index;
                     break;
                 }
                 index++;
             }
             int newIndex = currentIntIndex + 1;
-            if (newIndex >= list.size())
-            {
+            if (newIndex >= list.size()) {
                 newIndex = 0;
             }
 
@@ -157,12 +141,11 @@ public class RecipeSetting implements ICraftingSetting
 
     @Override
     public void render(
-      final ISettingKey<?> key,
-      final Pane pane,
-      final ISettingsModuleView settingsModuleView,
-      final IBuildingView building,
-      final BOWindow window)
-    {
+            final ISettingKey<?> key,
+            final Pane pane,
+            final ISettingsModuleView settingsModuleView,
+            final IBuildingView building,
+            final BOWindow window) {
         final IRecipeStorage stack = getValue(building);
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setEnabled(isActive(settingsModuleView));
@@ -173,42 +156,35 @@ public class RecipeSetting implements ICraftingSetting
     }
 
     @Override
-    public void set(final IRecipeStorage value)
-    {
+    public void set(final IRecipeStorage value) {
         selectedRecipe = value.getToken();
     }
 
     @Override
-    public boolean isActive(final ISettingsModule module)
-    {
+    public boolean isActive(final ISettingsModule module) {
         final ICraftingBuildingModule craftingModule = module.getBuilding().getModuleMatching(ICraftingBuildingModule.class, m -> m.getId().equals(craftingModuleId));
         return !craftingModule.getRecipes().isEmpty();
     }
 
     @Override
-    public boolean isActive(final ISettingsModuleView module)
-    {
+    public boolean isActive(final ISettingsModuleView module) {
         final CraftingModuleView craftingModule = module.getBuildingView().getModuleViewMatching(CraftingModuleView.class, m -> m.getId().equals(craftingModuleId));
         return craftingModule != null && !craftingModule.getRecipes().isEmpty();
     }
 
     @Override
-    public IToken<?> getValue()
-    {
+    public IToken<?> getValue() {
         return selectedRecipe;
     }
 
     @Override
-    public boolean shouldHideWhenInactive()
-    {
+    public boolean shouldHideWhenInactive() {
         return true;
     }
 
     @Override
-    public void copyValue(final ISetting<?> setting)
-    {
-        if (setting instanceof final RecipeSetting other)
-        {
+    public void copyValue(final ISetting<?> setting) {
+        if (setting instanceof final RecipeSetting other) {
             selectedRecipe = other.selectedRecipe;
         }
     }

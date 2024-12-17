@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-public class StandardRecipeManager implements IRecipeManager
-{
+public class StandardRecipeManager implements IRecipeManager {
     /**
      * The Tag to store the recipes to NBT.
      */
@@ -51,24 +50,20 @@ public class StandardRecipeManager implements IRecipeManager
     private ListTag nbtCache = null;
 
     @Override
-    public ImmutableMap<IToken<?>, IRecipeStorage> getRecipes()
-    {
-        if (cache == null)
-        {
+    public ImmutableMap<IToken<?>, IRecipeStorage> getRecipes() {
+        if (cache == null) {
             cache = ImmutableMap.copyOf(recipes);
         }
         return cache;
     }
 
     @Override
-    public IRecipeStorage getRecipe(final IToken<?> token)
-    {
+    public IRecipeStorage getRecipe(final IToken<?> token) {
         return recipes.get(token);
     }
 
     @Override
-    public IToken<?> addRecipe(final IRecipeStorage storage)
-    {
+    public IToken<?> addRecipe(final IRecipeStorage storage) {
         recipes.put(storage.getToken(), storage);
         registerUse(storage.getToken());
         cache = null;
@@ -77,11 +72,9 @@ public class StandardRecipeManager implements IRecipeManager
     }
 
     @Override
-    public IToken<?> checkOrAddRecipe(final IRecipeStorage storage)
-    {
+    public IToken<?> checkOrAddRecipe(final IRecipeStorage storage) {
         final IToken<?> token = getRecipeId(storage);
-        if (token == null)
-        {
+        if (token == null) {
             return addRecipe(storage);
         }
         registerUse(token);
@@ -89,16 +82,13 @@ public class StandardRecipeManager implements IRecipeManager
     }
 
     @Override
-    public IToken<?> getRecipeId(final IRecipeStorage storage)
-    {
+    public IToken<?> getRecipeId(final IRecipeStorage storage) {
         return recipes.inverse().get(storage);
     }
 
     @Override
-    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
-        if (dirty || nbtCache == null)
-        {
+    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
+        if (dirty || nbtCache == null) {
             nbtCache = recipes.entrySet().stream().filter(recipeEntry -> usedRecipes.contains(recipeEntry.getKey())).map(entry -> StandardFactoryController.getInstance().serializeTag(provider, entry.getValue())).collect(NBTUtils.toListNBT());
         }
 
@@ -107,20 +97,14 @@ public class StandardRecipeManager implements IRecipeManager
     }
 
     @Override
-    public void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         final ListTag list = compound.getList(TAG_RECIPES, Tag.TAG_COMPOUND);
-        for (int i = 0; i < list.size(); i++)
-        {
+        for (int i = 0; i < list.size(); i++) {
             IRecipeStorage recipe = StandardFactoryController.getInstance().deserializeTag(provider, list.getCompound(i));
-            if (recipe != null && !recipes.containsValue(recipe) && !recipe.getCleanedInput().isEmpty())
-            {
-                try
-                {
+            if (recipe != null && !recipes.containsValue(recipe) && !recipe.getCleanedInput().isEmpty()) {
+                try {
                     recipes.put(recipe.getToken(), recipe);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     // Eat the exception
                 }
             }
@@ -130,17 +114,14 @@ public class StandardRecipeManager implements IRecipeManager
     }
 
     @Override
-    public void reset()
-    {
+    public void reset() {
         recipes.clear();
         usedRecipes.clear();
     }
 
     @Override
-    public void registerUse(final IToken<?> token)
-    {
-        if (usedRecipes.contains(token))
-        {
+    public void registerUse(final IToken<?> token) {
+        if (usedRecipes.contains(token)) {
             return;
         }
         usedRecipes.add(token);

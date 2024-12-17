@@ -8,19 +8,15 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Update fix to lumberjack
  */
-public class ResetRSToStoreJobInResolvers implements IUpdateStep
-{
+public class ResetRSToStoreJobInResolvers implements IUpdateStep {
     @Override
-    public int updatesToVersion()
-    {
+    public int updatesToVersion() {
         return 13;
     }
 
     @Override
-    public void update(@NotNull final UpdateType type, @NotNull final IStandardRequestManager manager)
-    {
-        if (type == UpdateType.DATA_LOAD)
-        {
+    public void update(@NotNull final UpdateType type, @NotNull final IStandardRequestManager manager) {
+        if (type == UpdateType.DATA_LOAD) {
             manager.reset();
         }
     }

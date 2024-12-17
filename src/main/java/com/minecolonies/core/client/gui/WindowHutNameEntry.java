@@ -14,14 +14,14 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
+
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_NAME_TOO_LONG;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * BOWindow for a hut name entry.
  */
-public class WindowHutNameEntry extends BOWindow implements ButtonHandler
-{
+public class WindowHutNameEntry extends BOWindow implements ButtonHandler {
     /**
      * The max length of the name.
      */
@@ -42,40 +42,32 @@ public class WindowHutNameEntry extends BOWindow implements ButtonHandler
      *
      * @param b {@link AbstractBuilding}
      */
-    public WindowHutNameEntry(final IBuildingView b)
-    {
+    public WindowHutNameEntry(final IBuildingView b) {
         super(ResourceLocation.parse(Constants.MOD_ID + HUT_NAME_RESOURCE_SUFFIX));
         this.building = b;
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(Component.translatable(building.getCustomName().toLowerCase(Locale.US)).getString());
     }
 
     @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        if (button.getID().equals(BUTTON_DONE))
-        {
+    public void onButtonClicked(@NotNull final Button button) {
+        if (button.getID().equals(BUTTON_DONE)) {
             String name = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
 
-            if (name.length() > MAX_NAME_LENGTH)
-            {
+            if (name.length() > MAX_NAME_LENGTH) {
                 name = name.substring(0, MAX_NAME_LENGTH);
                 MessageUtils.format(WARNING_NAME_TOO_LONG, name).sendTo(Minecraft.getInstance().player);
             }
 
             building.setCustomName(name);
-        }
-        else if (!button.getID().equals(BUTTON_CANCEL))
-        {
+        } else if (!button.getID().equals(BUTTON_CANCEL)) {
             return;
         }
 
-        if (building != null)
-        {
+        if (building != null) {
             building.openGui(false);
         }
     }

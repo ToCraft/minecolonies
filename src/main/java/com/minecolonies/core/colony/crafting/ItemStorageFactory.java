@@ -9,18 +9,15 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Factory implementation taking care of creating new instances, serializing and deserializing ItemStorage.
  */
-public class ItemStorageFactory implements IItemStorageFactory
-{
+public class ItemStorageFactory implements IItemStorageFactory {
     /**
      * Compound tag for the size.
      */
@@ -43,22 +40,19 @@ public class ItemStorageFactory implements IItemStorageFactory
 
     @NotNull
     @Override
-    public TypeToken<ItemStorage> getFactoryOutputType()
-    {
+    public TypeToken<ItemStorage> getFactoryOutputType() {
         return TypeConstants.ITEMSTORAGE;
     }
 
     @NotNull
     @Override
-    public TypeToken<FactoryVoidInput> getFactoryInputType()
-    {
+    public TypeToken<FactoryVoidInput> getFactoryInputType() {
         return TypeConstants.FACTORYVOIDINPUT;
     }
 
     @NotNull
     @Override
-    public ItemStorage getNewInstance(@NotNull final ItemStack stack, final int size, final boolean ignoreDamage, final boolean ignoreNBT)
-    {
+    public ItemStorage getNewInstance(@NotNull final ItemStack stack, final int size, final boolean ignoreDamage, final boolean ignoreNBT) {
         ItemStorage newItem = new ItemStorage(stack, ignoreDamage, ignoreNBT);
         newItem.setAmount(size);
         return newItem;
@@ -67,20 +61,18 @@ public class ItemStorageFactory implements IItemStorageFactory
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final ItemStorage storage)
-    {
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final ItemStorage storage) {
         final CompoundTag compound = new CompoundTag();
         compound.put(TAG_STACK, storage.getItemStack().saveOptional(provider));
         compound.putInt(TAG_SIZE, storage.getAmount());
         compound.putBoolean(TAG_SHOULDIGNOREDAMAGE, storage.ignoreDamageValue());
-        compound.putBoolean(TAG_SHOULDIGNORENBT , storage.ignoreNBT());
+        compound.putBoolean(TAG_SHOULDIGNORENBT, storage.ignoreNBT());
         return compound;
     }
 
     @NotNull
     @Override
-    public ItemStorage deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
-    {
+    public ItemStorage deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) {
         final ItemStack stack = ItemStack.parseOptional(provider, nbt.getCompound(TAG_STACK));
         final int size = nbt.getInt(TAG_SIZE);
         final boolean ignoreNBT = nbt.getBoolean(TAG_SHOULDIGNORENBT);
@@ -89,16 +81,12 @@ public class ItemStorageFactory implements IItemStorageFactory
     }
 
     @Override
-    public void serialize(IFactoryController controller, ItemStorage input, RegistryFriendlyByteBuf packetBuffer)
-    {
+    public void serialize(IFactoryController controller, ItemStorage input, RegistryFriendlyByteBuf packetBuffer) {
         // Backup functionality.
         int writerIndex = packetBuffer.writerIndex();
-        try
-        {
+        try {
             Utils.serializeCodecMess(packetBuffer, input.getItemStack());
-        }
-        catch (final Exception ex)
-        {
+        } catch (final Exception ex) {
             packetBuffer.writerIndex(writerIndex);
             Utils.serializeCodecMess(packetBuffer, ItemStack.EMPTY);
         }
@@ -109,8 +97,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     }
 
     @Override
-    public ItemStorage deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
-    {
+    public ItemStorage deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable {
         final ItemStack stack = Utils.deserializeCodecMess(buffer);
         final int size = buffer.readVarInt();
         final boolean ignoreDamage = buffer.readBoolean();
@@ -119,8 +106,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     }
 
     @Override
-    public short getSerializationId()
-    {
+    public short getSerializationId() {
         return SerializationIdentifierConstants.ITEM_STORAGE_ID;
     }
 }

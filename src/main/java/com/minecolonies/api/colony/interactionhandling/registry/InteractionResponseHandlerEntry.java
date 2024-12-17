@@ -12,18 +12,16 @@ import java.util.function.Function;
  * Entry for the {@link IInteractionResponseHandler} registry.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public final class InteractionResponseHandlerEntry
-{
+public final class InteractionResponseHandlerEntry {
     private final Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer;
-    private ResourceLocation                                registryName;
+    private ResourceLocation registryName;
 
     /**
      * Builder for a {@link InteractionResponseHandlerEntry}.
      */
-    public static final class Builder
-    {
+    public static final class Builder {
         private Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer;
-        private ResourceLocation                                registryName;
+        private ResourceLocation registryName;
 
         /**
          * Setter the for the producer.
@@ -31,8 +29,7 @@ public final class InteractionResponseHandlerEntry
          * @param responseHandlerProducer The producer for {@link IInteractionResponseHandler}.
          * @return The builder.
          */
-        public Builder setResponseHandlerProducer(final Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer)
-        {
+        public Builder setResponseHandlerProducer(final Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer) {
             this.responseHandlerProducer = responseHandlerProducer;
             return this;
         }
@@ -43,8 +40,7 @@ public final class InteractionResponseHandlerEntry
          * @param registryName The registry name.
          * @return The builder.
          */
-        public Builder setRegistryName(final ResourceLocation registryName)
-        {
+        public Builder setRegistryName(final ResourceLocation registryName) {
             this.registryName = registryName;
             return this;
         }
@@ -55,8 +51,7 @@ public final class InteractionResponseHandlerEntry
          * @return The created {@link InteractionResponseHandlerEntry}.
          */
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder is explicitly allowed to create one.
-        public InteractionResponseHandlerEntry createEntry()
-        {
+        public InteractionResponseHandlerEntry createEntry() {
             Objects.requireNonNull(responseHandlerProducer);
             Objects.requireNonNull(registryName);
 
@@ -69,13 +64,11 @@ public final class InteractionResponseHandlerEntry
      *
      * @return The created {@link IInteractionResponseHandler}.
      */
-    public Function<ICitizen, IInteractionResponseHandler> getProducer()
-    {
+    public Function<ICitizen, IInteractionResponseHandler> getProducer() {
         return responseHandlerProducer;
     }
 
-    private InteractionResponseHandlerEntry(final Function<ICitizen, IInteractionResponseHandler> producer, final ResourceLocation registryName)
-    {
+    private InteractionResponseHandlerEntry(final Function<ICitizen, IInteractionResponseHandler> producer, final ResourceLocation registryName) {
         super();
         this.responseHandlerProducer = producer;
         this.registryName = registryName;

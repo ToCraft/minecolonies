@@ -31,8 +31,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Handles the sleep of the citizen.
  */
-public class CitizenSleepHandler implements ICitizenSleepHandler
-{
+public class CitizenSleepHandler implements ICitizenSleepHandler {
     /**
      * The additional weight for Y diff
      */
@@ -41,7 +40,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     /**
      * The rough time traveling one block takes, in ticks
      */
-    private static final double TIME_PER_BLOCK           = 6;
+    private static final double TIME_PER_BLOCK = 6;
     private static final double MAX_NO_COMPLAIN_DISTANCE = 160;
 
     /**
@@ -54,8 +53,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
      *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenSleepHandler(final AbstractEntityCitizen citizen)
-    {
+    public CitizenSleepHandler(final AbstractEntityCitizen citizen) {
         this.citizen = citizen;
     }
 
@@ -65,10 +63,8 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
      * @return true when a sleep.
      */
     @Override
-    public boolean isAsleep()
-    {
-        if (citizen.getCitizenData() != null)
-        {
+    public boolean isAsleep() {
+        if (citizen.getCitizenData() != null) {
             return citizen.getCitizenData().isAsleep();
         }
 
@@ -80,10 +76,8 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
      *
      * @param isAsleep True to make the citizen sleep.
      */
-    private void setIsAsleep(final boolean isAsleep)
-    {
-        if (citizen.getCitizenData() != null)
-        {
+    private void setIsAsleep(final boolean isAsleep) {
+        if (citizen.getCitizenData() != null) {
             citizen.getCitizenData().setAsleep(isAsleep);
         }
         citizen.getEntityData().set(DATA_IS_ASLEEP, isAsleep);
@@ -95,13 +89,11 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
      * @param bedLocation The possible location to sleep.
      */
     @Override
-    public boolean trySleep(final BlockPos bedLocation)
-    {
+    public boolean trySleep(final BlockPos bedLocation) {
         final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.level(), bedLocation) ? citizen.level().getBlockState(bedLocation) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.level(), bedLocation, citizen);
 
-        if (!isBed)
-        {
+        if (!isBed) {
             return false;
         }
 
@@ -113,8 +105,8 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         final double xOffset = state.getValue(BedBlock.FACING).getAxis() == Direction.Axis.X && citizen.getCitizenData().isChild() ? 0 : HALF_BLOCK;
 
         citizen.setPos(((double) bedLocation.getX() + xOffset),
-          (double) bedLocation.getY() + 0.6875D,
-          ((double) bedLocation.getZ() + zOffset));
+                (double) bedLocation.getY() + 0.6875D,
+                ((double) bedLocation.getZ() + zOffset));
         citizen.setSleepingPos(bedLocation);
 
         citizen.setDeltaMovement(Vec3.ZERO);
@@ -127,8 +119,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.HIDDEN));
 
-        if (citizen.getCitizenData() != null)
-        {
+        if (citizen.getCitizenData() != null) {
             citizen.getCitizenData().setBedPos(bedLocation);
         }
         citizen.getEntityData().set(DATA_BED_POS, bedLocation);
@@ -142,13 +133,11 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
      * Called when the citizen wakes up.
      */
     @Override
-    public void onWakeUp()
-    {
+    public void onWakeUp() {
         notifyCitizenHandlersOfWakeUp();
 
         //Only do this if he really sleeps
-        if (isAsleep())
-        {
+        if (isAsleep()) {
             spawnCitizenFromBed();
         }
 
@@ -157,61 +146,45 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         setIsAsleep(false);
     }
 
-    private void notifyCitizenHandlersOfWakeUp()
-    {
-        if (citizen.getCitizenColonyHandler().getWorkBuilding() != null)
-        {
+    private void notifyCitizenHandlersOfWakeUp() {
+        if (citizen.getCitizenColonyHandler().getWorkBuilding() != null) {
             citizen.getCitizenColonyHandler().getWorkBuilding().onWakeUp();
         }
-        if (citizen.getCitizenJobHandler().getColonyJob() != null)
-        {
+        if (citizen.getCitizenJobHandler().getColonyJob() != null) {
             citizen.getCitizenJobHandler().getColonyJob().onWakeUp();
         }
 
         final IBuilding homeBuilding = citizen.getCitizenColonyHandler().getHomeBuilding();
-        if (homeBuilding != null)
-        {
+        if (homeBuilding != null) {
             homeBuilding.onWakeUp();
         }
     }
 
-    private void spawnCitizenFromBed()
-    {
+    private void spawnCitizenFromBed() {
         final BlockPos spawn;
         final BlockState bedState = getBedLocation().equals(BlockPos.ZERO) ? null : citizen.level().getBlockState(getBedLocation());
-        if (!getBedLocation().equals(BlockPos.ZERO) && bedState.is(BlockTags.BEDS))
-        {
-            if (bedState.getValue(BedBlock.PART) == BedPart.HEAD)
-            {
+        if (!getBedLocation().equals(BlockPos.ZERO) && bedState.is(BlockTags.BEDS)) {
+            if (bedState.getValue(BedBlock.PART) == BedPart.HEAD) {
                 final BlockPos relPos = getBedLocation().relative(bedState.getValue(BedBlock.FACING).getOpposite());
                 final BlockState lowerState = citizen.level().getBlockState(relPos);
-                if (lowerState.is(BlockTags.BEDS) && lowerState.getValue(BedBlock.PART) == BedPart.FOOT)
-                {
+                if (lowerState.is(BlockTags.BEDS) && lowerState.getValue(BedBlock.PART) == BedPart.FOOT) {
                     spawn = EntityUtils.getSpawnPoint(citizen.level(), relPos);
-                }
-                else
-                {
+                } else {
                     spawn = EntityUtils.getSpawnPoint(citizen.level(), getBedLocation());
                 }
-            }
-            else
-            {
+            } else {
                 spawn = EntityUtils.getSpawnPoint(citizen.level(), getBedLocation());
             }
-        }
-        else
-        {
+        } else {
             spawn = citizen.blockPosition();
         }
 
-        if (spawn != null && !spawn.equals(BlockPos.ZERO))
-        {
+        if (spawn != null && !spawn.equals(BlockPos.ZERO)) {
             citizen.setPos(spawn.getX() + HALF_BLOCK, spawn.getY(), spawn.getZ() + HALF_BLOCK);
         }
 
         setIsAsleep(false);
-        if (citizen.getCitizenData() != null)
-        {
+        if (citizen.getCitizenData() != null) {
             citizen.getCitizenData().setBedPos(new BlockPos(0, 0, 0));
         }
         citizen.getEntityData().set(DATA_BED_POS, new BlockPos(0, 0, 0));
@@ -223,31 +196,26 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
      * @return the bed location.
      */
     @Override
-    public BlockPos getBedLocation()
-    {
+    public BlockPos getBedLocation() {
         return citizen.getEntityData().get(DATA_BED_POS);
     }
 
     @Override
-    public boolean shouldGoSleep()
-    {
+    public boolean shouldGoSleep() {
         final BlockPos homePos = citizen.getCitizenData().getHomePosition();
         BlockPos citizenPos = citizen.blockPosition();
-        if (homePos == null)
-        {
+        if (homePos == null) {
             return false;
         }
 
         int additionalDist = 0;
 
-        if(citizen.isInvisible())
-        {
+        if (citizen.isInvisible()) {
             return false;
         }
 
         // Additional distance for miners
-        if (citizen.getCitizenData().getJob() instanceof JobMiner && citizen.getCitizenData().getWorkBuilding().getPosition().getY() - 20 > citizenPos.getY())
-        {
+        if (citizen.getCitizenData().getJob() instanceof JobMiner && citizen.getCitizenData().getWorkBuilding().getPosition().getY() - 20 > citizenPos.getY()) {
             final BlockPos workPos = citizen.getCitizenData().getWorkBuilding().getID();
             additionalDist = (int) BlockPosUtil.getDistance2D(citizenPos, workPos) + Math.abs(citizenPos.getY() - workPos.getY()) * 3;
             citizenPos = workPos;
@@ -262,16 +230,13 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         // Estimated arrival is 1hour past night
         final double timeLeft = (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) == 0
-                                   ? NIGHT : NIGHT + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) * 1000) - (citizen.level().getDayTime() % 24000);
-        if (timeLeft <= 0 || (timeLeft - timeNeeded <= 0))
-        {
-            if (citizen.getCitizenData().getWorkBuilding() != null)
-            {
+                ? NIGHT : NIGHT + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) * 1000) - (citizen.level().getDayTime() % 24000);
+        if (timeLeft <= 0 || (timeLeft - timeNeeded <= 0)) {
+            if (citizen.getCitizenData().getWorkBuilding() != null) {
                 final double workHomeDistance = Math.sqrt(BlockPosUtil.getDistanceSquared(homePos, citizen.getCitizenData().getWorkBuilding().getID()));
-                if (workHomeDistance > MAX_NO_COMPLAIN_DISTANCE)
-                {
+                if (workHomeDistance > MAX_NO_COMPLAIN_DISTANCE) {
                     citizen.getCitizenData()
-                      .triggerInteraction(new SimpleNotificationInteraction(Component.translatableEscape("com.minecolonies.coremod.gui.chat.hometoofar"), ChatPriority.IMPORTANT));
+                            .triggerInteraction(new SimpleNotificationInteraction(Component.translatableEscape("com.minecolonies.coremod.gui.chat.hometoofar"), ChatPriority.IMPORTANT));
                 }
             }
             return true;

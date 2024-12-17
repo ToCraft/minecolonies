@@ -12,24 +12,20 @@ import java.util.function.Consumer;
 /**
  * Datagen for StoneSmeltery
  */
-public class DefaultStoneSmelteryCraftingProvider extends CustomRecipeProvider
-{
+public class DefaultStoneSmelteryCraftingProvider extends CustomRecipeProvider {
     private static final String STONE_SMELTERY = ModJobs.STONE_SMELTERY_ID.getPath();
 
-    public DefaultStoneSmelteryCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultStoneSmelteryCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "DefaultStoneSmelteryCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
     }
 }

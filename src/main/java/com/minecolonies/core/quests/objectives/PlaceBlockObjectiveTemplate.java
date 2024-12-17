@@ -26,8 +26,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 /**
  * Objective type tracking block placing.
  */
-public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTemplate implements IPlaceBlockObjectiveTemplate
-{
+public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTemplate implements IPlaceBlockObjectiveTemplate {
     /**
      * Amount of blocks to place.
      */
@@ -47,12 +46,11 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
      * Create a new objective of this type.
      *
      * @param target       the target citizen.
-     * @param qty the number of blocks to place.
-     * @param blockToPlace  the block to place.
-     * @param rewards the rewards this unlocks.
+     * @param qty          the number of blocks to place.
+     * @param blockToPlace the block to place.
+     * @param rewards      the rewards this unlocks.
      */
-    public PlaceBlockObjectiveTemplate(final int target, final int qty, final Block blockToPlace, final int nextObjective, final List<Integer> rewards)
-    {
+    public PlaceBlockObjectiveTemplate(final int target, final int qty, final Block blockToPlace, final int nextObjective, final List<Integer> rewards) {
         super(target, buildDialogueTree(blockToPlace), rewards);
         this.qty = qty;
         this.nextObjective = nextObjective;
@@ -60,8 +58,7 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     }
 
     @NotNull
-    private static DialogueElement buildDialogueTree(final Block blockToMine)
-    {
+    private static DialogueElement buildDialogueTree(final Block blockToMine) {
         final Component text = Component.translatableEscape("com.minecolonies.coremod.questobjectives.placeblock", blockToMine.getName());
         final AnswerElement answer1 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.later"),
                 new IQuestDialogueAnswer.CloseUIDialogueAnswer());
@@ -72,11 +69,11 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
 
     /**
      * Parse the mine block objective from json.
+     *
      * @param jsonObject the json to parse it from.
      * @return a new objective object.
      */
-    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject)
-    {
+    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject) {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
@@ -87,11 +84,9 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     }
 
     @Override
-    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
-    {
+    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest) {
         super.startObjective(colonyQuest);
-        if (colonyQuest.getColony() instanceof Colony)
-        {
+        if (colonyQuest.getColony() instanceof Colony) {
             // Only serverside cleanup.
             QuestObjectiveEventHandler.addQuestPlaceObjectiveListener(this.blockToPlace, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
@@ -99,65 +94,55 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     }
 
     @Override
-    public Component getProgressText(final IQuestInstance quest, final Style style)
-    {
-        if (quest.getCurrentObjectiveInstance() instanceof BlockPlacementProgressInstance progress)
-        {
+    public Component getProgressText(final IQuestInstance quest, final Style style) {
+        if (quest.getCurrentObjectiveInstance() instanceof BlockPlacementProgressInstance progress) {
             return Component.translatableEscape("com.minecolonies.coremod.questobjectives.placeblock.progress",
-              progress.currentProgress,
-              blockToPlace,
-              blockToPlace.getName().setStyle(style));
+                    progress.currentProgress,
+                    blockToPlace,
+                    blockToPlace.getName().setStyle(style));
         }
         return Component.empty();
     }
 
     @Override
-    public @Nullable IObjectiveInstance createObjectiveInstance()
-    {
+    public @Nullable IObjectiveInstance createObjectiveInstance() {
         return new BlockPlacementProgressInstance(this);
     }
 
     @Override
-    public void onCancellation(final IQuestInstance colonyQuest)
-    {
+    public void onCancellation(final IQuestInstance colonyQuest) {
         cleanupListener(colonyQuest);
     }
 
     /**
      * Cleanup the listener of this objective,
+     *
      * @param colonyQuest the listener.
      */
-    private void cleanupListener(final IQuestInstance colonyQuest)
-    {
-        if (colonyQuest.getColony() instanceof Colony)
-        {
+    private void cleanupListener(final IQuestInstance colonyQuest) {
+        if (colonyQuest.getColony() instanceof Colony) {
             // Only serverside cleanup.
             QuestObjectiveEventHandler.removeQuestPlaceBlockObjectiveListener(this.blockToPlace, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 
     @Override
-    public void onBlockPlace(final IObjectiveInstance blockPlacementProgressData, final IQuestInstance colonyQuest, final Player player)
-    {
-        if (blockPlacementProgressData.isFulfilled())
-        {
+    public void onBlockPlace(final IObjectiveInstance blockPlacementProgressData, final IQuestInstance colonyQuest, final Player player) {
+        if (blockPlacementProgressData.isFulfilled()) {
             return;
         }
 
         ((BlockPlacementProgressInstance) blockPlacementProgressData).currentProgress++;
-        if (blockPlacementProgressData.isFulfilled())
-        {
+        if (blockPlacementProgressData.isFulfilled()) {
             cleanupListener(colonyQuest);
             colonyQuest.advanceObjective(player, nextObjective);
         }
     }
 
     @Override
-    public void onWorldLoad(final IQuestInstance colonyQuest)
-    {
+    public void onWorldLoad(final IQuestInstance colonyQuest) {
         super.onWorldLoad(colonyQuest);
-        if (colonyQuest.getColony() instanceof Colony)
-        {
+        if (colonyQuest.getColony() instanceof Colony) {
             // Only serverside cleanup.
             QuestObjectiveEventHandler.addQuestPlaceObjectiveListener(this.blockToPlace, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
@@ -166,8 +151,7 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     /**
      * Progress data of this objective.
      */
-    private static class BlockPlacementProgressInstance implements IObjectiveInstance
-    {
+    private static class BlockPlacementProgressInstance implements IObjectiveInstance {
         /**
          * The template belonging to this progress instance.
          */
@@ -175,34 +159,29 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
 
         private int currentProgress = 0;
 
-        public BlockPlacementProgressInstance(final PlaceBlockObjectiveTemplate template)
-        {
+        public BlockPlacementProgressInstance(final PlaceBlockObjectiveTemplate template) {
             this.template = template;
         }
 
         @Override
-        public boolean isFulfilled()
-        {
+        public boolean isFulfilled() {
             return currentProgress >= template.qty;
         }
 
         @Override
-        public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-        {
+        public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
             final CompoundTag compoundTag = new CompoundTag();
             compoundTag.putInt(TAG_QUANTITY, currentProgress);
             return compoundTag;
         }
 
         @Override
-        public int getMissingQuantity()
-        {
+        public int getMissingQuantity() {
             return template.qty > currentProgress ? template.qty - currentProgress : 0;
         }
 
         @Override
-        public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
-        {
+        public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt) {
             this.currentProgress = nbt.getInt(TAG_QUANTITY);
         }
     }

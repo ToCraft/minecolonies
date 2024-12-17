@@ -6,8 +6,7 @@ import com.minecolonies.api.quests.ITriggerReturnData;
 /**
  * Wrapper around a citizen id.
  */
-public class CitizenTriggerReturnData implements ITriggerReturnData<ICitizenData>
-{
+public class CitizenTriggerReturnData implements ITriggerReturnData<ICitizenData> {
     /**
      * The citizen id or - max int if negative.
      */
@@ -15,22 +14,20 @@ public class CitizenTriggerReturnData implements ITriggerReturnData<ICitizenData
 
     /**
      * Create a new return data obj.
+     *
      * @param match citizen id.
      */
-    public CitizenTriggerReturnData(final ICitizenData match)
-    {
+    public CitizenTriggerReturnData(final ICitizenData match) {
         this.match = match;
     }
 
     @Override
-    public boolean isPositive()
-    {
+    public boolean isPositive() {
         return this.match != null;
     }
 
     @Override
-    public ICitizenData getContent()
-    {
+    public ICitizenData getContent() {
         return match;
     }
 }

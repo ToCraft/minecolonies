@@ -19,20 +19,17 @@ import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.core.commands.CommandArgumentNames.*;
 
-public class CommandClaimChunks implements IMCOPCommand
-{
+public class CommandClaimChunks implements IMCOPCommand {
     /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         final Entity sender = context.getSource().getEntity();
 
-        if (!(sender instanceof Player))
-        {
+        if (!(sender instanceof Player)) {
             return 0;
         }
 
@@ -42,8 +39,7 @@ public class CommandClaimChunks implements IMCOPCommand
 
         // Range
         final int range = IntegerArgumentType.getInteger(context, RANGE_ARG);
-        if (range > MineColonies.getConfig().getServer().maxColonySize.get())
-        {
+        if (range > MineColonies.getConfig().getServer().maxColonySize.get()) {
             MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_TOO_LARGE, colonyID).sendTo((Player) sender);
             return 0;
         }
@@ -51,12 +47,9 @@ public class CommandClaimChunks implements IMCOPCommand
         // Added/removed
         final boolean add = BoolArgumentType.getBool(context, ADD_ARG);
         ChunkDataHelper.staticClaimInRange(colony, add, sender.blockPosition(), range, (ServerLevel) sender.level(), true);
-        if (add)
-        {
+        if (add) {
             MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_SUCCESS).sendTo((Player) sender);
-        }
-        else
-        {
+        } else {
             MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_REMOVE_CLAIM).sendTo((Player) sender);
         }
         return 1;
@@ -66,16 +59,14 @@ public class CommandClaimChunks implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "claim";
     }
 
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
-                         .then(IMCCommand.newArgument(RANGE_ARG, IntegerArgumentType.integer(0, 10))
-                                 .then(IMCCommand.newArgument(ADD_ARG, BoolArgumentType.bool()).executes(this::checkPreConditionAndExecute))));
+                .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                        .then(IMCCommand.newArgument(RANGE_ARG, IntegerArgumentType.integer(0, 10))
+                                .then(IMCCommand.newArgument(ADD_ARG, BoolArgumentType.bool()).executes(this::checkPreConditionAndExecute))));
     }
 }

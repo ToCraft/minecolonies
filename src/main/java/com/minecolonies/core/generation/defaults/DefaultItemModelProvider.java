@@ -14,39 +14,34 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 /**
  * Datagen for item models
  */
-public class DefaultItemModelProvider extends ItemModelProvider
-{
+public class DefaultItemModelProvider extends ItemModelProvider {
     /**
      * Constructor
      */
-    public DefaultItemModelProvider(final PackOutput packOutput, final ExistingFileHelper existingFileHelper)
-    {
+    public DefaultItemModelProvider(final PackOutput packOutput, final ExistingFileHelper existingFileHelper) {
         super(packOutput, MOD_ID, existingFileHelper);
     }
 
     @Override
-    protected void registerModels()
-    {
+    protected void registerModels() {
         final ResourceLocation disabledGoggles = modLoc("build_goggles_disabled");
         basicItem(disabledGoggles);
         basicItem(ModItems.buildGoggles)
                 .override()
-                    .predicate(ResourceLocation.withDefaultNamespace("disabled"), 1.0F)
-                    .model(getExistingFile(disabledGoggles))
+                .predicate(ResourceLocation.withDefaultNamespace("disabled"), 1.0F)
+                .model(getExistingFile(disabledGoggles))
                 .end();
 
-        for (final Item foodItem : ModItems.getAllIngredients())
-        {
+        for (final Item foodItem : ModItems.getAllIngredients()) {
             getBuilder(foodItem.toString())
-              .parent(new ModelFile.UncheckedModelFile("item/generated"))
-              .texture("layer0", new ResourceLocation(MOD_ID, "item/food/" + BuiltInRegistries.ITEM.wrapAsHolder(foodItem).getKey().location().getPath()));
+                    .parent(new ModelFile.UncheckedModelFile("item/generated"))
+                    .texture("layer0", new ResourceLocation(MOD_ID, "item/food/" + BuiltInRegistries.ITEM.wrapAsHolder(foodItem).getKey().location().getPath()));
         }
 
-        for (final Item foodItem : ModItems.getAllFoods())
-        {
+        for (final Item foodItem : ModItems.getAllFoods()) {
             getBuilder(foodItem.toString())
-              .parent(new ModelFile.UncheckedModelFile("item/generated"))
-              .texture("layer0", new ResourceLocation(MOD_ID, "item/food/" + BuiltInRegistries.ITEM.wrapAsHolder(foodItem).getKey().location().getPath()));
+                    .parent(new ModelFile.UncheckedModelFile("item/generated"))
+                    .texture("layer0", new ResourceLocation(MOD_ID, "item/food/" + BuiltInRegistries.ITEM.wrapAsHolder(foodItem).getKey().location().getPath()));
         }
     }
 }

@@ -18,8 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.core.commands.CommandArgumentNames.PLAYERNAME_ARG;
 
-public class CommandChangeOwner implements IMCColonyOfficerCommand
-{
+public class CommandChangeOwner implements IMCColonyOfficerCommand {
 
     /**
      * What happens when the command is executed after preConditions are successful.
@@ -27,29 +26,23 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
+        if (colony == null) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         GameProfile profile;
-        try
-        {
+        try {
             profile = GameProfileArgument.getGameProfiles(context, PLAYERNAME_ARG).stream().findFirst().orElse(null);
-        }
-        catch (CommandSyntaxException e)
-        {
+        } catch (CommandSyntaxException e) {
             return 0;
         }
 
         final Player player = context.getSource().getServer().getPlayerList().getPlayer(profile.getId());
-        if (player == null)
-        {
+        if (player == null) {
             // could not find player with given name.
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile.getName()), true);
             return 0;
@@ -65,16 +58,14 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "setowner";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
-                         .then(IMCCommand.newArgument(PLAYERNAME_ARG, GameProfileArgument.gameProfile()).executes(this::checkPreConditionAndExecute)));
+                .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                        .then(IMCCommand.newArgument(PLAYERNAME_ARG, GameProfileArgument.gameProfile()).executes(this::checkPreConditionAndExecute)));
     }
 }

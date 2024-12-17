@@ -23,8 +23,7 @@ import java.util.Set;
 /**
  * AbstractBuilding View for clients.
  */
-public class WorkerBuildingModuleView extends AbstractBuildingModuleView implements IAssignmentModuleView
-{
+public class WorkerBuildingModuleView extends AbstractBuildingModuleView implements IAssignmentModuleView {
     /**
      * List of the worker ids.
      */
@@ -56,14 +55,12 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     private JobEntry jobEntry;
 
     @Override
-    public List<Integer> getAssignedCitizens()
-    {
+    public List<Integer> getAssignedCitizens() {
         return new ArrayList<>(workerIDs);
     }
 
     @Override
-    public void addCitizen(final @NotNull ICitizenDataView citizen)
-    {
+    public void addCitizen(final @NotNull ICitizenDataView citizen) {
         workerIDs.add(citizen.getId());
         new HireFireMessage(buildingView, true, citizen.getId(), getProducer().getRuntimeID()).sendToServer();
         citizen.setWorkBuilding(buildingView.getPosition());
@@ -72,20 +69,17 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     }
 
     @Override
-    public void removeCitizen(final @NotNull ICitizenDataView citizen)
-    {
+    public void removeCitizen(final @NotNull ICitizenDataView citizen) {
         workerIDs.remove(citizen.getId());
         new HireFireMessage(buildingView, false, citizen.getId(), getProducer().getRuntimeID()).sendToServer();
         citizen.setWorkBuilding(null);
     }
 
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         final int size = buf.readInt();
         workerIDs.clear();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             workerIDs.add(buf.readInt());
         }
         this.hiringMode = HiringMode.values()[buf.readInt()];
@@ -97,61 +91,52 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return "";
     }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return "";
     }
 
     @Override
-    public boolean isPageVisible()
-    {
+    public boolean isPageVisible() {
         return false;
     }
 
     @NotNull
-    public Skill getPrimarySkill()
-    {
+    public Skill getPrimarySkill() {
         return primary;
     }
 
     @NotNull
-    public Skill getSecondarySkill()
-    {
+    public Skill getSecondarySkill() {
         return secondary;
     }
 
     @Override
-    public HiringMode getHiringMode()
-    {
+    public HiringMode getHiringMode() {
         return hiringMode;
     }
 
     @Override
-    public void setHiringMode(final HiringMode hiringMode)
-    {
+    public void setHiringMode(final HiringMode hiringMode) {
         this.hiringMode = hiringMode;
         new BuildingHiringModeMessage(buildingView, hiringMode, getProducer().getRuntimeID()).sendToServer();
     }
 
     @Override
-    public boolean canAssign(final ICitizenDataView citizen)
-    {
+    public boolean canAssign(final ICitizenDataView citizen) {
         return !citizen.isChild() &&
-                 (citizen.getWorkBuilding() == null
-                    || workerIDs.contains(citizen.getId())
-                    || buildingView.getColony().getBuilding(citizen.getWorkBuilding()) != null && buildingView.getColony().getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(getJobEntry()))
-                         != null);
+                (citizen.getWorkBuilding() == null
+                        || workerIDs.contains(citizen.getId())
+                        || buildingView.getColony().getBuilding(citizen.getWorkBuilding()) != null && buildingView.getColony().getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(getJobEntry()))
+                        != null);
     }
 
     @Override
-    public int getMaxInhabitants()
-    {
+    public int getMaxInhabitants() {
         return this.maxInhabitants;
     }
 
@@ -160,15 +145,13 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
      *
      * @return the display name.
      */
-    public String getJobDisplayName()
-    {
+    public String getJobDisplayName() {
         return Component.translatableEscape(jobEntry.getTranslationKey()).getString();
     }
 
     @NotNull
     @Override
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new WindowHutWorkerModulePlaceholder<>(buildingView);
     }
 
@@ -177,14 +160,12 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
      *
      * @return the entry.
      */
-    public JobEntry getJobEntry()
-    {
+    public JobEntry getJobEntry() {
         return jobEntry;
     }
 
     @Override
-    public boolean isFull()
-    {
+    public boolean isFull() {
         return !buildingView.allowsAssignment() || getAssignedCitizens().size() >= getMaxInhabitants();
     }
 }

@@ -25,7 +25,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.IronBarsBlock;
-import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,78 +40,60 @@ import java.util.List;
 
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 
-public class DoBlockPlacementHandler implements IPlacementHandler
-{
+public class DoBlockPlacementHandler implements IPlacementHandler {
     @Override
-    public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
-    {
+    public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState) {
         return blockState.getBlock() instanceof IMateriallyTexturedBlock && blockState.getBlock() != ModBlocks.blockRack;
     }
 
     @Override
     public ActionProcessingResult handle(
-      @NotNull final Level world,
-      @NotNull final BlockPos pos,
-      @NotNull final BlockState blockState,
-      @Nullable final CompoundTag tileEntityData,
-      final boolean complete,
-      final BlockPos centerPos,
-      final RotationMirror settings)
-    {
+            @NotNull final Level world,
+            @NotNull final BlockPos pos,
+            @NotNull final BlockState blockState,
+            @Nullable final CompoundTag tileEntityData,
+            final boolean complete,
+            final BlockPos centerPos,
+            final RotationMirror settings) {
         BlockState placementState = blockState;
-        if (blockState.getBlock() instanceof WallBlock || blockState.getBlock() instanceof FenceBlock || blockState.getBlock() instanceof PillarBlock || blockState.getBlock() instanceof IronBarsBlock)
-        {
-            try
-            {
+        if (blockState.getBlock() instanceof WallBlock || blockState.getBlock() instanceof FenceBlock || blockState.getBlock() instanceof PillarBlock || blockState.getBlock() instanceof IronBarsBlock) {
+            try {
                 final BlockState tempState = blockState.getBlock().getStateForPlacement(
-                  new BlockPlaceContext(world, null, InteractionHand.MAIN_HAND, ItemStack.EMPTY,
-                    new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, true)));
-                if (tempState != null)
-                {
+                        new BlockPlaceContext(world, null, InteractionHand.MAIN_HAND, ItemStack.EMPTY,
+                                new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, true)));
+                if (tempState != null) {
                     placementState = tempState;
                 }
-            }
-            catch (final Exception ex)
-            {
+            } catch (final Exception ex) {
                 // Noop
             }
         }
 
-        if (world.getBlockState(pos).equals(placementState))
-        {
+        if (world.getBlockState(pos).equals(placementState)) {
             world.removeBlock(pos, false);
             WorldUtil.setBlockState(world, pos, placementState, Constants.UPDATE_FLAG);
-            if (tileEntityData != null)
-            {
-                try
-                {
+            if (tileEntityData != null) {
+                try {
                     handleTileEntityPlacement(tileEntityData, world, pos, settings);
                     placementState.getBlock().setPlacedBy(world, pos, placementState, null, placementState.getBlock().getCloneItemStack(placementState,
-                      new BlockHitResult(new Vec3(0,0,0), Direction.NORTH, pos, false), world, pos, null));
-                }
-                catch (final Exception ex)
-                {
+                            new BlockHitResult(new Vec3(0, 0, 0), Direction.NORTH, pos, false), world, pos, null));
+                } catch (final Exception ex) {
                     Log.getLogger().warn("Unable to place TileEntity");
                 }
             }
             return ActionProcessingResult.PASS;
         }
 
-        if (!WorldUtil.setBlockState(world, pos, placementState, Constants.UPDATE_FLAG))
-        {
-                return ActionProcessingResult.PASS;
+        if (!WorldUtil.setBlockState(world, pos, placementState, Constants.UPDATE_FLAG)) {
+            return ActionProcessingResult.PASS;
         }
 
-        if (tileEntityData != null)
-        {
-            try
-            {
+        if (tileEntityData != null) {
+            try {
                 handleTileEntityPlacement(tileEntityData, world, pos, settings);
                 blockState.getBlock().setPlacedBy(world, pos, placementState, null, placementState.getBlock().getCloneItemStack(placementState,
-                  new BlockHitResult(new Vec3(0,0,0), Direction.NORTH, pos, false), world, pos, null));
-            }
-            catch (final Exception ex)
-            {
+                        new BlockHitResult(new Vec3(0, 0, 0), Direction.NORTH, pos, false), world, pos, null));
+            } catch (final Exception ex) {
                 Log.getLogger().warn("Unable to place TileEntity");
             }
         }
@@ -122,49 +103,33 @@ public class DoBlockPlacementHandler implements IPlacementHandler
 
     @Override
     public List<ItemStack> getRequiredItems(
-      @NotNull final Level world,
-      @NotNull final BlockPos pos,
-      @NotNull final BlockState blockState,
-      @Nullable final CompoundTag tileEntityData,
-      final boolean complete)
-    {
+            @NotNull final Level world,
+            @NotNull final BlockPos pos,
+            @NotNull final BlockState blockState,
+            @Nullable final CompoundTag tileEntityData,
+            final boolean complete) {
         final List<ItemStack> itemList = new ArrayList<>();
-        if (tileEntityData != null)
-        {
+        if (tileEntityData != null) {
             BlockPos blockpos = new BlockPos(tileEntityData.getInt("x"), tileEntityData.getInt("y"), tileEntityData.getInt("z"));
             final BlockEntity tileEntity = BlockEntity.loadStatic(blockpos, blockState, tileEntityData, world.registryAccess());
-            if (tileEntity == null)
-            {
+            if (tileEntity == null) {
                 return Collections.emptyList();
             }
 
             final Property<?> property;
-            if (blockState.getBlock() instanceof DoorBlock)
-            {
+            if (blockState.getBlock() instanceof DoorBlock) {
                 property = DoorBlock.TYPE;
-            }
-            else if (blockState.getBlock() instanceof FancyDoorBlock)
-            {
+            } else if (blockState.getBlock() instanceof FancyDoorBlock) {
                 property = FancyDoorBlock.TYPE;
-            }
-            else if (blockState.getBlock() instanceof TrapdoorBlock)
-            {
+            } else if (blockState.getBlock() instanceof TrapdoorBlock) {
                 property = TrapdoorBlock.TYPE;
-            }
-            else if (blockState.getBlock() instanceof FancyTrapdoorBlock)
-            {
+            } else if (blockState.getBlock() instanceof FancyTrapdoorBlock) {
                 property = FancyTrapdoorBlock.TYPE;
-            }
-            else if (blockState.getBlock() instanceof PanelBlock)
-            {
+            } else if (blockState.getBlock() instanceof PanelBlock) {
                 property = PanelBlock.TYPE;
-            }
-            else if (blockState.getBlock() instanceof AbstractPostBlock<?>)
-            {
+            } else if (blockState.getBlock() instanceof AbstractPostBlock<?>) {
                 property = AbstractPostBlock.TYPE;
-            }
-            else
-            {
+            } else {
                 property = null;
             }
             itemList.add(property == null ? BlockUtils.getMaterializedItemStack(tileEntity, world.registryAccess()) : BlockUtils.getMaterializedItemStack(tileEntity, world.registryAccess(), property));

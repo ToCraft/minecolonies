@@ -18,8 +18,7 @@ import java.util.List;
 /**
  * Client side version of the abstract class for all buildings which require a filterable list of allowed entities.
  */
-public class EntityListModuleView extends AbstractBuildingModuleView implements IEntityListModuleView
-{
+public class EntityListModuleView extends AbstractBuildingModuleView implements IEntityListModuleView {
     /**
      * The list of entities.
      */
@@ -42,12 +41,12 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
 
     /**
      * Create a nw grouped entity list view for the client side.
-     * @param id the id.
-     * @param desc desc lang string.
+     *
+     * @param id       the id.
+     * @param desc     desc lang string.
      * @param inverted enabling or disabling.
      */
-    public EntityListModuleView(final String id, final String desc, final boolean inverted)
-    {
+    public EntityListModuleView(final String id, final String desc, final boolean inverted) {
         super();
         this.id = id;
         this.desc = desc;
@@ -55,74 +54,65 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     }
 
     @Override
-    public void addEntity(final ResourceLocation entity)
-    {
+    public void addEntity(final ResourceLocation entity) {
         new AssignFilterableEntityMessage(this.buildingView, getProducer().getRuntimeID(), entity, true).sendToServer();
         listOfEntities.add(entity);
     }
 
     @Override
-    public boolean isAllowedEntity(final ResourceLocation entity)
-    {
+    public boolean isAllowedEntity(final ResourceLocation entity) {
         return listOfEntities.contains(entity);
     }
 
     @Override
-    public int getSize()
-    {
+    public int getSize() {
         return listOfEntities.size();
     }
 
     @Override
-    public void removeEntity(final ResourceLocation entity)
-    {
+    public void removeEntity(final ResourceLocation entity) {
         new AssignFilterableEntityMessage(this.buildingView, getProducer().getRuntimeID(), entity, false).sendToServer();
         listOfEntities.remove(entity);
     }
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
     @Override
-    public boolean isInverted()
-    {
+    public boolean isInverted() {
         return inverted;
     }
 
     @Override
-    public void clearEntities() { listOfEntities.clear(); }
+    public void clearEntities() {
+        listOfEntities.clear();
+    }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return desc;
     }
 
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         listOfEntities.clear();
         final int size = buf.readInt();
 
-        for (int j = 0; j < size; j++)
-        {
+        for (int j = 0; j < size; j++) {
             listOfEntities.add(buf.readResourceLocation());
         }
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new EntityListModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutfilterableentitylist.xml", buildingView, this);
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return "workers";
     }
 }

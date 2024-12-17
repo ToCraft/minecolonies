@@ -14,15 +14,13 @@ import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STA
 /**
  * The Cowboy job
  */
-public class JobCowboy extends AbstractJob<EntityAIWorkCowboy, JobCowboy>
-{
+public class JobCowboy extends AbstractJob<EntityAIWorkCowboy, JobCowboy> {
     /**
      * Instantiates the placeholder job.
      *
      * @param entity the entity.
      */
-    public JobCowboy(final ICitizenData entity)
-    {
+    public JobCowboy(final ICitizenData entity) {
         super(entity);
     }
 
@@ -33,8 +31,7 @@ public class JobCowboy extends AbstractJob<EntityAIWorkCowboy, JobCowboy>
      */
     @Nullable
     @Override
-    public EntityAIWorkCowboy generateAI()
-    {
+    public EntityAIWorkCowboy generateAI() {
         return new EntityAIWorkCowboy(this);
     }
 
@@ -45,17 +42,14 @@ public class JobCowboy extends AbstractJob<EntityAIWorkCowboy, JobCowboy>
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.COW_FARMER_ID;
     }
 
     @Override
-    public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack)
-    {
+    public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack) {
         if (getCitizen().getWorkBuilding() != null && getCitizen().getEntity().isPresent() && getCitizen().getWorkBuilding()
-          .isInBuilding(getCitizen().getEntity().get().blockPosition()))
-        {
+                .isInBuilding(getCitizen().getEntity().get().blockPosition())) {
             getCitizen().getWorkBuilding().getModule(STATS_MODULE).incrementBy(ITEM_OBTAINED + ";" + pickedUpStack.getItem().getDescriptionId(), pickedUpStack.getCount());
         }
 

@@ -18,15 +18,13 @@ import java.util.function.Supplier;
 /**
  * Happiness forge registry to facilitate loading and saving to nbt.
  */
-public class HappinessRegistry
-{
+public class HappinessRegistry {
     /**
      * Get the reward registry.
      *
      * @return the reward registry.
      */
-    static Registry<HappinessFactorTypeEntry> getHappinessTypeRegistry()
-    {
+    static Registry<HappinessFactorTypeEntry> getHappinessTypeRegistry() {
         return IMinecoloniesAPI.getInstance().getHappinessTypeRegistry();
     }
 
@@ -35,20 +33,17 @@ public class HappinessRegistry
      *
      * @return the reward registry.
      */
-    static Registry<HappinessFunctionEntry> getHappinessFunctionRegistry()
-    {
+    static Registry<HappinessFunctionEntry> getHappinessFunctionRegistry() {
         return IMinecoloniesAPI.getInstance().getHappinessFunctionRegistry();
     }
 
     /**
      * Happiness Factor type.
      */
-    public static class HappinessFactorTypeEntry
-    {
+    public static class HappinessFactorTypeEntry {
         private final Supplier<IHappinessModifier> supplier;
 
-        public HappinessFactorTypeEntry(final Supplier<IHappinessModifier> productionFunction)
-        {
+        public HappinessFactorTypeEntry(final Supplier<IHappinessModifier> productionFunction) {
             this.supplier = productionFunction;
         }
 
@@ -57,8 +52,7 @@ public class HappinessRegistry
          *
          * @return the modifier.
          */
-        public IHappinessModifier create()
-        {
+        public IHappinessModifier create() {
             return supplier.get();
         }
     }
@@ -70,29 +64,22 @@ public class HappinessRegistry
      * @param persist  whether we're reading from persisted data or from networking.
      * @return the modifier instance.
      */
-    public static IHappinessModifier loadFrom(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound, final boolean persist)
-    {
+    public static IHappinessModifier loadFrom(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound, final boolean persist) {
         final ResourceLocation modifierType = compound.contains(NbtTagConstants.TAG_MODIFIER_TYPE)
-                                                ? ResourceLocation.parse(compound.getString(NbtTagConstants.TAG_MODIFIER_TYPE))
-                                                : new ResourceLocation(Constants.MOD_ID, "null");
+                ? ResourceLocation.parse(compound.getString(NbtTagConstants.TAG_MODIFIER_TYPE))
+                : new ResourceLocation(Constants.MOD_ID, "null");
         final IHappinessModifier modifier = getHappinessTypeRegistry().get(modifierType).create();
 
-        if (modifier != null)
-        {
-            try
-            {
+        if (modifier != null) {
+            try {
                 modifier.read(provider, compound, persist);
-            }
-            catch (final RuntimeException ex)
-            {
+            } catch (final RuntimeException ex) {
                 Log.getLogger()
-                  .error(String.format("A Happiness Modifier %s has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    modifierType), ex);
+                        .error(String.format("A Happiness Modifier %s has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                                modifierType), ex);
                 return null;
             }
-        }
-        else
-        {
+        } else {
             Log.getLogger().warn(String.format("Unknown Happiness Modifier type '%s' or missing constructor of proper format.", modifierType));
         }
 
@@ -102,8 +89,7 @@ public class HappinessRegistry
     /**
      * Happiness Factor type.
      */
-    public static class HappinessFunctionEntry
-    {
+    public static class HappinessFunctionEntry {
         private final Function<ICitizenData, Double> doubleSupplier;
 
         /**
@@ -111,8 +97,7 @@ public class HappinessRegistry
          *
          * @param doubleSupplier th
          */
-        public HappinessFunctionEntry(final Function<ICitizenData, Double> doubleSupplier)
-        {
+        public HappinessFunctionEntry(final Function<ICitizenData, Double> doubleSupplier) {
             this.doubleSupplier = doubleSupplier;
         }
 
@@ -121,27 +106,26 @@ public class HappinessRegistry
          *
          * @return the function.
          */
-        public Function<ICitizenData, Double> getDoubleSupplier()
-        {
+        public Function<ICitizenData, Double> getDoubleSupplier() {
             return doubleSupplier;
         }
     }
 
-    public static ResourceLocation STATIC_MODIFIER      = new ResourceLocation(Constants.MOD_ID, "static");
-    public static ResourceLocation EXPIRATION_MODIFIER  = new ResourceLocation(Constants.MOD_ID, "expiration");
+    public static ResourceLocation STATIC_MODIFIER = new ResourceLocation(Constants.MOD_ID, "static");
+    public static ResourceLocation EXPIRATION_MODIFIER = new ResourceLocation(Constants.MOD_ID, "expiration");
     public static ResourceLocation TIME_PERIOD_MODIFIER = new ResourceLocation(Constants.MOD_ID, "time");
 
-    public static ResourceLocation SCHOOL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "school");
-    public static ResourceLocation SECURITY_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "security");
-    public static ResourceLocation SOCIAL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "social");
+    public static ResourceLocation SCHOOL_FUNCTION = new ResourceLocation(Constants.MOD_ID, "school");
+    public static ResourceLocation SECURITY_FUNCTION = new ResourceLocation(Constants.MOD_ID, "security");
+    public static ResourceLocation SOCIAL_FUNCTION = new ResourceLocation(Constants.MOD_ID, "social");
     public static ResourceLocation MYSTICAL_SITE_FUNCTION = new ResourceLocation(Constants.MOD_ID, "mystical");
 
-    public static ResourceLocation HOUSING_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "housing");
+    public static ResourceLocation HOUSING_FUNCTION = new ResourceLocation(Constants.MOD_ID, "housing");
     public static ResourceLocation UNEMPLOYMENT_FUNCTION = new ResourceLocation(Constants.MOD_ID, "unemployment");
-    public static ResourceLocation HEALTH_FUNCTION       = new ResourceLocation(Constants.MOD_ID, "health");
-    public static ResourceLocation IDLEATJOB_FUNCTION    = new ResourceLocation(Constants.MOD_ID, "idleatjob");
+    public static ResourceLocation HEALTH_FUNCTION = new ResourceLocation(Constants.MOD_ID, "health");
+    public static ResourceLocation IDLEATJOB_FUNCTION = new ResourceLocation(Constants.MOD_ID, "idleatjob");
     public static ResourceLocation SLEPTTONIGHT_FUNCTION = new ResourceLocation(Constants.MOD_ID, "slepttonight");
-    public static ResourceLocation FOOD_FUNCTION         = new ResourceLocation(Constants.MOD_ID, "food");
+    public static ResourceLocation FOOD_FUNCTION = new ResourceLocation(Constants.MOD_ID, "food");
 
     public static DeferredHolder<HappinessFactorTypeEntry, HappinessFactorTypeEntry> staticHappinessModifier;
     public static DeferredHolder<HappinessFactorTypeEntry, HappinessFactorTypeEntry> expirationBasedHappinessModifier;

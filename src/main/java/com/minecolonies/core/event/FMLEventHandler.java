@@ -19,26 +19,21 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Event handler used to catch various forge events.
  */
-public class FMLEventHandler
-{
+public class FMLEventHandler {
     @SubscribeEvent
-    public static void onServerTick(final ServerTickEvent.Pre event)
-    {
+    public static void onServerTick(final ServerTickEvent.Pre event) {
         IColonyManager.getInstance().onServerTick(event);
         DataPackSyncEventHandler.ServerEvents.load(event.getServer());
     }
 
     @SubscribeEvent
-    public static void onClientTick(final ClientTickEvent.Pre event)
-    {
+    public static void onClientTick(final ClientTickEvent.Pre event) {
         IColonyManager.getInstance().onClientTick(event);
     }
 
     @SubscribeEvent
-    public static void onPlayerLogin(@NotNull final PlayerEvent.PlayerLoggedInEvent event)
-    {
-        if (event.getEntity() instanceof ServerPlayer)
-        {
+    public static void onPlayerLogin(@NotNull final PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer) {
             // This automatically reloads the owner of the colony if failed.
             IColonyManager.getInstance().getIColonyByOwner(event.getEntity().level(), event.getEntity());
             //ColonyManager.syncAllColoniesAchievements();
@@ -46,8 +41,7 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public static void onAddReloadListenerEvent(@NotNull final AddReloadListenerEvent event)
-    {
+    public static void onAddReloadListenerEvent(@NotNull final AddReloadListenerEvent event) {
         event.addListener(new CrafterRecipeListener());
         event.addListener(new ResearchListener());
         event.addListener(new CustomVisitorListener());
@@ -57,26 +51,22 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public static void onServerStarted(@NotNull final ServerStartedEvent event)
-    {
+    public static void onServerStarted(@NotNull final ServerStartedEvent event) {
         BackUpHelper.loadMissingColonies();
     }
 
     @SubscribeEvent
-    public static void onWorldTick(final LevelTickEvent.Pre event)
-    {
+    public static void onWorldTick(final LevelTickEvent.Pre event) {
         IColonyManager.getInstance().onWorldTick(event);
     }
 
     @SubscribeEvent
-    public static void onServerAboutToStart(@NotNull final ServerAboutToStartEvent event)
-    {
+    public static void onServerAboutToStart(@NotNull final ServerAboutToStartEvent event) {
         IColonyManager.getInstance().getRecipeManager().reset();
     }
 
     @SubscribeEvent
-    public static void onServerStopped(@NotNull final ServerStoppingEvent event)
-    {
+    public static void onServerStopped(@NotNull final ServerStoppingEvent event) {
         Pathfinding.shutdown();
         DataPackSyncEventHandler.ServerEvents.reset();
     }

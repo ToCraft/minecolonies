@@ -11,8 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * The implementation of the ILocalResearch interface which represents one type of research, stored in each colony.
  */
-public class LocalResearch implements ILocalResearch
-{
+public class LocalResearch implements ILocalResearch {
     /**
      * Depth of research.
      */
@@ -45,24 +44,19 @@ public class LocalResearch implements ILocalResearch
      * @param depth  the depth in the tree.
      * @param branch the branch it is on.
      */
-    public LocalResearch(final ResourceLocation id, final ResourceLocation branch, final int depth)
-    {
+    public LocalResearch(final ResourceLocation id, final ResourceLocation branch, final int depth) {
         this.id = id;
         this.depth = depth;
         this.branch = branch;
     }
 
     @Override
-    public boolean research(final IResearchEffectManager effects, final ILocalResearchTree tree)
-    {
-        if (state == ResearchState.IN_PROGRESS)
-        {
+    public boolean research(final IResearchEffectManager effects, final ILocalResearchTree tree) {
+        if (state == ResearchState.IN_PROGRESS) {
             progress++;
-            if (progress >= IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime(this.depth))
-            {
+            if (progress >= IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime(this.depth)) {
                 state = ResearchState.FINISHED;
-                for(final IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffects())
-                {
+                for (final IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffects()) {
                     effects.applyEffect(effect);
                 }
                 tree.finishResearch(this.id);
@@ -73,44 +67,37 @@ public class LocalResearch implements ILocalResearch
     }
 
     @Override
-    public int getProgress()
-    {
+    public int getProgress() {
         return progress;
     }
 
     @Override
-    public ResourceLocation getId()
-    {
+    public ResourceLocation getId() {
         return this.id;
     }
 
     @Override
-    public ResearchState getState()
-    {
+    public ResearchState getState() {
         return this.state;
     }
 
     @Override
-    public ResourceLocation getBranch()
-    {
+    public ResourceLocation getBranch() {
         return this.branch;
     }
 
     @Override
-    public int getDepth()
-    {
+    public int getDepth() {
         return depth;
     }
 
     @Override
-    public void setState(final ResearchState value)
-    {
+    public void setState(final ResearchState value) {
         this.state = value;
     }
 
     @Override
-    public void setProgress(final int progress)
-    {
+    public void setProgress(final int progress) {
         this.progress = progress;
     }
 }

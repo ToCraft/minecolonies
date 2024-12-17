@@ -15,25 +15,28 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 
-public class TileEntityColonyFlag extends BlockEntity
-{
-    /** A list of the default banner patterns, for colonies that have not chosen a flag */
+public class TileEntityColonyFlag extends BlockEntity {
+    /**
+     * A list of the default banner patterns, for colonies that have not chosen a flag
+     */
     private BannerPatternLayers patterns = BannerPatternLayers.EMPTY;
 
-    /** The colony of the player that placed this banner */
+    /**
+     * The colony of the player that placed this banner
+     */
     public int colonyId = -1;
 
-    public TileEntityColonyFlag(final BlockPos pos, final BlockState state) { super(MinecoloniesTileEntities.COLONY_FLAG.get(), pos, state); }
+    public TileEntityColonyFlag(final BlockPos pos, final BlockState state) {
+        super(MinecoloniesTileEntities.COLONY_FLAG.get(), pos, state);
+    }
 
-    public BannerPatternLayers getPatterns()
-    {
-        if (level != null && level.getGameTime() % 20 == 0)
-        {
+    public BannerPatternLayers getPatterns() {
+        if (level != null && level.getGameTime() % 20 == 0) {
             final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, level.dimension());
-            if (view != null)
-            {
+            if (view != null) {
                 this.patterns = view.getColonyFlag();
             }
         }
@@ -42,8 +45,7 @@ public class TileEntityColonyFlag extends BlockEntity
     }
 
     @Override
-    public void saveAdditional(CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void saveAdditional(CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.saveAdditional(compound, provider);
 
         compound.put(TAG_BANNER_PATTERNS, Utils.serializeCodecMess(BannerPatternLayers.CODEC, provider, this.patterns));
@@ -52,22 +54,18 @@ public class TileEntityColonyFlag extends BlockEntity
     }
 
     @Override
-    public void loadAdditional(CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void loadAdditional(CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.loadAdditional(compound, provider);
 
-        if (compound.contains(TAG_BANNER_PATTERNS))
-        {
+        if (compound.contains(TAG_BANNER_PATTERNS)) {
             this.patterns = Utils.deserializeCodecMess(BannerPatternLayers.CODEC, provider, compound.get(TAG_BANNER_PATTERNS));
         }
 
         this.colonyId = compound.getInt(TAG_COLONY_ID);
 
-        if(this.colonyId == -1 && this.hasLevel())
-        {
+        if (this.colonyId == -1 && this.hasLevel()) {
             IColony colony = IColonyManager.getInstance().getIColony(this.getLevel(), worldPosition);
-            if (colony != null)
-            {
+            if (colony != null) {
                 this.colonyId = colony.getID();
                 this.setChanged();
             }
@@ -75,17 +73,17 @@ public class TileEntityColonyFlag extends BlockEntity
     }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket()
-    {
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider) { return this.saveWithId(provider); }
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider) {
+        return this.saveWithId(provider);
+    }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
-    {
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = packet.getTag();
         this.loadAdditional(compound, provider);
     }

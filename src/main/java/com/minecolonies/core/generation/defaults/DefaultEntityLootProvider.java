@@ -25,16 +25,13 @@ import java.util.stream.Stream;
 /**
  * Loot table generator for entities
  */
-public class DefaultEntityLootProvider extends EntityLootSubProvider
-{
-    public DefaultEntityLootProvider(@NotNull final HolderLookup.Provider provider)
-    {
+public class DefaultEntityLootProvider extends EntityLootSubProvider {
+    public DefaultEntityLootProvider(@NotNull final HolderLookup.Provider provider) {
         super(FeatureFlags.REGISTRY.allFlags(), provider);
     }
 
     @Override
-    public void generate()
-    {
+    public void generate() {
         registerLoot(ModEntities.AMAZON, builder -> builder
                 .add(EmptyLootItem.emptyItem().setWeight(80))
                 .add(LootItem.lootTableItem(Items.BOW).setWeight(15))
@@ -133,32 +130,31 @@ public class DefaultEntityLootProvider extends EntityLootSubProvider
                 .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(30)));
 
         registerLoot(ModEntities.DROWNED_PIRATE, builder -> builder
-                                                                 .add(EmptyLootItem.emptyItem().setWeight(80))
-                                                                 .add(LootItem.lootTableItem(ModItems.scimitar).setWeight(6))
-                                                                 .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(4)));
+                .add(EmptyLootItem.emptyItem().setWeight(80))
+                .add(LootItem.lootTableItem(ModItems.scimitar).setWeight(6))
+                .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(4)));
 
         registerLoot(ModEntities.DROWNED_ARCHERPIRATE, builder -> builder
-                                                                       .add(EmptyLootItem.emptyItem().setWeight(80))
-                                                                       .add(LootItem.lootTableItem(Items.BOW).setWeight(10))
-                                                                       .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(5)));
+                .add(EmptyLootItem.emptyItem().setWeight(80))
+                .add(LootItem.lootTableItem(Items.BOW).setWeight(10))
+                .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(5)));
 
         registerLoot(ModEntities.DROWNED_CHIEFPIRATE, builder -> builder
-                                                                      .add(EmptyLootItem.emptyItem().setWeight(50))
-                                                                      .add(LootItem.lootTableItem(ModItems.pirateHelmet_1).setWeight(5).setQuality(1))
-                                                                      .add(LootItem.lootTableItem(ModItems.pirateLegs_1).setWeight(5).setQuality(1))
-                                                                      .add(LootItem.lootTableItem(ModItems.pirateBoots_1).setWeight(5).setQuality(1))
-                                                                      .add(LootItem.lootTableItem(ModItems.pirateChest_1).setWeight(5).setQuality(1))
-                                                                      .add(LootItem.lootTableItem(ModItems.pirateHelmet_2).setWeight(5).setQuality(1))
-                                                                      .add(LootItem.lootTableItem(ModItems.pirateLegs_2).setWeight(5).setQuality(1))
-                                                                      .add(LootItem.lootTableItem(ModItems.pirateBoots_2).setWeight(5).setQuality(1))
-                                                                      .add(LootItem.lootTableItem(ModItems.pirateChest_2).setWeight(5).setQuality(1))
-                                                                      .add(LootItem.lootTableItem(ModItems.scimitar).setWeight(25).setQuality(1))
-                                                                      .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(30)));
+                .add(EmptyLootItem.emptyItem().setWeight(50))
+                .add(LootItem.lootTableItem(ModItems.pirateHelmet_1).setWeight(5).setQuality(1))
+                .add(LootItem.lootTableItem(ModItems.pirateLegs_1).setWeight(5).setQuality(1))
+                .add(LootItem.lootTableItem(ModItems.pirateBoots_1).setWeight(5).setQuality(1))
+                .add(LootItem.lootTableItem(ModItems.pirateChest_1).setWeight(5).setQuality(1))
+                .add(LootItem.lootTableItem(ModItems.pirateHelmet_2).setWeight(5).setQuality(1))
+                .add(LootItem.lootTableItem(ModItems.pirateLegs_2).setWeight(5).setQuality(1))
+                .add(LootItem.lootTableItem(ModItems.pirateBoots_2).setWeight(5).setQuality(1))
+                .add(LootItem.lootTableItem(ModItems.pirateChest_2).setWeight(5).setQuality(1))
+                .add(LootItem.lootTableItem(ModItems.scimitar).setWeight(25).setQuality(1))
+                .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(30)));
     }
 
     private void registerLoot(@NotNull final EntityType<?> entity,
-                              @NotNull final Consumer<LootPool.Builder> builder)
-    {
+                              @NotNull final Consumer<LootPool.Builder> builder) {
         final ResourceLocation entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entity);
 
         final LootPool.Builder pool = LootPool.lootPool()
@@ -169,8 +165,7 @@ public class DefaultEntityLootProvider extends EntityLootSubProvider
     }
 
     @Override
-    protected Stream<EntityType<?>> getKnownEntityTypes()
-    {
+    protected Stream<EntityType<?>> getKnownEntityTypes() {
         return ModEntities.getRaiders().stream().map(EntityType.class::cast);
     }
 }

@@ -3,8 +3,7 @@ package com.minecolonies.api.sounds;
 /**
  * All possible sound events.
  */
-public enum EventType
-{
+public enum EventType {
     GENERAL(0.2, "general"),
     NOISE(2, "noise"),
     OFF_TO_BED(2, "gotobed"),
@@ -39,8 +38,7 @@ public enum EventType
      *
      * @param chance the chance for the sound to be played.
      */
-    EventType(final double chance, final String id)
-    {
+    EventType(final double chance, final String id) {
         this.chance = chance;
         this.id = id;
     }
@@ -50,17 +48,16 @@ public enum EventType
      *
      * @return the chance.
      */
-    public double getChance()
-    {
+    public double getChance() {
         return chance;
     }
 
     /**
      * Get the id.
+     *
      * @return the id.
      */
-    public String getId()
-    {
+    public String getId() {
         return this.id;
     }
 }

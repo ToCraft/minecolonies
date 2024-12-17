@@ -20,12 +20,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
-{
+public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_citizen_view", ColonyViewCitizenViewMessage::new);
 
-    private final int          colonyId;
-    private final int          citizenId;
+    private final int colonyId;
+    private final int citizenId;
     private final RegistryFriendlyByteBuf citizenBuffer;
 
     /**
@@ -39,8 +38,7 @@ public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
      * @param colony  Colony of the citizen
      * @param citizen Citizen data of the citizen to update view
      */
-    public ColonyViewCitizenViewMessage(@NotNull final Colony colony, @NotNull final ICitizenData citizen)
-    {
+    public ColonyViewCitizenViewMessage(@NotNull final Colony colony, @NotNull final ICitizenData citizen) {
         super(TYPE);
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();
@@ -49,8 +47,7 @@ public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
         citizen.serializeViewNetworkData(citizenBuffer);
     }
 
-    protected ColonyViewCitizenViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ColonyViewCitizenViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         colonyId = buf.readInt();
         citizenId = buf.readInt();
@@ -59,8 +56,7 @@ public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         citizenBuffer.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);
@@ -69,8 +65,7 @@ public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         IColonyManager.getInstance().handleColonyViewCitizensMessage(colonyId, citizenId, citizenBuffer, dimension);
     }
 }

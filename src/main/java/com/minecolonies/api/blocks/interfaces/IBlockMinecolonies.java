@@ -5,8 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
-public interface IBlockMinecolonies<B extends IBlockMinecolonies<B>>
-{
+public interface IBlockMinecolonies<B extends IBlockMinecolonies<B>> {
     /**
      * Registery block at gameregistry.
      *
@@ -25,6 +24,7 @@ public interface IBlockMinecolonies<B extends IBlockMinecolonies<B>>
 
     /**
      * Get the registry name of the block.
+     *
      * @return the registry name.
      */
     ResourceLocation getRegistryName();

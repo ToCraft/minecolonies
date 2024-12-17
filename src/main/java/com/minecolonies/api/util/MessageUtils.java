@@ -20,47 +20,38 @@ import java.util.List;
 /**
  * Simple class for containing reusable player messaging logic.
  */
-public class MessageUtils
-{
+public class MessageUtils {
     /**
      * No operation builders for failed/empty returns
      */
-    private static MessageBuilder NOOP = new MessageBuilder(Component.literal(""))
-    {
+    private static MessageBuilder NOOP = new MessageBuilder(Component.literal("")) {
         @Override
-        public void sendTo(final Player... players)
-        {
+        public void sendTo(final Player... players) {
             // Noop
         }
 
         @Override
-        public void sendTo(final Collection<Player> players)
-        {
+        public void sendTo(final Collection<Player> players) {
             // Noop
         }
 
         @Override
-        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony)
-        {
+        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony) {
             return NOOPColony;
         }
 
         @Override
-        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony, final boolean alwaysShowColony)
-        {
+        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony, final boolean alwaysShowColony) {
             return NOOPColony;
         }
     };
 
-    private static MessageBuilderColonyPlayerSelector NOOPColony = new MessageBuilderColonyPlayerSelector(null, null, false)
-    {
-        public void forAllPlayers()
-        {
+    private static MessageBuilderColonyPlayerSelector NOOPColony = new MessageBuilderColonyPlayerSelector(null, null, false) {
+        public void forAllPlayers() {
             // Noop
         }
 
-        public void forManagers()
-        {
+        public void forManagers() {
             // Noop
         }
     };
@@ -73,8 +64,7 @@ public class MessageUtils
      * @param msg
      * @return
      */
-    public static MessageBuilder forCitizen(final AbstractEntityCitizen citizen, final String keyIn, final Object... msg)
-    {
+    public static MessageBuilder forCitizen(final AbstractEntityCitizen citizen, final String keyIn, final Object... msg) {
         return forCitizen(citizen, Component.translatable(keyIn, msg));
     }
 
@@ -84,26 +74,21 @@ public class MessageUtils
      * @param citizen
      * @return
      */
-    public static MessageBuilder forCitizen(final AbstractEntityCitizen citizen, Component component)
-    {
-        if (citizen.getCitizenColonyHandler().getColonyOrRegister() != null)
-        {
+    public static MessageBuilder forCitizen(final AbstractEntityCitizen citizen, Component component) {
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister() != null) {
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
 
             MessageUtils.MessageBuilder builder;
-            if (job != null)
-            {
+            if (job != null) {
                 builder = MessageUtils.format(job.getJobRegistryEntry().getTranslationKey())
-                  .append(Component.literal(" "))
-                  .append(citizen.getCustomName())
-                  .append(Component.literal(": "))
-                  .append(component);
-            }
-            else
-            {
+                        .append(Component.literal(" "))
+                        .append(citizen.getCustomName())
+                        .append(Component.literal(": "))
+                        .append(component);
+            } else {
                 builder = MessageUtils.format(citizen.getCustomName())
-                  .append(Component.literal(": "))
-                  .append(component);
+                        .append(Component.literal(": "))
+                        .append(component);
             }
 
             return builder;
@@ -119,8 +104,7 @@ public class MessageUtils
      * @param args the arguments for the translation component.
      * @return the message builder instance.
      */
-    public static MessageBuilder format(final String key, final Object... args)
-    {
+    public static MessageBuilder format(final String key, final Object... args) {
         return format(Component.translatableEscape(key, args));
     }
 
@@ -130,16 +114,14 @@ public class MessageUtils
      * @param component the component to send.
      * @return the message builder instance.
      */
-    public static MessageBuilder format(final Component component)
-    {
+    public static MessageBuilder format(final Component component) {
         return new MessageBuilder(component);
     }
 
     /**
      * Message priority types handle different types of message displays.
      */
-    public enum MessagePriority
-    {
+    public enum MessagePriority {
         /**
          * Normal priority messages, these are not important messages sent to the colony, shown in a dimmed color (gray).
          */
@@ -158,8 +140,7 @@ public class MessageUtils
          */
         private final ChatFormatting color;
 
-        MessagePriority(final ChatFormatting color)
-        {
+        MessagePriority(final ChatFormatting color) {
             this.color = color;
         }
     }
@@ -167,8 +148,7 @@ public class MessageUtils
     /**
      * Starting class for the message building. Contains primary logic for sending the messages.
      */
-    public static class MessageBuilder
-    {
+    public static class MessageBuilder {
         /**
          * The current working component.
          */
@@ -191,8 +171,7 @@ public class MessageUtils
          *
          * @param component the component to begin with.
          */
-        MessageBuilder(final Component component)
-        {
+        MessageBuilder(final Component component) {
             this.fullComponent = getFormattableComponent(component);
         }
 
@@ -203,8 +182,7 @@ public class MessageUtils
          * @return the new message builder object.
          */
         @NotNull
-        public MessageBuilder withPriority(final MessagePriority priority)
-        {
+        public MessageBuilder withPriority(final MessagePriority priority) {
             this.priority = priority;
             return this;
         }
@@ -215,8 +193,7 @@ public class MessageUtils
          * @param clickEvent the click event instance.
          * @return the new message builder object.
          */
-        public MessageBuilder withClickEvent(final @NotNull ClickEvent clickEvent)
-        {
+        public MessageBuilder withClickEvent(final @NotNull ClickEvent clickEvent) {
             this.clickEvent = clickEvent;
             return this;
         }
@@ -228,8 +205,7 @@ public class MessageUtils
          * @param args the arguments for the translation component.
          * @return the new message builder object.
          */
-        public MessageBuilder append(final String key, final Object... args)
-        {
+        public MessageBuilder append(final String key, final Object... args) {
             return append(Component.translatableEscape(key, args));
         }
 
@@ -239,8 +215,7 @@ public class MessageUtils
          * @param component the component to send.
          * @return the new message builder object.
          */
-        public MessageBuilder append(final Component component)
-        {
+        public MessageBuilder append(final Component component) {
             fullComponent.append(getFormattableComponent(component));
             return this;
         }
@@ -250,16 +225,15 @@ public class MessageUtils
          *
          * @return the text component.
          */
-        public MutableComponent create()
-        {
+        public MutableComponent create() {
             final Style newStyle = Style.EMPTY
-              .withColor(priority.color)
-              .withClickEvent(clickEvent);
+                    .withColor(priority.color)
+                    .withClickEvent(clickEvent);
 
             fullComponent.withStyle(newStyle);
             fullComponent.getSiblings().stream()
-              .map(this::getFormattableComponent)
-              .forEach(comp -> comp.withStyle(newStyle));
+                    .map(this::getFormattableComponent)
+                    .forEach(comp -> comp.withStyle(newStyle));
             return fullComponent;
         }
 
@@ -268,8 +242,7 @@ public class MessageUtils
          *
          * @param players the players to send the message to.
          */
-        public void sendTo(final Player... players)
-        {
+        public void sendTo(final Player... players) {
             sendTo(Arrays.asList(players));
         }
 
@@ -278,10 +251,8 @@ public class MessageUtils
          *
          * @param players the players to send the message to.
          */
-        public void sendTo(final Collection<Player> players)
-        {
-            for (Player player : players)
-            {
+        public void sendTo(final Collection<Player> players) {
+            for (Player player : players) {
                 player.displayClientMessage(create(), false);
             }
         }
@@ -291,12 +262,9 @@ public class MessageUtils
          *
          * @param players the players to send the message to.
          */
-        public void sendToClose(final BlockPos pos, final int range, final List<Player> players)
-        {
-            for (Player player : players)
-            {
-                if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < range * range)
-                {
+        public void sendToClose(final BlockPos pos, final int range, final List<Player> players) {
+            for (Player player : players) {
+                if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < range * range) {
                     player.displayClientMessage(create(), false);
                 }
             }
@@ -309,8 +277,7 @@ public class MessageUtils
          * @param colony the reference to the colony.
          * @return the message builder colony player selector.
          */
-        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony)
-        {
+        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony) {
             return sendTo(colony, false);
         }
 
@@ -322,8 +289,7 @@ public class MessageUtils
          * @param alwaysShowColony whether we always want to include the colony name in front of the message.
          * @return the message builder colony player selector.
          */
-        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony, final boolean alwaysShowColony)
-        {
+        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony, final boolean alwaysShowColony) {
             return new MessageBuilderColonyPlayerSelector(create(), colony, alwaysShowColony);
         }
 
@@ -333,14 +299,12 @@ public class MessageUtils
          * @param component the input component.
          * @return the formattable component.
          */
-        private MutableComponent getFormattableComponent(final Component component)
-        {
+        private MutableComponent getFormattableComponent(final Component component) {
             return component.copy();
         }
     }
 
-    public static class MessageBuilderColonyPlayerSelector
-    {
+    public static class MessageBuilderColonyPlayerSelector {
         /**
          * The stored text component to use when sending the message.
          */
@@ -363,8 +327,7 @@ public class MessageUtils
          * @param colony           the reference to the colony.
          * @param alwaysShowColony whether we always want to include the colony name in front of the message.
          */
-        public MessageBuilderColonyPlayerSelector(final MutableComponent rootComponent, final IColony colony, final boolean alwaysShowColony)
-        {
+        public MessageBuilderColonyPlayerSelector(final MutableComponent rootComponent, final IColony colony, final boolean alwaysShowColony) {
             this.rootComponent = rootComponent;
             this.colony = colony;
             this.alwaysShowColony = alwaysShowColony;
@@ -373,16 +336,14 @@ public class MessageUtils
         /**
          * Sends the message to all players inside the colony.
          */
-        public void forAllPlayers()
-        {
+        public void forAllPlayers() {
             sendInternal(colony.getMessagePlayerEntities());
         }
 
         /**
          * Sends the message to all colony manager.
          */
-        public void forManagers()
-        {
+        public void forManagers() {
             sendInternal(colony.getImportantMessageEntityPlayers());
         }
 
@@ -391,13 +352,10 @@ public class MessageUtils
          *
          * @param players the collection of players to send the message to.
          */
-        private void sendInternal(final Collection<Player> players)
-        {
-            for (Player player : players)
-            {
+        private void sendInternal(final Collection<Player> players) {
+            for (Player player : players) {
                 MutableComponent fullComponent = rootComponent.copy();
-                if (alwaysShowColony || !colony.isCoordInColony(player.level(), player.blockPosition()))
-                {
+                if (alwaysShowColony || !colony.isCoordInColony(player.level(), player.blockPosition())) {
                     fullComponent = Component.literal("[" + colony.getName() + "] ").append(rootComponent);
                 }
 

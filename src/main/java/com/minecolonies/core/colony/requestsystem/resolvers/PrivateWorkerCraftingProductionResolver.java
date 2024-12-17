@@ -17,71 +17,60 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingProductionResolver<PrivateCrafting>
-{
+public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingProductionResolver<PrivateCrafting> {
     /**
      * Constructor to initialize.
      *
      * @param location the location.
      * @param token    the id.
      */
-    public PrivateWorkerCraftingProductionResolver(@NotNull final ILocation location, @NotNull final IToken<?> token, @NotNull final JobEntry entry)
-    {
+    public PrivateWorkerCraftingProductionResolver(@NotNull final ILocation location, @NotNull final IToken<?> token, @NotNull final JobEntry entry) {
         super(location, token, entry, PrivateCrafting.class);
     }
 
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PrivateCrafting> completedRequest)
-    {
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PrivateCrafting> completedRequest) {
         return null;
     }
 
     @Override
-    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PrivateCrafting> request)
-    {
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PrivateCrafting> request) {
 
     }
 
     @Override
-    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PrivateCrafting> request)
-    {
+    public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PrivateCrafting> request) {
 
     }
 
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
 
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
 
     }
 
     @Override
-    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PrivateCrafting> request, @NotNull final AbstractBuilding building)
-    {
+    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PrivateCrafting> request, @NotNull final AbstractBuilding building) {
         manager.updateRequestState(request.getId(), RequestState.FINALIZING);
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeID());
 
-        if (storage == null)
-        {
+        if (storage == null) {
             manager.updateRequestState(request.getId(), RequestState.FAILED);
             return;
         }
 
         final ICraftingBuildingModule module = building.getCraftingModuleForRecipe(request.getRequest().getRecipeID());
-        if (module == null)
-        {
+        if (module == null) {
             manager.updateRequestState(request.getId(), RequestState.FAILED);
             return;
         }
-        for (int i = 0; i < request.getRequest().getCount(); i++)
-        {
+        for (int i = 0; i < request.getRequest().getCount(); i++) {
             module.fullFillRecipe(storage);
         }
 

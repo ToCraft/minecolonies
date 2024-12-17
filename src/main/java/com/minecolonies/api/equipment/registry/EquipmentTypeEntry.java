@@ -13,8 +13,7 @@ import java.util.function.BiPredicate;
  * An entry in the EquipmentType registry that defines the types of
  * equipment within the colony.
  */
-public final class EquipmentTypeEntry
-{
+public final class EquipmentTypeEntry {
     /**
      * The registry identifier for this equipment type.
      */
@@ -46,11 +45,10 @@ public final class EquipmentTypeEntry
      * @param registryName the forge registry location of the equipment type
      */
     private EquipmentTypeEntry(
-      final Component displayName,
-      final BiPredicate<ItemStack, EquipmentTypeEntry> isEquipment,
-      final BiFunction<ItemStack, EquipmentTypeEntry, Integer> itemLevel,
-      final ResourceLocation registryName)
-    {
+            final Component displayName,
+            final BiPredicate<ItemStack, EquipmentTypeEntry> isEquipment,
+            final BiFunction<ItemStack, EquipmentTypeEntry, Integer> itemLevel,
+            final ResourceLocation registryName) {
         this.displayName = displayName;
         this.isEquipment = isEquipment;
         this.itemLevel = itemLevel;
@@ -65,8 +63,7 @@ public final class EquipmentTypeEntry
      * @param serialized the string representation of the equipment type
      * @return the correct resource location
      */
-    public static ResourceLocation parseResourceLocation(final String serialized)
-    {
+    public static ResourceLocation parseResourceLocation(final String serialized) {
         ResourceLocation result = ResourceLocation.parse(serialized);
         return parseResourceLocation(result);
     }
@@ -79,8 +76,7 @@ public final class EquipmentTypeEntry
      * @param serialized A resource location read from nbt
      * @return the correct resource location
      */
-    public static ResourceLocation parseResourceLocation(final ResourceLocation serialized)
-    {
+    public static ResourceLocation parseResourceLocation(final ResourceLocation serialized) {
         final String namespace = serialized.getNamespace().equals("minecraft") ? Constants.MOD_ID : serialized.getNamespace();
         final String path = serialized.getPath().isEmpty() ? ModEquipmentTypes.none.get().registryName.getPath() : serialized.getPath();
         return new ResourceLocation(namespace, path);
@@ -91,8 +87,7 @@ public final class EquipmentTypeEntry
      *
      * @return the resource location
      */
-    public ResourceLocation getRegistryName()
-    {
+    public ResourceLocation getRegistryName() {
         return registryName;
     }
 
@@ -101,8 +96,7 @@ public final class EquipmentTypeEntry
      *
      * @return the component for the human-readable name.
      */
-    public Component getDisplayName()
-    {
+    public Component getDisplayName() {
         return displayName;
     }
 
@@ -112,8 +106,7 @@ public final class EquipmentTypeEntry
      * @param itemStack to test
      * @return whether the item stack can act as the equipment.
      */
-    public boolean checkIsEquipment(ItemStack itemStack)
-    {
+    public boolean checkIsEquipment(ItemStack itemStack) {
         return isEquipment.test(itemStack, this);
     }
 
@@ -123,16 +116,14 @@ public final class EquipmentTypeEntry
      * @param itemStack to test
      * @return the item level
      */
-    public int getMiningLevel(ItemStack itemStack)
-    {
+    public int getMiningLevel(ItemStack itemStack) {
         return isEquipment.test(itemStack, this) ? itemLevel.apply(itemStack, this) : -1;
     }
 
     /**
      * A builder that can construct new EquipmentTypeEntries.
      */
-    public static class Builder
-    {
+    public static class Builder {
         /**
          * The registry identifier for this equipment type.
          */
@@ -161,8 +152,7 @@ public final class EquipmentTypeEntry
          * @param registryName The registry identifier
          * @return this
          */
-        public Builder setRegistryName(final ResourceLocation registryName)
-        {
+        public Builder setRegistryName(final ResourceLocation registryName) {
             this.registryName = registryName;
             return this;
         }
@@ -173,8 +163,7 @@ public final class EquipmentTypeEntry
          * @param displayName the new human-readable name
          * @return this
          */
-        public Builder setDisplayName(final Component displayName)
-        {
+        public Builder setDisplayName(final Component displayName) {
             this.displayName = displayName;
             return this;
         }
@@ -185,8 +174,7 @@ public final class EquipmentTypeEntry
          * @param isEquipment the predicate
          * @return this
          */
-        public Builder setIsEquipment(final BiPredicate<ItemStack, EquipmentTypeEntry> isEquipment)
-        {
+        public Builder setIsEquipment(final BiPredicate<ItemStack, EquipmentTypeEntry> isEquipment) {
             this.isEquipment = isEquipment;
             return this;
         }
@@ -197,8 +185,7 @@ public final class EquipmentTypeEntry
          * @param itemLevel the function
          * @return this
          */
-        public Builder setEquipmentLevel(final BiFunction<ItemStack, EquipmentTypeEntry, Integer> itemLevel)
-        {
+        public Builder setEquipmentLevel(final BiFunction<ItemStack, EquipmentTypeEntry, Integer> itemLevel) {
             this.itemLevel = itemLevel;
             return this;
         }
@@ -208,8 +195,7 @@ public final class EquipmentTypeEntry
          *
          * @return the new EquipmentTypeEntry
          */
-        public EquipmentTypeEntry build()
-        {
+        public EquipmentTypeEntry build() {
             return new EquipmentTypeEntry(displayName, isEquipment, itemLevel, registryName);
         }
     }
@@ -218,10 +204,8 @@ public final class EquipmentTypeEntry
      * The comparator used to compare two EquipmentTypeEntries. The names
      * are used for the comparison.
      */
-    public static class Comparator implements java.util.Comparator<EquipmentTypeEntry>
-    {
-        public int compare(EquipmentTypeEntry o1, EquipmentTypeEntry o2)
-        {
+    public static class Comparator implements java.util.Comparator<EquipmentTypeEntry> {
+        public int compare(EquipmentTypeEntry o1, EquipmentTypeEntry o2) {
             return o1.registryName.compareTo(o2.registryName);
         }
     }

@@ -19,8 +19,7 @@ import java.util.Random;
 /**
  * Handles spawning item particle effects close to an entity.
  */
-public class ItemParticleEffectMessage extends AbstractClientPlayMessage
-{
+public class ItemParticleEffectMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "item_particle_effect", ItemParticleEffectMessage::new);
 
     /**
@@ -67,14 +66,13 @@ public class ItemParticleEffectMessage extends AbstractClientPlayMessage
      * @param eyeHeight     the eye height.
      */
     public ItemParticleEffectMessage(
-      final ItemStack stack,
-      final double posX,
-      final double posY,
-      final double posZ,
-      final double rotationPitch,
-      final double rotationYaw,
-      final double eyeHeight)
-    {
+            final ItemStack stack,
+            final double posX,
+            final double posY,
+            final double posZ,
+            final double rotationPitch,
+            final double rotationYaw,
+            final double eyeHeight) {
         super(TYPE);
         this.stack = stack;
         this.posX = posX;
@@ -85,8 +83,7 @@ public class ItemParticleEffectMessage extends AbstractClientPlayMessage
         this.eyeHeight = eyeHeight;
     }
 
-    protected ItemParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ItemParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         stack = Utils.deserializeCodecMess(ItemStack.STREAM_CODEC, buf);
         posX = buf.readDouble();
@@ -98,8 +95,7 @@ public class ItemParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         Utils.serializeCodecMess(ItemStack.STREAM_CODEC, buf, stack);
         buf.writeDouble(posX);
         buf.writeDouble(posY);
@@ -110,12 +106,9 @@ public class ItemParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
-        if (stack.getUseAnimation() == UseAnim.EAT)
-        {
-            for (int i = 0; i < 5; ++i)
-            {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
+        if (stack.getUseAnimation() == UseAnim.EAT) {
+            for (int i = 0; i < 5; ++i) {
                 Vec3 randomPos = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
                 randomPos = randomPos.xRot((float) (-rotationPitch * 0.017453292F));
                 randomPos = randomPos.yRot((float) (-rotationYaw * 0.017453292F));
@@ -125,12 +118,12 @@ public class ItemParticleEffectMessage extends AbstractClientPlayMessage
                 randomOffset = randomOffset.yRot((float) (-rotationYaw * 0.017453292F));
                 randomOffset = randomOffset.add(posX, posY + eyeHeight, posZ);
                 player.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, stack),
-                  randomOffset.x,
-                  randomOffset.y,
-                  randomOffset.z,
-                  randomPos.x,
-                  randomPos.y + 0.05D,
-                  randomPos.z);
+                        randomOffset.x,
+                        randomOffset.y,
+                        randomOffset.z,
+                        randomPos.x,
+                        randomPos.y + 0.05D,
+                        randomPos.z);
             }
         }
     }

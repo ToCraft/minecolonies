@@ -22,8 +22,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The abstract interaction response handler to be extended by the other ones.
  */
-public abstract class AbstractInteractionResponseHandler implements IInteractionResponseHandler
-{
+public abstract class AbstractInteractionResponseHandler implements IInteractionResponseHandler {
     /**
      * The text the citizen is saying.
      */
@@ -54,16 +53,14 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
      */
     @SafeVarargs
     public AbstractInteractionResponseHandler(
-      @NotNull final Component inquiry,
-      final boolean primary,
-      final IChatPriority priority,
-      final Tuple<Component, Component>... responseTuples)
-    {
+            @NotNull final Component inquiry,
+            final boolean primary,
+            final IChatPriority priority,
+            final Tuple<Component, Component>... responseTuples) {
         this.inquiry = inquiry;
         this.primary = primary;
         this.priority = priority;
-        for (final Tuple<Component, Component> element : responseTuples)
-        {
+        for (final Tuple<Component, Component> element : responseTuples) {
             this.responses.put(element.getA(), element.getB());
         }
     }
@@ -71,27 +68,23 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     /**
      * Way to load the response handler.
      */
-    public AbstractInteractionResponseHandler()
-    {
+    public AbstractInteractionResponseHandler() {
         // Do nothing, await loading from NBT.
     }
 
     @Override
-    public Component getInquiry()
-    {
+    public Component getInquiry() {
         return inquiry;
     }
 
     @Nullable
     @Override
-    public Component getResponseResult(final Component response)
-    {
+    public Component getResponseResult(final Component response) {
         return responses.getOrDefault(response, null);
     }
 
     @Override
-    public List<Component> getPossibleResponses()
-    {
+    public List<Component> getPossibleResponses() {
         return ImmutableList.copyOf(responses.keySet());
     }
 
@@ -100,13 +93,11 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
      *
      * @return the serialized data.
      */
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag tag = new CompoundTag();
         tag.putString(TAG_INQUIRY, Component.Serializer.toJson(this.inquiry, provider));
         final ListTag list = new ListTag();
-        for (final Map.Entry<Component, Component> element : responses.entrySet())
-        {
+        for (final Map.Entry<Component, Component> element : responses.entrySet()) {
             final CompoundTag elementTag = new CompoundTag();
             elementTag.putString(TAG_RESPONSE, Component.Serializer.toJson(element.getKey(), provider));
             elementTag.putString(TAG_NEXT_INQUIRY, Component.Serializer.toJson(element.getValue(), provider));
@@ -119,16 +110,14 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
         tag.putString(NbtTagConstants.TAG_HANDLER_TYPE, getType());
         return tag;
     }
-    
+
     /**
      * Deserialize the response handler from NBT.
      */
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT) {
         this.inquiry = Component.Serializer.fromJson(compoundNBT.getString(TAG_INQUIRY), provider);
         final ListTag list = compoundNBT.getList(TAG_RESPONSES, Tag.TAG_COMPOUND);
-        for (int i = 0; i < list.size(); i++)
-        {
+        for (int i = 0; i < list.size(); i++) {
             final CompoundTag nbt = list.getCompound(i);
             this.responses.put(Component.Serializer.fromJson(nbt.getString(TAG_RESPONSE), provider), Component.Serializer.fromJson(nbt.getString(TAG_NEXT_INQUIRY), provider));
         }
@@ -137,26 +126,22 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     }
 
     @Override
-    public boolean isPrimary()
-    {
+    public boolean isPrimary() {
         return primary;
     }
 
     @Override
-    public IChatPriority getPriority()
-    {
+    public IChatPriority getPriority() {
         return this.priority;
     }
 
     @Override
-    public boolean isVisible(final Level world)
-    {
+    public boolean isVisible(final Level world) {
         return true;
     }
 
     @Override
-    public boolean isValid(final ICitizenData colony)
-    {
+    public boolean isValid(final ICitizenData colony) {
         return true;
     }
 }

@@ -3,8 +3,7 @@ package com.minecolonies.api.colony.permissions;
 /**
  * Ranks within a colony.
  */
-public enum OldRank
-{
+public enum OldRank {
     OWNER(true),
     OFFICER(true),
     FRIEND(true),
@@ -23,8 +22,7 @@ public enum OldRank
      *
      * @param isSubscriber boolean whether auto-subscribed to this colony.
      */
-    OldRank(final boolean isSubscriber)
-    {
+    OldRank(final boolean isSubscriber) {
         this.isSubscriber = isSubscriber;
     }
 }

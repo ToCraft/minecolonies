@@ -19,8 +19,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_COLONY
 /**
  * UI to reactivate a colony.
  */
-public class WindowTownHallColonyReactivate extends AbstractWindowSkeleton
-{
+public class WindowTownHallColonyReactivate extends AbstractWindowSkeleton {
     private static final String BUTTON_CREATE = "create";
 
     /**
@@ -31,8 +30,7 @@ public class WindowTownHallColonyReactivate extends AbstractWindowSkeleton
     private final int closestDistance;
     private final String closestName;
 
-    public WindowTownHallColonyReactivate(final BlockPos pos, final String closestName, final int closestDistance)
-    {
+    public WindowTownHallColonyReactivate(final BlockPos pos, final String closestName, final int closestDistance) {
         super(MOD_ID + TOWNHALL_COLONY_REACTIVATE_GUI);
         this.pos = pos;
         this.closestName = closestName;
@@ -55,8 +53,7 @@ public class WindowTownHallColonyReactivate extends AbstractWindowSkeleton
     /**
      * On create button
      */
-    public void onCreate()
-    {
+    public void onCreate() {
         new WindowTownHallColonyManage(pos, closestName, closestDistance, preName, true).open();
     }
 }

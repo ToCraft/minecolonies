@@ -27,24 +27,21 @@ import static com.minecolonies.core.colony.buildings.AbstractBuildingGuards.HIRE
 /**
  * Assignment module for guards.
  */
-public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
-{
+public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule {
     /**
      * Random obj.
      */
     private static final Random random = new Random();
 
     public GuardBuildingModule(
-      final GuardType type,
-      final boolean canWorkingDuringRain,
-      final Function<IBuilding, Integer> sizeLimit)
-    {
+            final GuardType type,
+            final boolean canWorkingDuringRain,
+            final Function<IBuilding, Integer> sizeLimit) {
         super(type.getJobEntry().get(), type.getPrimarySkill(), type.getSecondarySkill(), canWorkingDuringRain, sizeLimit);
     }
 
     @Override
-    void onRemoval(final ICitizenData citizen)
-    {
+    void onRemoval(final ICitizenData citizen) {
         super.onRemoval(citizen);
         final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
         optCitizen.ifPresent(cit -> {
@@ -64,17 +61,14 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
     }
 
     @Override
-    public boolean isFull()
-    {
+    public boolean isFull() {
         return building.getAllAssignedCitizen().size() >= getModuleMax();
     }
 
     @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
+    public void onColonyTick(@NotNull final IColony colony) {
         // Give the other assignment module also a chance.
-        if (random.nextInt(building.getModulesByType(GuardBuildingModule.class).size()) == 0)
-        {
+        if (random.nextInt(building.getModulesByType(GuardBuildingModule.class).size()) == 0) {
             return;
         }
 
@@ -82,28 +76,23 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
 
         // If we have no active worker, attempt to grab one from the appropriate trainer
         if (building.getSetting(HIRE_TRAINEE).getValue() && !isFull() &&
-                BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()))
-        {
+                BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry())) {
             ICitizenData trainingCitizen = null;
             int maxSkill = 0;
 
-            for (ICitizenData trainee : colony.getCitizenManager().getCitizens())
-            {
-                if (trainee.getJob() == null)
-                {
+            for (ICitizenData trainee : colony.getCitizenManager().getCitizens()) {
+                if (trainee.getJob() == null) {
                     continue;
                 }
                 if ((getJobEntry().equals(ModJobs.archer.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.archerInTraining.get())
-                       || getJobEntry().equals(ModJobs.knight.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get()))
-                      && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill)
-                {
+                        || getJobEntry().equals(ModJobs.knight.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get()))
+                        && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill) {
                     maxSkill = trainee.getCitizenSkillHandler().getLevel(getPrimarySkill());
                     trainingCitizen = trainee;
                 }
             }
 
-            if (trainingCitizen != null)
-            {
+            if (trainingCitizen != null) {
                 hiredFromTraining = true;
                 trainingCitizen.setJob(null);
                 assignCitizen(trainingCitizen);
@@ -111,18 +100,15 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
         }
 
         //If we hired, we may have more than one to hire, so let's skip the superclass until next time.
-        if (!hiredFromTraining)
-        {
+        if (!hiredFromTraining) {
             super.onColonyTick(colony);
         }
     }
 
     @Override
-    void onAssignment(final ICitizenData citizen)
-    {
+    void onAssignment(final ICitizenData citizen) {
         super.onAssignment(citizen);
-        if (building instanceof AbstractBuildingGuards)
-        {
+        if (building instanceof AbstractBuildingGuards) {
             // Start timeout to not be stuck with an old patrol target
             ((AbstractBuildingGuards) building).setPatrolTimer(5);
         }

@@ -10,8 +10,7 @@ import java.util.List;
  *
  * @param <T> the quest instance type.
  */
-public interface WindowQuestLogQuestModule<T>
-{
+public interface WindowQuestLogQuestModule<T> {
     /**
      * Get the list of quests for this window.
      *
@@ -34,5 +33,6 @@ public interface WindowQuestLogQuestModule<T>
      *
      * @param quest the quest instance.
      */
-    default void trackQuest(final T quest) {}
+    default void trackQuest(final T quest) {
+    }
 }

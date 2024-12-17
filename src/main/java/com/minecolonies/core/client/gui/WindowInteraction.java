@@ -15,8 +15,8 @@ import com.minecolonies.core.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.core.colony.interactionhandling.QuestDialogueInteraction;
 import com.minecolonies.core.network.messages.server.colony.InteractionClose;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,8 +27,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for the citizen.
  */
-public class WindowInteraction extends AbstractWindowSkeleton
-{
+public class WindowInteraction extends AbstractWindowSkeleton {
     /**
      * Response buttons default id, gets the response index added to the end 1 to x
      */
@@ -54,16 +53,14 @@ public class WindowInteraction extends AbstractWindowSkeleton
      *
      * @param citizen citizen to bind the window to.
      */
-    public WindowInteraction(final ICitizenDataView citizen)
-    {
+    public WindowInteraction(final ICitizenDataView citizen) {
         super(Constants.MOD_ID + INTERACTION_RESOURCE_SUFFIX, new MainWindowCitizen(citizen));
         this.citizen = citizen;
         this.interactions = new ArrayList<>(citizen.getOrderedInteractions());
         registerButton(BUTTON_CANCEL, this::cancelClicked);
     }
 
-    private void cancelClicked()
-    {
+    private void cancelClicked() {
         close();
     }
 
@@ -71,8 +68,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
      * Called when the gui is opened by an player.
      */
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         interactions.removeIf(interaction -> !interaction.isVisible(Minecraft.getInstance().level));
         setupInteraction();
@@ -81,10 +77,8 @@ public class WindowInteraction extends AbstractWindowSkeleton
     /**
      * Setup the current interaction.
      */
-    private void setupInteraction()
-    {
-        if (currentInteraction >= interactions.size())
-        {
+    private void setupInteraction() {
+        if (currentInteraction >= interactions.size()) {
             close();
             return;
         }
@@ -93,8 +87,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
         window.findPaneOfTypeByID("requestItem", ItemIcon.class).hide();
 
         final IInteractionResponseHandler handler = interactions.get(currentInteraction);
-        if (handler.getPriority().getPriority() <= ChatPriority.CHITCHAT.getPriority() && currentInteraction > 0 && !(handler instanceof QuestDialogueInteraction))
-        {
+        if (handler.getPriority().getPriority() <= ChatPriority.CHITCHAT.getPriority() && currentInteraction > 0 && !(handler instanceof QuestDialogueInteraction)) {
             currentInteraction++;
             setupInteraction();
             return;
@@ -109,15 +102,13 @@ public class WindowInteraction extends AbstractWindowSkeleton
         chatText.setAlignment(Alignment.TOP_LEFT);
         chatText.setText(Component.literal(citizen.getName() + ": " + handler.getInquiry(Minecraft.getInstance().player).getString()));
         int responseIndex = 1;
-        for (final Component component : handler.getPossibleResponses())
-        {
+        for (final Component component : handler.getPossibleResponses()) {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
 
             final int textLen = mc.font.width(component.getString());
             int buttonHeight = BUTTON_HEIGHT;
-            if (textLen > BUTTON_LENGTH - 4)
-            {
+            if (textLen > BUTTON_LENGTH - 4) {
                 buttonHeight = 2 * BUTTON_HEIGHT;
             }
 
@@ -134,8 +125,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
 
 
             x += button.getWidth() + BUTTON_X_BUFFER;
-            if (x + button.getWidth() >= group.getWidth())
-            {
+            if (x + button.getWidth() >= group.getWidth()) {
                 x = 0;
                 y += BUTTON_Y_BUFFER + 2 * BUTTON_HEIGHT;
             }
@@ -146,11 +136,9 @@ public class WindowInteraction extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onClosed()
-    {
+    public void onClosed() {
         super.onClosed();
-        if (currentInteraction < interactions.size())
-        {
+        if (currentInteraction < interactions.size()) {
             interactions.get(currentInteraction).onClosed();
             new InteractionClose(citizen.getColonyId(), citizen.getId(), mc.level.dimension(), interactions.get(currentInteraction).getInquiry()).sendToServer();
         }
@@ -162,27 +150,19 @@ public class WindowInteraction extends AbstractWindowSkeleton
      * @param button the clicked button.
      */
     @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        if (button.getID().equals(BUTTON_CANCEL))
-        {
+    public void onButtonClicked(@NotNull final Button button) {
+        if (button.getID().equals(BUTTON_CANCEL)) {
             super.onButtonClicked(button);
-        }
-        else if (!interactions.isEmpty())
-        {
+        } else if (!interactions.isEmpty()) {
             final IInteractionResponseHandler handler = interactions.get(currentInteraction);
-            try
-            {
-                if (handler.onClientResponseTriggered(Integer.parseInt(button.getID().replace("response_", "")) - 1, Minecraft.getInstance().player, citizen, this))
-                {
+            try {
+                if (handler.onClientResponseTriggered(Integer.parseInt(button.getID().replace("response_", "")) - 1, Minecraft.getInstance().player, citizen, this)) {
                     currentInteraction++;
                     setupInteraction();
                     return;
                 }
                 setupInteraction();
-            }
-            catch (final Exception ex)
-            {
+            } catch (final Exception ex) {
                 Log.getLogger().warn("Wrong button id of interaction.", ex);
             }
         }

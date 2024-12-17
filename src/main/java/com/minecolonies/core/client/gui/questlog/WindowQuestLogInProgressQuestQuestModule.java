@@ -5,7 +5,10 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.quests.*;
+import com.minecolonies.api.quests.IQuestInstance;
+import com.minecolonies.api.quests.IQuestManager;
+import com.minecolonies.api.quests.IQuestObjectiveTemplate;
+import com.minecolonies.api.quests.IQuestTemplate;
 import com.minecolonies.core.client.render.worldevent.HighlightManager;
 import com.minecolonies.core.client.render.worldevent.highlightmanager.CitizenRenderData;
 import net.minecraft.ChatFormatting;
@@ -21,17 +24,14 @@ import static com.minecolonies.core.client.gui.questlog.Constants.*;
 /**
  * Window quest log renderer for in progress quests.
  */
-public class WindowQuestLogInProgressQuestQuestModule implements WindowQuestLogQuestModule<IQuestInstance>
-{
+public class WindowQuestLogInProgressQuestQuestModule implements WindowQuestLogQuestModule<IQuestInstance> {
     @Override
-    public List<IQuestInstance> getQuestItems(final IColonyView colonyView)
-    {
+    public List<IQuestInstance> getQuestItems(final IColonyView colonyView) {
         return colonyView.getQuestManager().getInProgressQuests();
     }
 
     @Override
-    public void renderQuestItem(final IQuestInstance quest, final IColonyView colonyView, final Pane row)
-    {
+    public void renderQuestItem(final IQuestInstance quest, final IColonyView colonyView, final Pane row) {
         IQuestTemplate questTemplate = IQuestManager.GLOBAL_SERVER_QUESTS.get(quest.getId());
 
         setText(row, LABEL_QUEST_NAME, Component.translatableEscape(QUEST_LOG_NAME_PREFIX).append(questTemplate.getName()));
@@ -42,20 +42,19 @@ public class WindowQuestLogInProgressQuestQuestModule implements WindowQuestLogQ
 
         final Component progressText = objectiveTemplate.getProgressText(quest, Style.EMPTY.withColor(ChatFormatting.GOLD));
         final Component mainComponent = Component.literal(" - ")
-                                          .append(progressText)
-                                          .withStyle(ChatFormatting.GOLD);
+                .append(progressText)
+                .withStyle(ChatFormatting.GOLD);
 
         questObjectiveText.setText(mainComponent);
 
         PaneBuilders.tooltipBuilder()
-          .append(objectiveTemplate.getProgressText(quest, Style.EMPTY.withColor(ChatFormatting.WHITE)))
-          .hoverPane(questObjectiveText)
-          .build();
+                .append(objectiveTemplate.getProgressText(quest, Style.EMPTY.withColor(ChatFormatting.WHITE)))
+                .hoverPane(questObjectiveText)
+                .build();
     }
 
     @Override
-    public void trackQuest(final IQuestInstance quest)
-    {
+    public void trackQuest(final IQuestInstance quest) {
         HighlightManager.addHighlight(HIGHLIGHT_QUEST_LOG_TRACKER_KEY, new CitizenRenderData(quest.getQuestTarget(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
     }
 
@@ -66,17 +65,15 @@ public class WindowQuestLogInProgressQuestQuestModule implements WindowQuestLogQ
      * @param id        the id of the text element.
      * @param component the text component to write as text on the element.
      */
-    private void setText(final Pane container, final String id, final Component component)
-    {
+    private void setText(final Pane container, final String id, final Component component) {
         final Text label = container.findPaneOfTypeByID(id, Text.class);
         label.setText(component);
 
-        if (label.getRenderedTextWidth() > label.getWidth())
-        {
+        if (label.getRenderedTextWidth() > label.getWidth()) {
             PaneBuilders.tooltipBuilder()
-              .append(component)
-              .hoverPane(label)
-              .build();
+                    .append(component)
+                    .hoverPane(label)
+                    .build();
         }
     }
 
@@ -87,11 +84,9 @@ public class WindowQuestLogInProgressQuestQuestModule implements WindowQuestLogQ
      * @param quest      the quest instance.
      * @return the component containing the name of the citizen.
      */
-    private Component getQuestGiverName(final IColonyView colonyView, final IQuestInstance quest)
-    {
+    private Component getQuestGiverName(final IColonyView colonyView, final IQuestInstance quest) {
         final ICitizenDataView citizen = colonyView.getCitizen(quest.getQuestTarget());
-        if (citizen != null)
-        {
+        if (citizen != null) {
             return Component.literal(citizen.getName());
         }
         return Component.empty();

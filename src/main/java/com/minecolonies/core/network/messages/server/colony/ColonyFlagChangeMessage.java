@@ -16,47 +16,42 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Message to update the colony flag once set in the {@link com.minecolonies.core.client.gui.WindowBannerPicker}.
  */
-public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
-{
+public class ColonyFlagChangeMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "colony_flag_change", ColonyFlagChangeMessage::new);
 
-    /** The chosen list of patterns from the window */
+    /**
+     * The chosen list of patterns from the window
+     */
     private final BannerPatternLayers patterns;
 
     /**
      * Spawn a new change message
-     * @param colony the colony the player changed the banner in
+     *
+     * @param colony      the colony the player changed the banner in
      * @param patternList the list of patterns they set in the banner picker
      */
-    public ColonyFlagChangeMessage(final IColony colony, final BannerPatternLayers patternList)
-    {
+    public ColonyFlagChangeMessage(final IColony colony, final BannerPatternLayers patternList) {
         super(TYPE, colony);
         this.patterns = patternList;
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         colony.setColonyFlag(patterns);
-        try
-        {
+        try {
             NeoForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.FLAG));
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             Log.getLogger().error("Error during ColonyInformationChangedEvent", e);
         }
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         Utils.serializeCodecMess(BannerPatternLayers.STREAM_CODEC, buf, this.patterns);
     }
 
-    protected ColonyFlagChangeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ColonyFlagChangeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.patterns = Utils.deserializeCodecMess(BannerPatternLayers.STREAM_CODEC, buf);
     }

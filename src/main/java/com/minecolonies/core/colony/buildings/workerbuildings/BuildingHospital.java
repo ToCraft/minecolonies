@@ -36,8 +36,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Class of the hospital building.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingHospital extends AbstractBuilding
-{
+public class BuildingHospital extends AbstractBuilding {
     /**
      * The hospital string.
      */
@@ -65,60 +64,49 @@ public class BuildingHospital extends AbstractBuilding
      * @param c the colony.
      * @param l the location
      */
-    public BuildingHospital(final IColony c, final BlockPos l)
-    {
+    public BuildingHospital(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return HOSPITAL_DESC;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         final ListTag bedTagList = compound.getList(TAG_BEDS, Tag.TAG_COMPOUND);
-        for (int i = 0; i < bedTagList.size(); ++i)
-        {
+        for (int i = 0; i < bedTagList.size(); ++i) {
             final CompoundTag bedCompound = bedTagList.getCompound(i);
             final BlockPos bedPos = BlockPosUtil.read(bedCompound, TAG_POS);
-            if (!bedMap.containsKey(bedPos))
-            {
+            if (!bedMap.containsKey(bedPos)) {
                 bedMap.put(bedPos, bedCompound.getInt(TAG_ID));
             }
         }
 
         final ListTag patientTagList = compound.getList(TAG_PATIENTS, Tag.TAG_COMPOUND);
-        for (int i = 0; i < patientTagList.size(); ++i)
-        {
+        for (int i = 0; i < patientTagList.size(); ++i) {
             final CompoundTag patientCompound = patientTagList.getCompound(i);
             final int patientId = patientCompound.getInt(TAG_ID);
-            if (!patients.containsKey(patientId))
-            {
+            if (!patients.containsKey(patientId)) {
                 patients.put(patientId, new Patient(patientCompound));
             }
         }
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
-        if (!bedMap.isEmpty())
-        {
+        if (!bedMap.isEmpty()) {
             @NotNull final ListTag bedTagList = new ListTag();
-            for (@NotNull final Map.Entry<BlockPos, Integer> entry : bedMap.entrySet())
-            {
+            for (@NotNull final Map.Entry<BlockPos, Integer> entry : bedMap.entrySet()) {
                 final CompoundTag bedCompound = new CompoundTag();
                 BlockPosUtil.write(bedCompound, NbtTagConstants.TAG_POS, entry.getKey());
                 bedCompound.putInt(TAG_ID, entry.getValue());
@@ -127,11 +115,9 @@ public class BuildingHospital extends AbstractBuilding
             compound.put(TAG_BEDS, bedTagList);
         }
 
-        if (!patients.isEmpty())
-        {
+        if (!patients.isEmpty()) {
             @NotNull final ListTag patientTagList = new ListTag();
-            for (@NotNull final Patient patient : patients.values())
-            {
+            for (@NotNull final Patient patient : patients.values()) {
                 final CompoundTag patientCompound = new CompoundTag();
                 patient.write(patientCompound);
                 patientTagList.add(patientCompound);
@@ -143,20 +129,16 @@ public class BuildingHospital extends AbstractBuilding
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final Level world)
-    {
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final Level world) {
         super.registerBlockPosition(blockState, pos, world);
 
         BlockPos registrationPosition = pos;
-        if (blockState.getBlock() instanceof BedBlock)
-        {
-            if (blockState.getValue(BedBlock.PART) == BedPart.FOOT)
-            {
+        if (blockState.getBlock() instanceof BedBlock) {
+            if (blockState.getValue(BedBlock.PART) == BedPart.FOOT) {
                 registrationPosition = registrationPosition.relative(blockState.getValue(BedBlock.FACING));
             }
 
-            if (!bedMap.containsKey(registrationPosition))
-            {
+            if (!bedMap.containsKey(registrationPosition)) {
                 bedMap.put(registrationPosition, 0);
             }
         }
@@ -168,8 +150,7 @@ public class BuildingHospital extends AbstractBuilding
      * @return immutable copy
      */
     @NotNull
-    public List<BlockPos> getBedList()
-    {
+    public List<BlockPos> getBedList() {
         return ImmutableList.copyOf(bedMap.keySet());
     }
 
@@ -178,8 +159,7 @@ public class BuildingHospital extends AbstractBuilding
      *
      * @return immutable copy.
      */
-    public List<Patient> getPatients()
-    {
+    public List<Patient> getPatients() {
         return ImmutableList.copyOf(patients.values());
     }
 
@@ -188,14 +168,12 @@ public class BuildingHospital extends AbstractBuilding
      *
      * @param patient the patient to remove.
      */
-    public void removePatientFile(final Patient patient)
-    {
+    public void removePatientFile(final Patient patient) {
         patients.remove(patient.getId());
     }
 
     @Override
-    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
-    {
+    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount() {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> map = super.getRequiredItemsAndAmount();
         map.put(this::doesAnyPatientRequireStack, new Tuple<>(10, false));
         return map;
@@ -207,21 +185,15 @@ public class BuildingHospital extends AbstractBuilding
      * @param stack the stack to test.
      * @return true if so.
      */
-    private boolean doesAnyPatientRequireStack(final ItemStack stack)
-    {
-        for (final Patient patient : patients.values())
-        {
+    private boolean doesAnyPatientRequireStack(final ItemStack stack) {
+        for (final Patient patient : patients.values()) {
             final ICitizenData data = colony.getCitizenManager().getCivilian(patient.getId());
-            if (data != null && data.getEntity().isPresent() && data.getCitizenDiseaseHandler().isSick())
-            {
+            if (data != null && data.getEntity().isPresent() && data.getCitizenDiseaseHandler().isSick()) {
                 final String diseaseName = data.getCitizenDiseaseHandler().getDisease();
-                if (!diseaseName.isEmpty())
-                {
+                if (!diseaseName.isEmpty()) {
                     final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName);
-                    for (final ItemStack cure : disease.getCure())
-                    {
-                        if (ItemStack.isSameItem(cure, stack))
-                        {
+                    for (final ItemStack cure : disease.getCure()) {
+                        if (ItemStack.isSameItem(cure, stack)) {
                             return true;
                         }
                     }
@@ -236,10 +208,8 @@ public class BuildingHospital extends AbstractBuilding
      *
      * @param citizenId patient to add.
      */
-    public void checkOrCreatePatientFile(final int citizenId)
-    {
-        if (!patients.containsKey(citizenId))
-        {
+    public void checkOrCreatePatientFile(final int citizenId) {
+        if (!patients.containsKey(citizenId)) {
             patients.put(citizenId, new Patient(citizenId));
         }
     }
@@ -250,8 +220,7 @@ public class BuildingHospital extends AbstractBuilding
      * @param bedPos    the pos.
      * @param citizenId the citizen id.
      */
-    public void registerPatient(final BlockPos bedPos, final int citizenId)
-    {
+    public void registerPatient(final BlockPos bedPos, final int citizenId) {
         bedMap.put(bedPos, citizenId);
         setBedOccupation(bedPos, citizenId != 0);
     }
@@ -262,79 +231,56 @@ public class BuildingHospital extends AbstractBuilding
      * @param bedPos   the position of the bed.
      * @param occupied if occupied.
      */
-    private void setBedOccupation(final BlockPos bedPos, final boolean occupied)
-    {
+    private void setBedOccupation(final BlockPos bedPos, final boolean occupied) {
         final BlockState state = colony.getWorld().getBlockState(bedPos);
-        if (state.is(BlockTags.BEDS))
-        {
+        if (state.is(BlockTags.BEDS)) {
             colony.getWorld().setBlock(bedPos, state.setValue(BedBlock.OCCUPIED, occupied), 0x03);
 
             final BlockPos feetPos = bedPos.relative(state.getValue(BedBlock.FACING).getOpposite());
             final BlockState feetState = colony.getWorld().getBlockState(feetPos);
 
-            if (feetState.is(BlockTags.BEDS))
-            {
+            if (feetState.is(BlockTags.BEDS)) {
                 colony.getWorld().setBlock(feetPos, feetState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
             }
         }
     }
 
     @Override
-    public void onWakeUp()
-    {
-        for (final Map.Entry<BlockPos, Integer> entry : new ArrayList<>(bedMap.entrySet()))
-        {
+    public void onWakeUp() {
+        for (final Map.Entry<BlockPos, Integer> entry : new ArrayList<>(bedMap.entrySet())) {
             final BlockState state = colony.getWorld().getBlockState(entry.getKey());
-            if (state.getBlock() instanceof BedBlock)
-            {
-                if (entry.getValue() == 0 && state.getValue(BedBlock.OCCUPIED))
-                {
+            if (state.getBlock() instanceof BedBlock) {
+                if (entry.getValue() == 0 && state.getValue(BedBlock.OCCUPIED)) {
                     setBedOccupation(entry.getKey(), false);
-                }
-                else if (entry.getValue() != 0)
-                {
+                } else if (entry.getValue() != 0) {
                     final ICitizenData citizen = colony.getCitizenManager().getCivilian(entry.getValue());
-                    if (citizen != null)
-                    {
-                        if (state.getValue(BedBlock.OCCUPIED))
-                        {
+                    if (citizen != null) {
+                        if (state.getValue(BedBlock.OCCUPIED)) {
                             if (!citizen.isAsleep() || !citizen.getEntity().isPresent()
-                                  || citizen.getEntity().get().blockPosition().distSqr(entry.getKey()) > 2.0)
-                            {
+                                    || citizen.getEntity().get().blockPosition().distSqr(entry.getKey()) > 2.0) {
                                 setBedOccupation(entry.getKey(), false);
                                 bedMap.put(entry.getKey(), 0);
                             }
-                        }
-                        else
-                        {
-                            if (citizen.isAsleep() && citizen.getEntity().isPresent() && citizen.getEntity().get().blockPosition().distSqr(entry.getKey()) < 2.0)
-                            {
+                        } else {
+                            if (citizen.isAsleep() && citizen.getEntity().isPresent() && citizen.getEntity().get().blockPosition().distSqr(entry.getKey()) < 2.0) {
                                 setBedOccupation(entry.getKey(), true);
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
                         bedMap.put(entry.getKey(), 0);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 bedMap.remove(entry.getKey());
             }
         }
     }
 
     @Override
-    public boolean canEat(final ItemStack stack)
-    {
-        for (final Disease disease : IColonyManager.getInstance().getCompatibilityManager().getDiseases())
-        {
-            for (final ItemStack cure : disease.getCure())
-            {
-                if (ItemStack.isSameItem(cure, stack))
-                {
+    public boolean canEat(final ItemStack stack) {
+        for (final Disease disease : IColonyManager.getInstance().getCompatibilityManager().getDiseases()) {
+            for (final ItemStack cure : disease.getCure()) {
+                if (ItemStack.isSameItem(cure, stack)) {
                     return false;
                 }
             }

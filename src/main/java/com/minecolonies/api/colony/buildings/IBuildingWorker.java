@@ -10,8 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface IBuildingWorker extends IBuilding
-{
+public interface IBuildingWorker extends IBuilding {
     /**
      * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
      */
@@ -96,7 +95,8 @@ public interface IBuildingWorker extends IBuilding
     Skill getSecondarySkill();
 
     /**
-     *  Recipe Improvement skill getter
+     * Recipe Improvement skill getter
+     *
      * @return the recipe improvement skill
      */
     @NotNull

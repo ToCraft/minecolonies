@@ -22,8 +22,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JU
  *     <li>All requirements from {@link UpwardsGrowingPlantModule}</li>
  * </ol>
  */
-public class BambooPlantModule extends UpwardsGrowingPlantModule
-{
+public class BambooPlantModule extends UpwardsGrowingPlantModule {
     /**
      * The minimum height bamboo can grow to.
      */
@@ -42,38 +41,32 @@ public class BambooPlantModule extends UpwardsGrowingPlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public BambooPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
-    {
+    public BambooPlantModule(final IField field, final String fieldTag, final String workTag, final Item item) {
         super(field, fieldTag, workTag, item);
     }
 
     @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
+    protected boolean isValidHarvestBlock(final BlockState blockState) {
         return blockState.getBlock() == Blocks.BAMBOO || blockState.getBlock() == Blocks.BAMBOO_SAPLING;
     }
 
     @Override
-    protected int getMinimumPlantLength()
-    {
+    protected int getMinimumPlantLength() {
         return MIN_HEIGHT;
     }
 
     @Override
-    protected @Nullable Integer getMaximumPlantLength()
-    {
+    protected @Nullable Integer getMaximumPlantLength() {
         return MAX_HEIGHT;
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
-    {
+    public ResourceLocation getRequiredResearchEffect() {
         return PLANTATION_JUNGLE;
     }
 
     @Override
-    public EquipmentTypeEntry getRequiredTool()
-    {
+    public EquipmentTypeEntry getRequiredTool() {
         return ModEquipmentTypes.axe.get();
     }
 }

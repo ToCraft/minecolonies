@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Interface used to describe classes that function as Factory controllers.
  */
-public interface IFactoryController
-{
+public interface IFactoryController {
 
     /**
      * Method used to get a factory for a given input class name.
@@ -21,20 +20,14 @@ public interface IFactoryController
      * @return The factory that can handle the given input class.
      * @throws IllegalArgumentException is thrown when the given input name is unknown to this Factory Controller.
      */
-    default <Input> IFactory<Input, ?> getFactoryForInput(@NotNull final String className) throws IllegalArgumentException
-    {
+    default <Input> IFactory<Input, ?> getFactoryForInput(@NotNull final String className) throws IllegalArgumentException {
         //Simple default implementation grabs the class from a given name and casts it to the proper type.
         //Any exceptions thrown before actual request is made gets wrapped.
-        try
-        {
+        try {
             return getFactoryForInput((TypeToken<? extends Input>) TypeToken.of(Class.forName(className)));
-        }
-        catch (final IllegalArgumentException ex)
-        {
+        } catch (final IllegalArgumentException ex) {
             throw ex;
-        }
-        catch (final Exception ex)
-        {
+        } catch (final Exception ex) {
             throw new IllegalArgumentException("The given input name is unknown", ex);
         }
     }
@@ -60,7 +53,7 @@ public interface IFactoryController
      * @throws IllegalArgumentException Thrown when no factory exists for the combination of input and output.
      */
     <Input, Output> IFactory<Input, Output> getFactoryForIO(@NotNull final TypeToken<? extends Input> inputTypeToken, @NotNull final TypeToken<? extends Output> outputTypeToken)
-      throws IllegalArgumentException;
+            throws IllegalArgumentException;
 
     /**
      * Method used to get a factory for a given Output class name.
@@ -70,20 +63,14 @@ public interface IFactoryController
      * @return The factory that can handle the given Output class.
      * @throws IllegalArgumentException is thrown when the given Output name is unknown to this Factory Controller.
      */
-    default <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final String className) throws IllegalArgumentException
-    {
+    default <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final String className) throws IllegalArgumentException {
         //Simple default implementation grabs the class from a given name and casts it to the proper type.
         //Any exceptions thrown before actual request is made gets wrapped.
-        try
-        {
+        try {
             return getFactoryForOutput((TypeToken<? extends Output>) TypeToken.of(Class.forName(className)));
-        }
-        catch (final IllegalArgumentException ex)
-        {
+        } catch (final IllegalArgumentException ex) {
             throw ex;
-        }
-        catch (final Exception ex)
-        {
+        } catch (final Exception ex) {
             throw new IllegalArgumentException("The given output name is unknown", ex);
         }
     }
@@ -91,23 +78,17 @@ public interface IFactoryController
     /**
      * Method used to get a factory for a given Output class name.
      *
-     * @param id The class id of the Output type of the requested factory.
-     * @param <Output>  The type of Output for the requested factory.
+     * @param id       The class id of the Output type of the requested factory.
+     * @param <Output> The type of Output for the requested factory.
      * @return The factory that can handle the given Output class.
      * @throws IllegalArgumentException is thrown when the given Output name is unknown to this Factory Controller.
      */
-    default <Output> IFactory<?, Output> getFactoryForOutput(final short id) throws IllegalArgumentException
-    {
-        try
-        {
+    default <Output> IFactory<?, Output> getFactoryForOutput(final short id) throws IllegalArgumentException {
+        try {
             return getFactoryForSerializationId(id);
-        }
-        catch (final IllegalArgumentException ex)
-        {
+        } catch (final IllegalArgumentException ex) {
             throw ex;
-        }
-        catch (final Exception ex)
-        {
+        } catch (final Exception ex) {
             throw new IllegalArgumentException("The given output name is unknown", ex);
         }
     }
@@ -125,7 +106,7 @@ public interface IFactoryController
     /**
      * Method used to get a factory for a given output class.
      *
-     * @param id    The id of the output type of the requested factory.
+     * @param id       The id of the output type of the requested factory.
      * @param <Output> The type of output for the requested factory.
      * @return The factory that can handle the given output class.
      * @throws IllegalArgumentException is thrown when the given output class is unknown to this Factory Controller.
@@ -195,7 +176,7 @@ public interface IFactoryController
      * @throws ClassCastException       thrown when a Factory is known for the given input, but does not produce the given output.
      */
     <Input, Output> Output getNewInstance(@NotNull final TypeToken<? extends Output> requestedType, @NotNull final Input input, @NotNull final Object... context)
-      throws IllegalArgumentException, ClassCastException;
+            throws IllegalArgumentException, ClassCastException;
 
     /**
      * Method used to create a new instance of the given output.

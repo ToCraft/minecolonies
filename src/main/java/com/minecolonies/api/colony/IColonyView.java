@@ -22,8 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-public interface IColonyView extends IColony
-{
+public interface IColonyView extends IColony {
     /**
      * Get a copy of the freePositions list.
      *
@@ -208,7 +207,8 @@ public interface IColonyView extends IColony
 
     /**
      * Handles visitor view messages
-     * @param refresh if all need to be refreshed.
+     *
+     * @param refresh         if all need to be refreshed.
      * @param visitorViewData the new data to set
      */
     void handleColonyViewVisitorMessage(final RegistryFriendlyByteBuf visitorViewData, final boolean refresh);
@@ -248,6 +248,7 @@ public interface IColonyView extends IColony
 
     /**
      * Handle the colony view research manager updating.
+     *
      * @param compoundTag the tag to update the research manager with.
      */
     void handleColonyViewResearchManagerUpdate(@NotNull final HolderLookup.Provider provider, CompoundTag compoundTag);
@@ -416,6 +417,7 @@ public interface IColonyView extends IColony
 
     /**
      * Get a list of all available citizen name style options.
+     *
      * @return the list of options.
      */
     List<String> getNameFileIds();

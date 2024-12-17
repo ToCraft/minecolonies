@@ -19,8 +19,7 @@ import static com.minecolonies.api.util.constant.translation.GuiTranslationConst
 /**
  * Generic module window class. This creates the navigational menu.
  */
-public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implements IModuleWindow
-{
+public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implements IModuleWindow {
     /**
      * Building view matching the module.
      */
@@ -29,11 +28,10 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
     /**
      * Constructor for the window of the the filterable lists.
      *
-     * @param building   {@link AbstractBuildingView}.
-     * @param res        the resource String.
+     * @param building {@link AbstractBuildingView}.
+     * @param res      the resource String.
      */
-    public AbstractModuleWindow(final IBuildingView building, final String res)
-    {
+    public AbstractModuleWindow(final IBuildingView building, final String res) {
         super(res);
         this.buildingView = building;
         final Random random = new Random(building.getID().hashCode());
@@ -41,18 +39,15 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
 
         boolean anyVisible = false;
 
-        for (IBuildingModuleView view : building.getAllModuleViews())
-        {
-            if (view.isPageVisible())
-            {
+        for (IBuildingModuleView view : building.getAllModuleViews()) {
+            if (view.isPageVisible()) {
                 anyVisible = true;
                 break;
             }
         }
 
-            //todo We have to move this to 0 as soon as we're finished with modularization and remove the switch views in favor of a sidenav xml.
-        if (building.getAllModuleViews().size() > 0 && anyVisible)
-        {
+        //todo We have to move this to 0 as soon as we're finished with modularization and remove the switch views in favor of a sidenav xml.
+        if (building.getAllModuleViews().size() > 0 && anyVisible) {
             final ButtonImage image = new ButtonImage();
             image.setImage(new ResourceLocation("minecolonies", "textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"));
             image.setPosition(-20, 10 + offset);
@@ -74,8 +69,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatableEscape(LABEL_MAIN_TAB_NAME));
         }
 
-        for (IBuildingModuleView view : building.getAllModuleViews())
-        {
+        for (IBuildingModuleView view : building.getAllModuleViews()) {
             if (!view.isPageVisible()) continue;
 
             final ButtonImage image = new ButtonImage();

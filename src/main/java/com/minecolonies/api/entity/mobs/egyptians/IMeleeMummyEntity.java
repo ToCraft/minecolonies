@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.mobs.IMeleeMobEntity;
 /**
  * Melee mummy interface.
  */
-public interface IMeleeMummyEntity extends IEgyptianEntity, IMeleeMobEntity
-{
+public interface IMeleeMummyEntity extends IEgyptianEntity, IMeleeMobEntity {
 
 }

@@ -12,8 +12,7 @@ import java.util.Map;
  * @param <K> The key type.
  * @param <V> The value type.
  */
-public interface IAssignmentDataStore<K, V> extends IDataStore
-{
+public interface IAssignmentDataStore<K, V> extends IDataStore {
     /**
      * The K to V assignments.
      *
@@ -29,8 +28,7 @@ public interface IAssignmentDataStore<K, V> extends IDataStore
      * @return The key or null.
      */
     @Nullable
-    default K getAssignmentForValue(final V value)
-    {
+    default K getAssignmentForValue(final V value) {
         return getAssignments().keySet().stream().filter(k -> getAssignments().get(k).contains(value)).findFirst().orElse(null);
     }
 }

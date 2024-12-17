@@ -25,42 +25,39 @@ import java.util.stream.Collectors;
 /**
  * Common base class for JEI teaching GUI extensions.
  */
-public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScreen<?>> implements IGuiContainerHandler<W>, IGhostIngredientHandler<W>
-{
+public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScreen<?>> implements IGuiContainerHandler<W>, IGhostIngredientHandler<W> {
     @NotNull
     private final Map<ResourceLocation, JobBasedRecipeCategory<?>> categories;
 
-    protected AbstractTeachingGuiHandler(@NotNull final List<JobBasedRecipeCategory<?>> categories)
-    {
+    protected AbstractTeachingGuiHandler(@NotNull final List<JobBasedRecipeCategory<?>> categories) {
         this.categories = categories.stream()
                 .collect(Collectors.toMap(category -> category.getRecipeType().getUid(), Function.identity()));
     }
 
-    public void register(@NotNull final IGuiHandlerRegistration registration)
-    {
+    public void register(@NotNull final IGuiHandlerRegistration registration) {
         registration.addGuiContainerHandler(getWindowClass(), this);
         registration.addGhostIngredientHandler(getWindowClass(), this);
     }
 
-    @NotNull protected abstract Class<W> getWindowClass();
+    @NotNull
+    protected abstract Class<W> getWindowClass();
+
     protected abstract boolean isSupportedCraftingModule(@NotNull CraftingModuleView moduleView);
+
     protected abstract boolean isSupportedSlot(@NotNull Slot slot);
+
     protected abstract void updateServer(@NotNull W gui);
 
     @Nullable
-    protected JobBasedRecipeCategory<?> getRecipeCategory(@NotNull final AbstractBuildingView view)
-    {
-        for (final CraftingModuleView moduleView : view.getModuleViews(CraftingModuleView.class))
-        {
+    protected JobBasedRecipeCategory<?> getRecipeCategory(@NotNull final AbstractBuildingView view) {
+        for (final CraftingModuleView moduleView : view.getModuleViews(CraftingModuleView.class)) {
             if (!isSupportedCraftingModule(moduleView)) continue;
 
             final JobEntry jobEntry = moduleView.getJobEntry();
-            if (jobEntry != null)
-            {
+            if (jobEntry != null) {
                 final ResourceLocation uid = jobEntry.getKey();
                 final JobBasedRecipeCategory<?> category = this.categories.get(uid);
-                if (category != null)
-                {
+                if (category != null) {
                     return category;
                 }
             }
@@ -72,29 +69,23 @@ public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScre
     @Override
     public <I> List<Target<I>> getTargetsTyped(@NotNull final W gui,
                                                @NotNull final ITypedIngredient<I> ingredient,
-                                               final boolean doStart)
-    {
+                                               final boolean doStart) {
         final List<Target<I>> targets = new ArrayList<>();
-        if (ingredient.getType().getIngredientClass() == ItemStack.class)
-        {
-            for (final Slot slot : gui.getMenu().slots)
-            {
+        if (ingredient.getType().getIngredientClass() == ItemStack.class) {
+            for (final Slot slot : gui.getMenu().slots) {
                 if (!slot.isActive() || !isSupportedSlot(slot)) continue;
 
                 final Rect2i bounds = new Rect2i(gui.getGuiLeft() + slot.x, gui.getGuiTop() + slot.y, 17, 17);
 
-                targets.add(new Target<I>()
-                {
+                targets.add(new Target<I>() {
                     @NotNull
                     @Override
-                    public Rect2i getArea()
-                    {
+                    public Rect2i getArea() {
                         return bounds;
                     }
 
                     @Override
-                    public void accept(@NotNull I ingredient)
-                    {
+                    public void accept(@NotNull I ingredient) {
                         slot.set((ItemStack) ingredient);
                         updateServer(gui);
                     }
@@ -105,7 +96,6 @@ public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScre
     }
 
     @Override
-    public void onComplete()
-    {
+    public void onComplete() {
     }
 }

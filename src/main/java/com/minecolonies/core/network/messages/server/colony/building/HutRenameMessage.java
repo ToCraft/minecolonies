@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to execute the renaming of the townHall.
  */
-public class HutRenameMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class HutRenameMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "hut_rename", HutRenameMessage::new);
 
     /**
@@ -29,30 +28,26 @@ public class HutRenameMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param name     New name of the town hall.
      * @param building the building we're executing on.
      */
-    public HutRenameMessage(@NotNull final IBuildingView building, final String name)
-    {
+    public HutRenameMessage(@NotNull final IBuildingView building, final String name) {
         super(TYPE, building);
         this.name = name;
     }
 
-    protected HutRenameMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected HutRenameMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
 
         name = buf.readUtf(32767);
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
 
         buf.writeUtf(name);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
         building.setCustomBuildingName(name);
     }
 }

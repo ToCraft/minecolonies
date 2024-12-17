@@ -5,8 +5,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 /**
  * THe states a colony can be in.
  */
-public enum ColonyState implements IAIState
-{
+public enum ColonyState implements IAIState {
     /**
      * Colony is not ticking
      */
@@ -23,8 +22,7 @@ public enum ColonyState implements IAIState
     UNLOADED;
 
     @Override
-    public boolean isOkayToEat()
-    {
+    public boolean isOkayToEat() {
         return false;
     }
 }

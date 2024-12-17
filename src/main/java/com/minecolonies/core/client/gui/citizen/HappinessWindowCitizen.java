@@ -8,8 +8,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.CITIZEN_HAP_RES
 /**
  * BOWindow for the citizen.
  */
-public class HappinessWindowCitizen extends AbstractWindowCitizen
-{
+public class HappinessWindowCitizen extends AbstractWindowCitizen {
     /**
      * The citizenData.View object.
      */
@@ -20,14 +19,12 @@ public class HappinessWindowCitizen extends AbstractWindowCitizen
      *
      * @param citizen citizen to bind the window to.
      */
-    public HappinessWindowCitizen(final ICitizenDataView citizen)
-    {
+    public HappinessWindowCitizen(final ICitizenDataView citizen) {
         super(citizen, Constants.MOD_ID + CITIZEN_HAP_RESOURCE_SUFFIX);
         this.citizen = citizen;
     }
 
-    public ICitizenDataView getCitizen()
-    {
+    public ICitizenDataView getCitizen() {
         return citizen;
     }
 
@@ -35,8 +32,7 @@ public class HappinessWindowCitizen extends AbstractWindowCitizen
      * Called when the gui is opened by an player.
      */
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         CitizenWindowUtils.updateHappiness(citizen, this);
     }

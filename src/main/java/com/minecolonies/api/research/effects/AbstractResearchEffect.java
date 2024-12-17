@@ -5,8 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Abstract research effect.
  */
-public abstract class AbstractResearchEffect<T> implements IResearchEffect<T>
-{
+public abstract class AbstractResearchEffect<T> implements IResearchEffect<T> {
     /**
      * The String id of the research effect.
      */
@@ -17,14 +16,12 @@ public abstract class AbstractResearchEffect<T> implements IResearchEffect<T>
      *
      * @param id the id to unlock.
      */
-    public AbstractResearchEffect(final ResourceLocation id)
-    {
+    public AbstractResearchEffect(final ResourceLocation id) {
         this.id = id;
     }
 
     @Override
-    public ResourceLocation getId()
-    {
+    public ResourceLocation getId() {
         return this.id;
     }
 }

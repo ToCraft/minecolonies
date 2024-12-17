@@ -14,8 +14,7 @@ import java.util.function.Predicate;
 /**
  * Class to hold information about required item for the guard.
  */
-public class GuardGear implements Predicate<ItemStack>
-{
+public class GuardGear implements Predicate<ItemStack> {
     /**
      * Min level the citizen has to be to required the item.
      */
@@ -67,11 +66,10 @@ public class GuardGear implements Predicate<ItemStack>
      * @param buildingLevelRange level range that the item will be required.
      */
     public GuardGear(
-      final EquipmentTypeEntry item, final EquipmentSlot type,
-      final int minArmorLevel,
-      final int maxArmorLevel, final Tuple<Integer, Integer> citizenLevelRange,
-      final Tuple<Integer, Integer> buildingLevelRange)
-    {
+            final EquipmentTypeEntry item, final EquipmentSlot type,
+            final int minArmorLevel,
+            final int maxArmorLevel, final Tuple<Integer, Integer> citizenLevelRange,
+            final Tuple<Integer, Integer> buildingLevelRange) {
         this.type = type;
         this.itemNeeded = item;
         this.minLevelRequired = citizenLevelRange.getA();
@@ -85,74 +83,65 @@ public class GuardGear implements Predicate<ItemStack>
     /**
      * @return min level for this item to be required
      */
-    public int getMinLevelRequired()
-    {
+    public int getMinLevelRequired() {
         return minLevelRequired;
     }
 
     /**
      * @return max level for this item to be require
      */
-    public int getMaxLevelRequired()
-    {
+    public int getMaxLevelRequired() {
         return maxLevelRequired;
     }
 
     /**
      * @return type of the item
      */
-    public EquipmentSlot getType()
-    {
+    public EquipmentSlot getType() {
         return type;
     }
 
     /**
      * @return minimal level required for this tool.
      */
-    public int getMinArmorLevel()
-    {
+    public int getMinArmorLevel() {
         return minArmorLevel;
     }
 
     /**
      * @return maximal level required for this tool.
      */
-    public int getMaxArmorLevel()
-    {
+    public int getMaxArmorLevel() {
         return maxArmorLevel;
     }
 
     /**
      * @return return the tool type that is needed
      */
-    public EquipmentTypeEntry getItemNeeded()
-    {
+    public EquipmentTypeEntry getItemNeeded() {
         return itemNeeded;
     }
 
     /**
      * @return the min building level for this armor.
      */
-    public int getMinBuildingLevelRequired()
-    {
+    public int getMinBuildingLevelRequired() {
         return minBuildingLevelRequired;
     }
 
     /**
      * @return the max building level for this armor.
      */
-    public int getMaxBuildingLevelRequired()
-    {
+    public int getMaxBuildingLevelRequired() {
         return maxBuildingLevelRequired;
     }
 
     @Override
-    public boolean test(final ItemStack stack)
-    {
+    public boolean test(final ItemStack stack) {
         return
-          (ItemStackUtils.hasEquipmentLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ArmorItem
-             && ((ArmorItem) stack.getItem()).getEquipmentSlot() == getType())
-            || (stack.getItem() instanceof SwordItem && getType() == EquipmentSlot.MAINHAND)
-            || (stack.getItem() instanceof ShieldItem && getType() == EquipmentSlot.OFFHAND);
+                (ItemStackUtils.hasEquipmentLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ArmorItem
+                        && ((ArmorItem) stack.getItem()).getEquipmentSlot() == getType())
+                        || (stack.getItem() instanceof SwordItem && getType() == EquipmentSlot.MAINHAND)
+                        || (stack.getItem() instanceof ShieldItem && getType() == EquipmentSlot.OFFHAND);
     }
 }

@@ -28,8 +28,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JU
  *     <li>All requirements from {@link PercentageHarvestPlantModule}</li>
  * </ol>
  */
-public class VinePlantModule extends PercentageHarvestPlantModule
-{
+public class VinePlantModule extends PercentageHarvestPlantModule {
     /**
      * Default constructor.
      *
@@ -38,42 +37,36 @@ public class VinePlantModule extends PercentageHarvestPlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public VinePlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
-    {
+    public VinePlantModule(final IField field, final String fieldTag, final String workTag, final Item item) {
         super(field, fieldTag, workTag, item);
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
-    {
+    public ResourceLocation getRequiredResearchEffect() {
         return PLANTATION_JUNGLE;
     }
 
     @Override
-    public BlockState getPlantingBlockState(final Level world, final BlockPos workPosition, final BlockState blockState)
-    {
+    public BlockState getPlantingBlockState(final Level world, final BlockPos workPosition, final BlockState blockState) {
         return blockState.setValue(VineBlock.UP, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.above(), Direction.DOWN)))
-                 .setValue(VineBlock.NORTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.north(), Direction.SOUTH)))
-                 .setValue(VineBlock.SOUTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.south(), Direction.NORTH)))
-                 .setValue(VineBlock.WEST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.west(), Direction.EAST)))
-                 .setValue(VineBlock.EAST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.east(), Direction.WEST)));
+                .setValue(VineBlock.NORTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.north(), Direction.SOUTH)))
+                .setValue(VineBlock.SOUTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.south(), Direction.NORTH)))
+                .setValue(VineBlock.WEST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.west(), Direction.EAST)))
+                .setValue(VineBlock.EAST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.east(), Direction.WEST)));
     }
 
     @Override
-    public EquipmentTypeEntry getRequiredTool()
-    {
+    public EquipmentTypeEntry getRequiredTool() {
         return ModEquipmentTypes.shears.get();
     }
 
     @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
+    protected boolean isValidHarvestBlock(final BlockState blockState) {
         return blockState.is(Blocks.VINE);
     }
 
     @Override
-    protected int getMinimumPlantPercentage()
-    {
+    protected int getMinimumPlantPercentage() {
         return 20;
     }
 }

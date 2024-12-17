@@ -28,8 +28,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for the town hall.
  */
-public class WindowCitizenPage extends AbstractWindowTownHall
-{
+public class WindowCitizenPage extends AbstractWindowTownHall {
     /**
      * Citizen name comparator.
      */
@@ -61,14 +60,12 @@ public class WindowCitizenPage extends AbstractWindowTownHall
      *
      * @param townHall {@link BuildingTownHall.View}.
      */
-    public WindowCitizenPage(final BuildingTownHall.View townHall)
-    {
+    public WindowCitizenPage(final BuildingTownHall.View townHall) {
         super(townHall, "layoutcitizens.xml");
 
         updateCitizens();
         fillCitizensList();
-        if (!citizens.isEmpty())
-        {
+        if (!citizens.isEmpty()) {
             selectedCitizen = citizens.get(0);
         }
 
@@ -79,8 +76,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
 
         window.findPaneOfTypeByID(SEARCH_INPUT, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
-            if (!newFilter.equals(filter))
-            {
+            if (!newFilter.equals(filter)) {
                 filter = newFilter;
                 updateCitizens();
             }
@@ -90,27 +86,23 @@ public class WindowCitizenPage extends AbstractWindowTownHall
     /**
      * Clears and resets all citizens.
      */
-    private void updateCitizens()
-    {
+    private void updateCitizens() {
         citizens.clear();
-        if (filter.isEmpty())
-        {
+        if (filter.isEmpty()) {
             citizens.addAll(building.getColony().getCitizens().values());
-        }
-        else
-        {
+        } else {
             citizens.addAll(building.getColony().getCitizens().values().stream().filter(cit -> cit.getName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                                                 || cit.getJobComponent().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))).toList());
+                    || cit.getJobComponent().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))).toList());
         }
         citizens.sort(COMPARE_BY_NAME);
     }
 
     /**
      * On clicking a citizen name in the list.
+     *
      * @param button the clicked button.
      */
-    private void citizenSelected(final Button button)
-    {
+    private void citizenSelected(final Button button) {
         final ScrollingList citizenList = findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class);
         selectedCitizen = citizens.get(citizenList.getListElementIndexByPane(button));
 
@@ -120,31 +112,25 @@ public class WindowCitizenPage extends AbstractWindowTownHall
     /**
      * Setup citizen info in UI.
      */
-    private void fillCitizenInfo()
-    {
-        if (selectedCitizen == null)
-        {
+    private void fillCitizenInfo() {
+        if (selectedCitizen == null) {
             return;
         }
 
-        if (selectedCitizen.isFemale())
-        {
+        if (selectedCitizen.isFemale()) {
             findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(ResourceLocation.parse(FEMALE_SOURCE), false);
-        }
-        else
-        {
+        } else {
             findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(ResourceLocation.parse(MALE_SOURCE), false);
         }
 
         findPaneOfTypeByID(JOB_LABEL, Text.class).setText(selectedCitizen.getJobComponent().withStyle(ChatFormatting.BOLD));
 
-        findPaneOfTypeByID(HEALTH_SHORT_LABEL, Text.class).setText(Component.literal((int)selectedCitizen.getHealth() + "/" + (int) selectedCitizen.getMaxHealth()));
+        findPaneOfTypeByID(HEALTH_SHORT_LABEL, Text.class).setText(Component.literal((int) selectedCitizen.getHealth() + "/" + (int) selectedCitizen.getMaxHealth()));
         findPaneOfTypeByID(HAPPINESS_SHORT_LABEL, Text.class).setText(Component.literal((int) selectedCitizen.getHappiness() + "/" + 10));
-        findPaneOfTypeByID(SATURATION_SHORT_LABEL, Text.class).setText(Component.literal((int)selectedCitizen.getSaturation() + "/" + 20));
+        findPaneOfTypeByID(SATURATION_SHORT_LABEL, Text.class).setText(Component.literal((int) selectedCitizen.getSaturation() + "/" + 20));
 
         selectedEntity = Minecraft.getInstance().level.getEntity(selectedCitizen.getEntityId());
-        if (selectedEntity != null && selectedEntity.getPose() == Pose.SLEEPING)
-        {
+        if (selectedEntity != null && selectedEntity.getPose() == Pose.SLEEPING) {
             final EntityIcon entityIcon = findPaneOfTypeByID(ENTITY_ICON, EntityIcon.class);
             entityIcon.setEntity(selectedEntity);
             entityIcon.show();
@@ -156,10 +142,8 @@ public class WindowCitizenPage extends AbstractWindowTownHall
      *
      * @param button the clicked button.
      */
-    private void recallOneClicked(final Button button)
-    {
-        if (selectedCitizen == null)
-        {
+    private void recallOneClicked(final Button button) {
+        if (selectedCitizen == null) {
             return;
         }
         new RecallSingleCitizenMessage(building, selectedCitizen.getId()).sendToServer();
@@ -168,27 +152,22 @@ public class WindowCitizenPage extends AbstractWindowTownHall
     /**
      * Fills the citizens list in the GUI.
      */
-    private void fillCitizensList()
-    {
+    private void fillCitizensList() {
         final ScrollingList citizenList = findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class);
-        citizenList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        citizenList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return citizens.size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final ICitizenDataView citizen = citizens.get(index);
                 final Button button = rowPane.findPaneOfTypeByID(NAME_LABEL, ButtonImage.class);
                 button.setText(Component.literal(citizen.getName()));
 
                 final AbstractTextBuilder.TextBuilder textBuilder = PaneBuilders.textBuilder();
-                for (final Map.Entry<Skill, CitizenSkillHandler.SkillData> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
-                {
+                for (final Map.Entry<Skill, CitizenSkillHandler.SkillData> entry : citizen.getCitizenSkillHandler().getSkills().entrySet()) {
                     final String skillName = entry.getKey().name().toLowerCase(Locale.US);
                     final int skillLevel = entry.getValue().getLevel();
 
@@ -196,12 +175,9 @@ public class WindowCitizenPage extends AbstractWindowTownHall
                     textBuilder.append(Component.literal(": " + skillLevel + " "));
                 }
                 PaneBuilders.tooltipBuilder().hoverPane(button).build().setText(textBuilder.build().getText());
-                if (selectedCitizen == citizen)
-                {
+                if (selectedCitizen == citizen) {
                     button.disable();
-                }
-                else
-                {
+                } else {
                     button.enable();
                 }
             }
@@ -212,14 +188,11 @@ public class WindowCitizenPage extends AbstractWindowTownHall
     /**
      * Fills the citizens list in the GUI.
      */
-    private void fillHappinessList()
-    {
+    private void fillHappinessList() {
         final Map<String, Double> happinessMap = new HashMap<>();
 
-        for (final ICitizenDataView data : building.getColony().getCitizens().values())
-        {
-            for (final String modifier : data.getHappinessHandler().getModifiers())
-            {
+        for (final ICitizenDataView data : building.getColony().getCitizens().values()) {
+            for (final String modifier : data.getHappinessHandler().getModifiers()) {
                 happinessMap.put(modifier, happinessMap.getOrDefault(modifier, 0.0) + data.getHappinessHandler().getModifier(modifier).getFactor(null));
             }
         }
@@ -233,17 +206,14 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         final List<Map.Entry<String, Double>> happinessList = new ArrayList<>(happinessMap.entrySet());
 
         final ScrollingList happinessScrollingList = findPaneOfTypeByID(LIST_HAPPINESS, ScrollingList.class);
-        happinessScrollingList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        happinessScrollingList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return happinessList.size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final Map.Entry<String, Double> entry = happinessList.get(index);
                 final double value = entry.getValue() / building.getColony().getCitizenCount();
                 final Image image = rowPane.findPaneOfTypeByID("icon", Image.class);
@@ -251,20 +221,13 @@ public class WindowCitizenPage extends AbstractWindowTownHall
                 final Text label = rowPane.findPaneOfTypeByID("name", Text.class);
                 label.setText(Component.translatableEscape(PARTIAL_HAPPINESS_MODIFIER_NAME + entry.getKey()));
 
-                if (value > 1.0)
-                {
+                if (value > 1.0) {
                     image.setImage(ResourceLocation.parse(HAPPY_ICON), false);
-                }
-                else if (value == 1)
-                {
+                } else if (value == 1) {
                     image.setImage(ResourceLocation.parse(SATISFIED_ICON), false);
-                }
-                else if (value > 0.75)
-                {
+                } else if (value > 0.75) {
                     image.setImage(ResourceLocation.parse(UNSATISFIED_ICON), false);
-                }
-                else
-                {
+                } else {
                     image.setImage(ResourceLocation.parse(UNHAPPY_ICON), false);
                 }
                 PaneBuilders.tooltipBuilder().hoverPane(label).append(Component.translatableEscape("com.minecolonies.coremod.gui.townhall.happiness.desc." + entry.getKey())).build();
@@ -273,24 +236,19 @@ public class WindowCitizenPage extends AbstractWindowTownHall
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
         updateCitizens();
         final EntityIcon entityIcon = findPaneOfTypeByID(ENTITY_ICON, EntityIcon.class);
-        if (selectedEntity != null && selectedEntity.getPose() == Pose.SLEEPING)
-        {
+        if (selectedEntity != null && selectedEntity.getPose() == Pose.SLEEPING) {
             entityIcon.hide();
-        }
-        else
-        {
+        } else {
             entityIcon.show();
         }
     }
 
     @Override
-    protected String getWindowId()
-    {
+    protected String getWindowId() {
         return BUTTON_CITIZENS;
     }
 }

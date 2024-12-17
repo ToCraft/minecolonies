@@ -11,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * The WorkOrderView is the client-side representation of a WorkOrders. Views contain the WorkOrder's data that is relevant to a Client, in a more client-friendly form Mutable
  * operations on a View result in a message to the server to perform the operation
  */
-public abstract class AbstractWorkOrderView implements IWorkOrderView
-{
+public abstract class AbstractWorkOrderView implements IWorkOrderView {
     /**
      * The work order its id.
      */
@@ -88,35 +87,29 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      */
     private String translationKey;
 
-    public AbstractWorkOrderView()
-    {
+    public AbstractWorkOrderView() {
     }
 
     @Override
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
     @Override
-    public int getPriority()
-    {
+    public int getPriority() {
         return priority;
     }
 
     @Override
-    public void setPriority(final int priority)
-    {
+    public void setPriority(final int priority) {
         this.priority = priority;
     }
 
-    public BlockPos getClaimedBy()
-    {
+    public BlockPos getClaimedBy() {
         return claimedBy;
     }
 
-    public void setClaimedBy(final BlockPos position)
-    {
+    public void setClaimedBy(final BlockPos position) {
         this.claimedBy = position;
     }
 
@@ -126,67 +119,55 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      * @return the value String.
      */
     @Override
-    public String getPackName()
-    {
+    public String getPackName() {
         return packName.replaceAll("schematics/(?:decorations/)?", "");
     }
 
     @Override
-    public String getStructurePath()
-    {
+    public String getStructurePath() {
         return structurePath;
     }
 
     @Override
-    public final String getTranslationKey()
-    {
+    public final String getTranslationKey() {
         return translationKey;
     }
 
-    public WorkOrderType getWorkOrderType()
-    {
+    public WorkOrderType getWorkOrderType() {
         return workOrderType;
     }
 
     @Override
-    public BlockPos getLocation()
-    {
+    public BlockPos getLocation() {
         return this.location;
     }
 
     @Override
-    public RotationMirror getRotationMirror()
-    {
+    public RotationMirror getRotationMirror() {
         return rotationMirror;
     }
 
-    public int getCurrentLevel()
-    {
+    public int getCurrentLevel() {
         return currentLevel;
     }
 
-    public int getTargetLevel()
-    {
+    public int getTargetLevel() {
         return targetLevel;
     }
 
-    public int getAmountOfResources()
-    {
+    public int getAmountOfResources() {
         return amountOfResources;
     }
 
-    public String getIteratorType()
-    {
+    public String getIteratorType() {
         return iteratorType;
     }
 
-    public boolean isCleared()
-    {
+    public boolean isCleared() {
         return cleared;
     }
 
-    public boolean isRequested()
-    {
+    public boolean isRequested() {
         return requested;
     }
 
@@ -195,8 +176,7 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      *
      * @param buf Byte buffer to deserialize.
      */
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         id = buf.readInt();
         priority = buf.readInt();
         claimedBy = buf.readBlockPos();
@@ -221,8 +201,7 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      * @param builderLevel    level of the builders hut.
      * @return true if so.
      */
-    public boolean canBuildIgnoringDistance(@NotNull final BlockPos builderLocation, final int builderLevel)
-    {
+    public boolean canBuildIgnoringDistance(@NotNull final BlockPos builderLocation, final int builderLevel) {
         //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
         //  - The Builder's Work AbstractBuilding is built
         //  - OR the WorkOrder is for the Builder's Work AbstractBuilding

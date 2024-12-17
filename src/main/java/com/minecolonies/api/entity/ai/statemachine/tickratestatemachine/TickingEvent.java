@@ -11,8 +11,7 @@ import java.util.function.Supplier;
 /**
  * Event with a tickrate for a statemachine using a tickrate.
  */
-public class TickingEvent<S extends IState> extends TickingTransition<S> implements IStateMachineEvent<S>
-{
+public class TickingEvent<S extends IState> extends TickingTransition<S> implements IStateMachineEvent<S> {
     /**
      * The type of this Event
      */
@@ -27,11 +26,10 @@ public class TickingEvent<S extends IState> extends TickingTransition<S> impleme
      * @param tickRate  tickrate at which the event is checked
      */
     protected TickingEvent(
-      @NotNull final IStateEventType eventType,
-      @NotNull final BooleanSupplier condition,
-      @NotNull final Supplier<S> nextState,
-      final int tickRate)
-    {
+            @NotNull final IStateEventType eventType,
+            @NotNull final BooleanSupplier condition,
+            @NotNull final Supplier<S> nextState,
+            final int tickRate) {
         super(condition, nextState, tickRate);
         this.eventType = eventType;
     }
@@ -40,8 +38,7 @@ public class TickingEvent<S extends IState> extends TickingTransition<S> impleme
      * Get the type of this event
      */
     @Override
-    public IStateEventType getEventType()
-    {
+    public IStateEventType getEventType() {
         return eventType;
     }
 }

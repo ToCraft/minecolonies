@@ -10,8 +10,7 @@ import java.util.List;
 /**
  * The mult-output recipe type
  */
-public class MultiOutputRecipe extends AbstractRecipeType<IRecipeStorage>
-{
+public class MultiOutputRecipe extends AbstractRecipeType<IRecipeStorage> {
     /**
      * Cache of item stacks for display
      */
@@ -20,18 +19,14 @@ public class MultiOutputRecipe extends AbstractRecipeType<IRecipeStorage>
     /**
      * Multi-Output recipe type
      */
-    public MultiOutputRecipe(IRecipeStorage recipe)
-    {
+    public MultiOutputRecipe(IRecipeStorage recipe) {
         super(recipe);
     }
 
     @Override
-    public List<ItemStack> getOutputDisplayStacks()
-    {
-        if(outputDisplayStacks.isEmpty())
-        {
-            if (!recipe.getPrimaryOutput().isEmpty())
-            {
+    public List<ItemStack> getOutputDisplayStacks() {
+        if (outputDisplayStacks.isEmpty()) {
+            if (!recipe.getPrimaryOutput().isEmpty()) {
                 outputDisplayStacks.add(recipe.getPrimaryOutput());
             }
             outputDisplayStacks.addAll(recipe.getAlternateOutputs());
@@ -40,8 +35,7 @@ public class MultiOutputRecipe extends AbstractRecipeType<IRecipeStorage>
     }
 
     @Override
-    public ResourceLocation getId()
-    {
+    public ResourceLocation getId() {
         return ModRecipeTypes.MULTI_OUTPUT_ID;
     }
 }

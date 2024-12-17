@@ -11,28 +11,25 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.research.ModResearchRequirements.*;
 
-public class ModResearchRequirementInitializer
-{
+public class ModResearchRequirementInitializer {
     public final static DeferredRegister<ResearchRequirementEntry> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.RESEARCH_REQUIREMENT_TYPES, Constants.MOD_ID);
 
-    private ModResearchRequirementInitializer()
-    {
+    private ModResearchRequirementInitializer() {
         throw new IllegalStateException("Tried to initialize: ModResearchRequirementInitializer but this is a Utility class.");
     }
 
-    static
-    {
+    static {
         ModResearchRequirements.alternateBuildingResearchRequirement = DEFERRED_REGISTER.register(ALTERNATE_BUILDING_RESEARCH_REQ_ID.getPath(), () -> new ResearchRequirementEntry.Builder()
-                                                                         .setReadFromNBT(AlternateBuildingResearchRequirement::new)
-                                                                         .setRegistryName(ALTERNATE_BUILDING_RESEARCH_REQ_ID)
-                                                                         .createResearchRequirementEntry());
+                .setReadFromNBT(AlternateBuildingResearchRequirement::new)
+                .setRegistryName(ALTERNATE_BUILDING_RESEARCH_REQ_ID)
+                .createResearchRequirementEntry());
         ModResearchRequirements.buildingResearchRequirement = DEFERRED_REGISTER.register(BUILDING_RESEARCH_REQ_ID.getPath(), () -> new ResearchRequirementEntry.Builder()
-                                                                         .setReadFromNBT(BuildingResearchRequirement::new)
-                                                                         .setRegistryName(BUILDING_RESEARCH_REQ_ID)
-                                                                         .createResearchRequirementEntry());
+                .setReadFromNBT(BuildingResearchRequirement::new)
+                .setRegistryName(BUILDING_RESEARCH_REQ_ID)
+                .createResearchRequirementEntry());
         ModResearchRequirements.researchResearchRequirement = DEFERRED_REGISTER.register(RESEARCH_RESEARCH_REQ_ID.getPath(), () -> new ResearchRequirementEntry.Builder()
-                                                                         .setReadFromNBT(ResearchResearchRequirement::new)
-                                                                         .setRegistryName(RESEARCH_RESEARCH_REQ_ID)
-                                                                         .createResearchRequirementEntry());
+                .setReadFromNBT(ResearchResearchRequirement::new)
+                .setRegistryName(RESEARCH_RESEARCH_REQ_ID)
+                .createResearchRequirementEntry());
     }
 }

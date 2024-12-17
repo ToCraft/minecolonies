@@ -22,23 +22,20 @@ import static com.minecolonies.api.util.constant.GuardConstants.SHIELD_LEVEL_RAN
  * Knight AI, which deals with gear specifics
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBuildingGuards>
-{
-    public EntityAIKnight(@NotNull final JobKnight job)
-    {
+public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBuildingGuards> {
+    public EntityAIKnight(@NotNull final JobKnight job) {
         super(job);
         super.registerTargets();
 
         toolsNeeded.add(ModEquipmentTypes.sword.get());
 
-        for (final List<GuardGear> list : itemsNeeded)
-        {
+        for (final List<GuardGear> list : itemsNeeded) {
             list.add(new GuardGear(ModEquipmentTypes.shield.get(),
-              EquipmentSlot.OFFHAND,
-              TOOL_LEVEL_WOOD_OR_GOLD,
-              TOOL_LEVEL_MAXIMUM,
-              SHIELD_LEVEL_RANGE,
-              SHIELD_BUILDING_LEVEL_RANGE));
+                    EquipmentSlot.OFFHAND,
+                    TOOL_LEVEL_WOOD_OR_GOLD,
+                    TOOL_LEVEL_MAXIMUM,
+                    SHIELD_LEVEL_RANGE,
+                    SHIELD_BUILDING_LEVEL_RANGE));
         }
 
         new KnightCombatAI((EntityCitizen) worker, getStateAI(), this);
@@ -46,11 +43,9 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
 
     @NotNull
     @Override
-    protected List<ItemStack> itemsNiceToHave()
-    {
+    protected List<ItemStack> itemsNiceToHave() {
         final List<ItemStack> list = super.itemsNiceToHave();
-        if (worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
-        {
+        if (worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0) {
             list.add(new ItemStack(Items.SHIELD, 1));
         }
         return list;

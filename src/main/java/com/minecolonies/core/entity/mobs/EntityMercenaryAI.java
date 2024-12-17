@@ -5,14 +5,15 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.sounds.MercenarySounds;
 import com.minecolonies.api.util.*;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
 import net.neoforged.neoforge.items.IItemHandler;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,8 +22,7 @@ import java.util.Random;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_MERCENARY_STEAL_BUILDING;
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
-public class EntityMercenaryAI extends Goal
-{
+public class EntityMercenaryAI extends Goal {
     /**
      * The max distance a mercenary chases his target.
      */
@@ -90,8 +90,7 @@ public class EntityMercenaryAI extends Goal
 
     private final Random rand = new Random();
 
-    public enum State implements IState
-    {
+    public enum State implements IState {
         INIT,
         SPAWN_EVENT,
         PATROLLING,
@@ -100,8 +99,7 @@ public class EntityMercenaryAI extends Goal
         DEAD;
     }
 
-    public EntityMercenaryAI(final EntityMercenary entityMercenary)
-    {
+    public EntityMercenaryAI(final EntityMercenary entityMercenary) {
         super();
         entity = entityMercenary;
         patrolPoints = new LinkedList<>();
@@ -117,10 +115,8 @@ public class EntityMercenaryAI extends Goal
      *
      * @return whether the ai was initialized successfully
      */
-    private boolean initialize()
-    {
-        if (entity.getColony() == null)
-        {
+    private boolean initialize() {
+        if (entity.getColony() == null) {
             return false;
         }
 
@@ -133,11 +129,9 @@ public class EntityMercenaryAI extends Goal
      *
      * @return whether we got a target to fight
      */
-    private boolean hasTarget()
-    {
+    private boolean hasTarget() {
         if (entity.getTarget() != null && entity.getTarget().isAlive()
-              && !(entity.getTarget() instanceof EntityMercenary))
-        {
+                && !(entity.getTarget() instanceof EntityMercenary)) {
             entity.getTarget().setLastHurtByMob(entity);
             return true;
         }
@@ -149,52 +143,40 @@ public class EntityMercenaryAI extends Goal
      *
      * @return true
      */
-    private boolean patrol()
-    {
-        if (currentPatrolPos == null || entity.getProxy().walkToBlock(currentPatrolPos, 3, true))
-        {
-            if (currentPatrolPos != null && movingToBuilding)
-            {
+    private boolean patrol() {
+        if (currentPatrolPos == null || entity.getProxy().walkToBlock(currentPatrolPos, 3, true)) {
+            if (currentPatrolPos != null && movingToBuilding) {
                 // Attempt to steal!
                 final IBuilding building = entity.getColony().getBuildingManager().getBuilding(currentPatrolPos);
 
-                if (building != null)
-                {
+                if (building != null) {
                     final List<IItemHandler> handlers = new ArrayList<>(InventoryUtils.getItemHandlersFromProvider(building.getTileEntity()));
                     final IItemHandler handler = handlers.get(rand.nextInt(handlers.size()));
                     final ItemStack stack = handler.extractItem(rand.nextInt(handler.getSlots()), 5, false);
 
-                    if (!ItemStackUtils.isEmpty(stack))
-                    {
+                    if (!ItemStackUtils.isEmpty(stack)) {
                         entity.swing(InteractionHand.OFF_HAND);
                         MessageUtils.format(MESSAGE_INFO_COLONY_MERCENARY_STEAL_BUILDING, stack.getHoverName().getString()).sendTo(entity.getColony()).forAllPlayers();
                     }
                 }
             }
 
-            if (rand.nextInt(4) == 0 && !patrolPoints.isEmpty())
-            {
+            if (rand.nextInt(4) == 0 && !patrolPoints.isEmpty()) {
                 movingToBuilding = true;
                 currentPatrolPos = patrolPoints.get(rand.nextInt(patrolPoints.size()));
-            }
-            else
-            {
+            } else {
                 movingToBuilding = false;
                 currentPatrolPos = BlockPosUtil.getRandomPosition(entity.getCommandSenderWorld(), entity.blockPosition(), entity.blockPosition(), 10, 27);
             }
         }
 
-        if (entity.blockPosition().equals(lastWorkerPos))
-        {
+        if (entity.blockPosition().equals(lastWorkerPos)) {
             stuckTimer++;
-        }
-        else
-        {
+        } else {
             stuckTimer = 0;
         }
 
-        if (stuckTimer > MAX_STUCK_TIME)
-        {
+        if (stuckTimer > MAX_STUCK_TIME) {
             stuckTimer = 0;
             currentPatrolPos = null;
             entity.getNavigation().stop();
@@ -210,22 +192,18 @@ public class EntityMercenaryAI extends Goal
      *
      * @return false if we are still fighting
      */
-    private boolean fighting()
-    {
-        if (entity.getTarget() == null || !entity.getTarget().isAlive())
-        {
+    private boolean fighting() {
+        if (entity.getTarget() == null || !entity.getTarget().isAlive()) {
             entity.getNavigation().stop();
             attackPath = null;
             return true;
         }
 
-        if (attacktimer > 0)
-        {
+        if (attacktimer > 0) {
             attacktimer--;
         }
 
-        if (attackPath == null || !attackPath.isInProgress())
-        {
+        if (attackPath == null || !attackPath.isInProgress()) {
             entity.getNavigation().moveToLivingEntity(entity.getTarget(), 1);
             entity.getLookControl().setLookAt(entity.getTarget(), 180f, 180f);
         }
@@ -233,16 +211,13 @@ public class EntityMercenaryAI extends Goal
         final int distance = BlockPosUtil.getMaxDistance2D(entity.blockPosition(), entity.getTarget().blockPosition());
 
         // Check if we can attack
-        if (distance < MELEE_ATTACK_DIST && attacktimer == 0)
-        {
+        if (distance < MELEE_ATTACK_DIST && attacktimer == 0) {
             entity.swing(InteractionHand.MAIN_HAND);
             entity.playSound(MercenarySounds.mercenaryAttack, 0.55f, 1.0f);
             entity.getTarget().hurt(entity.level().damageSources().mobAttack(entity), 15);
             entity.getTarget().setRemainingFireTicks(3 * TICKS_PER_SECOND);
             attacktimer = ATTACK_DELAY;
-        }
-        else if (distance > MAX_BLOCK_CHASE_DISTANCE)
-        {
+        } else if (distance > MAX_BLOCK_CHASE_DISTANCE) {
             entity.setTarget(null);
             entity.getNavigation().stop();
             attackPath = null;
@@ -252,20 +227,17 @@ public class EntityMercenaryAI extends Goal
         return false;
     }
 
-    private void handleAIException(final RuntimeException e)
-    {
+    private void handleAIException(final RuntimeException e) {
         Log.getLogger().error("MercenaryAI threw an exception:", e);
     }
 
     @Override
-    public boolean canUse()
-    {
+    public boolean canUse() {
         return entity != null && entity.isAlive() && !entity.isInvisible() && entity.getColony() != null && entity.getState() == State.ALIVE;
     }
 
     @Override
-    public boolean canContinueToUse()
-    {
+    public boolean canContinueToUse() {
         stateMachine.tick();
         return entity != null && entity.isAlive() && !entity.isInvisible() && entity.getColony() != null && entity.getState() == State.ALIVE;
     }

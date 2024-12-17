@@ -3,8 +3,7 @@ package com.minecolonies.api.util.constant;
 /**
  * Some constants needed for the whole mod.
  */
-public final class InventoryConstants
-{
+public final class InventoryConstants {
     /**
      * Amount of columns in the player inventory.
      */
@@ -118,8 +117,7 @@ public final class InventoryConstants
     /**
      * Private constructor to hide implicit public one.
      */
-    private InventoryConstants()
-    {
+    private InventoryConstants() {
         /*
          * Intentionally left empty.
          */

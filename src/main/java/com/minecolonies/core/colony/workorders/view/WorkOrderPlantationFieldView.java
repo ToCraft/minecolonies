@@ -9,18 +9,14 @@ import net.minecraft.network.chat.Component;
 /**
  * The client side representation for a work order that the builder can take to build plantation fields.
  */
-public class WorkOrderPlantationFieldView extends AbstractWorkOrderView
-{
+public class WorkOrderPlantationFieldView extends AbstractWorkOrderView {
     @Override
-    public Component getDisplayName()
-    {
+    public Component getDisplayName() {
         return getOrderTypePrefix(Component.translatableEscape(getTranslationKey()));
     }
 
-    private Component getOrderTypePrefix(Component nameComponent)
-    {
-        return switch (this.getWorkOrderType())
-        {
+    private Component getOrderTypePrefix(Component nameComponent) {
+        return switch (this.getWorkOrderType()) {
             case BUILD -> Component.translatableEscape(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
             case REPAIR -> Component.translatableEscape(TranslationConstants.BUILDER_ACTION_REPAIRING, nameComponent);
             case REMOVE -> Component.translatableEscape(TranslationConstants.BUILDER_ACTION_REMOVING, nameComponent);
@@ -29,8 +25,7 @@ public class WorkOrderPlantationFieldView extends AbstractWorkOrderView
     }
 
     @Override
-    public boolean shouldShowIn(IBuildingView view)
-    {
+    public boolean shouldShowIn(IBuildingView view) {
         return view instanceof ITownHallView || view instanceof BuildingBuilder.View;
     }
 }

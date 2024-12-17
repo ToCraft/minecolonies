@@ -18,7 +18,9 @@ import com.minecolonies.core.network.messages.server.colony.WorkOrderChangeMessa
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -26,8 +28,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for the town hall.
  */
-public class WindowInfoPage extends AbstractWindowTownHall
-{
+public class WindowInfoPage extends AbstractWindowTownHall {
     /**
      * List of workOrders.
      */
@@ -43,8 +44,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
      *
      * @param building {@link BuildingTownHall.View}.
      */
-    public WindowInfoPage(final BuildingTownHall.View building)
-    {
+    public WindowInfoPage(final BuildingTownHall.View building) {
         super(building, "layoutinfo.xml");
         updateWorkOrders();
 
@@ -57,52 +57,41 @@ public class WindowInfoPage extends AbstractWindowTownHall
      * Executed when <code>WindowTownHall</code> is opened. Does tasks like setting buttons.
      */
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         fillWorkOrderList();
         fillEventsList();
     }
 
 
-    private void fillEventsList()
-    {
+    private void fillEventsList() {
         eventList = findPaneOfTypeByID(EVENTS_LIST, ScrollingList.class);
-        eventList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        eventList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return building.getColonyEvents().size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final Text nameLabel = rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class);
                 final Text actionLabel = rowPane.findPaneOfTypeByID(ACTION_LABEL, Text.class);
 
                 final IColonyEventDescription event = building.getColonyEvents().get(index);
-                if (event instanceof CitizenDiedEvent)
-                {
+                if (event instanceof CitizenDiedEvent) {
                     actionLabel.setText(Component.literal(((CitizenDiedEvent) event).getDeathCause()));
-                }
-                else
-                {
+                } else {
                     actionLabel.setText(Component.literal(event.getName()));
                 }
-                if (event instanceof ICitizenEventDescription)
-                {
+                if (event instanceof ICitizenEventDescription) {
                     nameLabel.setText(Component.literal(((ICitizenEventDescription) event).getCitizenName()));
-                }
-                else if (event instanceof IBuildingEventDescription)
-                {
+                } else if (event instanceof IBuildingEventDescription) {
                     IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
                     nameLabel.setText(MessageUtils.format(buildEvent.getBuildingName()).append(Component.literal(" " + buildEvent.getLevel())).create());
                     PaneBuilders.tooltipBuilder().append(nameLabel.getText()).hoverPane(nameLabel).build();
                 }
                 rowPane.findPaneOfTypeByID(POS_LABEL, Text.class)
-                  .setText(Component.literal(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ()));
+                        .setText(Component.literal(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ()));
                 rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
             }
         });
@@ -112,8 +101,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
     /**
      * Clears and resets all work orders.
      */
-    private void updateWorkOrders()
-    {
+    private void updateWorkOrders() {
         workOrders.clear();
         workOrders.addAll(building.getColony().getWorkOrders().stream().filter(wo -> wo.shouldShowIn(building)).collect(Collectors.toList()));
         sortWorkOrders();
@@ -122,8 +110,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
     /**
      * Re-sorts the WorkOrders list according to the priorities inside the list.
      */
-    private void sortWorkOrders()
-    {
+    private void sortWorkOrders() {
         workOrders.sort(Comparator.comparing(IWorkOrderView::getPriority, Comparator.reverseOrder()));
     }
 
@@ -132,23 +119,17 @@ public class WindowInfoPage extends AbstractWindowTownHall
      *
      * @param button the clicked button.
      */
-    private void updatePriority(@NotNull final Button button)
-    {
+    private void updatePriority(@NotNull final Button button) {
         final int id = Integer.parseInt(button.getParent().findPaneOfTypeByID("hiddenId", Text.class).getTextAsString());
         final String buttonLabel = button.getID();
 
-        for (int i = 0; i < workOrders.size(); i++)
-        {
+        for (int i = 0; i < workOrders.size(); i++) {
             final IWorkOrderView workOrder = workOrders.get(i);
-            if (workOrder.getId() == id)
-            {
-                if (buttonLabel.equals(BUTTON_UP) && i > 0)
-                {
+            if (workOrder.getId() == id) {
+                if (buttonLabel.equals(BUTTON_UP) && i > 0) {
                     workOrder.setPriority(workOrders.get(i - 1).getPriority() + 1);
                     new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()).sendToServer();
-                }
-                else if (buttonLabel.equals(BUTTON_DOWN) && i <= workOrders.size())
-                {
+                } else if (buttonLabel.equals(BUTTON_DOWN) && i <= workOrders.size()) {
                     workOrder.setPriority(workOrders.get(i + 1).getPriority() - 1);
                     new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()).sendToServer();
                 }
@@ -165,13 +146,10 @@ public class WindowInfoPage extends AbstractWindowTownHall
      *
      * @param button the clicked button.
      */
-    private void deleteWorkOrder(@NotNull final Button button)
-    {
+    private void deleteWorkOrder(@NotNull final Button button) {
         final int id = Integer.parseInt(button.getParent().findPaneOfTypeByID("hiddenId", Text.class).getTextAsString());
-        for (int i = 0; i < workOrders.size(); i++)
-        {
-            if (workOrders.get(i).getId() == id)
-            {
+        for (int i = 0; i < workOrders.size(); i++) {
+            if (workOrders.get(i).getId() == id) {
                 workOrders.remove(i);
                 break;
             }
@@ -183,49 +161,38 @@ public class WindowInfoPage extends AbstractWindowTownHall
     /**
      * Fills the workOrder list inside the townhall GUI.
      */
-    private void fillWorkOrderList()
-    {
+    private void fillWorkOrderList() {
         final ScrollingList workOrderList = findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class);
         workOrderList.enable();
         workOrderList.show();
 
         //Creates a dataProvider for the unemployed citizenList.
-        workOrderList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        workOrderList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return workOrders.size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final IWorkOrderView workOrder = workOrders.get(index);
                 String claimingCitizen = "";
 
                 final int numElements = getElementCount();
 
-                if (index == 0)
-                {
+                if (index == 0) {
                     rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).setVisible(numElements != 1);
                     rowPane.findPaneOfTypeByID(BUTTON_UP, Button.class).hide();
-                }
-                else if (index == numElements - 1)
-                {
+                } else if (index == numElements - 1) {
                     rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).hide();
-                }
-                else
-                {
+                } else {
                     rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).show();
                     rowPane.findPaneOfTypeByID(BUTTON_UP, Button.class).show();
                 }
 
                 //Searches citizen of id x
-                for (@NotNull final IBuildingView buildingView : building.getColony().getBuildings())
-                {
-                    if (buildingView.getPosition().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
-                    {
+                for (@NotNull final IBuildingView buildingView : building.getColony().getBuildings()) {
+                    if (buildingView.getPosition().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView) {
                         claimingCitizen = ((AbstractBuildingBuilderView) buildingView).getWorkerName();
                         break;
                     }
@@ -241,15 +208,13 @@ public class WindowInfoPage extends AbstractWindowTownHall
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
         updateWorkOrders();
     }
 
     @Override
-    protected String getWindowId()
-    {
+    protected String getWindowId() {
         return BUTTON_INFOPAGE;
     }
 }

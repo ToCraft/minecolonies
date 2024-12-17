@@ -15,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to set the level of the miner from the GUI.
  */
-public class MinerSetLevelMessage extends AbstractBuildingServerMessage<BuildingMiner>
-{
+public class MinerSetLevelMessage extends AbstractBuildingServerMessage<BuildingMiner> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "miner_set_level", MinerSetLevelMessage::new);
 
     private int level;
@@ -27,28 +26,24 @@ public class MinerSetLevelMessage extends AbstractBuildingServerMessage<Building
      * @param building View of the building to read data from.
      * @param level    Level of the miner.
      */
-    public MinerSetLevelMessage(@NotNull final IBuildingView building, final int level)
-    {
+    public MinerSetLevelMessage(@NotNull final IBuildingView building, final int level) {
         super(TYPE, building);
         this.level = level;
     }
 
-    protected MinerSetLevelMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected MinerSetLevelMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         level = buf.readInt();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(level);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingMiner building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingMiner building) {
         building.getModule(BuildingModules.MINER_LEVELS).setCurrentLevel(level);
     }
 }

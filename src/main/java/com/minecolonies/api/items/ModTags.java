@@ -17,43 +17,42 @@ import java.util.Map;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
-public class ModTags
-{
+public class ModTags {
     /**
      * Flag to check if tags are already loaded.
      */
     public static boolean tagsLoaded = false;
 
     public static final TagKey<Block> decorationItems = BlockTags.create(TagConstants.DECORATION_ITEMS);
-    public static final TagKey<Block> pathingBlocks   = BlockTags.create(TagConstants.PATHING_BLOCKS);
+    public static final TagKey<Block> pathingBlocks = BlockTags.create(TagConstants.PATHING_BLOCKS);
     public static final TagKey<Block> dangerousBlocks = BlockTags.create(TagConstants.DANGEROUS_BLOCKS);
     public static final TagKey<Block> freeClimbBlocks = BlockTags.create(TagConstants.FREE_CLIMB_BLOCKS);
-    public static final TagKey<Block> tier1blocks     = BlockTags.create(TagConstants.TIER1_BLOCKS);
-    public static final TagKey<Block> tier2blocks     = BlockTags.create(TagConstants.TIER2_BLOCKS);
-    public static final TagKey<Block> tier3blocks     = BlockTags.create(TagConstants.TIER3_BLOCKS);
-    public static final TagKey<Block> tier4blocks     = BlockTags.create(TagConstants.TIER4_BLOCKS);
-    public static final TagKey<Block> tier5blocks     = BlockTags.create(TagConstants.TIER5_BLOCKS);
-    public static final TagKey<Block> tier6blocks     = BlockTags.create(TagConstants.TIER6_BLOCKS);
-    public static final TagKey<Block> mangroveTree    = BlockTags.create(TagConstants.MANGROVE_TREE_BLOCKS);
-    public static final TagKey<Block> tree            = BlockTags.create(TagConstants.TREE_BLOCKS);
+    public static final TagKey<Block> tier1blocks = BlockTags.create(TagConstants.TIER1_BLOCKS);
+    public static final TagKey<Block> tier2blocks = BlockTags.create(TagConstants.TIER2_BLOCKS);
+    public static final TagKey<Block> tier3blocks = BlockTags.create(TagConstants.TIER3_BLOCKS);
+    public static final TagKey<Block> tier4blocks = BlockTags.create(TagConstants.TIER4_BLOCKS);
+    public static final TagKey<Block> tier5blocks = BlockTags.create(TagConstants.TIER5_BLOCKS);
+    public static final TagKey<Block> tier6blocks = BlockTags.create(TagConstants.TIER6_BLOCKS);
+    public static final TagKey<Block> mangroveTree = BlockTags.create(TagConstants.MANGROVE_TREE_BLOCKS);
+    public static final TagKey<Block> tree = BlockTags.create(TagConstants.TREE_BLOCKS);
 
-    public static final TagKey<Block> concreteBlocks       = BlockTags.create(TagConstants.CONCRETE_BLOCK);
-    public static final TagKey<Item>  concreteItems        = ItemTags.create(TagConstants.CONCRETE_BLOCK);
+    public static final TagKey<Block> concreteBlocks = BlockTags.create(TagConstants.CONCRETE_BLOCK);
+    public static final TagKey<Item> concreteItems = ItemTags.create(TagConstants.CONCRETE_BLOCK);
     public static final TagKey<Block> concretePowderBlocks = BlockTags.create(TagConstants.CONCRETE_POWDER);
-    public static final TagKey<Item>  concretePowderItems  = ItemTags.create(TagConstants.CONCRETE_POWDER);
+    public static final TagKey<Item> concretePowderItems = ItemTags.create(TagConstants.CONCRETE_POWDER);
 
     public static final TagKey<Block> colonyProtectionException = BlockTags.create(TagConstants.COLONYPROTECTIONEXCEPTION);
-    public static final TagKey<Block> indestructible            = BlockTags.create(TagConstants.INDESTRUCTIBLE);
+    public static final TagKey<Block> indestructible = BlockTags.create(TagConstants.INDESTRUCTIBLE);
 
     public static final TagKey<Block> oreChanceBlocks = BlockTags.create(TagConstants.ORECHANCEBLOCKS);
 
     public static final TagKey<Block> validSpawn = BlockTags.create(TagConstants.VALIDSPAWNBLOCKS);
 
-    public static final TagKey<Block> mushroomBlocks   = BlockTags.create(TagConstants.MUSHROOMS);
-    public static final TagKey<Block> hugeMushroomBlocks   = BlockTags.create(TagConstants.MUSHROOMS_HUGE);
-    public static final TagKey<Block> fungiBlocks      = BlockTags.create(TagConstants.FUNGI);
-    public static final TagKey<Item> fungi             = ItemTags.create(TagConstants.FUNGI);
-    public static final TagKey<Item> compostables      = ItemTags.create(TagConstants.COMPOSTABLES);
+    public static final TagKey<Block> mushroomBlocks = BlockTags.create(TagConstants.MUSHROOMS);
+    public static final TagKey<Block> hugeMushroomBlocks = BlockTags.create(TagConstants.MUSHROOMS_HUGE);
+    public static final TagKey<Block> fungiBlocks = BlockTags.create(TagConstants.FUNGI);
+    public static final TagKey<Item> fungi = ItemTags.create(TagConstants.FUNGI);
+    public static final TagKey<Item> compostables = ItemTags.create(TagConstants.COMPOSTABLES);
     public static final TagKey<Item> compostables_poor = ItemTags.create(TagConstants.COMPOSTABLES_POOR);
     public static final TagKey<Item> compostables_rich = ItemTags.create(TagConstants.COMPOSTABLES_RICH);
 
@@ -82,11 +81,11 @@ public class ModTags
     public static final TagKey<Biome> dryBiomes = TagKey.create(Registries.BIOME, TagConstants.DRY_BIOMES);
 
 
-    public static final Map<String, TagKey<Item>> crafterProduct              = new HashMap<>();
-    public static final Map<String, TagKey<Item>> crafterProductExclusions    = new HashMap<>();
-    public static final Map<String, TagKey<Item>> crafterIngredient           = new HashMap<>();
+    public static final Map<String, TagKey<Item>> crafterProduct = new HashMap<>();
+    public static final Map<String, TagKey<Item>> crafterProductExclusions = new HashMap<>();
+    public static final Map<String, TagKey<Item>> crafterIngredient = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterIngredientExclusions = new HashMap<>();
-    public static final Map<String, TagKey<Item>> crafterDoIngredient         = new HashMap<>();
+    public static final Map<String, TagKey<Item>> crafterDoIngredient = new HashMap<>();
 
 
     /**
@@ -114,8 +113,7 @@ public class ModTags
      */
     private static final String DO_INGREDIENT = "_do_ingredient";
 
-    public static void init()
-    {
+    public static void init() {
         initCrafterRules(TagConstants.CRAFTING_BAKER);  // both crafting and smelting
         initCrafterRules(TagConstants.CRAFTING_BLACKSMITH);
         initCrafterRules(TagConstants.CRAFTING_COOK);   // both crafting and smelting
@@ -136,10 +134,10 @@ public class ModTags
 
     /**
      * Initialize the four tags for a particular crafter
+     *
      * @param crafterName the string name of the crafter to initialize
      */
-    private static void initCrafterRules(@NotNull final String crafterName)
-    {
+    private static void initCrafterRules(@NotNull final String crafterName) {
         final ResourceLocation products = new ResourceLocation(MOD_ID, crafterName.concat(PRODUCT));
         final ResourceLocation ingredients = new ResourceLocation(MOD_ID, crafterName.concat(INGREDIENT));
         final ResourceLocation productsExcluded = new ResourceLocation(MOD_ID, crafterName.concat(PRODUCT_EXCLUDED));
@@ -153,8 +151,7 @@ public class ModTags
         crafterDoIngredient.put(crafterName, ItemTags.create(doIngredients));
     }
 
-    private ModTags()
-    {
+    private ModTags() {
         throw new IllegalStateException("Can not instantiate an instance of: ModTags. This is a utility class");
     }
 }

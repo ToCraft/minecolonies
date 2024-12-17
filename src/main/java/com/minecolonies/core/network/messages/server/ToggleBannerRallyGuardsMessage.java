@@ -20,8 +20,7 @@ import static com.minecolonies.core.items.ItemBannerRallyGuards.toggleBanner;
 /**
  * Toggles a rallying banner
  */
-public class ToggleBannerRallyGuardsMessage extends AbstractServerPlayMessage
-{
+public class ToggleBannerRallyGuardsMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "toggle_banner_rally_guards", ToggleBannerRallyGuardsMessage::new);
 
     /**
@@ -34,32 +33,27 @@ public class ToggleBannerRallyGuardsMessage extends AbstractServerPlayMessage
      *
      * @param banner The banner to be toggled.
      */
-    public ToggleBannerRallyGuardsMessage(final ItemStack banner)
-    {
+    public ToggleBannerRallyGuardsMessage(final ItemStack banner) {
         super(TYPE);
         this.banner = banner;
     }
 
-    protected ToggleBannerRallyGuardsMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ToggleBannerRallyGuardsMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         banner = Utils.deserializeCodecMess(buf);
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         Utils.serializeCodecMess(buf, banner);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player) {
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()),
-          (itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, banner)));
+                (itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, banner)));
 
-        if (slot == -1)
-        {
+        if (slot == -1) {
             MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR).sendTo(player);
             return;
         }

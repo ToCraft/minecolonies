@@ -3,8 +3,7 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
-public interface ICitizenInventoryHandler
-{
+public interface ICitizenInventoryHandler {
     /**
      * Returns the first slot in the inventory with a specific item.
      *

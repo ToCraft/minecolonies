@@ -3,8 +3,7 @@ package com.minecolonies.api.entity.ai.workers.util;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
-public class StudyItem
-{
+public class StudyItem {
     /**
      * The actual item to use for studies
      */
@@ -32,35 +31,29 @@ public class StudyItem
      * @param item          the item.
      * @param skillIncrease the skill increase factor.
      */
-    public StudyItem(@NotNull final Item item, final int skillIncrease, final int breakChance)
-    {
+    public StudyItem(@NotNull final Item item, final int skillIncrease, final int breakChance) {
         this.item = item;
         this.skillIncrease = skillIncrease > 0 ? skillIncrease : 100;
         this.breakChance = breakChance < 0 ? 0 : breakChance;
     }
 
-    public int getSkillIncreasePct()
-    {
+    public int getSkillIncreasePct() {
         return skillIncrease;
     }
 
-    public Item getItem()
-    {
+    public Item getItem() {
         return item;
     }
 
-    public int getBreakPct()
-    {
+    public int getBreakPct() {
         return breakChance;
     }
 
-    public int getSlot()
-    {
+    public int getSlot() {
         return slot;
     }
 
-    public void setSlot(final int slot)
-    {
+    public void setSlot(final int slot) {
         this.slot = slot;
     }
 }

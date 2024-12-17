@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.mobs.IChiefMobEntity;
 /**
  * Chief norsemen entity interface.
  */
-public interface INorsemenChiefEntity extends INorsemenEntity, IChiefMobEntity
-{
+public interface INorsemenChiefEntity extends INorsemenEntity, IChiefMobEntity {
 
 }

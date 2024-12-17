@@ -16,8 +16,7 @@ import java.util.Random;
 /**
  * Handles spawning item particle effects in a stream between two targets.
  */
-public class StreamParticleEffectMessage extends AbstractClientPlayMessage
-{
+public class StreamParticleEffectMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "stream_particle_effect", StreamParticleEffectMessage::new);
 
     /**
@@ -63,8 +62,7 @@ public class StreamParticleEffectMessage extends AbstractClientPlayMessage
      * @param stage    the stage we're at
      * @param maxStage the max stage
      */
-    public StreamParticleEffectMessage(final Vec3 start, final Vec3 end, final SimpleParticleType type, final int stage, final int maxStage)
-    {
+    public StreamParticleEffectMessage(final Vec3 start, final Vec3 end, final SimpleParticleType type, final int stage, final int maxStage) {
         super(TYPE);
         this.sPosX = start.x;
         this.sPosY = start.y - 0.5;
@@ -80,8 +78,7 @@ public class StreamParticleEffectMessage extends AbstractClientPlayMessage
         this.type = type;
     }
 
-    protected StreamParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected StreamParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.sPosX = buf.readDouble();
         this.sPosY = buf.readDouble();
@@ -97,8 +94,7 @@ public class StreamParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeDouble(this.sPosX);
         buf.writeDouble(this.sPosY);
         buf.writeDouble(this.sPosZ);
@@ -113,8 +109,7 @@ public class StreamParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         final Vec3 end = new Vec3(ePosX, ePosY, ePosZ);
 
         final double xDif = (sPosX - ePosX) / maxStage;
@@ -123,21 +118,19 @@ public class StreamParticleEffectMessage extends AbstractClientPlayMessage
 
         final double curve = maxStage / 3.0;
 
-        for (int step = Math.max(0, stage - 1); step <= Math.min(maxStage, stage + 1); step++)
-        {
+        for (int step = Math.max(0, stage - 1); step <= Math.min(maxStage, stage + 1); step++) {
             final double minDif = Math.min(step, Math.abs(step - maxStage)) / curve;
 
-            for (int i = 0; i < 10; ++i)
-            {
+            for (int i = 0; i < 10; ++i) {
                 final Vec3 randomPos = new Vec3(RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D);
                 final Vec3 randomOffset = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
                 player.level().addParticle(type,
-                  end.x + randomOffset.x + xDif * step,
-                  end.y + randomOffset.y + yDif * step + minDif,
-                  end.z + randomOffset.z + zDif * step,
-                  randomPos.x,
-                  randomPos.y + 0.05D,
-                  randomPos.z);
+                        end.x + randomOffset.x + xDif * step,
+                        end.y + randomOffset.y + yDif * step + minDif,
+                        end.z + randomOffset.z + zDif * step,
+                        randomPos.x,
+                        randomPos.y + 0.05D,
+                        randomPos.z);
             }
         }
     }

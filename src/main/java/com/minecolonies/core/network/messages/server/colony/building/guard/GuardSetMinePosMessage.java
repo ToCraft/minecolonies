@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to set the position of the mine a guard should patrol
  */
-public class GuardSetMinePosMessage extends AbstractBuildingServerMessage<AbstractBuildingGuards>
-{
+public class GuardSetMinePosMessage extends AbstractBuildingServerMessage<AbstractBuildingGuards> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "guard_set_mine_pos", GuardSetMinePosMessage::new);
 
     /**
@@ -27,48 +26,43 @@ public class GuardSetMinePosMessage extends AbstractBuildingServerMessage<Abstra
 
     /**
      * Creates an instance of the message to set a new position
+     *
      * @param building the building to apply the position change to
-     * @param minePos the position of the mine
+     * @param minePos  the position of the mine
      */
-    public GuardSetMinePosMessage(@NotNull final AbstractBuildingGuards.View building, final BlockPos minePos)
-    {
+    public GuardSetMinePosMessage(@NotNull final AbstractBuildingGuards.View building, final BlockPos minePos) {
         super(TYPE, building);
         this.minePos = minePos;
     }
 
     /**
      * Creates an instance of the message to clear the position
+     *
      * @param building the building to apply the position change to
      */
-    public GuardSetMinePosMessage(@NotNull final AbstractBuildingGuards.View building)
-    {
+    public GuardSetMinePosMessage(@NotNull final AbstractBuildingGuards.View building) {
         super(TYPE, building);
         this.minePos = null;
     }
 
-    protected GuardSetMinePosMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected GuardSetMinePosMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.minePos = buf.readBoolean() ? buf.readBlockPos() : null;
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeBoolean(this.minePos != null);
-        if (this.minePos != null)
-        {
+        if (this.minePos != null) {
             buf.writeBlockPos(this.minePos);
         }
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuildingGuards building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuildingGuards building) {
         final IBuilding miner = building.getColony().getBuildingManager().getBuilding(minePos == null ? building.getMinePos() : minePos);
-        if (miner instanceof BuildingMiner)
-        {
+        if (miner instanceof BuildingMiner) {
             building.setMinePos(this.minePos);
         }
     }

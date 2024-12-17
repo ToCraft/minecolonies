@@ -17,8 +17,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.BEEKEEP_2;
 /**
  * Stores the beekeeper collection setting.
  */
-public class BeekeeperCollectionSetting extends StringSetting
-{
+public class BeekeeperCollectionSetting extends StringSetting {
     /**
      * Cached research.
      */
@@ -29,8 +28,7 @@ public class BeekeeperCollectionSetting extends StringSetting
      *
      * @param settings the overall list of settings.
      */
-    public BeekeeperCollectionSetting(final String... settings)
-    {
+    public BeekeeperCollectionSetting(final String... settings) {
         super(settings);
     }
 
@@ -40,27 +38,24 @@ public class BeekeeperCollectionSetting extends StringSetting
      * @param settings     the overall list of settings.
      * @param currentIndex the current selected index.
      */
-    public BeekeeperCollectionSetting(final List<String> settings, final int currentIndex)
-    {
+    public BeekeeperCollectionSetting(final List<String> settings, final int currentIndex) {
         super(settings, currentIndex);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
     public void setupHandler(
-      final ISettingKey<?> key,
-      final Pane pane,
-      final ISettingsModuleView settingsModuleView,
-      final IBuildingView building,
-      final BOWindow window)
-    {
+            final ISettingKey<?> key,
+            final Pane pane,
+            final ISettingsModuleView settingsModuleView,
+            final IBuildingView building,
+            final BOWindow window) {
         hasResearch = building.getColony().getResearchManager().getResearchEffects().getEffectStrength(BEEKEEP_2) > 0;
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }
 
     @Override
-    public boolean isIndexAllowed(final int index)
-    {
+    public boolean isIndexAllowed(final int index) {
         return super.isIndexAllowed(index) && (hasResearch || !getSettings().get(index).equals(BuildingBeekeeper.BOTH));
     }
 }

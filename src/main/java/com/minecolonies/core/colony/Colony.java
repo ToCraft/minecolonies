@@ -24,7 +24,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.core.MineColonies;
@@ -42,8 +41,8 @@ import com.minecolonies.core.datalistener.CitizenNameListener;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.core.quests.QuestManager;
 import com.minecolonies.core.util.BackUpHelper;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -88,8 +87,7 @@ import static com.minecolonies.core.MineColonies.getConfig;
  * This class describes a colony and contains all the data and methods for manipulating a Colony.
  */
 @SuppressWarnings({Suppression.BIG_CLASS, Suppression.SPLIT_CLASS})
-public class Colony implements IColony
-{
+public class Colony implements IColony {
     /**
      * The default style for the building.
      */
@@ -342,12 +340,11 @@ public class Colony implements IColony
      * Base constructor.
      *
      * @param id     The current id for the colony.
-     * @param name The name of the colony.
+     * @param name   The name of the colony.
      * @param world  The world the colony exists in.
      * @param center The center of the colony (location of Town Hall).
      */
-    Colony(final int id, final String name, @Nullable final ServerLevel world, final BlockPos center)
-    {
+    Colony(final int id, final String name, @Nullable final ServerLevel world, final BlockPos center) {
         this.id = id;
         this.name = name;
         this.center = center;
@@ -367,8 +364,7 @@ public class Colony implements IColony
         this.permissions = new Permissions(this);
         this.researchManager = new ResearchManager(this);
 
-        if (world != null)
-        {
+        if (world != null) {
             this.colonyFlag = new BannerPatternLayers.Builder().add(Utils.getRegistryValue(BannerPatterns.BASE, world), DyeColor.WHITE).build();
             this.dimensionId = world.dimension();
             onWorldLoad(world);
@@ -401,22 +397,18 @@ public class Colony implements IColony
      *
      * @return the new colony state.
      */
-    private ColonyState updateState()
-    {
-        if (world == null)
-        {
+    private ColonyState updateState() {
+        if (world == null) {
             return INACTIVE;
         }
         packageManager.updateAwayTime();
 
-        if (!packageManager.getCloseSubscribers().isEmpty() || (loadedChunks.size() > 40 && !packageManager.getImportantColonyPlayers().isEmpty()))
-        {
+        if (!packageManager.getCloseSubscribers().isEmpty() || (loadedChunks.size() > 40 && !packageManager.getImportantColonyPlayers().isEmpty())) {
             isDirty = true;
             return ACTIVE;
         }
 
-        if (!packageManager.getImportantColonyPlayers().isEmpty() || forceLoadTimer > 0)
-        {
+        if (!packageManager.getImportantColonyPlayers().isEmpty() || forceLoadTimer > 0) {
             isDirty = true;
             return UNLOADED;
         }
@@ -429,8 +421,7 @@ public class Colony implements IColony
      *
      * @return false
      */
-    private boolean updateSubscribers()
-    {
+    private boolean updateSubscribers() {
         packageManager.updateSubscribers();
         return false;
     }
@@ -440,8 +431,7 @@ public class Colony implements IColony
      *
      * @return false
      */
-    private boolean tickRequests()
-    {
+    private boolean tickRequests() {
         getRequestManager().tick();
         return false;
     }
@@ -451,8 +441,7 @@ public class Colony implements IColony
      *
      * @return false
      */
-    private boolean worldTickSlow()
-    {
+    private boolean worldTickSlow() {
         buildingManager.cleanUpBuildings(this);
         citizenManager.onColonyTick(this);
         visitorManager.onColonyTick(this);
@@ -465,13 +454,10 @@ public class Colony implements IColony
         questManager.onColonyTick();
 
         final long currTime = System.currentTimeMillis();
-        if (lastOnlineTime != 0)
-        {
+        if (lastOnlineTime != 0) {
             final long pastTime = currTime - lastOnlineTime;
-            if (pastTime > ONE_HOUR_IN_MILLIS)
-            {
-                for (final IBuilding building : buildingManager.getBuildings().values())
-                {
+            if (pastTime > ONE_HOUR_IN_MILLIS) {
+                for (final IBuilding building : buildingManager.getBuildings().values()) {
                     building.processOfflineTime(pastTime / 1000);
                 }
             }
@@ -487,18 +473,13 @@ public class Colony implements IColony
      * Check if we can unload the colony now.
      * Update chunk unload timer and releases chunks when it hits 0.
      */
-    private void updateChunkLoadTimer()
-    {
-        if (getConfig().getServer().forceLoadColony.get())
-        {
-            for (final ServerPlayer sub : getPackageManager().getCloseSubscribers())
-            {
-                if (getPermissions().hasPermission(sub, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY))
-                {
+    private void updateChunkLoadTimer() {
+        if (getConfig().getServer().forceLoadColony.get()) {
+            for (final ServerPlayer sub : getPackageManager().getCloseSubscribers()) {
+                if (getPermissions().hasPermission(sub, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY)) {
                     this.forceLoadTimer = getConfig().getServer().loadtime.get() * 20 * 60;
                     pendingChunks.addAll(pendingToUnloadChunks);
-                    for (final long pending : pendingChunks)
-                    {
+                    for (final long pending : pendingChunks) {
                         checkChunkAndRegisterTicket(pending, world.getChunk(ChunkPos.getX(pending), ChunkPos.getZ(pending)));
                     }
 
@@ -508,17 +489,13 @@ public class Colony implements IColony
                 }
             }
 
-            if (this.forceLoadTimer > 0)
-            {
+            if (this.forceLoadTimer > 0) {
                 this.forceLoadTimer -= MAX_TICKRATE;
-                if (this.forceLoadTimer <= 0)
-                {
-                    for (final long chunkPos : this.ticketedChunks)
-                    {
+                if (this.forceLoadTimer <= 0) {
+                    for (final long chunkPos : this.ticketedChunks) {
                         final int chunkX = ChunkPos.getX(chunkPos);
                         final int chunkZ = ChunkPos.getZ(chunkPos);
-                        if (world instanceof ServerLevel)
-                        {
+                        if (world instanceof ServerLevel) {
                             final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
                             ((ServerChunkCache) world.getChunkSource()).removeRegionTicket(KEEP_LOADED_TYPE, pos, 2, pos);
                             pendingToUnloadChunks.add(chunkPos);
@@ -536,12 +513,9 @@ public class Colony implements IColony
      *
      * @param chunkPos chunk position to check
      */
-    private void checkChunkAndRegisterTicket(final long chunkPos, final LevelChunk chunk)
-    {
-        if (forceLoadTimer > 0 && world instanceof ServerLevel)
-        {
-            if (!ticketedChunks.contains(chunkPos) && buildingManager.keepChunkColonyLoaded(chunk))
-            {
+    private void checkChunkAndRegisterTicket(final long chunkPos, final LevelChunk chunk) {
+        if (forceLoadTimer > 0 && world instanceof ServerLevel) {
+            if (!ticketedChunks.contains(chunkPos) && buildingManager.keepChunkColonyLoaded(chunk)) {
                 ticketedChunks.add(chunkPos);
                 ticketedChunksDirty = true;
                 world.getChunkSource().addRegionTicket(KEEP_LOADED_TYPE, chunk.getPos(), 2, chunk.getPos(), true);
@@ -554,8 +528,7 @@ public class Colony implements IColony
      *
      * @return false
      */
-    private boolean worldTickUnloaded()
-    {
+    private boolean worldTickUnloaded() {
         updateChildTime();
         updateChunkLoadTimer();
         return false;
@@ -564,14 +537,10 @@ public class Colony implements IColony
     /**
      * Adds 500 additional ticks to the child growth.
      */
-    private void updateChildTime()
-    {
-        if (hasChilds && additionalChildTime < maxAdditionalChildTime)
-        {
+    private void updateChildTime() {
+        if (hasChilds && additionalChildTime < maxAdditionalChildTime) {
             additionalChildTime += MAX_TICKRATE;
-        }
-        else
-        {
+        } else {
             additionalChildTime = 0;
         }
     }
@@ -581,22 +550,17 @@ public class Colony implements IColony
      *
      * @return false
      */
-    private boolean checkDayTime()
-    {
-        if (isDay && !WorldUtil.isDayTime(world))
-        {
+    private boolean checkDayTime() {
+        if (isDay && !WorldUtil.isDayTime(world)) {
             isDay = false;
             eventManager.onNightFall();
             raidManager.onNightFall();
-            if (!packageManager.getCloseSubscribers().isEmpty())
-            {
+            if (!packageManager.getCloseSubscribers().isEmpty()) {
                 citizenManager.checkCitizensForHappiness();
             }
 
             citizenManager.updateCitizenSleep(false);
-        }
-        else if (!isDay && WorldUtil.isDayTime(world))
-        {
+        } else if (!isDay && WorldUtil.isDayTime(world)) {
             isDay = true;
             day++;
             citizenManager.onWakeUp();
@@ -607,27 +571,21 @@ public class Colony implements IColony
     /**
      * Updates the pvping playeres.
      */
-    public void updateAttackingPlayers()
-    {
+    public void updateAttackingPlayers() {
         final List<Player> visitors = new ArrayList<>(visitingPlayers);
 
         //Clean up visiting player.
-        for (final Player player : visitors)
-        {
-            if (!packageManager.getCloseSubscribers().contains(player))
-            {
+        for (final Player player : visitors) {
+            if (!packageManager.getCloseSubscribers().contains(player)) {
                 visitingPlayers.remove(player);
                 attackingPlayers.remove(new AttackingPlayer(player));
             }
         }
 
-        for (final AttackingPlayer player : attackingPlayers)
-        {
-            if (!player.getGuards().isEmpty())
-            {
+        for (final AttackingPlayer player : attackingPlayers) {
+            if (!player.getGuards().isEmpty()) {
                 player.refreshList(this);
-                if (player.getGuards().isEmpty())
-                {
+                if (player.getGuards().isEmpty()) {
                     MessageUtils.format(COLONY_DEFENDED_SUCCESS_MESSAGE, player.getPlayer().getName()).sendTo(this).forManagers();
                 }
             }
@@ -639,10 +597,8 @@ public class Colony implements IColony
      *
      * @param colonyColor the colony color.
      */
-    public void setColonyColor(final ChatFormatting colonyColor)
-    {
-        if (this.world != null)
-        {
+    public void setColonyColor(final ChatFormatting colonyColor) {
+        if (this.world != null) {
             this.colonyTeamColor = colonyColor;
         }
         this.markDirty();
@@ -654,8 +610,7 @@ public class Colony implements IColony
      * @param colonyFlag the list of pattern-color pairs
      */
     @Override
-    public void setColonyFlag(BannerPatternLayers colonyFlag)
-    {
+    public void setColonyFlag(BannerPatternLayers colonyFlag) {
         this.colonyFlag = colonyFlag;
         markDirty();
     }
@@ -669,10 +624,8 @@ public class Colony implements IColony
      * @return loaded colony.
      */
     @Nullable
-    public static Colony loadColony(@NotNull final CompoundTag compound, @Nullable final ServerLevel world, final HolderLookup.@NotNull Provider provider)
-    {
-        try
-        {
+    public static Colony loadColony(@NotNull final CompoundTag compound, @Nullable final ServerLevel world, final HolderLookup.@NotNull Provider provider) {
+        try {
             final int id = compound.getInt(TAG_ID);
             final String name = compound.getString(TAG_NAME);
             final BlockPos center = BlockPosUtil.read(compound, TAG_CENTER);
@@ -682,9 +635,7 @@ public class Colony implements IColony
             c.read(compound, provider);
 
             return c;
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             Log.getLogger().warn("Something went wrong loading a colony, please report this to the administrators", e);
         }
         return null;
@@ -695,8 +646,7 @@ public class Colony implements IColony
      *
      * @param compound compound to read from.
      */
-    public void read(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void read(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         dimensionId = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(compound.getString(TAG_DIMENSION)));
 
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
@@ -720,8 +670,7 @@ public class Colony implements IColony
         questManager.deserializeNBT(provider, compound.getCompound(TAG_QUEST_MANAGER));
         eventDescManager.deserializeNBT(provider, compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
-        if (compound.contains(TAG_RESEARCH))
-        {
+        if (compound.contains(TAG_RESEARCH)) {
             researchManager.readFromNBT(provider, compound.getCompound(TAG_RESEARCH));
             // now that buildings, colonists, and research are loaded, check for new autoStartResearch.
             // this is mostly for backwards compatibility with older saves, so players do not have to manually start newly added autostart researches that they've unlocked before the update.
@@ -734,8 +683,7 @@ public class Colony implements IColony
         wayPoints.clear();
         // Waypoints
         final ListTag wayPointTagList = compound.getList(TAG_WAYPOINT, Tag.TAG_COMPOUND);
-        for (int i = 0; i < wayPointTagList.size(); ++i)
-        {
+        for (int i = 0; i < wayPointTagList.size(); ++i) {
             final CompoundTag blockAtPos = wayPointTagList.getCompound(i);
             final BlockPos pos = BlockPosUtil.read(blockAtPos, TAG_WAYPOINT);
             final BlockState state = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), blockAtPos);
@@ -745,8 +693,7 @@ public class Colony implements IColony
         // Free blocks
         final Set<Block> tempFreeBlocks = new HashSet<>();
         final ListTag freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, Tag.TAG_STRING);
-        for (int i = 0; i < freeBlockTagList.size(); ++i)
-        {
+        for (int i = 0; i < freeBlockTagList.size(); ++i) {
             tempFreeBlocks.add(BuiltInRegistries.BLOCK.get(ResourceLocation.parse(freeBlockTagList.getString(i))));
         }
         freeBlocks = ImmutableSet.copyOf(tempFreeBlocks);
@@ -754,8 +701,7 @@ public class Colony implements IColony
         final Set<BlockPos> tempFreePositions = new HashSet<>();
         // Free positions
         final ListTag freePositionTagList = compound.getList(TAG_FREE_POSITIONS, Tag.TAG_COMPOUND);
-        for (int i = 0; i < freePositionTagList.size(); ++i)
-        {
+        for (int i = 0; i < freePositionTagList.size(); ++i) {
             final CompoundTag blockTag = freePositionTagList.getCompound(i);
             final BlockPos block = BlockPosUtil.read(blockTag, TAG_FREE_POSITIONS);
             tempFreePositions.add(block);
@@ -764,61 +710,48 @@ public class Colony implements IColony
 
         packageManager.setLastContactInHours(compound.getInt(TAG_ABANDONED));
 
-        if (compound.contains(TAG_STYLE))
-        {
+        if (compound.contains(TAG_STYLE)) {
             this.pack = BlueprintMapping.getStyleMapping(compound.getString(TAG_STYLE));
-        }
-        else
-        {
+        } else {
             this.pack = compound.getString(TAG_PACK);
         }
 
         raidManager.read(compound);
 
-        if (compound.contains(TAG_AUTO_DELETE))
-        {
+        if (compound.contains(TAG_AUTO_DELETE)) {
             this.canColonyBeAutoDeleted = compound.getBoolean(TAG_AUTO_DELETE);
-        }
-        else
-        {
+        } else {
             this.canColonyBeAutoDeleted = true;
         }
 
-        if (compound.contains(TAG_TEAM_COLOR))
-        {
+        if (compound.contains(TAG_TEAM_COLOR)) {
             // This read can occur before the world is non-null, due to Minecraft's order of operations for capabilities.
             // As a result, setColonyColor proper must wait until onWorldLoad fires.
             this.colonyTeamColor = ChatFormatting.values()[compound.getInt(TAG_TEAM_COLOR)];
         }
 
-        if (compound.contains(TAG_FLAG_PATTERNS))
-        {
+        if (compound.contains(TAG_FLAG_PATTERNS)) {
             this.setColonyFlag(Utils.deserializeCodecMess(BannerPatternLayers.CODEC, provider, compound.get(TAG_FLAG_PATTERNS)));
         }
 
         getRequestManager().reset();
-        if (compound.contains(TAG_REQUESTMANAGER))
-        {
+        if (compound.contains(TAG_REQUESTMANAGER)) {
             getRequestManager().deserializeNBT(provider, compound.getCompound(TAG_REQUESTMANAGER));
         }
         this.lastOnlineTime = compound.getLong(TAG_LAST_ONLINE);
-        if (compound.contains(TAG_COL_TEXT))
-        {
+        if (compound.contains(TAG_COL_TEXT)) {
             this.textureStyle = compound.getString(TAG_COL_TEXT);
         }
-        if (compound.contains(TAG_COL_NAME_STYLE))
-        {
+        if (compound.contains(TAG_COL_NAME_STYLE)) {
             this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
         }
 
-        if (compound.contains(BuildingModules.TOWNHALL_SETTINGS.key))
-        {
+        if (compound.contains(BuildingModules.TOWNHALL_SETTINGS.key)) {
             settingsModule.deserializeNBT(provider, compound.getCompound(BuildingModules.TOWNHALL_SETTINGS.key));
         }
 
         @NotNull final ListTag claimTagList = compound.getList(TAG_CLAIM_DATA, Tag.TAG_COMPOUND);
-        for (int i = 0; i < claimTagList.size(); i++)
-        {
+        for (int i = 0; i < claimTagList.size(); i++) {
             @NotNull final CompoundTag chunkCompound = claimTagList.getCompound(i);
             final ChunkClaimData chunkClaimData = new ChunkClaimData();
             chunkClaimData.deserializeNBT(provider, chunkCompound.getCompound(TAG_CHUNK_CLAIM));
@@ -835,8 +768,7 @@ public class Colony implements IColony
      *
      * @return the ColonyPermissionEventHandler.
      */
-    public ColonyPermissionEventHandler getEventHandler()
-    {
+    public ColonyPermissionEventHandler getEventHandler() {
         return eventHandler;
     }
 
@@ -845,8 +777,7 @@ public class Colony implements IColony
      *
      * @param compound compound to write to.
      */
-    public CompoundTag write(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag write(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         compound.putInt(DATA_VERSION_TAG, DATA_VERSION);
 
         //  Core attributes
@@ -896,8 +827,7 @@ public class Colony implements IColony
 
         // Waypoints
         @NotNull final ListTag wayPointTagList = new ListTag();
-        for (@NotNull final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
-        {
+        for (@NotNull final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet()) {
             @NotNull final CompoundTag wayPointCompound = new CompoundTag();
             BlockPosUtil.write(wayPointCompound, TAG_WAYPOINT, entry.getKey());
             wayPointCompound.put(TAG_BLOCK, NbtUtils.writeBlockState(entry.getValue()));
@@ -907,16 +837,14 @@ public class Colony implements IColony
 
         // Free blocks
         @NotNull final ListTag freeBlocksTagList = new ListTag();
-        for (@NotNull final Block block : freeBlocks)
-        {
+        for (@NotNull final Block block : freeBlocks) {
             freeBlocksTagList.add(StringTag.valueOf(BuiltInRegistries.BLOCK.getKey(block).toString()));
         }
         compound.put(TAG_FREE_BLOCKS, freeBlocksTagList);
 
         // Free positions
         @NotNull final ListTag freePositionsTagList = new ListTag();
-        for (@NotNull final BlockPos pos : freePositions)
-        {
+        for (@NotNull final BlockPos pos : freePositions) {
             @NotNull final CompoundTag wayPointCompound = new CompoundTag();
             BlockPosUtil.write(wayPointCompound, TAG_FREE_POSITIONS, pos);
             freePositionsTagList.add(wayPointCompound);
@@ -939,8 +867,7 @@ public class Colony implements IColony
         compound.put(BuildingModules.TOWNHALL_SETTINGS.key, settings);
 
         @NotNull final ListTag claimTagList = new ListTag();
-        for (final Long2ObjectMap.Entry<ChunkClaimData> chunkClaimData : claimData.long2ObjectEntrySet())
-        {
+        for (final Long2ObjectMap.Entry<ChunkClaimData> chunkClaimData : claimData.long2ObjectEntrySet()) {
             @NotNull final CompoundTag chunkCompound = new CompoundTag();
             chunkCompound.put(TAG_CHUNK_CLAIM, chunkClaimData.getValue().serializeNBT(provider));
             chunkCompound.putLong(TAG_CHUNK_POS, chunkClaimData.getLongKey());
@@ -959,20 +886,17 @@ public class Colony implements IColony
      *
      * @return Dimension ID.
      */
-    public ResourceKey<Level> getDimension()
-    {
+    public ResourceKey<Level> getDimension() {
         return dimensionId;
     }
 
     @Override
-    public boolean isRemote()
-    {
+    public boolean isRemote() {
         return false;
     }
 
     @Override
-    public IResearchManager getResearchManager()
-    {
+    public IResearchManager getResearchManager() {
         return this.researchManager;
     }
 
@@ -982,22 +906,18 @@ public class Colony implements IColony
      * @param w World object.
      */
     @Override
-    public void onWorldLoad(@NotNull final ServerLevel w)
-    {
-        if (w.dimension() == dimensionId)
-        {
+    public void onWorldLoad(@NotNull final ServerLevel w) {
+        if (w.dimension() == dimensionId) {
             this.world = w;
             // Register a new event handler
-            if (eventHandler == null)
-            {
+            if (eventHandler == null) {
                 eventHandler = new ColonyPermissionEventHandler(this);
                 questManager.onWorldLoad();
                 NeoForge.EVENT_BUS.register(eventHandler);
 
                 // Recovery for missing static colony claims
                 final IChunkClaimData data = claimData.get(ChunkPos.asLong(getCenter()));
-                if (data == null || !data.getStaticClaimColonies().contains(getID()))
-                {
+                if (data == null || !data.getStaticClaimColonies().contains(getID())) {
                     BackUpHelper.reclaimChunks(this);
                 }
             }
@@ -1011,10 +931,8 @@ public class Colony implements IColony
      * @param w World object.
      */
     @Override
-    public void onWorldUnload(@NotNull final Level w)
-    {
-        if (w != world)
-        {
+    public void onWorldUnload(@NotNull final Level w) {
+        if (w != world) {
             /*
              * If the event world is not the colony world ignore. This might happen in interactions with other mods.
              * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
@@ -1022,16 +940,14 @@ public class Colony implements IColony
             return;
         }
 
-        if (eventHandler != null)
-        {
+        if (eventHandler != null) {
             NeoForge.EVENT_BUS.unregister(eventHandler);
         }
         world = null;
     }
 
     @Override
-    public void onServerTick(@NotNull final ServerTickEvent.Pre event)
-    {
+    public void onServerTick(@NotNull final ServerTickEvent.Pre event) {
 
     }
 
@@ -1042,8 +958,7 @@ public class Colony implements IColony
      */
     @Override
     @NotNull
-    public IWorkManager getWorkManager()
-    {
+    public IWorkManager getWorkManager() {
         return workManager;
     }
 
@@ -1052,8 +967,7 @@ public class Colony implements IColony
      *
      * @return the list of free to interact positions.
      */
-    public Set<BlockPos> getFreePositions()
-    {
+    public Set<BlockPos> getFreePositions() {
         return freePositions;
     }
 
@@ -1062,8 +976,7 @@ public class Colony implements IColony
      *
      * @return the list of free to interact blocks.
      */
-    public Set<Block> getFreeBlocks()
-    {
+    public Set<Block> getFreeBlocks() {
         return freeBlocks;
     }
 
@@ -1072,8 +985,7 @@ public class Colony implements IColony
      *
      * @param pos position to add.
      */
-    public void addFreePosition(@NotNull final BlockPos pos)
-    {
+    public void addFreePosition(@NotNull final BlockPos pos) {
         ImmutableSet.Builder<BlockPos> builder = ImmutableSet.builder();
         builder.addAll(freePositions);
         builder.add(pos);
@@ -1086,8 +998,7 @@ public class Colony implements IColony
      *
      * @param block block to add.
      */
-    public void addFreeBlock(@NotNull final Block block)
-    {
+    public void addFreeBlock(@NotNull final Block block) {
         ImmutableSet.Builder<Block> builder = ImmutableSet.builder();
         builder.addAll(freeBlocks);
         builder.add(block);
@@ -1100,13 +1011,10 @@ public class Colony implements IColony
      *
      * @param pos position to remove.
      */
-    public void removeFreePosition(@NotNull final BlockPos pos)
-    {
+    public void removeFreePosition(@NotNull final BlockPos pos) {
         ImmutableSet.Builder<BlockPos> builder = ImmutableSet.builder();
-        for (final BlockPos tempPos : freePositions)
-        {
-            if (!pos.equals(tempPos))
-            {
+        for (final BlockPos tempPos : freePositions) {
+            if (!pos.equals(tempPos)) {
                 builder.add(tempPos);
             }
         }
@@ -1119,13 +1027,10 @@ public class Colony implements IColony
      *
      * @param block state to remove.
      */
-    public void removeFreeBlock(@NotNull final Block block)
-    {
+    public void removeFreeBlock(@NotNull final Block block) {
         ImmutableSet.Builder<Block> builder = ImmutableSet.builder();
-        for (final Block tempBlock : freeBlocks)
-        {
-            if (block != tempBlock)
-            {
+        for (final Block tempBlock : freeBlocks) {
+            if (block != tempBlock) {
                 builder.add(tempBlock);
             }
         }
@@ -1140,10 +1045,8 @@ public class Colony implements IColony
      * @param event {@link net.neoforged.neoforge.event.tick.LevelTickEvent}
      */
     @Override
-    public void onWorldTick(@NotNull final LevelTickEvent.Pre event)
-    {
-        if (event.getLevel() != getWorld())
-        {
+    public void onWorldTick(@NotNull final LevelTickEvent.Pre event) {
+        if (event.getLevel() != getWorld()) {
             /*
              * If the event world is not the colony world ignore. This might happen in interactions with other mods.
              * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
@@ -1161,8 +1064,7 @@ public class Colony implements IColony
      * @param averageTicks the average ticks to upate it.
      * @return a boolean by random.
      */
-    public static boolean shallUpdate(final Level world, final int averageTicks)
-    {
+    public static boolean shallUpdate(final Level world, final int averageTicks) {
         return world.getGameTime() % (world.random.nextInt(averageTicks * 2) + 1) == 0;
     }
 
@@ -1171,23 +1073,17 @@ public class Colony implements IColony
      *
      * @return false
      */
-    private boolean updateWayPoints()
-    {
-        if (!wayPoints.isEmpty() && world != null)
-        {
+    private boolean updateWayPoints() {
+        if (!wayPoints.isEmpty() && world != null) {
             final int randomPos = world.random.nextInt(wayPoints.size());
             int count = 0;
-            for (final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
-            {
-                if (count++ == randomPos)
-                {
-                    if (WorldUtil.isBlockLoaded(world, entry.getKey()))
-                    {
+            for (final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet()) {
+                if (count++ == randomPos) {
+                    if (WorldUtil.isBlockLoaded(world, entry.getKey())) {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
                         if (
-                          ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
-                            || (world.isEmptyBlock(entry.getKey().below()) && !BlockUtils.isAnySolid(entry.getValue())))
-                        {
+                                ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
+                                        || (world.isEmptyBlock(entry.getKey().below()) && !BlockUtils.isAnySolid(entry.getValue()))) {
                             wayPoints.remove(entry.getKey());
                             markDirty();
                         }
@@ -1206,14 +1102,12 @@ public class Colony implements IColony
      * @return Chunk Coordinates of the center of the colony.
      */
     @Override
-    public BlockPos getCenter()
-    {
+    public BlockPos getCenter() {
         return center;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
@@ -1223,24 +1117,20 @@ public class Colony implements IColony
      * @param n new name.
      */
     @Override
-    public void setName(final String n)
-    {
+    public void setName(final String n) {
         name = n;
         markDirty();
     }
 
     @NotNull
     @Override
-    public Permissions getPermissions()
-    {
+    public Permissions getPermissions() {
         return permissions;
     }
 
     @Override
-    public boolean isCoordInColony(@NotNull final Level w, @NotNull final BlockPos pos)
-    {
-        if (w.dimension() != this.dimensionId)
-        {
+    public boolean isCoordInColony(@NotNull final Level w, @NotNull final BlockPos pos) {
+        if (w.dimension() != this.dimensionId) {
             return false;
         }
 
@@ -1250,14 +1140,12 @@ public class Colony implements IColony
     }
 
     @Override
-    public long getDistanceSquared(@NotNull final BlockPos pos)
-    {
+    public long getDistanceSquared(@NotNull final BlockPos pos) {
         return BlockPosUtil.getDistanceSquared2D(center, pos);
     }
 
     @Override
-    public boolean hasTownHall()
-    {
+    public boolean hasTownHall() {
         return buildingManager.hasTownHall();
     }
 
@@ -1267,37 +1155,27 @@ public class Colony implements IColony
      * @return Colony ID.
      */
     @Override
-    public int getID()
-    {
+    public int getID() {
         return id;
     }
 
     @Override
-    public boolean hasWarehouse()
-    {
+    public boolean hasWarehouse() {
         return buildingManager.hasWarehouse();
     }
 
     @Override
-    public boolean hasBuilding(final String name, final int level, boolean singleBuilding)
-    {
+    public boolean hasBuilding(final String name, final int level, boolean singleBuilding) {
         int sum = 0;
-        for (final IBuilding building : this.getBuildingManager().getBuildings().values())
-        {
-            if (building.getBuildingType().getRegistryName().getPath().equalsIgnoreCase(name))
-            {
-                if (singleBuilding)
-                {
-                    if (building.getBuildingLevel() >= level)
-                    {
+        for (final IBuilding building : this.getBuildingManager().getBuildings().values()) {
+            if (building.getBuildingType().getRegistryName().getPath().equalsIgnoreCase(name)) {
+                if (singleBuilding) {
+                    if (building.getBuildingLevel() >= level) {
                         return true;
                     }
-                }
-                else
-                {
+                } else {
                     sum += building.getBuildingLevel();
-                    if (sum >= level)
-                    {
+                    if (sum >= level) {
                         return true;
                     }
                 }
@@ -1307,8 +1185,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public int getLastContactInHours()
-    {
+    public int getLastContactInHours() {
         return packageManager.getLastContactInHours();
     }
 
@@ -1318,17 +1195,14 @@ public class Colony implements IColony
      * @return World the colony is in.
      */
     @Nullable
-    public ServerLevel getWorld()
-    {
+    public ServerLevel getWorld() {
         return world;
     }
 
     @NotNull
     @Override
-    public IRequestManager getRequestManager()
-    {
-        if (requestManager == null)
-        {
+    public IRequestManager getRequestManager() {
+        if (requestManager == null) {
             requestManager = new StandardRequestManager(this);
         }
         return requestManager;
@@ -1337,35 +1211,29 @@ public class Colony implements IColony
     /**
      * Marks the instance dirty.
      */
-    public void markDirty()
-    {
+    public void markDirty() {
         packageManager.setDirty();
         isDirty = true;
     }
 
     @Override
-    public boolean canBeAutoDeleted()
-    {
+    public boolean canBeAutoDeleted() {
         return canColonyBeAutoDeleted;
     }
 
     @Nullable
     @Override
-    public IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos)
-    {
+    public IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos) {
         return buildingManager.getBuilding(pos);
     }
 
     @Override
     @NotNull
-    public List<Player> getMessagePlayerEntities()
-    {
+    public List<Player> getMessagePlayerEntities() {
         List<Player> players = new ArrayList<>();
 
-        for (ServerPlayer player : packageManager.getCloseSubscribers())
-        {
-            if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES))
-            {
+        for (ServerPlayer player : packageManager.getCloseSubscribers()) {
+            if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES)) {
                 players.add(player);
             }
         }
@@ -1375,14 +1243,11 @@ public class Colony implements IColony
 
     @Override
     @NotNull
-    public List<Player> getImportantMessageEntityPlayers()
-    {
+    public List<Player> getImportantMessageEntityPlayers() {
         final Set<Player> playerList = new HashSet<>(getMessagePlayerEntities());
 
-        for (final ServerPlayer player : packageManager.getImportantColonyPlayers())
-        {
-            if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
-            {
+        for (final ServerPlayer player : packageManager.getImportantColonyPlayers()) {
+            if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY)) {
                 playerList.add(player);
             }
         }
@@ -1394,8 +1259,7 @@ public class Colony implements IColony
      *
      * @return true of false.
      */
-    public boolean isManualHiring()
-    {
+    public boolean isManualHiring() {
         return !settingsModule.getSetting(BuildingTownHall.AUTO_HIRING_MODE).getValue();
     }
 
@@ -1404,8 +1268,7 @@ public class Colony implements IColony
      *
      * @return true of false.
      */
-    public boolean isManualHousing()
-    {
+    public boolean isManualHousing() {
         return !settingsModule.getSetting(BuildingTownHall.AUTO_HOUSING_MODE).getValue();
     }
 
@@ -1414,8 +1277,7 @@ public class Colony implements IColony
      *
      * @return true of false.
      */
-    public boolean canMoveIn()
-    {
+    public boolean canMoveIn() {
         return settingsModule.getSetting(BuildingTownHall.MOVE_IN).getValue();
     }
 
@@ -1424,8 +1286,7 @@ public class Colony implements IColony
      *
      * @param orderId the workOrder to remove.
      */
-    public void removeWorkOrderInView(final int orderId)
-    {
+    public void removeWorkOrderInView(final int orderId) {
         //  Inform Subscribers of removed workOrder
         new ColonyViewRemoveWorkOrderMessage(this, orderId).sendToPlayer(packageManager.getCloseSubscribers());
     }
@@ -1436,8 +1297,7 @@ public class Colony implements IColony
      * @param point the waypoint to add.
      * @param block the block at the waypoint.
      */
-    public void addWayPoint(final BlockPos point, final BlockState block)
-    {
+    public void addWayPoint(final BlockPos point, final BlockState block) {
         wayPoints.put(point, block);
         this.markDirty();
     }
@@ -1448,16 +1308,13 @@ public class Colony implements IColony
      * @return the overall happiness.
      */
     @Override
-    public double getOverallHappiness()
-    {
-        if (citizenManager.getCitizens().size() <= 0)
-        {
+    public double getOverallHappiness() {
+        if (citizenManager.getCitizens().size() <= 0) {
             return 5.5;
         }
 
         double happinessSum = 0;
-        for (final ICitizenData citizen : citizenManager.getCitizens())
-        {
+        for (final ICitizenData citizen : citizenManager.getCitizens()) {
             happinessSum += citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony(), citizen);
         }
         return happinessSum / citizenManager.getCitizens().size();
@@ -1469,8 +1326,7 @@ public class Colony implements IColony
      * @return copy of hashmap.
      */
     @Override
-    public Map<BlockPos, BlockState> getWayPoints()
-    {
+    public Map<BlockPos, BlockState> getWayPoints() {
         return new HashMap<>(wayPoints);
     }
 
@@ -1479,8 +1335,7 @@ public class Colony implements IColony
      *
      * @param canBeDeleted whether the colony is able to be deleted automatically
      */
-    public void setCanBeAutoDeleted(final boolean canBeDeleted)
-    {
+    public void setCanBeAutoDeleted(final boolean canBeDeleted) {
         this.canColonyBeAutoDeleted = canBeDeleted;
         this.markDirty();
     }
@@ -1491,8 +1346,7 @@ public class Colony implements IColony
      * @return the style string.
      */
     @Override
-    public String getStructurePack()
-    {
+    public String getStructurePack() {
         return pack;
     }
 
@@ -1502,8 +1356,7 @@ public class Colony implements IColony
      * @param style the default string.
      */
     @Override
-    public void setStructurePack(final String style)
-    {
+    public void setStructurePack(final String style) {
         this.pack = style;
         this.markDirty();
     }
@@ -1514,8 +1367,7 @@ public class Colony implements IColony
      * @return the buildingManager.
      */
     @Override
-    public IRegisteredStructureManager getBuildingManager()
-    {
+    public IRegisteredStructureManager getBuildingManager() {
         return buildingManager;
     }
 
@@ -1525,8 +1377,7 @@ public class Colony implements IColony
      * @return the graveManager.
      */
     @Override
-    public IGraveManager getGraveManager()
-    {
+    public IGraveManager getGraveManager() {
         return graveManager;
     }
 
@@ -1536,8 +1387,7 @@ public class Colony implements IColony
      * @return the citizenManager.
      */
     @Override
-    public ICitizenManager getCitizenManager()
-    {
+    public ICitizenManager getCitizenManager() {
         return citizenManager;
     }
 
@@ -1547,8 +1397,7 @@ public class Colony implements IColony
      * @return the visitor manager.
      */
     @Override
-    public IVisitorManager getVisitorManager()
-    {
+    public IVisitorManager getVisitorManager() {
         return visitorManager;
     }
 
@@ -1558,32 +1407,27 @@ public class Colony implements IColony
      * @return the barbManager.
      */
     @Override
-    public IRaiderManager getRaiderManager()
-    {
+    public IRaiderManager getRaiderManager() {
         return raidManager;
     }
 
     @Override
-    public IEventManager getEventManager()
-    {
+    public IEventManager getEventManager() {
         return eventManager;
     }
 
     @Override
-    public IStatisticsManager getStatisticsManager()
-    {
+    public IStatisticsManager getStatisticsManager() {
         return statisticManager;
     }
 
     @Override
-    public IReproductionManager getReproductionManager()
-    {
+    public IReproductionManager getReproductionManager() {
         return reproductionManager;
     }
 
     @Override
-    public IEventDescriptionManager getEventDescriptionManager()
-    {
+    public IEventDescriptionManager getEventDescriptionManager() {
         return eventDescManager;
     }
 
@@ -1593,8 +1437,7 @@ public class Colony implements IColony
      * @return the manager.
      */
     @Override
-    public IColonyPackageManager getPackageManager()
-    {
+    public IColonyPackageManager getPackageManager() {
         return packageManager;
     }
 
@@ -1603,20 +1446,16 @@ public class Colony implements IColony
      *
      * @return the list.
      */
-    public ImmutableList<Player> getVisitingPlayers()
-    {
+    public ImmutableList<Player> getVisitingPlayers() {
         return ImmutableList.copyOf(visitingPlayers);
     }
 
     @Override
-    public void addVisitingPlayer(final Player player)
-    {
+    public void addVisitingPlayer(final Player player) {
         final Rank rank = getPermissions().getRank(player);
-        if (!rank.isColonyManager() && !visitingPlayers.contains(player) && settingsModule.getSetting(BuildingTownHall.ENTER_LEAVE_MESSAGES).getValue())
-        {
+        if (!rank.isColonyManager() && !visitingPlayers.contains(player) && settingsModule.getSetting(BuildingTownHall.ENTER_LEAVE_MESSAGES).getValue()) {
             visitingPlayers.add(player);
-            if (!this.getImportantMessageEntityPlayers().contains(player))
-            {
+            if (!this.getImportantMessageEntityPlayers().contains(player)) {
                 MessageUtils.format(ENTERING_COLONY_MESSAGE, this.getName()).sendTo(player);
             }
             MessageUtils.format(ENTERING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
@@ -1624,13 +1463,10 @@ public class Colony implements IColony
     }
 
     @Override
-    public void removeVisitingPlayer(final Player player)
-    {
-        if (visitingPlayers.contains(player) && settingsModule.getSetting(BuildingTownHall.ENTER_LEAVE_MESSAGES).getValue())
-        {
+    public void removeVisitingPlayer(final Player player) {
+        if (visitingPlayers.contains(player) && settingsModule.getSetting(BuildingTownHall.ENTER_LEAVE_MESSAGES).getValue()) {
             visitingPlayers.remove(player);
-            if (!this.getImportantMessageEntityPlayers().contains(player))
-            {
+            if (!this.getImportantMessageEntityPlayers().contains(player)) {
                 MessageUtils.format(LEAVING_COLONY_MESSAGE, this.getName()).sendTo(player);
             }
             MessageUtils.format(LEAVING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
@@ -1643,17 +1479,12 @@ public class Colony implements IColony
      * @return the tag of it.
      */
     @Override
-    public CompoundTag getColonyTag()
-    {
-        try
-        {
-            if (this.colonyTag == null || this.isDirty)
-            {
+    public CompoundTag getColonyTag() {
+        try {
+            if (this.colonyTag == null || this.isDirty) {
                 this.write(new CompoundTag(), world.registryAccess());
             }
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             Log.getLogger().warn("Something went wrong persisting colony: " + id, e);
         }
         return this.colonyTag;
@@ -1665,17 +1496,13 @@ public class Colony implements IColony
      * @param player the player to check..
      * @return true if so.
      */
-    public boolean isValidAttackingPlayer(final Player player)
-    {
-        if (packageManager.getLastContactInHours() > 1)
-        {
+    public boolean isValidAttackingPlayer(final Player player) {
+        if (packageManager.getLastContactInHours() > 1) {
             return false;
         }
 
-        for (final AttackingPlayer attackingPlayer : attackingPlayers)
-        {
-            if (attackingPlayer.getPlayer().equals(player))
-            {
+        for (final AttackingPlayer attackingPlayer : attackingPlayers) {
+            if (attackingPlayer.getPlayer().equals(player)) {
                 return attackingPlayer.isValidAttack(this);
             }
         }
@@ -1688,10 +1515,8 @@ public class Colony implements IColony
      * @param entity the guard entity.
      * @return true if so.
      */
-    public boolean isValidAttackingGuard(final AbstractEntityCitizen entity)
-    {
-        if (packageManager.getLastContactInHours() > 1)
-        {
+    public boolean isValidAttackingGuard(final AbstractEntityCitizen entity) {
+        if (packageManager.getLastContactInHours() > 1) {
             return false;
         }
 
@@ -1703,31 +1528,24 @@ public class Colony implements IColony
      *
      * @param IEntityCitizen the citizen to add.
      */
-    public void addGuardToAttackers(final AbstractEntityCitizen IEntityCitizen, final Player player)
-    {
-        if (player == null)
-        {
+    public void addGuardToAttackers(final AbstractEntityCitizen IEntityCitizen, final Player player) {
+        if (player == null) {
             return;
         }
 
-        for (final AttackingPlayer attackingPlayer : attackingPlayers)
-        {
-            if (attackingPlayer.getPlayer().equals(player))
-            {
-                if (attackingPlayer.addGuard(IEntityCitizen))
-                {
+        for (final AttackingPlayer attackingPlayer : attackingPlayers) {
+            if (attackingPlayer.getPlayer().equals(player)) {
+                if (attackingPlayer.addGuard(IEntityCitizen)) {
                     MessageUtils.format(COLONY_ATTACK_GUARD_GROUP_SIZE_MESSAGE, attackingPlayer.getPlayer().getName(), attackingPlayer.getGuards().size())
-                      .sendTo(this)
-                      .forManagers();
+                            .sendTo(this)
+                            .forManagers();
                 }
                 return;
             }
         }
 
-        for (final Player visitingPlayer : visitingPlayers)
-        {
-            if (visitingPlayer.equals(player))
-            {
+        for (final Player visitingPlayer : visitingPlayers) {
+            if (visitingPlayer.equals(player)) {
                 final AttackingPlayer attackingPlayer = new AttackingPlayer(visitingPlayer);
                 attackingPlayer.addGuard(IEntityCitizen);
                 attackingPlayers.add(attackingPlayer);
@@ -1741,8 +1559,7 @@ public class Colony implements IColony
      *
      * @return true if so.
      */
-    public boolean isColonyUnderAttack()
-    {
+    public boolean isColonyUnderAttack() {
         return !attackingPlayers.isEmpty();
     }
 
@@ -1752,8 +1569,7 @@ public class Colony implements IColony
      * @return the ChatFormatting enum color.
      */
     @Override
-    public ChatFormatting getTeamColonyColor()
-    {
+    public ChatFormatting getTeamColonyColor() {
         return colonyTeamColor;
     }
 
@@ -1763,8 +1579,7 @@ public class Colony implements IColony
      * @return the list of pattern-color pairs
      */
     @Override
-    public BannerPatternLayers getColonyFlag()
-    {
+    public BannerPatternLayers getColonyFlag() {
         return colonyFlag;
     }
 
@@ -1773,8 +1588,7 @@ public class Colony implements IColony
      *
      * @param dirty if dirty.
      */
-    public void setDirty(final boolean dirty)
-    {
+    public void setDirty(final boolean dirty) {
         this.isDirty = dirty;
     }
 
@@ -1782,8 +1596,7 @@ public class Colony implements IColony
      * Save the time when mercenaries are used, to set a cooldown.
      */
     @Override
-    public void usedMercenaries()
-    {
+    public void usedMercenaries() {
         mercenaryLastUse = world.getGameTime();
         markDirty();
     }
@@ -1792,32 +1605,24 @@ public class Colony implements IColony
      * Get the last time mercenaries were used.
      */
     @Override
-    public long getMercenaryUseTime()
-    {
+    public long getMercenaryUseTime() {
         return mercenaryLastUse;
     }
 
     @Override
-    public boolean useAdditionalChildTime(final int amount)
-    {
-        if (additionalChildTime < amount)
-        {
+    public boolean useAdditionalChildTime(final int amount) {
+        if (additionalChildTime < amount) {
             return false;
-        }
-        else
-        {
+        } else {
             additionalChildTime -= amount;
             return true;
         }
     }
 
     @Override
-    public void updateHasChilds()
-    {
-        for (ICitizenData data : this.getCitizenManager().getCitizens())
-        {
-            if (data.isChild())
-            {
+    public void updateHasChilds() {
+        for (ICitizenData data : this.getCitizenManager().getCitizens()) {
+            if (data.isChild()) {
                 this.hasChilds = true;
                 return;
             }
@@ -1826,17 +1631,12 @@ public class Colony implements IColony
     }
 
     @Override
-    public void addLoadedChunk(final long chunkPos, final LevelChunk chunk)
-    {
+    public void addLoadedChunk(final long chunkPos, final LevelChunk chunk) {
         if (world instanceof ServerLevel
-              && getConfig().getServer().forceLoadColony.get())
-        {
-            if (this.forceLoadTimer > 0)
-            {
+                && getConfig().getServer().forceLoadColony.get()) {
+            if (this.forceLoadTimer > 0) {
                 checkChunkAndRegisterTicket(chunkPos, chunk);
-            }
-            else if (buildingManager.keepChunkColonyLoaded(chunk))
-            {
+            } else if (buildingManager.keepChunkColonyLoaded(chunk)) {
                 this.pendingChunks.add(chunkPos);
             }
         }
@@ -1844,62 +1644,52 @@ public class Colony implements IColony
     }
 
     @Override
-    public void removeLoadedChunk(final long chunkPos)
-    {
+    public void removeLoadedChunk(final long chunkPos) {
         loadedChunks.remove(chunkPos);
         pendingToUnloadChunks.remove(chunkPos);
     }
 
     @Override
-    public int getLoadedChunkCount()
-    {
+    public int getLoadedChunkCount() {
         return loadedChunks.size();
     }
 
     @Override
-    public Set<Long> getLoadedChunks()
-    {
+    public Set<Long> getLoadedChunks() {
         return loadedChunks.keySet();
     }
 
     @Override
-    public ColonyState getState()
-    {
+    public ColonyState getState() {
         return colonyStateMachine.getState();
     }
 
     @Override
-    public boolean isActive()
-    {
+    public boolean isActive() {
         return colonyStateMachine.getState() != INACTIVE;
     }
 
     @Override
-    public boolean isDay()
-    {
+    public boolean isDay() {
         return isDay;
     }
 
     @Override
-    public Set<Long> getTicketedChunks()
-    {
+    public Set<Long> getTicketedChunks() {
         return ticketedChunks;
     }
 
     @Override
-    public void setTextureStyle(final String style)
-    {
+    public void setTextureStyle(final String style) {
         this.textureStyle = style;
         this.markDirty();
     }
 
     @Override
-    public String getTextureStyleId()
-    {
+    public String getTextureStyleId() {
         if (MineColonies.getConfig().getServer().holidayFeatures.get() &&
-              ((LocalDateTime.now().getDayOfMonth() >= 29 && LocalDateTime.now().getMonth() == Month.OCTOBER)
-                 || (LocalDateTime.now().getDayOfMonth() <= 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER)))
-        {
+                ((LocalDateTime.now().getDayOfMonth() >= 29 && LocalDateTime.now().getMonth() == Month.OCTOBER)
+                        || (LocalDateTime.now().getDayOfMonth() <= 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER))) {
             return "nether";
         }
 
@@ -1907,21 +1697,18 @@ public class Colony implements IColony
     }
 
     @Override
-    public void setNameStyle(final String style)
-    {
+    public void setNameStyle(final String style) {
         this.nameStyle = style;
         this.markDirty();
     }
 
     @Override
-    public String getNameStyle()
-    {
+    public String getNameStyle() {
         return this.nameStyle;
     }
 
     @Override
-    public CitizenNameFile getCitizenNameFile()
-    {
+    public CitizenNameFile getCitizenNameFile() {
         return CitizenNameListener.nameFileMap.getOrDefault(nameStyle, CitizenNameListener.nameFileMap.get("default"));
     }
 
@@ -1930,49 +1717,44 @@ public class Colony implements IColony
      *
      * @return true if dirty.
      */
-    public boolean isTicketedChunksDirty()
-    {
+    public boolean isTicketedChunksDirty() {
         return ticketedChunksDirty;
     }
 
     @Override
-    public int getDay()
-    {
+    public int getDay() {
         return day;
     }
 
     @Override
-    public IQuestManager getQuestManager()
-    {
+    public IQuestManager getQuestManager() {
         return questManager;
     }
 
     @Override
-    public ICitizen getCitizen(final int id)
-    {
+    public ICitizen getCitizen(final int id) {
         return citizenManager.getCivilian(id);
     }
 
     /**
      * Gets the colonies settings
+     *
      * @return
      */
-    public ISettingsModule getSettings()
-    {
+    public ISettingsModule getSettings() {
         return settingsModule;
     }
 
     /**
      * Get the claim data from the colony.
+     *
      * @return the claim data map.
      */
-    public Long2ObjectMap<ChunkClaimData> getClaimData()
-    {
+    public Long2ObjectMap<ChunkClaimData> getClaimData() {
         return claimData;
     }
 
-    public IChunkClaimData claimNewChunk(final ChunkPos pos)
-    {
+    public IChunkClaimData claimNewChunk(final ChunkPos pos) {
         final ChunkClaimData chunkClaimData = new ChunkClaimData();
         claimData.put(pos.toLong(), chunkClaimData);
         IColonyManager.getInstance().addNewChunk(this, pos, chunkClaimData);
@@ -1985,8 +1767,7 @@ public class Colony implements IColony
      *
      * @param dimensionId
      */
-    public void setDimensionId(final ResourceKey<Level> dimensionId)
-    {
+    public void setDimensionId(final ResourceKey<Level> dimensionId) {
         this.dimensionId = dimensionId;
     }
 }

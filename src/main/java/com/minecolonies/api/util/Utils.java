@@ -28,25 +28,22 @@ import java.util.regex.Pattern;
 /**
  * General purpose utilities class. todo: split up into logically distinct parts
  */
-public final class Utils
-{
-    private static final NavigableMap<Long, String> suffixes = new TreeMap<> ();
-    
-    static
-    {
-    suffixes.put(1_000L, "k");
-    suffixes.put(1_000_000L, "M");
-    suffixes.put(1_000_000_000L, "G");
-    suffixes.put(1_000_000_000_000L, "T");
-    suffixes.put(1_000_000_000_000_000L, "P");
-    suffixes.put(1_000_000_000_000_000_000L, "E");
+public final class Utils {
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+
+    static {
+        suffixes.put(1_000L, "k");
+        suffixes.put(1_000_000L, "M");
+        suffixes.put(1_000_000_000L, "G");
+        suffixes.put(1_000_000_000_000L, "T");
+        suffixes.put(1_000_000_000_000_000L, "P");
+        suffixes.put(1_000_000_000_000_000_000L, "E");
     }
 
     /**
      * Private constructor to hide the implicit public one.
      */
-    private Utils()
-    {
+    private Utils() {
     }
 
     /**
@@ -60,16 +57,11 @@ public final class Utils
      * @param range the range to check around the point.
      * @return true if he found the block.
      */
-    public static boolean isBlockInRange(@NotNull final Level world, final Block block, final int posX, final int posY, final int posZ, final int range)
-    {
-        for (int x = posX - range; x < posX + range; x++)
-        {
-            for (int z = posZ - range; z < posZ + range; z++)
-            {
-                for (int y = posY - range; y < posY + range; y++)
-                {
-                    if (Objects.equals(world.getBlockState(new BlockPos(x, y, z)).getBlock(), block))
-                    {
+    public static boolean isBlockInRange(@NotNull final Level world, final Block block, final int posX, final int posY, final int posZ, final int range) {
+        for (int x = posX - range; x < posX + range; x++) {
+            for (int z = posZ - range; z < posZ + range; z++) {
+                for (int y = posY - range; y < posY + range; y++) {
+                    if (Objects.equals(world.getBlockState(new BlockPos(x, y, z)).getBlock(), block)) {
                         return true;
                     }
                 }
@@ -80,13 +72,12 @@ public final class Utils
 
     /**
      * Split path util.
+     *
      * @param path the path string.
      * @return the array.
      */
-    public static String[] splitPath(final String path)
-    {
-        if (path.contains("\\"))
-        {
+    public static String[] splitPath(final String path) {
+        if (path.contains("\\")) {
             return path.split("\\\\");
         }
         return path.split("/");
@@ -94,15 +85,14 @@ public final class Utils
 
     /**
      * Resolve a path with a sub path.
-     * @param path the path.
+     *
+     * @param path    the path.
      * @param subPath the sub path.
      * @return the appended path.
      */
-    public static Path resolvePath(final Path path, final String subPath)
-    {
+    public static Path resolvePath(final Path path, final String subPath) {
         Path resultPath = path;
-        for (final String sub : splitPath(subPath))
-        {
+        for (final String sub : splitPath(subPath)) {
             resultPath = resultPath.resolve(sub);
         }
         return resultPath;
@@ -115,8 +105,7 @@ public final class Utils
      * @param flag Flag to check whether it is set or not.
      * @return True if flag is set, otherwise false.
      */
-    public static boolean testFlag(final long data, final long flag)
-    {
+    public static boolean testFlag(final long data, final long flag) {
         return mask(data, flag) == flag;
     }
 
@@ -127,8 +116,7 @@ public final class Utils
      * @param mask Mask to check.
      * @return Byte in which both data bits and mask bits are set.
      */
-    public static long mask(final long data, final long mask)
-    {
+    public static long mask(final long data, final long mask) {
         return data & mask;
     }
 
@@ -139,8 +127,7 @@ public final class Utils
      * @param flag Flag to set.
      * @return Data with flags set.
      */
-    public static long setFlag(final long data, final long flag)
-    {
+    public static long setFlag(final long data, final long flag) {
         return data | flag;
     }
 
@@ -151,8 +138,7 @@ public final class Utils
      * @param flag Flag to remove.
      * @return Data with flag unset.
      */
-    public static long unsetFlag(final long data, final long flag)
-    {
+    public static long unsetFlag(final long data, final long flag) {
         return data & ~flag;
     }
 
@@ -163,8 +149,7 @@ public final class Utils
      * @param flag Flag to toggle.
      * @return Data with flag toggled.
      */
-    public static long toggleFlag(final long data, final long flag)
-    {
+    public static long toggleFlag(final long data, final long flag) {
         return data ^ flag;
     }
 
@@ -173,21 +158,19 @@ public final class Utils
      *
      * @param directory the directory to check.
      */
-    public static void checkDirectory(@NotNull final File directory)
-    {
-        if (!directory.exists() && !directory.mkdirs())
-        {
+    public static void checkDirectory(@NotNull final File directory) {
+        if (!directory.exists() && !directory.mkdirs()) {
             Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
         }
     }
-    
+
     /**
      * Formats a long value into a abbreviated string, ie: 1000 to 1k, 1200 to 1.2k, 13000 to 13k
+     *
      * @param value to format
      * @return string version of the value
      */
-    public static String format(long value)
-    {
+    public static String format(long value) {
         //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
         if (value == Long.MIN_VALUE) return format(Long.MIN_VALUE + 1);
         if (value < 0) return "-" + format(-value);
@@ -204,23 +187,18 @@ public final class Utils
 
     /**
      * Get the level of this blueprint from the name
+     *
      * @param schematicName the name of the blueprint.
      * @return the level or -1 if it doesn't have one.
      */
-    public static int getBlueprintLevel(final String schematicName)
-    {
+    public static int getBlueprintLevel(final String schematicName) {
         Matcher matcher = Pattern.compile("[0-9]$").matcher(schematicName.replace(".blueprint", ""));
-        if (matcher.find())
-        {
+        if (matcher.find()) {
             final String string = matcher.group();
-            if (!string.isEmpty())
-            {
-                try
-                {
+            if (!string.isEmpty()) {
+                try {
                     return Integer.parseInt(string);
-                }
-                catch (final NumberFormatException ex)
-                {
+                } catch (final NumberFormatException ex) {
                     // noop
                 }
             }
@@ -229,52 +207,43 @@ public final class Utils
         return -1;
     }
 
-    public static <T extends Object> Holder<T> getRegistryValue(final ResourceKey<T> resourceKey, final Level level)
-    {
+    public static <T extends Object> Holder<T> getRegistryValue(final ResourceKey<T> resourceKey, final Level level) {
         return level.holderOrThrow(resourceKey);
     }
 
-    public static <T extends Object> Tag serializeCodecMess(final Codec<T> codec, HolderLookup.Provider provider, final T obj)
-    {
+    public static <T extends Object> Tag serializeCodecMess(final Codec<T> codec, HolderLookup.Provider provider, final T obj) {
         return codec.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), obj).getOrThrow();
     }
 
-    public static <T extends Object> T deserializeCodecMess(final Codec<T> codec, HolderLookup.Provider provider, final Tag tag)
-    {
+    public static <T extends Object> T deserializeCodecMess(final Codec<T> codec, HolderLookup.Provider provider, final Tag tag) {
         return codec.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).resultOrPartial((res) -> {
             Log.getLogger().error("Failed to parse thing: '{}'", res);
         }).get();
     }
 
-    public static <T extends Object> JsonElement serializeCodecMessToJson(final Codec<T> codec, HolderLookup.Provider provider, final T obj)
-    {
+    public static <T extends Object> JsonElement serializeCodecMessToJson(final Codec<T> codec, HolderLookup.Provider provider, final T obj) {
         return codec.encodeStart(provider.createSerializationContext(JsonOps.INSTANCE), obj).getOrThrow();
     }
 
-    public static <T extends Object> T deserializeCodecMessFromJson(final Codec<T> codec, HolderLookup.Provider provider, final JsonElement tag)
-    {
+    public static <T extends Object> T deserializeCodecMessFromJson(final Codec<T> codec, HolderLookup.Provider provider, final JsonElement tag) {
         return codec.parse(provider.createSerializationContext(JsonOps.INSTANCE), tag).resultOrPartial((res) -> {
             Log.getLogger().error("Failed to parse thing: '{}'", res);
         }).get();
     }
 
-    public static <T extends Object> void serializeCodecMess(final StreamCodec<RegistryFriendlyByteBuf, T> codec, RegistryFriendlyByteBuf buf, final T obj)
-    {
+    public static <T extends Object> void serializeCodecMess(final StreamCodec<RegistryFriendlyByteBuf, T> codec, RegistryFriendlyByteBuf buf, final T obj) {
         codec.encode(buf, obj);
     }
 
-    public static <T extends Object> T deserializeCodecMess(final StreamCodec<RegistryFriendlyByteBuf, T> codec, final RegistryFriendlyByteBuf buf)
-    {
+    public static <T extends Object> T deserializeCodecMess(final StreamCodec<RegistryFriendlyByteBuf, T> codec, final RegistryFriendlyByteBuf buf) {
         return codec.decode(buf);
     }
 
-    public static void serializeCodecMess(RegistryFriendlyByteBuf buf, final ItemStack obj)
-    {
+    public static void serializeCodecMess(RegistryFriendlyByteBuf buf, final ItemStack obj) {
         ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, obj);
     }
 
-    public static ItemStack deserializeCodecMess(final RegistryFriendlyByteBuf buf)
-    {
+    public static ItemStack deserializeCodecMess(final RegistryFriendlyByteBuf buf) {
         return ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
     }
 }

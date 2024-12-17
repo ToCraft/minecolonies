@@ -14,24 +14,24 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_STATS_MODIFIER_NAME;
+import static com.minecolonies.api.util.constant.WindowConstants.DROPDOWN_INTERVAL_ID;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
 /**
  * BOWindow for the miner hut.
  */
-public class WindowStatsModule extends AbstractModuleWindow
-{
+public class WindowStatsModule extends AbstractModuleWindow {
     /**
      * Map of intervals.
      */
     private static final LinkedHashMap<String, Integer> INTERVAL = new LinkedHashMap<>();
 
-    static
-    {
+    static {
         INTERVAL.put("com.minecolonies.coremod.gui.interval.yesterday", 1);
         INTERVAL.put("com.minecolonies.coremod.gui.interval.lastweek", 7);
         INTERVAL.put("com.minecolonies.coremod.gui.interval.100days", 100);
@@ -58,14 +58,12 @@ public class WindowStatsModule extends AbstractModuleWindow
      *
      * @param moduleView {@link MinerLevelManagementModuleView}.
      */
-    public WindowStatsModule(final IBuildingView building, final BuildingStatisticsModuleView moduleView)
-    {
+    public WindowStatsModule(final IBuildingView building, final BuildingStatisticsModuleView moduleView) {
         super(building, Constants.MOD_ID + HUT_RESOURCE_SUFFIX);
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         updateStats();
     }
@@ -73,19 +71,16 @@ public class WindowStatsModule extends AbstractModuleWindow
     /**
      * Update the display for the stats.
      */
-    private void updateStats()
-    {
+    private void updateStats() {
         final IStatisticsManager statisticsManager = buildingView.getModuleView(STATS_MODULE).getBuildingStatisticsManager();
         final @NotNull List<String> stats = new ArrayList<>(statisticsManager.getStatTypes());
-        findPaneOfTypeByID("stats", ScrollingList.class).setDataProvider(new ScrollingList.DataProvider()
-        {
+        findPaneOfTypeByID("stats", ScrollingList.class).setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return stats.size();
             }
 
@@ -95,24 +90,19 @@ public class WindowStatsModule extends AbstractModuleWindow
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 int stat = statisticsManager.getStatTotal(stats.get(index));
                 int interval = INTERVAL.get(selectedInterval);
-                if (interval > 0)
-                {
+                if (interval > 0) {
                     stat = statisticsManager.getStatsInPeriod(stats.get(index), buildingView.getColony().getDay() - interval, buildingView.getColony().getDay());
                 }
 
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("desc", Text.class);
                 final String id = stats.get(index);
-                if (id.contains(";"))
-                {
+                if (id.contains(";")) {
                     final String[] split = id.split(";");
                     resourceLabel.setText(Component.translatableEscape(PARTIAL_STATS_MODIFIER_NAME + split[0], stat, Component.translatableEscape(split[1])));
-                }
-                else
-                {
+                } else {
                     resourceLabel.setText(Component.translatableEscape(PARTIAL_STATS_MODIFIER_NAME + id, stat));
                 }
             }
@@ -121,28 +111,23 @@ public class WindowStatsModule extends AbstractModuleWindow
         intervalDropdown = findPaneOfTypeByID(DROPDOWN_INTERVAL_ID, DropDownList.class);
         intervalDropdown.setHandler(this::onDropDownListChanged);
 
-        intervalDropdown.setDataProvider(new DropDownList.DataProvider()
-        {
+        intervalDropdown.setDataProvider(new DropDownList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return INTERVAL.size();
             }
 
             @Override
-            public MutableComponent getLabel(final int index)
-            {
+            public MutableComponent getLabel(final int index) {
                 return Component.translatableEscape((String) INTERVAL.keySet().toArray()[index]);
             }
         });
         intervalDropdown.setSelectedIndex(new ArrayList<>(INTERVAL.keySet()).indexOf(selectedInterval));
     }
 
-    private void onDropDownListChanged(final DropDownList dropDownList)
-    {
+    private void onDropDownListChanged(final DropDownList dropDownList) {
         final String temp = (String) INTERVAL.keySet().toArray()[dropDownList.getSelectedIndex()];
-        if (!temp.equals(selectedInterval))
-        {
+        if (!temp.equals(selectedInterval)) {
             selectedInterval = temp;
             updateStats();
         }

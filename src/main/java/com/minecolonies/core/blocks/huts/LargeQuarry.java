@@ -7,24 +7,20 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the Large quarry. No different from {@link AbstractBlockHut}
  */
-public class LargeQuarry extends AbstractBlockHut<LargeQuarry>
-{
-    public LargeQuarry()
-    {
+public class LargeQuarry extends AbstractBlockHut<LargeQuarry> {
+    public LargeQuarry() {
         //No different from Abstract parent
         super();
     }
 
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "largequarry";
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return null;//ModBuildings.largeQuarry;
     }
 }

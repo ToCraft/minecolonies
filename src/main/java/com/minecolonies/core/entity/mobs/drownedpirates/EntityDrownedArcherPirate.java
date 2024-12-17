@@ -9,28 +9,24 @@ import net.minecraft.world.level.Level;
 /**
  * Class for the Archer drowned Pirate entity.
  */
-public class EntityDrownedArcherPirate extends AbstractDrownedEntityPirate implements IArcherPirateEntity
-{
+public class EntityDrownedArcherPirate extends AbstractDrownedEntityPirate implements IArcherPirateEntity {
     /**
      * Constructor of the entity.
      *
      * @param worldIn world to construct it in.
      * @param type    the entity type.
      */
-    public EntityDrownedArcherPirate(final EntityType<? extends EntityDrownedArcherPirate> type, final Level worldIn)
-    {
+    public EntityDrownedArcherPirate(final EntityType<? extends EntityDrownedArcherPirate> type, final Level worldIn) {
         super(type, worldIn);
     }
 
     @Override
-    public boolean penetrateFluids()
-    {
+    public boolean penetrateFluids() {
         return true;
     }
 
     @Override
-    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
-    {
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage) {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
         this.getAttribute(Attributes.ARMOR).setBaseValue(0.25);
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth * 1.5);

@@ -19,8 +19,7 @@ import java.util.UUID;
 /**
  * Data for all civilians of a colony, can be citizen/trader/visitor etc
  */
-public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
-{
+public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag> {
     /**
      * Return the entity instance of the civilian data. Respawn the civilian if needed.
      *
@@ -51,6 +50,7 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
 
     /**
      * Sets a gender and generates a new name
+     *
      * @param isFemale
      */
     void setGenderAndGenerateName(boolean isFemale);
@@ -150,9 +150,9 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     /**
      * Trigger the response on the server side.
      *
-     * @param key      the key of the component.
+     * @param key        the key of the component.
      * @param responseId the triggered response.
-     * @param player   the world it was triggered in.
+     * @param player     the world it was triggered in.
      */
     void onResponseTriggered(@NotNull Component key, int responseId, Player player);
 
@@ -198,6 +198,7 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
 
     /**
      * Set the voice profile of the citizen.
+     *
      * @param profile the profile to set.
      */
     void setVoiceProfile(final int profile);

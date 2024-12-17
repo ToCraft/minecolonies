@@ -24,15 +24,14 @@ import java.util.Map;
 /**
  * Utility class of combat functions
  */
-public class CombatUtils
-{
+public class CombatUtils {
     /**
      * Shooting constants
      */
-    private static final double AIM_HEIGHT                     = 2.0D;
-    private static final double ARROW_SPEED                    = 1.4D;
+    private static final double AIM_HEIGHT = 2.0D;
+    private static final double ARROW_SPEED = 1.4D;
     private static final double AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.18;
-    private static final double SPEED_FOR_DIST                 = 35;
+    private static final double SPEED_FOR_DIST = 35;
 
     /**
      * Get an arrow entity for the given shooter
@@ -40,8 +39,7 @@ public class CombatUtils
      * @param shooter entity
      * @return arrow entity
      */
-    public static AbstractArrow createArrowForShooter(final LivingEntity shooter)
-    {
+    public static AbstractArrow createArrowForShooter(final LivingEntity shooter) {
         AbstractArrow arrowEntity = ModEntities.MC_NORMAL_ARROW.create(shooter.level());
 
         final ItemStack rangedWeapon = shooter.getItemInHand(InteractionHand.MAIN_HAND);
@@ -49,17 +47,12 @@ public class CombatUtils
 
         // Mod compat, some mods expect it to be set before using their Bows to create a custom arrow *looks at TF*
         arrowEntity.setOwner(shooter);
-        if (rangedWeaponItem instanceof final BowItem bow)
-        {
+        if (rangedWeaponItem instanceof final BowItem bow) {
             // TODO: empty stack should be projectile stack but vanilla 
             arrowEntity = bow.customArrow(arrowEntity, ItemStack.EMPTY, rangedWeapon);
-        }
-        else if (rangedWeaponItem instanceof ItemSpear)
-        {
+        } else if (rangedWeaponItem instanceof ItemSpear) {
             arrowEntity = ModEntities.SPEAR.create(shooter.level());
-        }
-        else if (rangedWeaponItem instanceof TridentItem)
-        {
+        } else if (rangedWeaponItem instanceof TridentItem) {
             arrowEntity = EntityType.TRIDENT.create(shooter.level());
         }
 
@@ -75,8 +68,7 @@ public class CombatUtils
      * @param target    the target to be shot at
      * @param hitChance the chance the target will be hit
      */
-    public static void shootArrow(final AbstractArrow arrow, final LivingEntity target, final float hitChance)
-    {
+    public static void shootArrow(final AbstractArrow arrow, final LivingEntity target, final float hitChance) {
         final double xVector = target.getX() - arrow.getX();
         final double yVector = target.getBoundingBox().minY + target.getBbHeight() / AIM_HEIGHT - arrow.getY();
         final double zVector = target.getZ() - arrow.getZ();
@@ -89,23 +81,17 @@ public class CombatUtils
     /**
      * Actions on changing to a new target entity
      */
-    public static void notifyGuardsOfTarget(final AbstractEntityCitizen user, final LivingEntity target, final int callRange)
-    {
-        for (final ICitizenData citizen : user.getCitizenData().getWorkBuilding().getAllAssignedCitizen())
-        {
-            if (citizen.getEntity().isPresent() && citizen.getEntity().get().getLastHurtByMob() == null)
-            {
+    public static void notifyGuardsOfTarget(final AbstractEntityCitizen user, final LivingEntity target, final int callRange) {
+        for (final ICitizenData citizen : user.getCitizenData().getWorkBuilding().getAllAssignedCitizen()) {
+            if (citizen.getEntity().isPresent() && citizen.getEntity().get().getLastHurtByMob() == null) {
                 ((EntityCitizen) citizen.getEntity().get()).getThreatTable().addThreat(target, 0);
             }
         }
 
-        if (target instanceof AbstractEntityRaiderMob)
-        {
-            for (final Map.Entry<BlockPos, IBuilding> entry : user.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuildings().entrySet())
-            {
+        if (target instanceof AbstractEntityRaiderMob) {
+            for (final Map.Entry<BlockPos, IBuilding> entry : user.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuildings().entrySet()) {
                 if (entry.getValue() instanceof AbstractBuildingGuards &&
-                      user.blockPosition().distSqr(entry.getKey()) < callRange)
-                {
+                        user.blockPosition().distSqr(entry.getKey()) < callRange) {
                     final AbstractBuildingGuards building = (AbstractBuildingGuards) entry.getValue();
                     building.setTempNextPatrolPoint(target.blockPosition());
                 }

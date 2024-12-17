@@ -4,15 +4,14 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
-import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
 import com.minecolonies.core.entity.ai.workers.util.MineNode;
+import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.core.BlockPos;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,8 +24,7 @@ import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructu
 /**
  * Module containing miner level management.
  */
-public class MinerLevelManagementModule extends AbstractBuildingModule implements IPersistentModule
-{
+public class MinerLevelManagementModule extends AbstractBuildingModule implements IPersistentModule {
     /**
      * Stores the levels of the miners mine. This could be a map with (depth,level).
      */
@@ -56,49 +54,40 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
     private int startingLevelShaft = 0;
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         startingLevelShaft = compound.getInt(TAG_STARTING_LEVEL);
         currentLevel = compound.getInt(TAG_CURRENT_LEVEL);
         final ListTag levelTagList = compound.getList(TAG_LEVELS, Tag.TAG_COMPOUND);
-        for (int i = 0; i < levelTagList.size(); i++)
-        {
+        for (int i = 0; i < levelTagList.size(); i++) {
             this.levels.add(new MinerLevel(levelTagList.getCompound(i)));
         }
 
-        if (compound.contains(TAG_ACTIVE))
-        {
+        if (compound.contains(TAG_ACTIVE)) {
             activeNode = MineNode.createFromNBT(compound.getCompound(TAG_ACTIVE));
-        }
-        else if (compound.contains(TAG_OLD))
-        {
+        } else if (compound.contains(TAG_OLD)) {
             oldNode = MineNode.createFromNBT(compound.getCompound(TAG_OLD));
         }
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         compound.putInt(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.putInt(TAG_CURRENT_LEVEL, currentLevel);
         @NotNull final ListTag levelTagList = new ListTag();
-        for (@NotNull final MinerLevel level : levels)
-        {
+        for (@NotNull final MinerLevel level : levels) {
             @NotNull final CompoundTag levelCompound = new CompoundTag();
             level.write(levelCompound);
             levelTagList.add(levelCompound);
         }
         compound.put(TAG_LEVELS, levelTagList);
 
-        if (activeNode != null)
-        {
+        if (activeNode != null) {
             final CompoundTag nodeCompound = new CompoundTag();
             activeNode.write(nodeCompound);
             compound.put(TAG_ACTIVE, nodeCompound);
         }
 
-        if (oldNode != null)
-        {
+        if (oldNode != null) {
             final CompoundTag nodeCompound = new CompoundTag();
             oldNode.write(nodeCompound);
             compound.put(TAG_OLD, nodeCompound);
@@ -106,21 +95,18 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
     }
 
     @Override
-    public void serializeToView(final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeToView(final RegistryFriendlyByteBuf buf) {
         buf.writeInt(currentLevel);
         buf.writeInt(levels.size());
 
-        for (@NotNull final MinerLevel level : levels)
-        {
+        for (@NotNull final MinerLevel level : levels) {
             buf.writeInt(level.getNumberOfBuiltNodes());
             buf.writeInt(level.getDepth());
         }
 
         final List<WorkOrderMiner> list = building.getColony().getWorkManager().getOrderedList(WorkOrderMiner.class, building.getPosition());
         buf.writeInt(list.size());
-        for (@NotNull final WorkOrderMiner wo : list)
-        {
+        for (@NotNull final WorkOrderMiner wo : list) {
             wo.serializeViewNetworkData(buf);
         }
     }
@@ -130,8 +116,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      *
      * @param currentLevel {@link MinerLevel} to add.
      */
-    public void addLevel(final MinerLevel currentLevel)
-    {
+    public void addLevel(final MinerLevel currentLevel) {
         levels.add(currentLevel);
     }
 
@@ -140,8 +125,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      *
      * @return levels size.
      */
-    public int getNumberOfLevels()
-    {
+    public int getNumberOfLevels() {
         return levels.size();
     }
 
@@ -151,10 +135,8 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      * @return Current level.
      */
     @Nullable
-    public MinerLevel getCurrentLevel()
-    {
-        if (currentLevel >= 0 && currentLevel < levels.size())
-        {
+    public MinerLevel getCurrentLevel() {
+        if (currentLevel >= 0 && currentLevel < levels.size()) {
             return levels.get(currentLevel);
         }
         return null;
@@ -166,8 +148,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      * @param level the level.
      * @return position in the levels array.
      */
-    public int getLevelId(final MinerLevel level)
-    {
+    public int getLevelId(final MinerLevel level) {
         return levels.indexOf(level);
     }
 
@@ -176,8 +157,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      *
      * @param currentLevel the level to set.
      */
-    public void setCurrentLevel(final int currentLevel)
-    {
+    public void setCurrentLevel(final int currentLevel) {
         this.currentLevel = currentLevel;
         this.activeNode = null;
         this.oldNode = null;
@@ -188,14 +168,10 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      *
      * @return the start level.
      */
-    public int getStartingLevelShaft()
-    {
-        if (levels.isEmpty())
-        {
+    public int getStartingLevelShaft() {
+        if (levels.isEmpty()) {
             return startingLevelShaft;
-        }
-        else
-        {
+        } else {
             return levels.get(levels.size() - 1).getDepth() - 6;
         }
     }
@@ -206,25 +182,20 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      * @return the int id of the active node.
      */
     @Nullable
-    public MineNode getActiveNode()
-    {
-        if (levels.isEmpty())
-        {
+    public MineNode getActiveNode() {
+        if (levels.isEmpty()) {
             return null;
         }
 
         MineNode calcNode = activeNode;
-        if (activeNode == null || activeNode.getStatus() == MineNode.NodeStatus.COMPLETED)
-        {
-            if (currentLevel >= levels.size())
-            {
+        if (activeNode == null || activeNode.getStatus() == MineNode.NodeStatus.COMPLETED) {
+            if (currentLevel >= levels.size()) {
                 currentLevel = levels.size() - 1;
             }
             calcNode = levels.get(currentLevel).getRandomNode(oldNode);
         }
 
-        if (activeNode != calcNode)
-        {
+        if (activeNode != calcNode) {
             activeNode = calcNode;
         }
         return activeNode;
@@ -235,8 +206,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      *
      * @param activeNode the int id of the active node.
      */
-    public void setActiveNode(@Nullable final MineNode activeNode)
-    {
+    public void setActiveNode(@Nullable final MineNode activeNode) {
         this.activeNode = activeNode;
     }
 
@@ -245,8 +215,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      *
      * @param oldNode the int id of the old node.
      */
-    public void setOldNode(@Nullable final MineNode oldNode)
-    {
+    public void setOldNode(@Nullable final MineNode oldNode) {
         this.oldNode = oldNode;
     }
 
@@ -255,38 +224,36 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      *
      * @param level the level o set it to.
      */
-    public void setStartingLevelShaft(final int level)
-    {
+    public void setStartingLevelShaft(final int level) {
         this.startingLevelShaft = level;
     }
 
     /**
      * Repair the level.
+     *
      * @param level the level to repair.
      */
-    public void repairLevel(final int level)
-    {
-        if (building instanceof BuildingMiner)
-        {
+    public void repairLevel(final int level) {
+        if (building instanceof BuildingMiner) {
             final BlockPos ladderPos = ((BuildingMiner) building).getLadderLocation();
             final BlockPos vector = ladderPos.subtract(((BuildingMiner) building).getCobbleLocation());
             final int xOffset = SHAFT_RADIUS * vector.getX();
             final int zOffset = SHAFT_RADIUS * vector.getZ();
 
             BuildingMiner.initStructure(null,
-              new BlockPos(ladderPos.getX() + xOffset, levels.get(level).getDepth(), ladderPos.getZ() + zOffset),
-              (BuildingMiner) building,
-              building.getColony().getWorld(),
-              null);
+                    new BlockPos(ladderPos.getX() + xOffset, levels.get(level).getDepth(), ladderPos.getZ() + zOffset),
+                    (BuildingMiner) building,
+                    building.getColony().getWorld(),
+                    null);
         }
     }
 
     /**
      * Get the list of levels.
+     *
      * @return the list.
      */
-    public List<MinerLevel> getLevels()
-    {
+    public List<MinerLevel> getLevels() {
         return levels;
     }
 }

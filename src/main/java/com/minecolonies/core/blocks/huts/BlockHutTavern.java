@@ -8,8 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * HutBlock for the Tavern
  */
-public class BlockHutTavern extends AbstractBlockHut<com.minecolonies.core.blocks.huts.BlockHutTavern>
-{
+public class BlockHutTavern extends AbstractBlockHut<com.minecolonies.core.blocks.huts.BlockHutTavern> {
     /**
      * Block name
      */
@@ -17,14 +16,12 @@ public class BlockHutTavern extends AbstractBlockHut<com.minecolonies.core.block
 
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return BLOCKHUT_TAVERN;
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.tavern.get();
     }
 }

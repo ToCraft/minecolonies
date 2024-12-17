@@ -1,18 +1,17 @@
 package com.minecolonies.core.colony.eventhooks.citizenEvents;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The event for handling a newly born citizen.
  */
-public class CitizenBornEvent extends AbstractCitizenEvent
-{
+public class CitizenBornEvent extends AbstractCitizenEvent {
 
     /**
      * This events id, registry entries use res locations as ids.
@@ -22,31 +21,27 @@ public class CitizenBornEvent extends AbstractCitizenEvent
     /**
      * Creates a new citizen born event.
      */
-    public CitizenBornEvent()
-    {
+    public CitizenBornEvent() {
         super();
     }
 
     /**
      * Creates a new citizen born event.
-     * 
+     *
      * @param eventPos    the position of the hut block of the building.
      * @param citizenName the name of the building.
      */
-    public CitizenBornEvent(BlockPos eventPos, String citizenName)
-    {
+    public CitizenBornEvent(BlockPos eventPos, String citizenName) {
         super(eventPos, citizenName);
     }
 
     @Override
-    public ResourceLocation getEventTypeId()
-    {
+    public ResourceLocation getEventTypeId() {
         return CITIZEN_BORN_EVENT_ID;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "Citizen Born";
     }
 
@@ -56,8 +51,7 @@ public class CitizenBornEvent extends AbstractCitizenEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static CitizenBornEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public static CitizenBornEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         final CitizenBornEvent birthEvent = new CitizenBornEvent();
         birthEvent.deserializeNBT(provider, compound);
         return birthEvent;
@@ -69,8 +63,7 @@ public class CitizenBornEvent extends AbstractCitizenEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static CitizenBornEvent loadFromFriendlyByteBuf(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public static CitizenBornEvent loadFromFriendlyByteBuf(@NotNull final RegistryFriendlyByteBuf buf) {
         final CitizenBornEvent birthEvent = new CitizenBornEvent();
         birthEvent.deserialize(buf);
         return birthEvent;

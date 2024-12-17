@@ -28,17 +28,20 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static com.minecolonies.api.util.constant.BuildingConstants.*;
+import static com.minecolonies.api.util.constant.BuildingConstants.TAG_CLOCATION;
+import static com.minecolonies.api.util.constant.BuildingConstants.TAG_LLOCATION;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * The miners building.
  */
-public class BuildingMiner extends AbstractBuildingStructureBuilder
-{
+public class BuildingMiner extends AbstractBuildingStructureBuilder {
     /**
      * Setting for solid filling block.
      */
@@ -56,7 +59,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * -16: Gold
      * -100: Diamond
      */
-    private static final List<Integer> MINING_LEVELS = ImmutableList.copyOf(new Integer[] {48, 16, -16, -100});
+    private static final List<Integer> MINING_LEVELS = ImmutableList.copyOf(new Integer[]{48, 16, -16, -100});
 
     /**
      * The job description.
@@ -79,8 +82,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param c colony containing the building.
      * @param l location of the building.
      */
-    public BuildingMiner(final IColony c, final BlockPos l)
-    {
+    public BuildingMiner(final IColony c, final BlockPos l) {
         super(c, l);
 
         final ItemStack stackLadder = new ItemStack(Blocks.LADDER);
@@ -106,8 +108,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return MINER;
     }
 
@@ -117,8 +118,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @return the integer.
      */
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
@@ -126,10 +126,8 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * The Miner wants to get multiple nodes/levels worth of stuff when requesting.
      */
     @Override
-    public int getResourceBatchMultiplier() 
-    {
-        if (getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.quarrier.get()).getAssignedCitizen().isEmpty())
-        {
+    public int getResourceBatchMultiplier() {
+        if (getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.quarrier.get()).getAssignedCitizen().isEmpty()) {
             //Ask for 4x the resources if possible
             return 4;
         }
@@ -137,8 +135,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
 
         ladderLocation = BlockPosUtil.readOrNull(compound, TAG_LLOCATION);
@@ -146,8 +143,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
 
         BlockPosUtil.writeOptional(compound, TAG_CLOCATION, cobbleLocation);
@@ -166,22 +162,18 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      *
      * @return Depth limit.
      */
-    public int getDepthLimit(final Level level)
-    {
+    public int getDepthLimit(final Level level) {
         int buildingY = this.getLadderLocation().getY() - 5;
 
         int buildingLevels = getBuildingLevel();
         int yLevel = 0;
-        for (final Integer miningLevel : MINING_LEVELS)
-        {
-            if (miningLevel < buildingY)
-            {
+        for (final Integer miningLevel : MINING_LEVELS) {
+            if (miningLevel < buildingY) {
                 yLevel = miningLevel;
                 buildingLevels--;
             }
 
-            if (buildingLevels == 0)
-            {
+            if (buildingLevels == 0) {
                 break;
             }
         }
@@ -192,16 +184,15 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     /**
      * Normalize the maximum depth.
      * Make sure that the returned depth respects the world limits and follows the building setting..
-     * @param max the max depth of the given building level.
+     *
+     * @param max   the max depth of the given building level.
      * @param level the world.
      * @return the max.
      */
-    public int normalizeMaxDepth(final int max, final Level level)
-    {
+    public int normalizeMaxDepth(final int max, final Level level) {
         final int worldMaxDepth = level.getMinBuildHeight() + 5;
         final IntSetting maxDepth = getSetting(MAX_DEPTH);
-        if (maxDepth.getValue() == maxDepth.getDefault())
-        {
+        if (maxDepth.getValue() == maxDepth.getDefault()) {
             return Math.max(worldMaxDepth, max);
         }
         return Math.max(worldMaxDepth, Math.max(max, maxDepth.getValue()));
@@ -212,10 +203,8 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      *
      * @return the ladder location.
      */
-    public BlockPos getLadderLocation()
-    {
-        if (ladderLocation == null)
-        {
+    public BlockPos getLadderLocation() {
+        if (ladderLocation == null) {
             loadLadderPos();
         }
 
@@ -227,23 +216,19 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      *
      * @return the location.
      */
-    public BlockPos getCobbleLocation()
-    {
-        if (cobbleLocation == null)
-        {
+    public BlockPos getCobbleLocation() {
+        if (cobbleLocation == null) {
             loadLadderPos();
         }
 
         return cobbleLocation;
     }
 
-    private void loadLadderPos()
-    {
+    private void loadLadderPos() {
         final Map<String, Set<BlockPos>> map = getTileEntity().getWorldTagNamePosMap();
         final Set<BlockPos> cobblePos = map.getOrDefault("cobble", new HashSet<>());
         final Set<BlockPos> ladderPos = map.getOrDefault("ladder", new HashSet<>());
-        if (cobblePos.isEmpty() || ladderPos.isEmpty())
-        {
+        if (cobblePos.isEmpty() || ladderPos.isEmpty()) {
             return;
         }
         cobbleLocation = cobblePos.iterator().next();
@@ -251,20 +236,16 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public void searchWorkOrder()
-    {
+    public void searchWorkOrder() {
         final ICitizenData citizen = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
-        if (citizen == null)
-        {
+        if (citizen == null) {
             return;
         }
 
         final List<WorkOrderMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderMiner.class, getPosition());
 
-        for (final WorkOrderMiner wo : list)
-        {
-            if (this.getID().equals(wo.getMinerBuilding()))
-            {
+        for (final WorkOrderMiner wo : list) {
+            if (this.getID().equals(wo.getMinerBuilding())) {
                 citizen.getJob(JobMiner.class).setWorkOrder(wo);
                 wo.setClaimedBy(citizen);
                 getColony().getWorkManager().setDirty(true);
@@ -280,34 +261,26 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param rotateTimes  The amount of time to rotate the structure.
      * @param structurePos The position of the structure.
      */
-    public static void initStructure(final MineNode mineNode, final BlockPos structurePos, final BuildingMiner buildingMiner, final Level world, final JobMiner job)
-    {
+    public static void initStructure(final MineNode mineNode, final BlockPos structurePos, final BuildingMiner buildingMiner, final Level world, final JobMiner job) {
         final String structurePack = buildingMiner.getStructurePack();
         RotationMirror rotMir;
         final String style;
 
-        if (mineNode == null)
-        {
+        if (mineNode == null) {
             rotMir = getRotationFromVector(buildingMiner);
             style = MineNode.NodeType.SHAFT.getSchematicName();
-        }
-        else
-        {
+        } else {
             rotMir = mineNode.getRotationMirror().orElse(RotationMirror.NONE);
             style = mineNode.getStyle().getSchematicName();
         }
 
-        if (job == null || job.getWorkOrder() == null)
-        {
+        if (job == null || job.getWorkOrder() == null) {
             final WorkOrderMiner wo = new WorkOrderMiner(structurePack, style + ".blueprint", style, rotMir, structurePos, false, buildingMiner.getPosition());
             wo.setClaimedBy(buildingMiner.getPosition());
             buildingMiner.getColony().getWorkManager().addWorkOrder(wo, false);
-            if (job != null)
-            {
+            if (job != null) {
                 job.setWorkOrder(wo);
-            }
-            else
-            {
+            } else {
                 wo.setClaimedBy(buildingMiner.getPosition());
             }
         }
@@ -319,24 +292,16 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      *
      * @return the rotation.
      */
-    private static RotationMirror getRotationFromVector(final BuildingMiner buildingMiner)
-    {
+    private static RotationMirror getRotationFromVector(final BuildingMiner buildingMiner) {
         final BlockPos vector = buildingMiner.getLadderLocation().subtract(buildingMiner.getCobbleLocation());
 
-        if (vector.getX() == 1)
-        {
+        if (vector.getX() == 1) {
             return RotationMirror.R90;
-        }
-        else if (vector.getZ() == 1)
-        {
+        } else if (vector.getZ() == 1) {
             return RotationMirror.R180;
-        }
-        else if (vector.getX() == -1)
-        {
+        } else if (vector.getX() == -1) {
             return RotationMirror.R270;
-        }
-        else if (vector.getZ() == -1)
-        {
+        } else if (vector.getZ() == -1) {
             return RotationMirror.NONE;
         }
         return RotationMirror.NONE;

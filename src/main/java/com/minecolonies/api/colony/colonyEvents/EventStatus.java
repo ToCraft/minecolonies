@@ -3,8 +3,7 @@ package com.minecolonies.api.colony.colonyEvents;
 /**
  * Status enum for colony events.
  */
-public enum EventStatus
-{
+public enum EventStatus {
     STARTING,
     PREPARING,
     PROGRESSING,

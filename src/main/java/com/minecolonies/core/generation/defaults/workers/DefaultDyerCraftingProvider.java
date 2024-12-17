@@ -18,25 +18,21 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTI
 /**
  * Datagen for Dyer
  */
-public class DefaultDyerCraftingProvider extends CustomRecipeProvider
-{
+public class DefaultDyerCraftingProvider extends CustomRecipeProvider {
     private static final String DYER = ModJobs.DYER_ID.getPath();
 
-    public DefaultDyerCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultDyerCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "DefaultDyerCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
         recipe(DYER, MODULE_CRAFTING, "red_sand")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.SAND, 4)),
                         new ItemStorage(new ItemStack(Items.RED_DYE))))

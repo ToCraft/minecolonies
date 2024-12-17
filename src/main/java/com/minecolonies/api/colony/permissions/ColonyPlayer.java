@@ -5,11 +5,10 @@ import java.util.UUID;
 /**
  * Player within a colony.
  */
-public class ColonyPlayer
-{
-    private final UUID   id;
+public class ColonyPlayer {
+    private final UUID id;
     private final String name;
-    private       Rank   rank;
+    private Rank rank;
 
     /**
      * Instantiates our own player object.
@@ -18,8 +17,7 @@ public class ColonyPlayer
      * @param name name of the player
      * @param rank rank of the player.
      */
-    public ColonyPlayer(final UUID id, final String name, final Rank rank)
-    {
+    public ColonyPlayer(final UUID id, final String name, final Rank rank) {
         this.id = id;
         this.name = name;
         this.rank = rank;
@@ -28,24 +26,21 @@ public class ColonyPlayer
     /**
      * @return The UUID of the player.
      */
-    public UUID getID()
-    {
+    public UUID getID() {
         return id;
     }
 
     /**
      * @return The player's current name.
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     /**
      * @return The player's current rank.
      */
-    public Rank getRank()
-    {
+    public Rank getRank() {
         return rank;
     }
 
@@ -54,8 +49,7 @@ public class ColonyPlayer
      *
      * @param rank The new Rank.
      */
-    public void setRank(final Rank rank)
-    {
+    public void setRank(final Rank rank) {
         this.rank = rank;
     }
 }

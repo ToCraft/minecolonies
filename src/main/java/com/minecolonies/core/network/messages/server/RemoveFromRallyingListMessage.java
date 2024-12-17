@@ -2,8 +2,6 @@ package com.minecolonies.core.network.messages.server;
 
 import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
@@ -23,8 +21,7 @@ import static com.minecolonies.core.items.ItemBannerRallyGuards.removeGuardTower
 /**
  * Removes a guard tower from the rallying list
  */
-public class RemoveFromRallyingListMessage extends AbstractServerPlayMessage
-{
+public class RemoveFromRallyingListMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "remove_from_rallying_list", RemoveFromRallyingListMessage::new);
 
     /**
@@ -40,38 +37,33 @@ public class RemoveFromRallyingListMessage extends AbstractServerPlayMessage
     /**
      * Remove the guard tower from the rallying list
      *
-     * @param banner   The banner to be modified.
-     * @param pos The position of the guard tower
+     * @param banner The banner to be modified.
+     * @param pos    The position of the guard tower
      */
-    public RemoveFromRallyingListMessage(final ItemStack banner, final BlockPos pos)
-    {
+    public RemoveFromRallyingListMessage(final ItemStack banner, final BlockPos pos) {
         super(TYPE);
         this.banner = banner;
         this.location = pos;
     }
 
-    protected RemoveFromRallyingListMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected RemoveFromRallyingListMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         banner = Utils.deserializeCodecMess(buf);
         location = buf.readBlockPos();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         Utils.serializeCodecMess(buf, banner);
         buf.writeBlockPos(location);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player) {
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()),
-          (itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, banner)));
+                (itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, banner)));
 
-        if (slot == -1)
-        {
+        if (slot == -1) {
             MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR).sendTo(player);
             return;
         }

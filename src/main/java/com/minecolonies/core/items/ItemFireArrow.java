@@ -13,27 +13,23 @@ import javax.annotation.Nullable;
 /**
  * Class handling the Scepter for the Pharao.
  */
-public class ItemFireArrow extends ArrowItem
-{
+public class ItemFireArrow extends ArrowItem {
     /**
      * Constructor method for the Chief Sword Item
      *
      * @param properties the properties.
      */
-    public ItemFireArrow(final Properties properties)
-    {
+    public ItemFireArrow(final Properties properties) {
         super(properties);
     }
 
     @Override
-    public boolean hasCustomEntity(final ItemStack stack)
-    {
+    public boolean hasCustomEntity(final ItemStack stack) {
         return true;
     }
 
     @Override
-    public AbstractArrow createArrow(final Level worldIn, final ItemStack stack, final LivingEntity shooter, @Nullable final ItemStack bow)
-    {
+    public AbstractArrow createArrow(final Level worldIn, final ItemStack stack, final LivingEntity shooter, @Nullable final ItemStack bow) {
         AbstractArrow entity = ModEntities.FIREARROW.create(worldIn);
         entity.setOwner(shooter);
         return entity;
@@ -41,8 +37,7 @@ public class ItemFireArrow extends ArrowItem
 
     @Nullable
     @Override
-    public Entity createEntity(final Level world, final Entity location, final ItemStack itemstack)
-    {
+    public Entity createEntity(final Level world, final Entity location, final ItemStack itemstack) {
         return ModEntities.FIREARROW.create(world);
     }
 }

@@ -15,8 +15,7 @@ import java.util.function.Function;
 /**
  * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to create the right event object.
  */
-public class ColonyEventDescriptionTypeRegistryEntry
-{
+public class ColonyEventDescriptionTypeRegistryEntry {
     /**
      * Function for creating the event description from nbt.
      */
@@ -25,7 +24,7 @@ public class ColonyEventDescriptionTypeRegistryEntry
     /**
      * Function for creating the event description from a {@link RegistryFriendlyByteBuf}.
      */
-    private final Function<RegistryFriendlyByteBuf, IColonyEventDescription>        packetBufferEventDescriptionCreator;
+    private final Function<RegistryFriendlyByteBuf, IColonyEventDescription> packetBufferEventDescriptionCreator;
 
     /**
      * The name of this registry.
@@ -39,10 +38,8 @@ public class ColonyEventDescriptionTypeRegistryEntry
      * @param packetBufferEventCreator the event creator using a {@link RegistryFriendlyByteBuf}.
      * @param registryID               the registry id.
      */
-    public ColonyEventDescriptionTypeRegistryEntry(@NotNull final BiFunction<HolderLookup.Provider, CompoundTag, IColonyEventDescription> nbtEventCreator, @NotNull final Function<RegistryFriendlyByteBuf, IColonyEventDescription> packetBufferEventCreator, @NotNull final ResourceLocation registryID)
-    {
-        if (registryID.getPath().isEmpty())
-        {
+    public ColonyEventDescriptionTypeRegistryEntry(@NotNull final BiFunction<HolderLookup.Provider, CompoundTag, IColonyEventDescription> nbtEventCreator, @NotNull final Function<RegistryFriendlyByteBuf, IColonyEventDescription> packetBufferEventCreator, @NotNull final ResourceLocation registryID) {
+        if (registryID.getPath().isEmpty()) {
             Log.getLogger().warn("Created empty registry empty for event, supply a name for it!");
         }
 
@@ -53,32 +50,30 @@ public class ColonyEventDescriptionTypeRegistryEntry
 
     /**
      * Deserializes the event description from nbt.
-     * 
+     *
      * @param compound the nbt to deserialize the event description from.
      * @return the deserialized event description.
      */
-    public IColonyEventDescription deserializeEventDescriptionFromNBT(@NotNull final HolderLookup.Provider provider, @Nonnull final CompoundTag compound)
-    {
+    public IColonyEventDescription deserializeEventDescriptionFromNBT(@NotNull final HolderLookup.Provider provider, @Nonnull final CompoundTag compound) {
         return nbtEventDescriptionCreator.apply(provider, compound);
     }
 
     /**
      * Deserializes the event description from the given {@link RegistryFriendlyByteBuf}.
-     * 
+     *
      * @param buffer the {@link RegistryFriendlyByteBuf} to deserialize the event description from.
      * @return the deserialized event description.
      */
-    public IColonyEventDescription deserializeEventDescriptionFromFriendlyByteBuf(@Nonnull final RegistryFriendlyByteBuf buffer)
-    {
+    public IColonyEventDescription deserializeEventDescriptionFromFriendlyByteBuf(@Nonnull final RegistryFriendlyByteBuf buffer) {
         return packetBufferEventDescriptionCreator.apply(buffer);
     }
 
     /**
      * Get the set registry name.
+     *
      * @return the name.
      */
-    public ResourceLocation getRegistryName()
-    {
+    public ResourceLocation getRegistryName() {
         return registryName;
     }
 }

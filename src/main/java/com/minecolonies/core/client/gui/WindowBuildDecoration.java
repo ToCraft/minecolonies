@@ -45,8 +45,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.ACTION_BUI
 import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
-public class WindowBuildDecoration extends AbstractWindowSkeleton
-{
+public class WindowBuildDecoration extends AbstractWindowSkeleton {
     /**
      * Link to the xml file of the window.
      */
@@ -107,12 +106,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
      * Constructs the decoration build confirmation dialog
      */
     public WindowBuildDecoration(
-      final BlockPos pos,
-      final String packMeta,
-      final String path,
-      final RotationMirror rotationMirror,
-      final Function<BlockPos, AbstractServerPlayMessage> buildRequestMessage)
-    {
+            final BlockPos pos,
+            final String packMeta,
+            final String path,
+            final RotationMirror rotationMirror,
+            final Function<BlockPos, AbstractServerPlayMessage> buildRequestMessage) {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.packMeta = packMeta;
         this.path = path;
@@ -137,16 +135,14 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         updateBuilders();
         updateResources();
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
         updateResources();
     }
@@ -154,13 +150,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     /**
      * Update the builders list but try to keep the same one.
      */
-    private void updateBuilders()
-    {
+    private void updateBuilders() {
         IColonyView colony = (IColonyView) IColonyManager.getInstance()
-                                             .getIColony(Minecraft.getInstance().level, structurePos);
+                .getIColony(Minecraft.getInstance().level, structurePos);
 
-        if (colony == null)
-        {
+        if (colony == null) {
             MessageUtils.format(OUT_OF_COLONY, path, structurePos.getX(), structurePos.getZ()).sendTo(Minecraft.getInstance().player);
             close();
             return;
@@ -169,11 +163,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         builders.clear();
         builders.add(new Tuple<>(Component.translatableEscape(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
         builders.addAll(colony.getBuildings().stream()
-                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
-                                             && build.getBuildingType() != ModBuildings.miner.get())
-                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
-                          .sorted(Comparator.comparing(item -> item.getB().distSqr(structurePos)))
-                          .collect(Collectors.toList()));
+                .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
+                        && build.getBuildingType() != ModBuildings.miner.get())
+                .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
+                .sorted(Comparator.comparing(item -> item.getB().distSqr(structurePos)))
+                .collect(Collectors.toList()));
 
         initBuilderNavigation();
     }
@@ -181,22 +175,17 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     /**
      * Initialise the builder setup..
      */
-    private void initBuilderNavigation()
-    {
+    private void initBuilderNavigation() {
         buildersDropDownList = findPaneOfTypeByID(DROPDOWN_BUILDER_ID, DropDownList.class);
-        buildersDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
+        buildersDropDownList.setDataProvider(new DropDownList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return builders.size();
             }
 
             @Override
-            public MutableComponent getLabel(final int index)
-            {
-                if (index >= 0 && index < builders.size())
-                {
+            public MutableComponent getLabel(final int index) {
+                if (index >= 0 && index < builders.size()) {
                     return Component.literal(builders.get(index).getA());
                 }
                 return Component.empty();
@@ -208,43 +197,37 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     /**
      * Clears and resets/updates all resources.
      */
-    private void updateResources()
-    {
-        if (blueprintFuture == null || !blueprintFuture.isDone())
-        {
+    private void updateResources() {
+        if (blueprintFuture == null || !blueprintFuture.isDone()) {
             return;
         }
 
         final Level world = Minecraft.getInstance().level;
         resources.clear();
 
-        try
-        {
-            if (blueprintFuture.get() == null)
-            {
+        try {
+            if (blueprintFuture.get() == null) {
                 blueprintFuture = null;
                 return;
             }
             final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(
-              world,
-              structurePos,
-              blueprintFuture.get(),
-              RotationMirror.NONE,
-              true);
+                    world,
+                    structurePos,
+                    blueprintFuture.get(),
+                    RotationMirror.NONE,
+                    true);
             structure.getBluePrint().setRotationMirror(rotationMirror, Minecraft.getInstance().level);
 
             StructurePlacer placer = new StructurePlacer(structure);
             StructurePhasePlacementResult result;
             BlockPos progressPos = NULL_POS;
 
-            do
-            {
+            do {
                 result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                  () -> placer.getIterator().increment(), true);
+                        () -> placer.getIterator().increment(), true);
 
                 progressPos = result.getIteratorPos();
-                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
-                {
+                for (final ItemStack stack : result.getBlockResult().getRequiredItems()) {
                     addNeededResource(stack, stack.getCount());
                 }
             }
@@ -254,9 +237,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
             window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
             updateResourceList();
             blueprintFuture = null;
-        }
-        catch (final InterruptedException | ExecutionException ex)
-        {
+        } catch (final InterruptedException | ExecutionException ex) {
             // Noop
         }
     }
@@ -267,44 +248,36 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
      * @param res    the resource.
      * @param amount the amount.
      */
-    public void addNeededResource(@Nullable final ItemStack res, final int amount)
-    {
-        if (ItemStackUtils.isEmpty(res) || amount == 0)
-        {
+    public void addNeededResource(@Nullable final ItemStack res, final int amount) {
+        if (ItemStackUtils.isEmpty(res) || amount == 0) {
             return;
         }
         final int hashCode = res.getComponentsPatch().hashCode();
         final String key = res.getDescriptionId() + "-" + hashCode;
         ItemStorage resource = resources.get(key);
-        if (resource == null)
-        {
+        if (resource == null) {
             resource = new ItemStorage(res);
             resource.setAmount(amount);
-        }
-        else
-        {
+        } else {
             resource.setAmount(resource.getAmount() + amount);
         }
         resources.put(key, resource);
     }
 
-    public void updateResourceList()
-    {
+    public void updateResourceList() {
         final ScrollingList recourseList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         recourseList.enable();
         recourseList.show();
         final List<ItemStorage> tempRes = new ArrayList<>(resources.values());
 
         //Creates a dataProvider for the unemployed recourseList.
-        recourseList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        recourseList.setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return tempRes.size();
             }
 
@@ -314,8 +287,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final ItemStorage resource = tempRes.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
                 final Text quantityLabel = rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class);
@@ -330,11 +302,10 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         });
     }
 
-    private void confirmedBuild()
-    {
+    private void confirmedBuild() {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0
-                                   ? BlockPos.ZERO
-                                   : builders.get(buildersDropDownList.getSelectedIndex()).getB();
+                ? BlockPos.ZERO
+                : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
         buildRequestMessage.apply(builder).sendToServer();
         close();

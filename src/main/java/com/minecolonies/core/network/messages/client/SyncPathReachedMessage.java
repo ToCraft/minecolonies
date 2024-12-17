@@ -16,8 +16,7 @@ import java.util.Set;
 /**
  * Message to sync the reached positions over to the client for rendering.
  */
-public class SyncPathReachedMessage extends AbstractClientPlayMessage
-{
+public class SyncPathReachedMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "sync_path_reached", SyncPathReachedMessage::new);
 
     /**
@@ -27,35 +26,27 @@ public class SyncPathReachedMessage extends AbstractClientPlayMessage
 
     /**
      * Create the message to send a set of positions over to the client side.
-     *
      */
-    public SyncPathReachedMessage(final Set<BlockPos> reached)
-    {
+    public SyncPathReachedMessage(final Set<BlockPos> reached) {
         super(TYPE);
         this.reached = new HashSet<>(reached);
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         buf.writeCollection(reached, RegistryFriendlyByteBuf::writeBlockPos);
     }
 
-    protected SyncPathReachedMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected SyncPathReachedMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         reached = buf.readCollection(HashSet::new, RegistryFriendlyByteBuf::readBlockPos);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
-        for (final MNode node : PathfindingDebugRenderer.lastDebugNodesPath)
-        {
-            for (final BlockPos reachedPos : reached)
-            {
-                if (reachedPos.getX() == node.x && reachedPos.getY() == node.y && reachedPos.getZ() == node.z)
-                {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
+        for (final MNode node : PathfindingDebugRenderer.lastDebugNodesPath) {
+            for (final BlockPos reachedPos : reached) {
+                if (reachedPos.getX() == node.x && reachedPos.getY() == node.y && reachedPos.getZ() == node.z) {
                     node.setReachedByWorker(true);
                 }
             }

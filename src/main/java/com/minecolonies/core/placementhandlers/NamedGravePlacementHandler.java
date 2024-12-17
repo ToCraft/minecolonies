@@ -16,31 +16,26 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class NamedGravePlacementHandler implements IPlacementHandler
-{
+public class NamedGravePlacementHandler implements IPlacementHandler {
     @Override
-    public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
-    {
+    public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState) {
         return blockState.getBlock() instanceof BlockMinecoloniesNamedGrave;
     }
 
     @Override
     public ActionProcessingResult handle(
-      @NotNull final Level world,
-      @NotNull final BlockPos pos,
-      @NotNull final BlockState blockState,
-      @Nullable final CompoundTag tileEntityData,
-      final boolean complete,
-      final BlockPos centerPos,
-      final RotationMirror settings)
-    {
-        if (world.getBlockState(pos).getBlock() == ModBlocks.blockNamedGrave)
-        {
+            @NotNull final Level world,
+            @NotNull final BlockPos pos,
+            @NotNull final BlockState blockState,
+            @Nullable final CompoundTag tileEntityData,
+            final boolean complete,
+            final BlockPos centerPos,
+            final RotationMirror settings) {
+        if (world.getBlockState(pos).getBlock() == ModBlocks.blockNamedGrave) {
             return ActionProcessingResult.SUCCESS;
         }
 
-        if (complete)
-        {
+        if (complete) {
             world.setBlockAndUpdate(pos, blockState);
             return ActionProcessingResult.SUCCESS;
         }
@@ -50,14 +45,12 @@ public class NamedGravePlacementHandler implements IPlacementHandler
 
     @Override
     public List<ItemStack> getRequiredItems(
-      @NotNull final Level world,
-      @NotNull final BlockPos pos,
-      @NotNull final BlockState blockState,
-      @Nullable final CompoundTag tileEntityData,
-      final boolean complete)
-    {
-        if (complete)
-        {
+            @NotNull final Level world,
+            @NotNull final BlockPos pos,
+            @NotNull final BlockState blockState,
+            @Nullable final CompoundTag tileEntityData,
+            final boolean complete) {
+        if (complete) {
             return Collections.singletonList(BlockUtils.getItemStackFromBlockState(blockState));
         }
         return Collections.emptyList();

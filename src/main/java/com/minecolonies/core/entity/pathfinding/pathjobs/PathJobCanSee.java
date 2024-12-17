@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Pathing job for moving into vision of the given entity
  */
-public class PathJobCanSee extends AbstractPathJob implements ISearchPathJob
-{
+public class PathJobCanSee extends AbstractPathJob implements ISearchPathJob {
     /**
      * The entity to see
      */
@@ -30,11 +29,10 @@ public class PathJobCanSee extends AbstractPathJob implements ISearchPathJob
     private final BlockPos searchAroundPos;
 
     public PathJobCanSee(
-      final Mob searchingEntity,
-      final LivingEntity lookTarget,
-      final Level world,
-      @NotNull final BlockPos searchAroundPos, final int range)
-    {
+            final Mob searchingEntity,
+            final LivingEntity lookTarget,
+            final Level world,
+            @NotNull final BlockPos searchAroundPos, final int range) {
         super(world, PathfindingUtils.prepareStart(searchingEntity), range, new PathResult<PathJobCanSee>(), searchingEntity);
 
         this.searchAroundPos = searchAroundPos;
@@ -42,22 +40,19 @@ public class PathJobCanSee extends AbstractPathJob implements ISearchPathJob
     }
 
     @Override
-    protected double computeHeuristic(final int x, final int y, final int z)
-    {
+    protected double computeHeuristic(final int x, final int y, final int z) {
         return BlockPosUtil.distManhattan(searchAroundPos.getX(), searchAroundPos.getY(), searchAroundPos.getZ(), x, y, z);
     }
 
     @Override
-    protected boolean isAtDestination(final MNode n)
-    {
-        if (searchAroundPos.getY() - n.y > 2)
-        {
+    protected boolean isAtDestination(final MNode n) {
+        if (searchAroundPos.getY() - n.y > 2) {
             return false;
         }
 
         return canSeeTargetFromPos(tempWorldPos.set(n.x, n.y, n.z))
-                 && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
-                      == SurfaceType.WALKABLE;
+                && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                == SurfaceType.WALKABLE;
     }
 
     /**
@@ -67,13 +62,11 @@ public class PathJobCanSee extends AbstractPathJob implements ISearchPathJob
      * @return double of the distance.
      */
     @Override
-    public double getEndNodeScore(@NotNull final MNode n)
-    {
+    public double getEndNodeScore(@NotNull final MNode n) {
         return BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
     }
 
-    private boolean canSeeTargetFromPos(final BlockPos pos)
-    {
+    private boolean canSeeTargetFromPos(final BlockPos pos) {
         Vec3 vec3d = new Vec3(pos.getX(), pos.getY() + entity.getEyeHeight(), pos.getZ());
         Vec3 vec3d1 = new Vec3(lookTarget.getX(), lookTarget.getEyeY(), lookTarget.getZ());
         return this.world.clip(new ClipContext(vec3d, vec3d1, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity)).getType() == HitResult.Type.MISS;

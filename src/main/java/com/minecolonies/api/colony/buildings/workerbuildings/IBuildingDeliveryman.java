@@ -5,6 +5,5 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 /**
  * Marker interface for deliveryman buildings
  */
-public interface IBuildingDeliveryman extends IBuilding
-{
+public interface IBuildingDeliveryman extends IBuilding {
 }

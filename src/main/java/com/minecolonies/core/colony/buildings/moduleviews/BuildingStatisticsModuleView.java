@@ -11,43 +11,38 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Building statistic module.
  */
-public class BuildingStatisticsModuleView extends AbstractBuildingModuleView
-{
+public class BuildingStatisticsModuleView extends AbstractBuildingModuleView {
     /**
      * List of all beds.
      */
     private IStatisticsManager statisticsManager = new StatisticsManager();
 
     @Override
-    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf) {
         statisticsManager.deserialize(buf);
     }
 
     @Override
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new WindowStatsModule(getBuildingView(), this);
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return "stats";
     }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return "com.minecolonies.core.gui.modules.stats";
     }
 
     /**
      * Get the statistic manager of the building.
+     *
      * @return the manager.
      */
-    public IStatisticsManager getBuildingStatisticsManager()
-    {
+    public IStatisticsManager getBuildingStatisticsManager() {
         return statisticsManager;
     }
 }

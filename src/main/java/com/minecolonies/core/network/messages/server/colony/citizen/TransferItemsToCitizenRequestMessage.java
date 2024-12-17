@@ -28,8 +28,7 @@ import java.util.Optional;
 /**
  * Transfer some items from the player inventory to the Workers's Inventory.
  */
-public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMessage
-{
+public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "transfer_items_to_citizen_request", TransferItemsToCitizenRequestMessage::new);
 
     /**
@@ -55,16 +54,14 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
      * @param quantity        of item needed to be transfered
      * @param colony          the colony of the network message
      */
-    public TransferItemsToCitizenRequestMessage(final IColony colony, @NotNull final ICitizenDataView citizenDataView, final ItemStack itemStack, final int quantity)
-    {
+    public TransferItemsToCitizenRequestMessage(final IColony colony, @NotNull final ICitizenDataView citizenDataView, final ItemStack itemStack, final int quantity) {
         super(TYPE, colony);
         this.citizenId = citizenDataView.getId();
         this.itemStack = itemStack;
         this.quantity = quantity;
     }
 
-    protected TransferItemsToCitizenRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected TransferItemsToCitizenRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         citizenId = buf.readInt();
         itemStack = Utils.deserializeCodecMess(buf);
@@ -72,8 +69,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(citizenId);
         Utils.serializeCodecMess(buf, itemStack);
@@ -81,25 +77,21 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
-        if (citizenData == null)
-        {
+        if (citizenData == null) {
             Log.getLogger().warn("TransferItemsRequestMessage citizenData is null");
             return;
         }
 
         final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
-        if (!optionalEntityCitizen.isPresent())
-        {
+        if (!optionalEntityCitizen.isPresent()) {
             Log.getLogger().warn("TransferItemsRequestMessage entity citizen is null");
             return;
         }
 
         final boolean isCreative = player.isCreative();
-        if (quantity <= 0 && !isCreative)
-        {
+        if (quantity <= 0 && !isCreative) {
             Log.getLogger().warn("TransferItemsRequestMessage quantity below 0");
             return;
         }
@@ -107,21 +99,17 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
         // Inventory content before
         Map<ItemStorage, ItemStorage> previousContent = null;
         final int amountToTake;
-        if (isCreative)
-        {
+        if (isCreative) {
             amountToTake = quantity;
-        }
-        else
-        {
+        } else {
             amountToTake = Math.min(quantity,
-              InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack)));
+                    InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack)));
         }
 
         final List<ItemStack> itemsToPut = new ArrayList<>();
         int tempAmount = amountToTake;
 
-        while (tempAmount > 0)
-        {
+        while (tempAmount > 0) {
             final int count = Math.min(itemStack.getMaxStackSize(), tempAmount);
             final ItemStack stack = itemStack.copy();
             stack.setCount(count);
@@ -131,37 +119,31 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
 
         final AbstractEntityCitizen citizen = optionalEntityCitizen.get();
 
-        if (!isCreative && MineColonies.getConfig().getServer().debugInventories.get())
-        {
+        if (!isCreative && MineColonies.getConfig().getServer().debugInventories.get()) {
             previousContent = InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.getInventory()));
         }
 
         tempAmount = 0;
-        for (final ItemStack insertStack : itemsToPut)
-        {
+        for (final ItemStack insertStack : itemsToPut) {
             final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), insertStack);
-            if (!ItemStackUtils.isEmpty(remainingItemStack))
-            {
+            if (!ItemStackUtils.isEmpty(remainingItemStack)) {
                 tempAmount += (insertStack.getCount() - remainingItemStack.getCount());
                 break;
             }
             tempAmount += insertStack.getCount();
         }
 
-        if (!isCreative)
-        {
+        if (!isCreative) {
             int amountToRemoveFromPlayer = tempAmount;
-            while (amountToRemoveFromPlayer > 0)
-            {
+            while (amountToRemoveFromPlayer > 0) {
                 final int slot =
-                  InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack));
+                        InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack));
                 final ItemStack itemsTaken = player.getInventory().removeItem(slot, amountToRemoveFromPlayer);
                 amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
             }
         }
 
-        if (!isCreative && previousContent != null && MineColonies.getConfig().getServer().debugInventories.get())
-        {
+        if (!isCreative && previousContent != null && MineColonies.getConfig().getServer().debugInventories.get()) {
             InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.getInventory())), true);
         }
     }

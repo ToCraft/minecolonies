@@ -17,13 +17,11 @@ import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLON
 /**
  * Contains colony specific utility.
  */
-public final class ColonyUtils
-{
+public final class ColonyUtils {
     /**
      * Private constructor to hide implicit one.
      */
-    private ColonyUtils()
-    {
+    private ColonyUtils() {
         /*
          * Intentionally left empty.
          */
@@ -32,20 +30,18 @@ public final class ColonyUtils
     /**
      * Calculated the corner of a building.
      *
-     * @param pos        the central position.
-     * @param world      the world.
-     * @param blueprint  the structureWrapper.
-     * @param rotMir     the rotation and mirror.
+     * @param pos       the central position.
+     * @param world     the world.
+     * @param blueprint the structureWrapper.
+     * @param rotMir    the rotation and mirror.
      * @return a tuple with the required corners.
      */
     public static Tuple<BlockPos, BlockPos> calculateCorners(
-      final BlockPos pos,
-      final Level world,
-      final Blueprint blueprint,
-      final RotationMirror rotMir)
-    {
-        if (blueprint == null)
-        {
+            final BlockPos pos,
+            final Level world,
+            final Blueprint blueprint,
+            final RotationMirror rotMir) {
+        if (blueprint == null) {
             return new Tuple<>(pos, pos);
         }
 
@@ -60,45 +56,45 @@ public final class ColonyUtils
 
     /**
      * Get the owning colony from a chunk.
+     *
      * @param chunk the chunk to check.
      * @return the colony id.
      */
-    public static int getOwningColony(final ChunkAccess chunk)
-    {
+    public static int getOwningColony(final ChunkAccess chunk) {
         final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? NO_COLONY_ID : cap.getOwningColony();
     }
 
     /**
      * Get all claiming buildings from the chunk.
+     *
      * @param chunk the chunk they are at.
      * @return the map from colony to building claims.
      */
-    public static Map<Integer, Set<BlockPos>> getAllClaimingBuildings(final ChunkAccess chunk)
-    {
+    public static Map<Integer, Set<BlockPos>> getAllClaimingBuildings(final ChunkAccess chunk) {
         final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? new HashMap<>() : cap.getAllClaimingBuildings();
     }
 
     /**
      * Get all static claims from a chunk.
+     *
      * @param chunk the chunk to get it from.
      * @return the list.
      */
-    public static List<Integer> getStaticClaims(final ChunkAccess chunk)
-    {
+    public static List<Integer> getStaticClaims(final ChunkAccess chunk) {
         final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? new ArrayList<>() : cap.getStaticClaimColonies();
     }
 
     /**
      * Get comprehensive chunk ownership data.
+     *
      * @param chunk the chunk to get it from.
      * @return the ownership data, or null.
      */
     @Nullable
-    public static ChunkCapData getChunkCapData(final ChunkAccess chunk)
-    {
+    public static ChunkCapData getChunkCapData(final ChunkAccess chunk) {
         final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? new ChunkCapData(chunk.getPos().x, chunk.getPos().z) : new ChunkCapData(chunk.getPos().x, chunk.getPos().z, cap.getOwningColony(), cap.getStaticClaimColonies(), cap.getAllClaimingBuildings());
     }

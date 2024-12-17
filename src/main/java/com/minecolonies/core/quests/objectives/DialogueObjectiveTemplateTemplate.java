@@ -23,8 +23,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.UNLOCKS_REWARDS_KEY
 /**
  * Dialogue type of objective.
  */
-public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemplate
-{
+public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemplate {
     /**
      * The quest participant target of this dialogue (0 if questgiver).
      */
@@ -38,15 +37,15 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
     /**
      * Reward unlocks from the objective.
      */
-    private final List<Integer>  rewardUnlocks;
+    private final List<Integer> rewardUnlocks;
 
     /**
      * Create a new dialogue objective.
-     * @param target the target of the dialogue.
+     *
+     * @param target       the target of the dialogue.
      * @param dialogueTree the dialogue tree.
      */
-    public DialogueObjectiveTemplateTemplate(final int target, final DialogueElement dialogueTree, final List<Integer> rewards)
-    {
+    public DialogueObjectiveTemplateTemplate(final int target, final DialogueElement dialogueTree, final List<Integer> rewards) {
         this.target = target;
         this.dialogueTree = dialogueTree;
         this.rewardUnlocks = ImmutableList.copyOf(rewards);
@@ -54,53 +53,49 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
 
     /**
      * Getter for the dialogue tree.
+     *
      * @return the tree.
      */
-    public DialogueElement getDialogueTree()
-    {
+    public DialogueElement getDialogueTree() {
         return dialogueTree;
     }
 
     @Override
-    public List<Integer> getRewardUnlocks()
-    {
+    public List<Integer> getRewardUnlocks() {
         return this.rewardUnlocks;
     }
 
     @Override
-    public int getTarget()
-    {
+    public int getTarget() {
         return target;
     }
 
     /**
      * Parse the dialogue objective from json.
+     *
      * @param jsonObject the json to parse it from.
      * @return a new objective object.
      */
-    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject)
-    {
+    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject) {
         return new DialogueObjectiveTemplateTemplate(jsonObject.get(TARGET_KEY).getAsInt(),
-          DialogueElement.parse(jsonObject),
-            parseRewards(jsonObject));
+                DialogueElement.parse(jsonObject),
+                parseRewards(jsonObject));
     }
 
     /**
      * Parse the specific reward array from the objective.
+     *
      * @param jsonObject the object to get it from.
      * @return the unlocked rewards.
      */
-    public static List<Integer> parseRewards(final JsonObject jsonObject)
-    {
-        if (!jsonObject.has(UNLOCKS_REWARDS_KEY))
-        {
+    public static List<Integer> parseRewards(final JsonObject jsonObject) {
+        if (!jsonObject.has(UNLOCKS_REWARDS_KEY)) {
             return Collections.emptyList();
         }
 
         final List<Integer> rewardList = new ArrayList<>();
         final JsonArray jsonArray = jsonObject.get(UNLOCKS_REWARDS_KEY).getAsJsonArray();
-        for (int i = 0; i < jsonArray.size(); i++)
-        {
+        for (int i = 0; i < jsonArray.size(); i++) {
             rewardList.add(jsonArray.get(i).getAsInt());
         }
 
@@ -108,29 +103,21 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
     }
 
     @Override
-    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
-    {
-        if (target == 0)
-        {
+    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest) {
+        if (target == 0) {
             colonyQuest.getQuestGiver().openDialogue(colonyQuest, colonyQuest.getObjectiveIndex());
-        }
-        else
-        {
+        } else {
             colonyQuest.getParticipant(target).openDialogue(colonyQuest, colonyQuest.getObjectiveIndex());
         }
         return null;
     }
 
     @Override
-    public Component getProgressText(final IQuestInstance quest, final Style style)
-    {
+    public Component getProgressText(final IQuestInstance quest, final Style style) {
         final ICitizen citizen = quest.getColony().getCitizen(target == 0 ? quest.getQuestGiverId() : target - 1);
-        if (citizen != null)
-        {
+        if (citizen != null) {
             return Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.progress", citizen.getName()).setStyle(style);
-        }
-        else
-        {
+        } else {
             return Component.empty();
         }
     }

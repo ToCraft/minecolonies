@@ -18,87 +18,73 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.util.Tuple;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * A default implementation of the {@link IRequestResolverIdentitiesDataStore} interface.
  */
-public class StandardRequestResolversIdentitiesDataStore implements IRequestResolverIdentitiesDataStore
-{
-    private       IToken<?>                             id;
+public class StandardRequestResolversIdentitiesDataStore implements IRequestResolverIdentitiesDataStore {
+    private IToken<?> id;
     private final BiMap<IToken<?>, IRequestResolver<?>> map;
 
     public StandardRequestResolversIdentitiesDataStore(
-      final IToken<?> id,
-      final BiMap<IToken<?>, IRequestResolver<?>> map)
-    {
+            final IToken<?> id,
+            final BiMap<IToken<?>, IRequestResolver<?>> map) {
         this.id = id;
         this.map = map;
     }
 
-    public StandardRequestResolversIdentitiesDataStore()
-    {
+    public StandardRequestResolversIdentitiesDataStore() {
         this.id = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN);
         this.map = HashBiMap.create();
     }
 
     @Override
-    public BiMap<IToken<?>, IRequestResolver<?>> getIdentities()
-    {
+    public BiMap<IToken<?>, IRequestResolver<?>> getIdentities() {
         return map;
     }
 
     @Override
-    public IToken<?> getId()
-    {
+    public IToken<?> getId() {
         return id;
     }
 
     @Override
-    public void setId(final IToken<?> id)
-    {
+    public void setId(final IToken<?> id) {
         this.id = id;
     }
 
-    public static class Factory implements IFactory<FactoryVoidInput, StandardRequestResolversIdentitiesDataStore>
-    {
+    public static class Factory implements IFactory<FactoryVoidInput, StandardRequestResolversIdentitiesDataStore> {
 
         @NotNull
         @Override
-        public TypeToken<? extends StandardRequestResolversIdentitiesDataStore> getFactoryOutputType()
-        {
+        public TypeToken<? extends StandardRequestResolversIdentitiesDataStore> getFactoryOutputType() {
             return TypeToken.of(StandardRequestResolversIdentitiesDataStore.class);
         }
 
         @NotNull
         @Override
-        public TypeToken<? extends FactoryVoidInput> getFactoryInputType()
-        {
+        public TypeToken<? extends FactoryVoidInput> getFactoryInputType() {
             return TypeConstants.FACTORYVOIDINPUT;
         }
 
         @NotNull
         @Override
         public StandardRequestResolversIdentitiesDataStore getNewInstance(
-          @NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, @NotNull final Object... context) throws IllegalArgumentException
-        {
+                @NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, @NotNull final Object... context) throws IllegalArgumentException {
             return new StandardRequestResolversIdentitiesDataStore();
         }
 
         @NotNull
         @Override
         public CompoundTag serialize(
-          @NotNull final HolderLookup.Provider provider,
-          @NotNull final IFactoryController controller, @NotNull final StandardRequestResolversIdentitiesDataStore standardRequestIdentitiesDataStore)
-        {
+                @NotNull final HolderLookup.Provider provider,
+                @NotNull final IFactoryController controller, @NotNull final StandardRequestResolversIdentitiesDataStore standardRequestIdentitiesDataStore) {
             final CompoundTag systemCompound = new CompoundTag();
 
             systemCompound.put(TAG_TOKEN, controller.serializeTag(provider, standardRequestIdentitiesDataStore.getId()));
@@ -116,19 +102,16 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
 
         @NotNull
         @Override
-        public StandardRequestResolversIdentitiesDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
-        {
+        public StandardRequestResolversIdentitiesDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) {
             final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
             final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
             final BiMap<IToken<?>, IRequestResolver<?>> biMap = HashBiMap.create();
 
-            for (int i = 0; i < list.size(); i++)
-            {
+            for (int i = 0; i < list.size(); i++) {
                 final CompoundTag mapCompound = list.getCompound(i);
                 final IToken<?> id = controller.deserializeTag(provider, mapCompound.getCompound(TAG_TOKEN));
                 final IRequestResolver<?> resolver = controller.deserializeTag(provider, mapCompound.getCompound(TAG_RESOLVER));
-                if (resolver.isValid())
-                {
+                if (resolver.isValid()) {
                     biMap.put(id, resolver);
                 }
             }
@@ -138,9 +121,8 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
 
         @Override
         public void serialize(
-          IFactoryController controller, StandardRequestResolversIdentitiesDataStore input,
-          RegistryFriendlyByteBuf packetBuffer)
-        {
+                IFactoryController controller, StandardRequestResolversIdentitiesDataStore input,
+                RegistryFriendlyByteBuf packetBuffer) {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.getIdentities().size());
             input.getIdentities().forEach((key, value) -> {
@@ -151,14 +133,12 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
 
         @Override
         public StandardRequestResolversIdentitiesDataStore deserialize(
-          IFactoryController controller,
-          RegistryFriendlyByteBuf buffer) throws Throwable
-        {
+                IFactoryController controller,
+                RegistryFriendlyByteBuf buffer) throws Throwable {
             final IToken<?> token = controller.deserialize(buffer);
             final Map<IToken<?>, IRequestResolver<?>> identities = new HashMap<>();
             final int assignmentsSize = buffer.readInt();
-            for (int i = 0; i < assignmentsSize; ++i)
-            {
+            for (int i = 0; i < assignmentsSize; ++i) {
                 identities.put(controller.deserialize(buffer), controller.deserialize(buffer));
             }
 
@@ -168,8 +148,7 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
         }
 
         @Override
-        public short getSerializationId()
-        {
+        public short getSerializationId() {
             return SerializationIdentifierConstants.STANDARD_REQUEST_RESOLVERS_IDENTITIES_DATASTORE_ID;
         }
     }

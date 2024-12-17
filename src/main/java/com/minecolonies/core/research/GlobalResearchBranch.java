@@ -9,8 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
 
-public class GlobalResearchBranch implements IGlobalResearchBranch
-{
+public class GlobalResearchBranch implements IGlobalResearchBranch {
     /**
      * The property name for research branch name keys.  Only applies at the level of branch settings.
      * May be a human-readable text, or a translation key.
@@ -74,45 +73,50 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
     private final boolean hidden;
 
     @Override
-    public TranslatableContents getName(){return this.name;}
-
-    @Override
-    public TranslatableContents getSubtitle(){return this.subtitle;}
-
-    @Override
-    public int getBaseTime(final int depth)
-    {
-        return (int)(BASE_RESEARCH_TIME * this.baseTime * Math.pow(2, depth - 1));
+    public TranslatableContents getName() {
+        return this.name;
     }
 
     @Override
-    public double getHoursTime(final int depth)
-    {
+    public TranslatableContents getSubtitle() {
+        return this.subtitle;
+    }
+
+    @Override
+    public int getBaseTime(final int depth) {
+        return (int) (BASE_RESEARCH_TIME * this.baseTime * Math.pow(2, depth - 1));
+    }
+
+    @Override
+    public double getHoursTime(final int depth) {
         return (getBaseTime(depth) * 25.0) / 60 / 60;
     }
 
     @Override
-    public int getSortOrder(){return this.sortOrder;}
+    public int getSortOrder() {
+        return this.sortOrder;
+    }
 
     @Override
-    public ResearchBranchType getType(){return this.type;}
+    public ResearchBranchType getType() {
+        return this.type;
+    }
 
     @Override
-    public boolean getHidden(){return this.hidden;}
+    public boolean getHidden() {
+        return this.hidden;
+    }
 
     /**
      * Creates a GlobalResearchBranch containing default values for a given BranchID.
-     * @param id   The Branch's ResourceID.
+     *
+     * @param id The Branch's ResourceID.
      */
-    public GlobalResearchBranch(final ResourceLocation id)
-    {
-        if(id.getPath().isEmpty())
-        {
+    public GlobalResearchBranch(final ResourceLocation id) {
+        if (id.getPath().isEmpty()) {
             // yes, technically "/.json" is a valid file name and "" is a valid resource location.
             this.name = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
-        }
-        else
-        {
+        } else {
             this.name = new TranslatableContents(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1), null, TranslatableContents.NO_ARGS);
         }
         this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
@@ -125,83 +129,62 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
 
     /**
      * Creates a GlobalResearchBranch from a jsonObject.
-     * @param id            The Branch's ResourceID.
-     * @param researchJson  the Json containing research branch data.
+     *
+     * @param id           The Branch's ResourceID.
+     * @param researchJson the Json containing research branch data.
      */
-    public GlobalResearchBranch(final ResourceLocation id, final JsonObject researchJson)
-    {
+    public GlobalResearchBranch(final ResourceLocation id, final JsonObject researchJson) {
         // Research branches can have all, only some, or none of these traits.
         if (researchJson.has(RESEARCH_BRANCH_NAME_PROP) && researchJson.get(RESEARCH_BRANCH_NAME_PROP).isJsonPrimitive()
-              && researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().isString())
-        {
+                && researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().isString()) {
             this.name = new TranslatableContents(researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().getAsString(), null, TranslatableContents.NO_ARGS);
-        }
-        else
-        {
-            if(id.getPath().isEmpty())
-            {
+        } else {
+            if (id.getPath().isEmpty()) {
                 // yes, technically "/.json" is a valid file name.
                 this.name = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
-            }
-            else
-            {
+            } else {
                 this.name = new TranslatableContents(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1), null, TranslatableContents.NO_ARGS);
             }
         }
         if (researchJson.has(RESEARCH_SUBTITLE_PROP) && researchJson.get(RESEARCH_SUBTITLE_PROP).isJsonPrimitive()
-              && researchJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().isString())
-        {
+                && researchJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().isString()) {
             this.subtitle = new TranslatableContents(researchJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().getAsString(), null, TranslatableContents.NO_ARGS);
-        }
-        else
-        {
+        } else {
             this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         }
         if (researchJson.has(RESEARCH_BASE_TIME_PROP) && researchJson.get(RESEARCH_BASE_TIME_PROP).isJsonPrimitive()
-              && researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().isNumber())
-        {
+                && researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().isNumber()) {
             this.baseTime = researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().getAsDouble();
-        }
-        else
-        {
+        } else {
             this.baseTime = 1.0;
         }
         if (researchJson.has(RESEARCH_SORT_PROP) && researchJson.get(RESEARCH_SORT_PROP).isJsonPrimitive()
-              && researchJson.get(RESEARCH_SORT_PROP).getAsJsonPrimitive().isNumber())
-        {
+                && researchJson.get(RESEARCH_SORT_PROP).getAsJsonPrimitive().isNumber()) {
             this.sortOrder = researchJson.get(RESEARCH_SORT_PROP).getAsJsonPrimitive().getAsInt();
-        }
-        else
-        {
+        } else {
             // branches without a declared sortOrder will float to the bottom in most normal ranges, and then be sorted by alphabetic order.
             this.sortOrder = 1000;
         }
         if (researchJson.has(RESEARCH_BRANCH_TYPE_PROP) && researchJson.get(RESEARCH_BRANCH_TYPE_PROP).isJsonPrimitive()
-              && researchJson.get(RESEARCH_BRANCH_TYPE_PROP).getAsJsonPrimitive().isString())
-        {
+                && researchJson.get(RESEARCH_BRANCH_TYPE_PROP).getAsJsonPrimitive().isString()) {
             this.type = ResearchBranchType.valueOfTag(researchJson.get(RESEARCH_BRANCH_TYPE_PROP).getAsJsonPrimitive().getAsString());
-        }
-        else
-        {
+        } else {
             this.type = ResearchBranchType.DEFAULT;
         }
         if (researchJson.has(RESEARCH_HIDDEN_PROP) && researchJson.get(RESEARCH_HIDDEN_PROP).isJsonPrimitive()
-              && researchJson.get(RESEARCH_HIDDEN_PROP).getAsJsonPrimitive().isBoolean())
-        {
+                && researchJson.get(RESEARCH_HIDDEN_PROP).getAsJsonPrimitive().isBoolean()) {
             this.hidden = researchJson.get(RESEARCH_HIDDEN_PROP).getAsJsonPrimitive().getAsBoolean();
-        }
-        else
-        {
+        } else {
             this.hidden = false;
         }
     }
 
     /**
      * Reassembles a GlobalResearchBranch from its NBT transmission.
-     * @param nbt  The nbt containing the Research Branch data.
+     *
+     * @param nbt The nbt containing the Research Branch data.
      */
-    public GlobalResearchBranch(final CompoundTag nbt)
-    {
+    public GlobalResearchBranch(final CompoundTag nbt) {
         this.name = new TranslatableContents(nbt.getString(RESEARCH_BRANCH_NAME_PROP), null, TranslatableContents.NO_ARGS);
         this.subtitle = new TranslatableContents(nbt.getString(RESEARCH_SUBTITLE_PROP), null, TranslatableContents.NO_ARGS);
         this.type = ResearchBranchType.valueOfTag(nbt.getString(RESEARCH_BRANCH_TYPE_PROP));
@@ -211,8 +194,7 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
     }
 
     @Override
-    public CompoundTag writeToNBT()
-    {
+    public CompoundTag writeToNBT() {
         final CompoundTag nbt = new CompoundTag();
         nbt.putString(RESEARCH_BRANCH_NAME_PROP, this.name.getKey());
         nbt.putString(RESEARCH_SUBTITLE_PROP, this.subtitle.getKey());

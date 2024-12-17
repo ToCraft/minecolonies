@@ -6,8 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An {@link IDeliverable} is an Requestable that can be delivered.
  */
-public interface IDeliverable extends IRetryable
-{
+public interface IDeliverable extends IRetryable {
     /**
      * Method called to check if a given stack matches this deliverable. The first stack that returns true from this method is returned as a Deliverable.
      *
@@ -55,10 +54,10 @@ public interface IDeliverable extends IRetryable
 
     /**
      * Can this type of request be resolved by the building, or only by external resolvers.
+     *
      * @return true if so.
      */
-    default boolean canBeResolvedByBuilding()
-    {
+    default boolean canBeResolvedByBuilding() {
         return true;
     }
 }

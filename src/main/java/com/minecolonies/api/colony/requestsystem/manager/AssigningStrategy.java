@@ -3,8 +3,7 @@ package com.minecolonies.api.colony.requestsystem.manager;
 /**
  * Enum determining the assigning strategy.
  */
-public enum AssigningStrategy
-{
+public enum AssigningStrategy {
     /**
      * Default strategy.
      */

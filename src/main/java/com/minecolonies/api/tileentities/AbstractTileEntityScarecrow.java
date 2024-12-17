@@ -8,13 +8,11 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * The abstract implementation for farmer field tile entities.
  */
-public abstract class AbstractTileEntityScarecrow extends BlockEntity
-{
+public abstract class AbstractTileEntityScarecrow extends BlockEntity {
     /**
      * Default constructor.
      */
-    protected AbstractTileEntityScarecrow(final BlockPos pos, final BlockState state)
-    {
+    protected AbstractTileEntityScarecrow(final BlockPos pos, final BlockState state) {
         super(MinecoloniesTileEntities.SCARECROW.get(), pos, state);
     }
 

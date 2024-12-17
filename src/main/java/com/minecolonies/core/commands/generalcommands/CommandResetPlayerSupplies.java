@@ -9,34 +9,28 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_RESET_SUPPLY_SUCCESS;
 import static com.minecolonies.core.commands.CommandArgumentNames.PLAYERNAME_ARG;
 
-public class CommandResetPlayerSupplies implements IMCOPCommand
-{
+public class CommandResetPlayerSupplies implements IMCOPCommand {
     /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         final String username = StringArgumentType.getString(context, PLAYERNAME_ARG);
         final Player player = context.getSource().getServer().getPlayerList().getPlayerByName(username);
-        if (player == null)
-        {
-            if (context.getSource().getEntity() instanceof Player)
-            {
+        if (player == null) {
+            if (context.getSource().getEntity() instanceof Player) {
                 // could not find player with given name.
                 MessageUtils.format(COMMAND_PLAYER_NOT_FOUND, username).sendTo((Player) context.getSource().getEntity());
-            }
-            else
-            {
+            } else {
                 context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_PLAYER_NOT_FOUND, username), true);
             }
             return 0;
@@ -49,8 +43,7 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName()).then(IMCCommand.newArgument(PLAYERNAME_ARG, StringArgumentType.string()).executes(this::checkPreConditionAndExecute));
     }
 
@@ -58,8 +51,7 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "resetsupplies";
     }
 }

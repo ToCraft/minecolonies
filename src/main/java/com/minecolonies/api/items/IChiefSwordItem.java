@@ -1,6 +1,5 @@
 package com.minecolonies.api.items;
 
-public interface IChiefSwordItem
-{
+public interface IChiefSwordItem {
 
 }

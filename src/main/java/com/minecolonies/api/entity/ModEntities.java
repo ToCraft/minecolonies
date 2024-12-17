@@ -13,12 +13,14 @@ import com.minecolonies.core.entity.other.NewBobberEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.projectile.*;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.ThrownPotion;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 
 import java.util.List;
 
-public class ModEntities
-{
+public class ModEntities {
     public static EntityType<? extends AbstractEntityCitizen> CITIZEN;
 
     public static EntityType<? extends AbstractEntityCitizen> VISITOR;
@@ -75,27 +77,26 @@ public class ModEntities
 
     public static EntityType<? extends AbstractDrownedEntityPirate> DROWNED_ARCHERPIRATE;
 
-    public static List<EntityType<? extends AbstractEntityRaiderMob>> getRaiders()
-    {
+    public static List<EntityType<? extends AbstractEntityRaiderMob>> getRaiders() {
         return List.of(
-          BARBARIAN,
-          ARCHERBARBARIAN,
-          CHIEFBARBARIAN,
-          AMAZON,
-          AMAZONSPEARMAN,
-          AMAZONCHIEF,
-          MUMMY,
-          ARCHERMUMMY,
-          PHARAO,
-          PIRATE,
-          ARCHERPIRATE,
-          CHIEFPIRATE,
-          SHIELDMAIDEN,
-          NORSEMEN_ARCHER,
-          NORSEMEN_CHIEF,
-          DROWNED_PIRATE,
-          DROWNED_ARCHERPIRATE,
-          DROWNED_CHIEFPIRATE
+                BARBARIAN,
+                ARCHERBARBARIAN,
+                CHIEFBARBARIAN,
+                AMAZON,
+                AMAZONSPEARMAN,
+                AMAZONCHIEF,
+                MUMMY,
+                ARCHERMUMMY,
+                PHARAO,
+                PIRATE,
+                ARCHERPIRATE,
+                CHIEFPIRATE,
+                SHIELDMAIDEN,
+                NORSEMEN_ARCHER,
+                NORSEMEN_CHIEF,
+                DROWNED_PIRATE,
+                DROWNED_ARCHERPIRATE,
+                DROWNED_CHIEFPIRATE
         );
     }
 }

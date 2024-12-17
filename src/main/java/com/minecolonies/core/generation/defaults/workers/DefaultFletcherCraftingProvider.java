@@ -18,25 +18,21 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTI
 /**
  * Datagen for Fletcher
  */
-public class DefaultFletcherCraftingProvider extends CustomRecipeProvider
-{
+public class DefaultFletcherCraftingProvider extends CustomRecipeProvider {
     private static final String FLETCHER = ModJobs.FLETCHER_ID.getPath();
 
-    public DefaultFletcherCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultFletcherCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "DefaultFletcherCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
         recipe(FLETCHER, MODULE_CRAFTING, "flint")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.GRAVEL, 3))))
                 .result(new ItemStack(Items.FLINT))

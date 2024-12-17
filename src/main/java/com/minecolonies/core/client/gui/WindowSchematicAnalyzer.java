@@ -2,7 +2,10 @@ package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.api.ItemStorage;
@@ -26,8 +29,7 @@ import static com.minecolonies.core.items.ItemScanAnalyzer.TEMP_SCAN;
 /**
  * Window for finishing a scan.
  */
-public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
-{
+public class WindowSchematicAnalyzer extends AbstractWindowSkeleton {
     /**
      * Link to the xml file of the window.
      */
@@ -36,23 +38,23 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
     /**
      * Xml ID's for analyzer/analyzedisplay.xml
      */
-    private static final String BUTTON_SELECTION_LEFT   = "selectleft";
-    private static final String BUTTON_SELECTION_RIGHT  = "selectright";
+    private static final String BUTTON_SELECTION_LEFT = "selectleft";
+    private static final String BUTTON_SELECTION_RIGHT = "selectright";
     private static final String BUTTON_SELECT_SCHEMATIC = "selectschematic";
-    private static final String BUTTON_VIEW_CURRENT     = "viewschem";
-    private static final String BOX_RESULTS             = "results";
-    private static final String BOX_LEFT                = "left";
-    private static final String BOX_RIGHT               = "right";
-    private static final String LABEL_SCORE             = "score";
-    private static final String LABEL_BLOCK_COUNTS      = "blockcounts";
-    private static final String LABEL_SIZE              = "size";
-    private static final String LABEL_BUILDINGS         = "buildings";
-    private static final String BUTTON_SHOW_RES         = "showresources";
-    private static final String BUTTON_CANCEL           = "cancel";
-    private static final String LIST_RES                = "resources";
-    private static final String LIST_ENTRY_ITEMICON     = "resourceIcon";
-    private static final String LIST_ENTRY_LABEL        = "resourceName";
-    private static final String LIST_ENTRY_COUNT        = "resourceCount";
+    private static final String BUTTON_VIEW_CURRENT = "viewschem";
+    private static final String BOX_RESULTS = "results";
+    private static final String BOX_LEFT = "left";
+    private static final String BOX_RIGHT = "right";
+    private static final String LABEL_SCORE = "score";
+    private static final String LABEL_BLOCK_COUNTS = "blockcounts";
+    private static final String LABEL_SIZE = "size";
+    private static final String LABEL_BUILDINGS = "buildings";
+    private static final String BUTTON_SHOW_RES = "showresources";
+    private static final String BUTTON_CANCEL = "cancel";
+    private static final String LIST_RES = "resources";
+    private static final String LIST_ENTRY_ITEMICON = "resourceIcon";
+    private static final String LIST_ENTRY_LABEL = "resourceName";
+    private static final String LIST_ENTRY_COUNT = "resourceCount";
 
     /**
      * Cached analyzed blueprints
@@ -67,27 +69,26 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
     /**
      * Current selection for left/right schematic result display
      */
-    private static SchemAnalyzerUtil.SchematicAnalyzationResult selectedLeft  = null;
+    private static SchemAnalyzerUtil.SchematicAnalyzationResult selectedLeft = null;
     private static SchemAnalyzerUtil.SchematicAnalyzationResult selectedRight = null;
 
-    public WindowSchematicAnalyzer()
-    {
+    public WindowSchematicAnalyzer() {
         super(ID);
         registerButton(BUTTON_CANCEL, b -> {
             close();
         });
         registerButton(BUTTON_SELECT_SCHEMATIC, b -> {
             new WindowExtendedBuildTool(
-              BlockPos.containing(Minecraft.getInstance().player.position().add(Minecraft.getInstance().player.getLookAngle().multiply(10, 10, 10))),
-              1,
-              (window, blueprint) -> {
-                  Minecraft.getInstance().setScreen(this.getScreen());
-                  final SchemAnalyzerUtil.SchematicAnalyzationResult result = analyzationResults.computeIfAbsent(blueprint, SchemAnalyzerUtil::analyzeSchematic);
-                  sortAnalyzationResults();
-                  switchSelectionTo(getBoxForSide(b), result);
-              },
-              (a) -> true,
-            mc.level.registryAccess()).open();
+                    BlockPos.containing(Minecraft.getInstance().player.position().add(Minecraft.getInstance().player.getLookAngle().multiply(10, 10, 10))),
+                    1,
+                    (window, blueprint) -> {
+                        Minecraft.getInstance().setScreen(this.getScreen());
+                        final SchemAnalyzerUtil.SchematicAnalyzationResult result = analyzationResults.computeIfAbsent(blueprint, SchemAnalyzerUtil::analyzeSchematic);
+                        sortAnalyzationResults();
+                        switchSelectionTo(getBoxForSide(b), result);
+                    },
+                    (a) -> true,
+                    mc.level.registryAccess()).open();
         });
 
         registerButton(BUTTON_SELECTION_LEFT, b -> {
@@ -100,18 +101,15 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
 
         registerButton(BUTTON_SHOW_RES, this::showResourcesFor);
 
-        if (ItemScanAnalyzer.blueprint != null)
-        {
+        if (ItemScanAnalyzer.blueprint != null) {
             analyzationResults.keySet().removeIf(blueprint -> blueprint.getName().equals(TEMP_SCAN));
             analyzationResults.put(ItemScanAnalyzer.blueprint, SchemAnalyzerUtil.analyzeSchematic(ItemScanAnalyzer.blueprint));
         }
 
         sortAnalyzationResults();
 
-        for (SchemAnalyzerUtil.SchematicAnalyzationResult sortedAnalyzationResult : sortedAnalyzationResults)
-        {
-            if (sortedAnalyzationResult.blueprint.equals(ItemScanAnalyzer.blueprint))
-            {
+        for (SchemAnalyzerUtil.SchematicAnalyzationResult sortedAnalyzationResult : sortedAnalyzationResults) {
+            if (sortedAnalyzationResult.blueprint.equals(ItemScanAnalyzer.blueprint)) {
                 selectedRight = sortedAnalyzationResult;
                 ItemScanAnalyzer.blueprint = null;
                 break;
@@ -129,8 +127,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
      *
      * @param b
      */
-    private void showResourcesFor(final Button b)
-    {
+    private void showResourcesFor(final Button b) {
         final ScrollingList resourceList = b.getParent().findPaneOfTypeByID(LIST_RES, ScrollingList.class);
         resourceList.setVisible(true);
         b.setVisible(false);
@@ -138,26 +135,23 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
         final List<ItemStorage> resources = new ArrayList<>(selected.differentBlocks);
         resources.sort(Comparator.comparingInt((ItemStorage itemStorage) -> itemStorage.getAmount() * itemStorage.getItemStack().getCount()).reversed());
 
-        resourceList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        resourceList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return resources.size();
             }
 
             @Override
-            public void updateElement(final int index, final Pane rowPane)
-            {
+            public void updateElement(final int index, final Pane rowPane) {
                 final ItemStorage storage = resources.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(LIST_ENTRY_LABEL, Text.class);
                 final Text countLabel = rowPane.findPaneOfTypeByID(LIST_ENTRY_COUNT, Text.class);
                 countLabel.setText(Component.literal(Integer.toString(storage.getAmount())).withStyle(ChatFormatting.YELLOW));
                 PaneBuilders.tooltipBuilder().hoverPane(countLabel)
-                  .append(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.score",
-                    storage.getItemStack().getCount(),
-                    storage.getItemStack().getCount() * storage.getAmount()))
-                  .build();
+                        .append(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.score",
+                                storage.getItemStack().getCount(),
+                                storage.getItemStack().getCount() * storage.getAmount()))
+                        .build();
                 resourceLabel.setText(storage.getItemStack().getHoverName());
                 final ItemStack copy = storage.getItemStack().copy();
                 copy.setCount(1);
@@ -171,8 +165,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
      *
      * @return
      */
-    private Box getLeftSide()
-    {
+    private Box getLeftSide() {
         return findPaneOfTypeByID(BOX_LEFT, Box.class);
     }
 
@@ -181,8 +174,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
      *
      * @return
      */
-    private Box getRightSide()
-    {
+    private Box getRightSide() {
         return findPaneOfTypeByID(BOX_RIGHT, Box.class);
     }
 
@@ -192,10 +184,8 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
      * @param context
      * @return
      */
-    private Box getBoxForSide(final Pane context)
-    {
-        if (isLeft(context))
-        {
+    private Box getBoxForSide(final Pane context) {
+        if (isLeft(context)) {
             return getLeftSide();
         }
         return getRightSide();
@@ -207,19 +197,15 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
      * @param current
      * @return
      */
-    private boolean isLeft(final Pane current)
-    {
-        if (current.getID().equals(BOX_LEFT))
-        {
+    private boolean isLeft(final Pane current) {
+        if (current.getID().equals(BOX_LEFT)) {
             return true;
         }
-        if (current.getParent() != null && current.getParent().getID().equals(BOX_LEFT))
-        {
+        if (current.getParent() != null && current.getParent().getID().equals(BOX_LEFT)) {
             return true;
         }
 
-        if (current.getParent().getParent() != null && current.getParent().getParent().getID().equals(BOX_LEFT))
-        {
+        if (current.getParent().getParent() != null && current.getParent().getParent().getID().equals(BOX_LEFT)) {
             return true;
         }
 
@@ -232,17 +218,12 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
      * @param context
      * @return
      */
-    private SchemAnalyzerUtil.SchematicAnalyzationResult getCurrentSelectionData(Pane context)
-    {
+    private SchemAnalyzerUtil.SchematicAnalyzationResult getCurrentSelectionData(Pane context) {
 
         SchemAnalyzerUtil.SchematicAnalyzationResult selection;
-        if (isLeft(context))
-        {
+        if (isLeft(context)) {
             selection = selectedLeft;
-        }
-        else
-
-        {
+        } else {
             selection = selectedRight;
         }
 
@@ -255,16 +236,13 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
      * @param current
      * @return
      */
-    private SchemAnalyzerUtil.SchematicAnalyzationResult getNextFor(SchemAnalyzerUtil.SchematicAnalyzationResult current)
-    {
+    private SchemAnalyzerUtil.SchematicAnalyzationResult getNextFor(SchemAnalyzerUtil.SchematicAnalyzationResult current) {
         final int currentIndex = sortedAnalyzationResults.indexOf(current);
-        if (current != null && currentIndex == -1 && !sortedAnalyzationResults.isEmpty())
-        {
+        if (current != null && currentIndex == -1 && !sortedAnalyzationResults.isEmpty()) {
             return sortedAnalyzationResults.get(0);
         }
 
-        if (currentIndex != -1 && currentIndex + 1 < sortedAnalyzationResults.size())
-        {
+        if (currentIndex != -1 && currentIndex + 1 < sortedAnalyzationResults.size()) {
             return sortedAnalyzationResults.get(currentIndex + 1);
         }
 
@@ -277,16 +255,13 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
      * @param current
      * @return
      */
-    private SchemAnalyzerUtil.SchematicAnalyzationResult getPrevFor(SchemAnalyzerUtil.SchematicAnalyzationResult current)
-    {
+    private SchemAnalyzerUtil.SchematicAnalyzationResult getPrevFor(SchemAnalyzerUtil.SchematicAnalyzationResult current) {
         final int currentIndex = sortedAnalyzationResults.indexOf(current);
-        if (current != null && currentIndex == -1 && !sortedAnalyzationResults.isEmpty())
-        {
+        if (current != null && currentIndex == -1 && !sortedAnalyzationResults.isEmpty()) {
             return sortedAnalyzationResults.get(0);
         }
 
-        if (currentIndex - 1 >= 0 && currentIndex - 1 < sortedAnalyzationResults.size())
-        {
+        if (currentIndex - 1 >= 0 && currentIndex - 1 < sortedAnalyzationResults.size()) {
             return sortedAnalyzationResults.get(currentIndex - 1);
         }
 
@@ -296,8 +271,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
     /**
      * Sorts the results in the saved list
      */
-    private void sortAnalyzationResults()
-    {
+    private void sortAnalyzationResults() {
         sortedAnalyzationResults = new ArrayList<>(analyzationResults.values());
         sortedAnalyzationResults.sort((o1, o2) -> o1.blueprint.getName().compareToIgnoreCase(o2.blueprint.getName()));
     }
@@ -308,15 +282,11 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
      * @param buttonClicked
      * @param next
      */
-    private void switchSelection(final Button buttonClicked, boolean next)
-    {
+    private void switchSelection(final Button buttonClicked, boolean next) {
         SchemAnalyzerUtil.SchematicAnalyzationResult result;
-        if (next)
-        {
+        if (next) {
             result = getNextFor(getCurrentSelectionData(buttonClicked));
-        }
-        else
-        {
+        } else {
             result = getPrevFor(getCurrentSelectionData(buttonClicked));
         }
 
@@ -328,26 +298,20 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
      *
      * @param next
      */
-    private void switchSelectionTo(final Box parent, SchemAnalyzerUtil.SchematicAnalyzationResult next)
-    {
-        if (isLeft(parent))
-        {
+    private void switchSelectionTo(final Box parent, SchemAnalyzerUtil.SchematicAnalyzationResult next) {
+        if (isLeft(parent)) {
             selectedLeft = next;
-        }
-        else
-        {
+        } else {
             selectedRight = next;
         }
 
         final Box box = parent.findPaneOfTypeByID(BOX_RESULTS, Box.class);
-        if (box == null)
-        {
+        if (box == null) {
             Log.getLogger().warn("Nonexisting pane");
             return;
         }
 
-        if (next == null)
-        {
+        if (next == null) {
             parent.findPaneOfTypeByID(BUTTON_VIEW_CURRENT, ButtonImage.class).setText(Component.literal("none"));
             box.hide();
             box.findPaneOfTypeByID(BUTTON_SHOW_RES, ButtonImage.class).setVisible(false);
@@ -357,8 +321,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
         box.show();
 
         String name = next.blueprint.getName();
-        if (next.blueprint.getFileName() != null && next.blueprint.getFilePath() != null)
-        {
+        if (next.blueprint.getFileName() != null && next.blueprint.getFilePath() != null) {
             final String[] split = next.blueprint.getFileName().split("/");
             name = next.blueprint.getFilePath().toString().replace("blueprints/minecolonies/", "") + "/" + split[split.length - 1];
         }
@@ -366,26 +329,26 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
         parent.findPaneOfTypeByID(BUTTON_VIEW_CURRENT, ButtonImage.class).setText(Component.literal(name));
 
         box.findPaneOfTypeByID(LABEL_SCORE, Text.class)
-          .setText(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.complexity", Component.literal("" + next.costScore).withStyle(
-            ChatFormatting.RED).withStyle(ChatFormatting.BOLD)));
+                .setText(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.complexity", Component.literal("" + next.costScore).withStyle(
+                        ChatFormatting.RED).withStyle(ChatFormatting.BOLD)));
 
         box.findPaneOfTypeByID(LABEL_BLOCK_COUNTS, Text.class)
-          .setText(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.blockcounts", Component.literal("" + next.differentBlocks.size()).withStyle(
-            ChatFormatting.BLUE).withStyle(ChatFormatting.BOLD)));
+                .setText(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.blockcounts", Component.literal("" + next.differentBlocks.size()).withStyle(
+                        ChatFormatting.BLUE).withStyle(ChatFormatting.BOLD)));
 
         PaneBuilders.tooltipBuilder()
-          .append(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.score", next.differentBlocks.size() * 40, next.costScore))
-          .hoverPane(box.findPaneOfTypeByID(LABEL_BLOCK_COUNTS, Text.class))
-          .build();
+                .append(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.score", next.differentBlocks.size() * 40, next.costScore))
+                .hoverPane(box.findPaneOfTypeByID(LABEL_BLOCK_COUNTS, Text.class))
+                .build();
 
         box.findPaneOfTypeByID(LABEL_SIZE, Text.class)
-          .setText(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.size", Component.literal("[" + next.blueprint.getSizeX() + " " + next.blueprint.getSizeY() + " "
-                                                                                                            + next.blueprint.getSizeZ() + "]")
-            .withStyle(ChatFormatting.YELLOW)
-            .withStyle(ChatFormatting.BOLD)));
+                .setText(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.size", Component.literal("[" + next.blueprint.getSizeX() + " " + next.blueprint.getSizeY() + " "
+                                + next.blueprint.getSizeZ() + "]")
+                        .withStyle(ChatFormatting.YELLOW)
+                        .withStyle(ChatFormatting.BOLD)));
         box.findPaneOfTypeByID(LABEL_BUILDINGS, Text.class)
-          .setText(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.buildings",
-            Component.literal("" + next.containedBuildings).withStyle(ChatFormatting.GOLD).withStyle(ChatFormatting.BOLD)));
+                .setText(Component.translatableEscape("com.minecolonies.coremod.gui.analyzer.buildings",
+                        Component.literal("" + next.containedBuildings).withStyle(ChatFormatting.GOLD).withStyle(ChatFormatting.BOLD)));
 
         final ScrollingList resourceList = box.findPaneOfTypeByID(LIST_RES, ScrollingList.class);
         resourceList.setVisible(false);
@@ -394,8 +357,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onClosed()
-    {
+    public void onClosed() {
         RenderingCache.removeBox("analyzer");
         super.onClosed();
     }

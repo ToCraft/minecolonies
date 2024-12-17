@@ -14,8 +14,7 @@ import javax.annotation.Nonnull;
 /**
  * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to create the right event object.
  */
-public class ColonyEventTypeRegistryEntry
-{
+public class ColonyEventTypeRegistryEntry {
     /**
      * Function for creating the event objects.
      */
@@ -32,10 +31,8 @@ public class ColonyEventTypeRegistryEntry
      * @param eventCreator the event creator.
      * @param registryID   the registry id.
      */
-    public ColonyEventTypeRegistryEntry(@NotNull final TriFunction<IColony, CompoundTag, HolderLookup.Provider, IColonyEvent> eventCreator, @NotNull final ResourceLocation registryID)
-    {
-        if (registryID.getPath().isEmpty())
-        {
+    public ColonyEventTypeRegistryEntry(@NotNull final TriFunction<IColony, CompoundTag, HolderLookup.Provider, IColonyEvent> eventCreator, @NotNull final ResourceLocation registryID) {
+        if (registryID.getPath().isEmpty()) {
             Log.getLogger().warn("Created empty registry empty for event, supply a name for it!");
         }
 
@@ -45,22 +42,21 @@ public class ColonyEventTypeRegistryEntry
 
     /**
      * Deserializes the event from nbt.
-     * 
+     *
      * @param colony   the colony this event is part of.
      * @param compound the nbt to deserialize the event from.
      * @return the deserialized event.
      */
-    public IColonyEvent deserializeEvent(@Nonnull final IColony colony, @NotNull final HolderLookup.Provider provider, @Nonnull final CompoundTag compound)
-    {
+    public IColonyEvent deserializeEvent(@Nonnull final IColony colony, @NotNull final HolderLookup.Provider provider, @Nonnull final CompoundTag compound) {
         return eventCreator.apply(colony, compound, provider);
     }
 
     /**
      * Get the fitting registry name.
+     *
      * @return the name.
      */
-    public ResourceLocation getRegistryName()
-    {
+    public ResourceLocation getRegistryName() {
         return registryName;
     }
 }

@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Key mappings
  */
-public class ModKeyMappings
-{
+public class ModKeyMappings {
     private static final String CATEGORY = "key.minecolonies.categories.general";
 
     /**
@@ -23,16 +22,14 @@ public class ModKeyMappings
     /**
      * Register key mappings
      */
-    public static void register(@NotNull final RegisterKeyMappingsEvent event)
-    {
+    public static void register(@NotNull final RegisterKeyMappingsEvent event) {
         event.register(TOGGLE_GOGGLES.get());
     }
 
     /**
      * Private constructor to hide the implicit one.
      */
-    private ModKeyMappings()
-    {
+    private ModKeyMappings() {
         /*
          * Intentionally left empty.
          */

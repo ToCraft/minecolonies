@@ -8,8 +8,7 @@ import java.util.Random;
 /**
  * Useful math stuff to use statically.
  */
-public final class MathUtils
-{
+public final class MathUtils {
     /**
      * Static random for global use.
      */
@@ -18,8 +17,7 @@ public final class MathUtils
     /**
      * Private constructor to hide the public one.
      */
-    private MathUtils()
-    {
+    private MathUtils() {
     }
 
     /**
@@ -28,8 +26,7 @@ public final class MathUtils
      * @param number Number to square.
      * @return Answer of calculation.
      */
-    public static double square(final double number)
-    {
+    public static double square(final double number) {
         return number * number;
     }
 
@@ -40,8 +37,7 @@ public final class MathUtils
      * @param target   the end position.
      * @return the distance.
      */
-    public static double twoDimDistance(@NotNull final BlockPos position, @NotNull final BlockPos target)
-    {
+    public static double twoDimDistance(@NotNull final BlockPos position, @NotNull final BlockPos target) {
         final int x1 = position.getX();
         final int x2 = target.getX();
         final int z1 = position.getZ();
@@ -59,8 +55,7 @@ public final class MathUtils
      * @param max   the upper bound.
      * @return the value, clamped between the lower and upper bound.
      */
-    public static int clamp(int value, int min, int max)
-    {
+    public static int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
     }
 }

@@ -13,24 +13,21 @@ import java.util.concurrent.TimeUnit;
 /**
  * Static class the handles all the Pathfinding.
  */
-public final class Pathfinding
-{
+public final class Pathfinding {
     private static final ArrayBlockingQueue<Runnable> jobQueue = new ArrayBlockingQueue<>(10000, false);
-    private static       ThreadPoolExecutor           executor;
+    private static ThreadPoolExecutor executor;
 
     /**
      * Minecolonies specific thread factory.
      */
-    public static class MinecoloniesThreadFactory implements ThreadFactory
-    {
+    public static class MinecoloniesThreadFactory implements ThreadFactory {
         /**
          * Ongoing thread IDs.
          */
         public static int id;
 
         @Override
-        public Thread newThread(@NotNull final Runnable runnable)
-        {
+        public Thread newThread(@NotNull final Runnable runnable) {
             final Thread thread = new Thread(runnable, "Minecolonies Pathfinding Worker #" + (id++));
             thread.setDaemon(true);
 
@@ -44,10 +41,8 @@ public final class Pathfinding
      *
      * @return the threadpool executor.
      */
-    public static ThreadPoolExecutor getExecutor()
-    {
-        if (executor == null)
-        {
+    public static ThreadPoolExecutor getExecutor() {
+        if (executor == null) {
             executor = new ThreadPoolExecutor(1, MineColonies.getConfig().getServer().pathfindingMaxThreadCount.get(), 10, TimeUnit.SECONDS, jobQueue, new MinecoloniesThreadFactory());
         }
         return executor;
@@ -56,13 +51,11 @@ public final class Pathfinding
     /**
      * Stops all running threads in this thread pool
      */
-    public static void shutdown()
-    {
+    public static void shutdown() {
         jobQueue.clear();
     }
 
-    private Pathfinding()
-    {
+    private Pathfinding() {
         //Hides default constructor.
     }
 
@@ -71,8 +64,7 @@ public final class Pathfinding
      *
      * @param job PathJob
      */
-    public static void enqueue(@NotNull final AbstractPathJob job)
-    {
+    public static void enqueue(@NotNull final AbstractPathJob job) {
         job.getResult().startJob(getExecutor());
     }
 }

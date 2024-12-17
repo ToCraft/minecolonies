@@ -1,7 +1,9 @@
 package com.minecolonies.core.client.gui.citizen;
 
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.Image;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -17,8 +19,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for the citizen.
  */
-public class MainWindowCitizen extends AbstractWindowCitizen
-{
+public class MainWindowCitizen extends AbstractWindowCitizen {
     /**
      * The citizenData.View object.
      */
@@ -34,38 +35,31 @@ public class MainWindowCitizen extends AbstractWindowCitizen
      *
      * @param citizen citizen to bind the window to.
      */
-    public MainWindowCitizen(final ICitizenDataView citizen)
-    {
+    public MainWindowCitizen(final ICitizenDataView citizen) {
         super(citizen, Constants.MOD_ID + CITIZEN_MAIN_RESOURCE_SUFFIX);
         this.citizen = citizen;
 
         final Image statusIcon = findPaneOfTypeByID(STATUS_ICON, Image.class);
-        if (citizen.getVisibleStatus() == null)
-        {
+        if (citizen.getVisibleStatus() == null) {
             statusIcon.setVisible(false);
-        }
-        else
-        {
+        } else {
             statusIcon.setImage(citizen.getVisibleStatus().getIcon(), false);
             PaneBuilders.tooltipBuilder()
-                .append(Component.translatableEscape(citizen.getVisibleStatus().getTranslationKey()))
-                .hoverPane(statusIcon)
-                .build();
+                    .append(Component.translatableEscape(citizen.getVisibleStatus().getTranslationKey()))
+                    .hoverPane(statusIcon)
+                    .build();
         }
     }
 
-    public ICitizenDataView getCitizen()
-    {
+    public ICitizenDataView getCitizen() {
         return citizen;
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
 
-        if (tick++ == 20)
-        {
+        if (tick++ == 20) {
             tick = 0;
             CitizenWindowUtils.createSkillContent(citizen, this);
         }
@@ -75,8 +69,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
      * Called when the gui is opened by an player.
      */
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         findPaneOfTypeByID(WINDOW_ID_NAME, Text.class).setText(Component.literal(citizen.getName()));
 
@@ -87,8 +80,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
 
         //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
 
-        if (citizen.isFemale())
-        {
+        if (citizen.isFemale()) {
             findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(ResourceLocation.parse(FEMALE_SOURCE), false);
         }
     }
@@ -99,18 +91,14 @@ public class MainWindowCitizen extends AbstractWindowCitizen
      * @param button the clicked button.
      */
     @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
+    public void onButtonClicked(@NotNull final Button button) {
         super.onButtonClicked(button);
-        if (button.getID().contains(PLUS_PREFIX))
-        {
+        if (button.getID().contains(PLUS_PREFIX)) {
             final String label = button.getID().replace(PLUS_PREFIX, "");
             final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
 
             new AdjustSkillCitizenMessage(colony, citizen, 1, skill).sendToServer();
-        }
-        else if (button.getID().contains(MINUS_PREFIX))
-        {
+        } else if (button.getID().contains(MINUS_PREFIX)) {
             final String label = button.getID().replace(MINUS_PREFIX, "");
             final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
 

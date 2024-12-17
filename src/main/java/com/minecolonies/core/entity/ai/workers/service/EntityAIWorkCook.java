@@ -12,7 +12,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.Constants;
@@ -22,16 +21,10 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobCook;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIUsesFurnace;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
-import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
-import com.minecolonies.core.tileentities.TileEntityRack;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -54,8 +47,7 @@ import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RES
 /**
  * Cook AI class.
  */
-public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, BuildingCook>
-{
+public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, BuildingCook> {
     /**
      * The amount of food which should be served to the worker.
      */
@@ -85,26 +77,24 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      * Cooking icon
      */
     private final static VisibleCitizenStatus COOK =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/cook.png"), "com.minecolonies.gui.visiblestatus.cook");
+            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/cook.png"), "com.minecolonies.gui.visiblestatus.cook");
 
     /**
      * Constructor for the Cook. Defines the tasks the cook executes.
      *
      * @param job a cook job to use.
      */
-    public EntityAIWorkCook(@NotNull final JobCook job)
-    {
+    public EntityAIWorkCook(@NotNull final JobCook job) {
         super(job);
         super.registerTargets(
-          new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen, SERVE_DELAY),
-          new AITarget(COOK_SERVE_FOOD_TO_PLAYER, this::serveFoodToPlayer, SERVE_DELAY)
+                new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen, SERVE_DELAY),
+                new AITarget(COOK_SERVE_FOOD_TO_PLAYER, this::serveFoodToPlayer, SERVE_DELAY)
         );
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    public Class<BuildingCook> getExpectedBuildingClass()
-    {
+    public Class<BuildingCook> getExpectedBuildingClass() {
         return BuildingCook.class;
     }
 
@@ -114,73 +104,63 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      * @param furnace the furnace to retrieve from.
      */
     @Override
-    protected void extractFromFurnace(final FurnaceBlockEntity furnace)
-    {
+    protected void extractFromFurnace(final FurnaceBlockEntity furnace) {
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
-          new InvWrapper(furnace), RESULT_SLOT,
-          worker.getInventoryCitizen());
+                new InvWrapper(furnace), RESULT_SLOT,
+                worker.getInventoryCitizen());
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
     }
 
     @Override
-    public IAIState startWorking()
-    {
+    public IAIState startWorking() {
         return super.startWorking();
     }
 
     @Override
-    protected boolean isSmeltable(final ItemStack stack)
-    {
+    protected boolean isSmeltable(final ItemStack stack) {
         //Only return true if the item isn't queued for a recipe.
         return ItemStackUtils.ISCOOKABLE.test(stack) && building.getModule(RESTAURANT_MENU).getMenu().contains(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
     }
 
     @Override
-    protected boolean reachedMaxToKeep()
-    {
-        if (super.reachedMaxToKeep())
-        {
+    protected boolean reachedMaxToKeep() {
+        if (super.reachedMaxToKeep()) {
             return true;
         }
         final int buildingLimit = Math.max(1, building.getBuildingLevel() * building.getBuildingLevel()) * SLOT_PER_LINE;
         return InventoryUtils.getCountFromBuildingWithLimit(building,
-            FoodUtils.EDIBLE.and(stack -> FoodUtils.canEatLevel(stack, building.getBuildingLevel() - 1)),
-          stack -> stack.getMaxStackSize() * 6) > buildingLimit;
+                FoodUtils.EDIBLE.and(stack -> FoodUtils.canEatLevel(stack, building.getBuildingLevel() - 1)),
+                stack -> stack.getMaxStackSize() * 6) > buildingLimit;
     }
 
     @Override
-    public void requestSmeltable()
-    {
+    public void requestSmeltable() {
         final RestaurantMenuModule menuModule = building.getModule(RESTAURANT_MENU);
-        if (menuModule.getMenu().isEmpty() && worker.getCitizenData() != null)
-        {
+        if (menuModule.getMenu().isEmpty() && worker.getCitizenData() != null) {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
         }
     }
 
     /**
      * Serve food to citizen.
+     *
      * @return next IAIState
      */
-    private IAIState serveFoodToCitizen()
-    {
-        if (citizenToServe.isEmpty())
-        {
+    private IAIState serveFoodToCitizen() {
+        if (citizenToServe.isEmpty()) {
             return START_WORKING;
         }
 
         worker.getCitizenData().setVisibleStatus(COOK);
 
-        if (!building.isInBuilding(citizenToServe.peek().blockPosition()))
-        {
+        if (!building.isInBuilding(citizenToServe.peek().blockPosition())) {
             worker.getNavigation().stop();
             citizenToServe.poll();
             return getState();
         }
 
-        if (walkToBlock(citizenToServe.peek().blockPosition()))
-        {
+        if (walkToBlock(citizenToServe.peek().blockPosition())) {
             return getState();
         }
 
@@ -190,40 +170,30 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         final Predicate<ItemStack> canEatPredicate = stack -> module.getMenu().contains(new ItemStorage(stack));
         final ICitizenData citizenData = citizen.getCitizenData();
 
-        if (InventoryUtils.isItemHandlerFull(handler))
-        {
-            for (int feedingAttempts = 0; feedingAttempts < 10; feedingAttempts++)
-            {
+        if (InventoryUtils.isItemHandlerFull(handler)) {
+            for (int feedingAttempts = 0; feedingAttempts < 10; feedingAttempts++) {
                 final int foodSlot = FoodUtils.getBestFoodForCitizen(worker.getInventoryCitizen(), citizenData, module.getMenu());
-                if (foodSlot != -1)
-                {
+                if (foodSlot != -1) {
                     final ItemStack stack = worker.getInventoryCitizen().extractItem(foodSlot, 1, false);
                     citizenData.increaseSaturation(FoodUtils.getFoodValue(stack, worker));
                     worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(FOOD_SERVED, worker.getCitizenColonyHandler().getColony().getDay());
-                }
-                else
-                {
+                } else {
                     break;
                 }
 
-                if (citizenData.getSaturation() >= CitizenConstants.FULL_SATURATION)
-                {
+                if (citizenData.getSaturation() >= CitizenConstants.FULL_SATURATION) {
                     break;
                 }
             }
 
             return getState();
-        }
-        else if (InventoryUtils.hasItemInItemHandler(handler, canEatPredicate))
-        {
+        } else if (InventoryUtils.hasItemInItemHandler(handler, canEatPredicate)) {
             return getState();
         }
 
         final int foodSlot = FoodUtils.getBestFoodForCitizen(worker.getInventoryCitizen(), citizenData, module.getMenu());
-        if (foodSlot == -1)
-        {
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), canEatPredicate) <= 0)
-            {
+        if (foodSlot == -1) {
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), canEatPredicate) <= 0) {
                 citizenToServe.clear();
                 return START_WORKING;
             }
@@ -232,11 +202,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
 
         final int countInSlot = worker.getInventoryCitizen().getStackInSlot(foodSlot).getCount();
         int homeBuildingLevel = citizen.getCitizenData().getHomeBuilding() == null ? 1 : citizen.getCitizenData().getHomeBuilding().getBuildingLevel();
-        int qty = (int) (Math.max(1.0, (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(worker.getInventoryCitizen().getStackInSlot(foodSlot), citizen)) * homeBuildingLevel/2.0);
+        int qty = (int) (Math.max(1.0, (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(worker.getInventoryCitizen().getStackInSlot(foodSlot), citizen)) * homeBuildingLevel / 2.0);
 
         final int transferCount = Math.min(countInSlot, building.getBuildingLevel());
-        if (InventoryUtils.transferXOfItemStackIntoNextFreeSlotInItemHandler(worker.getInventoryCitizen(), foodSlot, qty, citizenData.getInventory()))
-        {
+        if (InventoryUtils.transferXOfItemStackIntoNextFreeSlotInItemHandler(worker.getInventoryCitizen(), foodSlot, qty, citizenData.getInventory())) {
             worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(FOOD_SERVED, qty, worker.getCitizenColonyHandler().getColony().getDay());
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
             this.incrementActionsDoneAndDecSaturation();
@@ -247,25 +216,22 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
 
     /**
      * Serve food to player.
+     *
      * @return next IAIState
      */
-    private IAIState serveFoodToPlayer()
-    {
-        if (playerToServe.isEmpty())
-        {
+    private IAIState serveFoodToPlayer() {
+        if (playerToServe.isEmpty()) {
             return START_WORKING;
         }
 
         worker.getCitizenData().setVisibleStatus(COOK);
-        if (!building.isInBuilding(playerToServe.peek().blockPosition()))
-        {
+        if (!building.isInBuilding(playerToServe.peek().blockPosition())) {
             worker.getNavigation().stop();
             playerToServe.poll();
             return START_WORKING;
         }
 
-        if (walkToBlock(playerToServe.peek().blockPosition()))
-        {
+        if (walkToBlock(playerToServe.peek().blockPosition())) {
             return getState();
         }
 
@@ -273,18 +239,14 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         final IItemHandler handler = new InvWrapper(player.getInventory());
         final RestaurantMenuModule module = worker.getCitizenData().getWorkBuilding().getModule(RESTAURANT_MENU);
         final Predicate<ItemStack> canEatPredicate = stack -> module.getMenu().contains(new ItemStorage(stack));
-        if (InventoryUtils.isItemHandlerFull(handler))
-        {
+        if (InventoryUtils.isItemHandlerFull(handler)) {
             return getState();
-        }
-        else if (InventoryUtils.hasItemInItemHandler(handler, canEatPredicate))
-        {
+        } else if (InventoryUtils.hasItemInItemHandler(handler, canEatPredicate)) {
             return getState();
         }
 
         final int count = InventoryUtils.transferFoodUpToSaturation(worker, handler, building.getBuildingLevel() * SATURATION_TO_SERVE, canEatPredicate);
-        if (count <= 0)
-        {
+        if (count <= 0) {
             playerToServe.clear();
             return START_WORKING;
         }
@@ -303,24 +265,20 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      * @param citizen the citizen to check for.
      * @return true if the stack can be eaten
      */
-    private boolean canEat(final ItemStack stack, final AbstractEntityCitizen citizen)
-    {
+    private boolean canEat(final ItemStack stack, final AbstractEntityCitizen citizen) {
         final RestaurantMenuModule module = worker.getCitizenData().getWorkBuilding().getModule(RESTAURANT_MENU);
-        if (!module.getMenu().contains(new ItemStorage(stack)))
-        {
+        if (!module.getMenu().contains(new ItemStorage(stack))) {
             return false;
         }
-        if (citizen != null)
-        {
+        if (citizen != null) {
             final IBuilding building = citizen.getCitizenData().getHomeBuilding();
-            if (building != null)
-            {
+            if (building != null) {
                 return building.canEat(stack);
             }
         }
         return true;
     }
-    
+
     /**
      * Checks if the cook has anything important to do before going to the default furnace user jobs. First calculate the building range if not cached yet. Then check for citizens
      * around the building. If no citizen around switch to default jobs. If citizens around check if food in inventory, if not, switch to gather job. If food in inventory switch to
@@ -329,54 +287,43 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      * @return the next IAIState to transfer to.
      */
     @Override
-    protected IAIState checkForImportantJobs()
-    {
+    protected IAIState checkForImportantJobs() {
         citizenToServe.clear();
         final List<? extends Player> playerList = WorldUtil.getEntitiesWithinBuilding(world, Player.class,
-          building, player -> player != null
-                                && player.getFoodData().getFoodLevel() < LEVEL_TO_FEED_PLAYER
-                                && building.getColony().getPermissions().hasPermission(player, Action.MANAGE_HUTS)
+                building, player -> player != null
+                        && player.getFoodData().getFoodLevel() < LEVEL_TO_FEED_PLAYER
+                        && building.getColony().getPermissions().hasPermission(player, Action.MANAGE_HUTS)
         );
 
         playerToServe.addAll(playerList);
         final RestaurantMenuModule module = worker.getCitizenData().getWorkBuilding().getModule(RESTAURANT_MENU);
 
-        for (final EntityCitizen citizen : WorldUtil.getEntitiesWithinBuilding(world, EntityCitizen.class, building, null))
-        {
+        for (final EntityCitizen citizen : WorldUtil.getEntitiesWithinBuilding(world, EntityCitizen.class, building, null)) {
             if (citizen.getCitizenJobHandler().getColonyJob() instanceof JobCook
-                  || !shouldBeFed(citizen)
-                  || InventoryUtils.hasItemInItemHandler(citizen.getItemHandlerCitizen(), stack -> canEat(stack, citizen)))
-            {
+                    || !shouldBeFed(citizen)
+                    || InventoryUtils.hasItemInItemHandler(citizen.getItemHandlerCitizen(), stack -> canEat(stack, citizen))) {
                 continue;
             }
 
-            if (FoodUtils.getBestFoodForCitizen(worker.getInventoryCitizen(), citizen.getCitizenData(), module.getMenu()) >= 0)
-            {
+            if (FoodUtils.getBestFoodForCitizen(worker.getInventoryCitizen(), citizen.getCitizenData(), module.getMenu()) >= 0) {
                 citizenToServe.add(citizen);
-            }
-            else
-            {
+            } else {
                 final ItemStorage storage = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), module.getMenu(), building);
-                if (storage != null)
-                {
+                if (storage != null) {
                     needsCurrently = new Tuple<>(stack -> new ItemStorage(stack).equals(storage), STACKSIZE);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
             }
         }
 
-        if (!citizenToServe.isEmpty())
-        {
+        if (!citizenToServe.isEmpty()) {
             return COOK_SERVE_FOOD_TO_CITIZEN;
         }
 
-        if (!playerToServe.isEmpty())
-        {
+        if (!playerToServe.isEmpty()) {
             final Predicate<ItemStack> foodPredicate = stack -> module.getMenu().contains(new ItemStorage(stack));
-            if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), foodPredicate))
-            {
-                if (InventoryUtils.hasItemInProvider(building, foodPredicate))
-                {
+            if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), foodPredicate)) {
+                if (InventoryUtils.hasItemInProvider(building, foodPredicate)) {
                     needsCurrently = new Tuple<>(foodPredicate, STACKSIZE);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
@@ -392,23 +339,20 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      *
      * @return true if so.
      */
-    private boolean shouldBeFed(AbstractEntityCitizen citizen)
-    {
+    private boolean shouldBeFed(AbstractEntityCitizen citizen) {
         return citizen.getCitizenData() != null
-                 && !citizen.getCitizenData().isWorking()
-                 && citizen.getCitizenData().getSaturation() <= AVERAGE_SATURATION
-                 && !citizen.getCitizenData().justAte();
+                && !citizen.getCitizenData().isWorking()
+                && citizen.getCitizenData().getSaturation() <= AVERAGE_SATURATION
+                && !citizen.getCitizenData().justAte();
     }
 
     @Override
-    protected int getActionsDoneUntilDumping()
-    {
+    protected int getActionsDoneUntilDumping() {
         return 1;
     }
 
     @Override
-    protected IRequestable getSmeltAbleClass()
-    {
+    protected IRequestable getSmeltAbleClass() {
         return new Food(STACKSIZE, building.getBuildingLevel());
     }
 }

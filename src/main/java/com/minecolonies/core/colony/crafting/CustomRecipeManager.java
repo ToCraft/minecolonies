@@ -35,8 +35,7 @@ import java.util.stream.Collectors;
  * Manager class for tracking Custom recipes during load and use
  * This class is a singleton
  */
-public class CustomRecipeManager
-{
+public class CustomRecipeManager {
     /**
      * The internal static instance of the singleton
      */
@@ -68,8 +67,7 @@ public class CustomRecipeManager
      */
     private final Map<ResourceLocation, JsonObject> recipeTemplates = new HashMap<>();
 
-    private CustomRecipeManager()
-    {
+    private CustomRecipeManager() {
     }
 
     /**
@@ -77,33 +75,28 @@ public class CustomRecipeManager
      *
      * @return
      */
-    public static CustomRecipeManager getInstance()
-    {
+    public static CustomRecipeManager getInstance() {
         return instance;
     }
 
     /**
      * Add recipe to manager.
+     *
      * @param recipe the recipe to add
      */
-    public void addRecipe(@NotNull final CustomRecipe recipe)
-    {
-        if(!recipeMap.containsKey(recipe.getCrafter()))
-        {
+    public void addRecipe(@NotNull final CustomRecipe recipe) {
+        if (!recipeMap.containsKey(recipe.getCrafter())) {
             recipeMap.put(recipe.getCrafter(), new HashMap<>());
         }
 
         recipeMap.get(recipe.getCrafter()).put(recipe.getRecipeId(), recipe);
 
-        if (!recipeOutputMap.containsKey(recipe.getPrimaryOutput().getItem()))
-        {
+        if (!recipeOutputMap.containsKey(recipe.getPrimaryOutput().getItem())) {
             recipeOutputMap.put(recipe.getPrimaryOutput().getItem(), new ArrayList<>());
         }
         recipeOutputMap.get(recipe.getPrimaryOutput().getItem()).add(recipe);
-        for (final ItemStack item : recipe.getAltOutputs())
-        {
-            if (!recipeOutputMap.containsKey(item.getItem()))
-            {
+        for (final ItemStack item : recipe.getAltOutputs()) {
+            if (!recipeOutputMap.containsKey(item.getItem())) {
                 recipeOutputMap.put(item.getItem(), new ArrayList<>());
             }
             recipeOutputMap.get(item.getItem()).add(recipe);
@@ -112,24 +105,23 @@ public class CustomRecipeManager
 
     /**
      * Remove recipe
+     *
      * @param toRemove
      */
-    public void removeRecipe(@NotNull final ResourceLocation toRemove)
-    {
-        if(!removedRecipes.contains(toRemove))
-        {
+    public void removeRecipe(@NotNull final ResourceLocation toRemove) {
+        if (!removedRecipes.contains(toRemove)) {
             removedRecipes.add(toRemove);
         }
     }
 
     /**
      * Temporarily stores a recipe template while waiting for the tags to finish loading.
+     *
      * @param id           the resource id of the template.
      * @param templateJson the template content.
      */
     public void addRecipeTemplate(@NotNull final ResourceLocation id,
-                                  @NotNull final JsonObject templateJson)
-    {
+                                  @NotNull final JsonObject templateJson) {
         recipeTemplates.put(id, templateJson);
     }
 
@@ -137,8 +129,7 @@ public class CustomRecipeManager
      * Reset the entire recipe map.
      * Should be run on Data Pack Reloads, to avoid transferring settings from another world.
      */
-    public void reset()
-    {
+    public void reset() {
         recipeOutputMap.clear();
         recipeMap.clear();
         lootTables.clear();
@@ -148,11 +139,11 @@ public class CustomRecipeManager
 
     /**
      * Get all of the custom recipes that apply to a particular crafter
+     *
      * @param crafter
      * @return
      */
-    public Set<CustomRecipe> getRecipes(@NotNull final String crafter)
-    {
+    public Set<CustomRecipe> getRecipes(@NotNull final String crafter) {
         removeRecipes();
 
         return Collections.unmodifiableSet(new HashSet<>(recipeMap.getOrDefault(crafter, new HashMap<>()).values()));
@@ -161,20 +152,18 @@ public class CustomRecipeManager
     /**
      * The complete list of custom recipes, by crafter.
      */
-    public Map<String, Map<ResourceLocation, CustomRecipe>> getAllRecipes()
-    {
+    public Map<String, Map<ResourceLocation, CustomRecipe>> getAllRecipes() {
         return recipeMap;
     }
 
     /**
      * Get the custom recipes for an item, or an empty list if no matching recipe exists.
-     * @param item     An individual item to search for recipes.
-     * @return  A list of custom recipes with that output.
+     *
+     * @param item An individual item to search for recipes.
+     * @return A list of custom recipes with that output.
      */
-    public List<CustomRecipe> getRecipeByOutput(final Item item)
-    {
-        if(recipeOutputMap.containsKey(item))
-        {
+    public List<CustomRecipe> getRecipeByOutput(final Item item) {
+        if (recipeOutputMap.containsKey(item)) {
             return recipeOutputMap.get(item);
         }
         return Collections.emptyList();
@@ -182,23 +171,19 @@ public class CustomRecipeManager
 
     /**
      * Gets the custom recipes for an ItemStack, including comparing count and tags, or an empty list if no matching recipe exists.
+     *
      * @param itemStack An ItemStack to search for recipes.
-     * @return  A list of custom recipes with that output.
+     * @return A list of custom recipes with that output.
      */
-    public List<CustomRecipe> getRecipeByOutput(final ItemStack itemStack)
-    {
+    public List<CustomRecipe> getRecipeByOutput(final ItemStack itemStack) {
         List<CustomRecipe> returnList = new ArrayList<>();
-        for (CustomRecipe recipe : recipeOutputMap.get(itemStack.getItem()))
-        {
+        for (CustomRecipe recipe : recipeOutputMap.get(itemStack.getItem())) {
             // ItemStacks don't override equals, so have to use the static methods.
-            if (ItemStack.matches(recipe.getPrimaryOutput(), itemStack))
-            {
+            if (ItemStack.matches(recipe.getPrimaryOutput(), itemStack)) {
                 returnList.add(recipe);
             }
-            for (ItemStack output : recipe.getAltOutputs())
-            {
-                if (ItemStack.matches(output, itemStack))
-                {
+            for (ItemStack output : recipe.getAltOutputs()) {
+                if (ItemStack.matches(output, itemStack)) {
                     returnList.add(recipe);
                 }
             }
@@ -208,24 +193,20 @@ public class CustomRecipeManager
 
     /**
      * Gets the custom recipes for an ItemStorage, optionally including comparing count, damage, and NBT, or an empty list if no matching recipe exists.
+     *
      * @param itemStorage An ItemStorage to search for recipes.
-     * @return  A list of custom recipes with that output.
+     * @return A list of custom recipes with that output.
      */
-    public List<CustomRecipe> getRecipeByOutput(final ItemStorage itemStorage)
-    {
+    public List<CustomRecipe> getRecipeByOutput(final ItemStorage itemStorage) {
         List<CustomRecipe> returnList = new ArrayList<>();
-        for (CustomRecipe recipe : recipeOutputMap.get(itemStorage.getItem()))
-        {
+        for (CustomRecipe recipe : recipeOutputMap.get(itemStorage.getItem())) {
             // ItemStorage#equals does the actual comparison work for us, here.
-            if (new ItemStorage(recipe.getPrimaryOutput()).equals(itemStorage))
-            {
+            if (new ItemStorage(recipe.getPrimaryOutput()).equals(itemStorage)) {
                 returnList.add(recipe);
             }
 
-            for (final ItemStack output : recipe.getAltOutputs())
-            {
-                if (new ItemStorage(output).equals(itemStorage))
-                {
+            for (final ItemStack output : recipe.getAltOutputs()) {
+                if (new ItemStorage(output).equals(itemStorage)) {
                     returnList.add(recipe);
                     break;
                 }
@@ -237,39 +218,34 @@ public class CustomRecipeManager
     /**
      * Gets the loot drops (if any) associated with a particular recipe.  These are just
      * informational and shouldn't be used to actually generate loot.
+     *
      * @param lootTableId The loot table id of the recipe.
      * @return The loot drops.
      */
     @NotNull
-    public List<LootTableAnalyzer.LootDrop> getLootDrops(@Nullable final ResourceKey<LootTable> lootTableId)
-    {
+    public List<LootTableAnalyzer.LootDrop> getLootDrops(@Nullable final ResourceKey<LootTable> lootTableId) {
         if (lootTableId == null) return new ArrayList<>();
 
         return lootTables.getOrDefault(lootTableId, new ArrayList<>());
     }
 
-    private void removeRecipes()
-    {
-        if (!removedRecipes.isEmpty())
-        {
-            for (final ResourceLocation toRemove : removedRecipes)
-            {
+    private void removeRecipes() {
+        if (!removedRecipes.isEmpty()) {
+            for (final ResourceLocation toRemove : removedRecipes) {
                 recipeMap.values().stream()
-                    .filter(recipes -> recipes.containsKey(toRemove))
-                    .findFirst()
-                    .ifPresent(crafterRecipeMap ->
-                            {
-                                final List<CustomRecipe> emptyList = new ArrayList<>();
-                                final CustomRecipe recipe = crafterRecipeMap.remove(toRemove);
-                                if (recipe != null)
-                                {
-                                    recipeOutputMap.getOrDefault(recipe.getPrimaryOutput().getItem(), emptyList).remove(recipe);
-                                    for (final ItemStack item : recipe.getAltOutputs())
-                                    {
-                                        recipeOutputMap.getOrDefault(item.getItem(), emptyList).remove(recipe);
-                                    }
+                        .filter(recipes -> recipes.containsKey(toRemove))
+                        .findFirst()
+                        .ifPresent(crafterRecipeMap ->
+                        {
+                            final List<CustomRecipe> emptyList = new ArrayList<>();
+                            final CustomRecipe recipe = crafterRecipeMap.remove(toRemove);
+                            if (recipe != null) {
+                                recipeOutputMap.getOrDefault(recipe.getPrimaryOutput().getItem(), emptyList).remove(recipe);
+                                for (final ItemStack item : recipe.getAltOutputs()) {
+                                    recipeOutputMap.getOrDefault(item.getItem(), emptyList).remove(recipe);
                                 }
-                            });
+                            }
+                        });
             }
 
             removedRecipes.clear();
@@ -278,22 +254,16 @@ public class CustomRecipeManager
 
     /**
      * Resolve the {@link #recipeTemplates} into actual recipes.
-     *
+     * <p>
      * Must be called server-side-only after tags have been loaded and before we sync to client.
      */
-    public void resolveTemplates(@NotNull final HolderLookup.Provider provider)
-    {
-        for (final Map.Entry<ResourceLocation, JsonObject> templateEntry : recipeTemplates.entrySet())
-        {
-            try
-            {
-                for (final CustomRecipe recipe : CustomRecipe.parseTemplate(provider, templateEntry.getKey(), templateEntry.getValue()))
-                {
+    public void resolveTemplates(@NotNull final HolderLookup.Provider provider) {
+        for (final Map.Entry<ResourceLocation, JsonObject> templateEntry : recipeTemplates.entrySet()) {
+            try {
+                for (final CustomRecipe recipe : CustomRecipe.parseTemplate(provider, templateEntry.getKey(), templateEntry.getValue())) {
                     addRecipe(recipe);
                 }
-            }
-            catch (final Exception e)
-            {
+            } catch (final Exception e) {
                 Log.getLogger().error("Error parsing crafterrecipe template " + templateEntry.getKey().toString(), e);
             }
         }
@@ -303,54 +273,42 @@ public class CustomRecipeManager
 
     /**
      * Analyses and builds an approximate list of possible loot drops from registered recipes.
+     *
      * @param level the world.
      */
-    public void buildLootData(@NotNull final Level level)
-    {
+    public void buildLootData(@NotNull final Level level) {
         final List<Animal> animals = RecipeAnalyzer.createAnimals(level);
 
         final List<ResourceKey<LootTable>> lootIds = new ArrayList<>();
-        for (final Map<ResourceLocation, CustomRecipe> recipes : recipeMap.values())
-        {
-            for (final CustomRecipe recipe : recipes.values())
-            {
+        for (final Map<ResourceLocation, CustomRecipe> recipes : recipeMap.values()) {
+            for (final CustomRecipe recipe : recipes.values()) {
                 final ResourceKey<LootTable> lootTable = recipe.getLootTable();
-                if (lootTable != null)
-                {
+                if (lootTable != null) {
                     lootIds.add(lootTable);
                 }
             }
         }
 
-        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
-        {
-            for (final Block source : crop.getDroppedFrom())
-            {
+        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops()) {
+            for (final Block source : crop.getDroppedFrom()) {
                 lootIds.add(source.getLootTable());
             }
         }
 
-        for (final String producerKey : BuildingEntry.getALlModuleProducers().keySet())
-        {
+        for (final String producerKey : BuildingEntry.getALlModuleProducers().keySet()) {
             final var module = BuildingEntry.produceModuleWithoutBuilding(producerKey);
 
-            if (module == null)
-            {
+            if (module == null) {
                 continue;
             }
 
-            if (module instanceof AnimalHerdingModule herding)
-            {
-                for (final Animal animal : animals)
-                {
-                    if (herding.isCompatible(animal))
-                    {
+            if (module instanceof AnimalHerdingModule herding) {
+                for (final Animal animal : animals) {
+                    if (herding.isCompatible(animal)) {
                         lootIds.addAll(herding.getLootTables(animal));
                     }
                 }
-            }
-            else if (module instanceof ICraftingBuildingModule crafting)
-            {
+            } else if (module instanceof ICraftingBuildingModule crafting) {
                 lootIds.addAll(crafting.getAdditionalLootTables());
             }
         }
@@ -368,10 +326,10 @@ public class CustomRecipeManager
 
     /**
      * Sends relevant Custom Recipes loaded from the Custom Recipe Manager to the client.
+     *
      * @param player the player to send the new data to.
      */
-    public void sendCustomRecipeManagerPackets(final ServerPlayer player)
-    {
+    public void sendCustomRecipeManagerPackets(final ServerPlayer player) {
         final RegistryFriendlyByteBuf recipeMgrFriendlyByteBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), player.level().registryAccess());
         serializeNetworkData(recipeMgrFriendlyByteBuf);
         new CustomRecipeManagerMessage(recipeMgrFriendlyByteBuf).sendToPlayer(player);
@@ -380,27 +338,23 @@ public class CustomRecipeManager
     /**
      * Serializes a partial assembly of Custom Recipes.
      * This version sends the full Custom Recipe Manager.
+     *
      * @param recipeMgrFriendlyByteBuf packet buffer to encode the data into.
      */
-    private void serializeNetworkData(final RegistryFriendlyByteBuf recipeMgrFriendlyByteBuf)
-    {
+    private void serializeNetworkData(final RegistryFriendlyByteBuf recipeMgrFriendlyByteBuf) {
         recipeMgrFriendlyByteBuf.writeVarInt(recipeMap.size());
-        for (Map.Entry<String, Map<ResourceLocation, CustomRecipe>> crafter : recipeMap.entrySet())
-        {
+        for (Map.Entry<String, Map<ResourceLocation, CustomRecipe>> crafter : recipeMap.entrySet()) {
             recipeMgrFriendlyByteBuf.writeVarInt(crafter.getValue().size());
-            for (CustomRecipe recipe : crafter.getValue().values())
-            {
+            for (CustomRecipe recipe : crafter.getValue().values()) {
                 recipe.serialize(recipeMgrFriendlyByteBuf);
             }
         }
 
         recipeMgrFriendlyByteBuf.writeVarInt(lootTables.size());
-        for (final Map.Entry<ResourceKey<LootTable>, List<LootTableAnalyzer.LootDrop>> lootEntry : lootTables.entrySet())
-        {
+        for (final Map.Entry<ResourceKey<LootTable>, List<LootTableAnalyzer.LootDrop>> lootEntry : lootTables.entrySet()) {
             recipeMgrFriendlyByteBuf.writeResourceLocation(lootEntry.getKey().location());
             recipeMgrFriendlyByteBuf.writeVarInt(lootEntry.getValue().size());
-            for (final LootTableAnalyzer.LootDrop drop : lootEntry.getValue())
-            {
+            for (final LootTableAnalyzer.LootDrop drop : lootEntry.getValue()) {
                 drop.serialize(recipeMgrFriendlyByteBuf);
             }
         }
@@ -408,38 +362,31 @@ public class CustomRecipeManager
 
     /**
      * Ingests the custom recipes packet, and applies it to the recipe manager.
+     *
      * @param buff packet buffer containing the received data.
      */
-    public void handleCustomRecipeManagerMessage(final RegistryFriendlyByteBuf buff)
-    {
+    public void handleCustomRecipeManagerMessage(final RegistryFriendlyByteBuf buff) {
         reset();
 
-        for (int crafterNum = buff.readVarInt(); crafterNum > 0; crafterNum--)
-        {
-            for (int recipeNum = buff.readVarInt(); recipeNum > 0; recipeNum--)
-            {
+        for (int crafterNum = buff.readVarInt(); crafterNum > 0; crafterNum--) {
+            for (int recipeNum = buff.readVarInt(); recipeNum > 0; recipeNum--) {
                 addRecipe(CustomRecipe.deserialize(buff));
             }
         }
 
-        for (int lootNum = buff.readVarInt(); lootNum > 0; --lootNum)
-        {
+        for (int lootNum = buff.readVarInt(); lootNum > 0; --lootNum) {
             final ResourceKey<LootTable> id = ResourceKey.create(Registries.LOOT_TABLE, buff.readResourceLocation());
             int count = buff.readVarInt();
             final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(count);
-            for (; count > 0; --count)
-            {
+            for (; count > 0; --count) {
                 drops.add(LootTableAnalyzer.LootDrop.deserialize(buff));
             }
             lootTables.put(id, drops);
         }
 
-        try
-        {
+        try {
             NeoForge.EVENT_BUS.post(new CustomRecipesReloadedEvent());
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             Log.getLogger().error("Error during CustomRecipesReloadedEvent", e);
         }
     }

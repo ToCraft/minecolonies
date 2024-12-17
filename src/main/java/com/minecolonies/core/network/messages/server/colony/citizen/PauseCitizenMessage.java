@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class PauseCitizenMessage extends AbstractColonyServerMessage
-{
+public class PauseCitizenMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "pause_citizen", PauseCitizenMessage::new);
 
     /**
@@ -29,8 +28,7 @@ public class PauseCitizenMessage extends AbstractColonyServerMessage
      * @param building  view of the building to read data from
      * @param citizenID the id of the citizen to fill the job.
      */
-    public PauseCitizenMessage(@NotNull final AbstractBuildingView building, final int citizenID)
-    {
+    public PauseCitizenMessage(@NotNull final AbstractBuildingView building, final int citizenID) {
         super(TYPE, building.getColony());
         this.citizenID = citizenID;
     }
@@ -40,8 +38,7 @@ public class PauseCitizenMessage extends AbstractColonyServerMessage
      *
      * @param buf the used byteBuffer.
      */
-    protected PauseCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected PauseCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
 
         citizenID = buf.readInt();
@@ -53,16 +50,14 @@ public class PauseCitizenMessage extends AbstractColonyServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
 
         buf.writeInt(citizenID);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
         citizen.setPaused(!citizen.isPaused());
     }

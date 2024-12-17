@@ -8,8 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * This is a colony-related event in the Forge sense, not in the
  * {@link com.minecolonies.api.colony.colonyEvents.IColonyEvent} sense.
  */
-public abstract class AbstractColonyEvent extends Event
-{
+public abstract class AbstractColonyEvent extends Event {
     /**
      * The colony this event was called in.
      */
@@ -21,8 +20,7 @@ public abstract class AbstractColonyEvent extends Event
      *
      * @param colony The colony related to the event.
      */
-    protected AbstractColonyEvent(@NotNull final IColony colony)
-    {
+    protected AbstractColonyEvent(@NotNull final IColony colony) {
         this.colony = colony;
     }
 
@@ -30,8 +28,7 @@ public abstract class AbstractColonyEvent extends Event
      * Gets the colony related to the event.
      */
     @NotNull
-    public IColony getColony()
-    {
+    public IColony getColony() {
         return colony;
     }
 }

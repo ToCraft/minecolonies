@@ -6,7 +6,6 @@ import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
@@ -23,8 +22,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all drowned pirate entities.
  */
-public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMob
-{
+public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMob {
     /**
      * Swim speed for pirates
      */
@@ -46,30 +44,25 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
      * @param type  the type.
      * @param world the world.
      */
-    public AbstractDrownedEntityPirate(final EntityType<? extends AbstractDrownedEntityPirate> type, final Level world)
-    {
+    public AbstractDrownedEntityPirate(final EntityType<? extends AbstractDrownedEntityPirate> type, final Level world) {
         super(type, world);
         this.textureId = new Random().nextInt(PIRATE_TEXTURES);
     }
 
     @Override
-    public void playAmbientSound()
-    {
-        if (level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
-        {
+    public void playAmbientSound() {
+        if (level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE) {
             this.playSound(this.isInWater() ? SoundEvents.DROWNED_AMBIENT_WATER : SoundEvents.DROWNED_AMBIENT, this.getSoundVolume(), this.getVoicePitch());
         }
     }
 
     @Override
-    public boolean checkSpawnObstruction(final LevelReader level)
-    {
+    public boolean checkSpawnObstruction(final LevelReader level) {
         return level.isUnobstructed(this);
     }
 
     @Override
-    public boolean checkSpawnRules(final LevelAccessor worldIn, final MobSpawnType spawnReasonIn)
-    {
+    public boolean checkSpawnRules(final LevelAccessor worldIn, final MobSpawnType spawnReasonIn) {
         return true;
     }
 
@@ -78,30 +71,26 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
      *
      * @return the texture id.
      */
-    public int getTextureId()
-    {
+    public int getTextureId() {
         return this.textureId;
     }
 
     @NotNull
     @Override
-    public AbstractAdvancedPathNavigate getNavigation()
-    {
-        if (this.newNavigator == null)
-        {
+    public AbstractAdvancedPathNavigate getNavigation() {
+        if (this.newNavigator == null) {
             this.newNavigator = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigation = newNavigator;
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
             newNavigator.setSpeedModifier(0.5);
             newNavigator.getPathingOptions().withStartSwimCost(0.0D).withSwimCost(0.0D).withDivingCost(0.0D).withCanEnterDoors(true).withDropCost(0.0D).withJumpCost(0.0D).withWalkUnderWater(true).withNonLadderClimbableCost(0.0D).setPassDanger(true);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
-                                                 .withTakeDamageOnStuck(0.4f)
-                                                 .withBuildLeafBridges()
-                                                 .withChanceToByPassMovingAway(0.20)
-                                                 .withPlaceLadders();
+                    .withTakeDamageOnStuck(0.4f)
+                    .withBuildLeafBridges()
+                    .withChanceToByPassMovingAway(0.20)
+                    .withPlaceLadders();
 
-            if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidersbreakblocks.get())
-            {
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidersbreakblocks.get()) {
                 stuckHandler.withBlockBreaks();
                 stuckHandler.withCompleteStuckBlockBreak(6);
             }
@@ -113,20 +102,17 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
     }
 
     @Override
-    protected int decreaseAirSupply(final int supply)
-    {
+    protected int decreaseAirSupply(final int supply) {
         return supply;
     }
 
     @Override
-    public RaiderType getRaiderType()
-    {
+    public RaiderType getRaiderType() {
         return RaiderType.PIRATE;
     }
 
     @Override
-    public double getSwimSpeedFactor()
-    {
+    public double getSwimSpeedFactor() {
         return PIRATE_SWIM_BONUS;
     }
 }

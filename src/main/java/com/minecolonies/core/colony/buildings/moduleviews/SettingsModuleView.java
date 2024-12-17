@@ -17,44 +17,39 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Module containing all settings (client side).
  */
-public class SettingsModuleView extends AbstractBuildingModuleView implements ISettingsModuleView
-{
+public class SettingsModuleView extends AbstractBuildingModuleView implements ISettingsModuleView {
     /**
      * Map of setting id (string) to generic setting.
      */
     final Map<ISettingKey<? extends ISetting>, ISetting> settings = new LinkedHashMap<>();
 
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         final Map<ISettingKey<?>, ISetting> tempSettings = new LinkedHashMap<>();
         final int size = buf.readInt();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             final ResourceLocation key = buf.readResourceLocation();
             final ISetting setting = StandardFactoryController.getInstance().deserialize(buf);
-            if (setting != null)
-            {
+            if (setting != null) {
                 final SettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);
                 tempSettings.put(settingsKey, setting);
                 settings.putIfAbsent(settingsKey, setting);
             }
         }
 
-        for (final Map.Entry<ISettingKey<? extends ISetting>, ISetting> entry : new ArrayList<>(settings.entrySet()))
-        {
+        for (final Map.Entry<ISettingKey<? extends ISetting>, ISetting> entry : new ArrayList<>(settings.entrySet())) {
             final ISetting syncSetting = tempSettings.get(entry.getKey());
-            if (syncSetting == null)
-            {
+            if (syncSetting == null) {
                 settings.remove(entry.getKey());
-            }
-            else if (entry.getValue() != syncSetting)
-            {
+            } else if (entry.getValue() != syncSetting) {
                 entry.getValue().updateSetting(syncSetting);
                 entry.getValue().copyValue(syncSetting);
             }
@@ -66,13 +61,10 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
      *
      * @return the list of string key and ISetting value.
      */
-    public List<ISettingKey<? extends ISetting>> getSettingsToShow()
-    {
+    public List<ISettingKey<? extends ISetting>> getSettingsToShow() {
         List<ISettingKey<? extends ISetting>> filteredSettings = new ArrayList<>();
-        for (Map.Entry<ISettingKey<? extends ISetting>, ISetting> setting : settings.entrySet())
-        {
-            if (setting.getValue().isActive(this) || !setting.getValue().shouldHideWhenInactive())
-            {
+        for (Map.Entry<ISettingKey<? extends ISetting>, ISetting> setting : settings.entrySet()) {
+            if (setting.getValue().isActive(this) || !setting.getValue().shouldHideWhenInactive()) {
                 filteredSettings.add(setting.getKey());
             }
         }
@@ -82,36 +74,30 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     @Override
     @Nullable
     @SuppressWarnings("unchecked")
-    public <T extends ISetting> T getSetting(final ISettingKey<T> key)
-    {
+    public <T extends ISetting> T getSetting(final ISettingKey<T> key) {
         return (T) settings.getOrDefault(key, null);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new SettingsModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutsettings.xml", buildingView, this);
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return "settings";
     }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return "com.minecolonies.coremod.gui.workerhuts.settings";
     }
 
     @Override
-    public void trigger(final ISettingKey<?> key)
-    {
+    public void trigger(final ISettingKey<?> key) {
         final ISetting setting = settings.get(key);
-        if (setting.isActive(this))
-        {
+        if (setting.isActive(this)) {
             setting.trigger();
             new TriggerSettingMessage(buildingView, key, setting, getProducer().getRuntimeID()).sendToServer();
         }

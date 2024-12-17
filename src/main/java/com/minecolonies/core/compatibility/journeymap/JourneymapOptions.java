@@ -11,8 +11,7 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JOURNEY_MAP_INFO;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class JourneymapOptions
-{
+public class JourneymapOptions {
     private final Option<BorderStyle> borderFullscreenStyle;
     private final Option<BorderStyle> borderMinimapStyle;
     private final Option<Boolean> deathpoints;
@@ -26,8 +25,7 @@ public class JourneymapOptions
     private final Option<Boolean> visitors;
     private final Option<RaiderColor> raiders;
 
-    public JourneymapOptions()
-    {
+    public JourneymapOptions() {
         final String prefix = PARTIAL_JOURNEY_MAP_INFO + "options.";
         final OptionCategory category = new OptionCategory(MOD_ID, prefix + "category");
 
@@ -45,88 +43,72 @@ public class JourneymapOptions
         this.raiders = new EnumOption<>(category, "raiders", prefix + "raiders", RaiderColor.HOSTILE).setSortOrder(303);
     }
 
-    public static BorderStyle getBorderFullscreenStyle(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static BorderStyle getBorderFullscreenStyle(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.borderFullscreenStyle.get()).orElse(BorderStyle.FILLED);
     }
 
-    public static BorderStyle getBorderMinimapStyle(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static BorderStyle getBorderMinimapStyle(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.borderMinimapStyle.get()).orElse(BorderStyle.FRAMED);
     }
 
-    public static boolean getDeathpoints(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static boolean getDeathpoints(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.deathpoints.get()).orElse(true);
     }
 
-    public static boolean getShowColonyName(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static boolean getShowColonyName(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.colonyname.get()).orElse(true);
     }
 
-    public static boolean getShowColonistNameMinimap(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static boolean getShowColonistNameMinimap(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.colonistNameMinimap.get()).orElse(true);
     }
 
-    public static boolean getShowColonistNameFullscreen(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static boolean getShowColonistNameFullscreen(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.colonistNameFullscreen.get()).orElse(true);
     }
 
-    public static boolean getShowColonistTooltip(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static boolean getShowColonistTooltip(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.colonistTooltips.get()).orElse(true);
     }
 
-    public static boolean getShowColonistTeamColour(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static boolean getShowColonistTeamColour(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.colonistTeam.get()).orElse(true);
     }
 
-    public static boolean getShowGuards(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static boolean getShowGuards(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.guards.get()).orElse(true);
     }
 
-    public static boolean getShowCitizens(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static boolean getShowCitizens(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.citizens.get()).orElse(true);
     }
 
-    public static boolean getShowVisitors(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static boolean getShowVisitors(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.visitors.get()).orElse(true);
     }
 
-    public static RaiderColor getRaiderColor(@NotNull final Optional<JourneymapOptions> options)
-    {
+    public static RaiderColor getRaiderColor(@NotNull final Optional<JourneymapOptions> options) {
         return options.map(o -> o.raiders.get()).orElse(RaiderColor.HOSTILE);
     }
 
-    public enum BorderStyle implements KeyedEnum
-    {
+    public enum BorderStyle implements KeyedEnum {
         HIDDEN(PARTIAL_JOURNEY_MAP_INFO + "borderstyle.hidden"),
         FRAMED(PARTIAL_JOURNEY_MAP_INFO + "borderstyle.framed"),
         FILLED(PARTIAL_JOURNEY_MAP_INFO + "borderstyle.filled");
 
         private final String key;
 
-        BorderStyle(final String key)
-        {
+        BorderStyle(final String key) {
             this.key = key;
         }
 
         @Override
-        public String getKey()
-        {
+        public String getKey() {
             return this.key;
         }
     }
 
-    public enum RaiderColor implements KeyedEnum
-    {
+    public enum RaiderColor implements KeyedEnum {
         HOSTILE(PARTIAL_JOURNEY_MAP_INFO + "raidercolor.hostile", TextColor.fromRgb(0xFFFFFFFF)),
         NONE(PARTIAL_JOURNEY_MAP_INFO + "raidercolor.none", TextColor.fromRgb(0xFF000000)),
         YELLOW(PARTIAL_JOURNEY_MAP_INFO + "raidercolor.yellow", TextColor.fromLegacyFormat(ChatFormatting.YELLOW)),
@@ -137,21 +119,18 @@ public class JourneymapOptions
         private final String key;
         private final TextColor color;
 
-        RaiderColor(final String key, final TextColor color)
-        {
+        RaiderColor(final String key, final TextColor color) {
             this.key = key;
             this.color = color;
         }
 
         @Override
-        public String getKey()
-        {
+        public String getKey() {
             return this.key;
         }
 
         @NotNull
-        public TextColor getColor()
-        {
+        public TextColor getColor() {
             return this.color;
         }
     }

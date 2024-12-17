@@ -12,15 +12,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The sifter job class.
  */
-public class JobSifter extends AbstractJobCrafter<EntityAIWorkSifter, JobSifter>
-{
+public class JobSifter extends AbstractJobCrafter<EntityAIWorkSifter, JobSifter> {
     /**
      * Create a sifter job.
      *
      * @param entity the lumberjack.
      */
-    public JobSifter(final ICitizenData entity)
-    {
+    public JobSifter(final ICitizenData entity) {
         super(entity);
     }
 
@@ -31,8 +29,7 @@ public class JobSifter extends AbstractJobCrafter<EntityAIWorkSifter, JobSifter>
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.SMELTER_ID;
     }
 
@@ -43,14 +40,12 @@ public class JobSifter extends AbstractJobCrafter<EntityAIWorkSifter, JobSifter>
      */
     @NotNull
     @Override
-    public EntityAIWorkSifter generateAI()
-    {
+    public EntityAIWorkSifter generateAI() {
         return new EntityAIWorkSifter(this);
     }
 
     @Override
-    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
-    {
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker) {
         worker.queueSound(SoundEvents.NETHER_BRICKS_HIT, blockPos, 1, 9);
     }
 }

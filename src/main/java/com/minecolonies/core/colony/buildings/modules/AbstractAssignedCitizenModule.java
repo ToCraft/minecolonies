@@ -26,8 +26,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_HIRING_MODE
 /**
  * Abstract assignment module.
  */
-public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModule implements IAssignsCitizen, IPersistentModule, IBuildingEventsModule
-{
+public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModule implements IAssignsCitizen, IPersistentModule, IBuildingEventsModule {
     /**
      * List of worker assosiated to the building.
      */
@@ -39,10 +38,8 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     private HiringMode hiringMode = HiringMode.DEFAULT;
 
     @Override
-    public boolean removeCitizen(@NotNull final ICitizenData citizen)
-    {
-        if (assignedCitizen.contains(citizen))
-        {
+    public boolean removeCitizen(@NotNull final ICitizenData citizen) {
+        if (assignedCitizen.contains(citizen)) {
             assignedCitizen.remove(citizen);
             markDirty();
             onRemoval(citizen);
@@ -53,10 +50,8 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     }
 
     @Override
-    public boolean assignCitizen(final ICitizenData citizen)
-    {
-        if (assignedCitizen.contains(citizen) || isFull() || citizen == null)
-        {
+    public boolean assignCitizen(final ICitizenData citizen) {
+        if (assignedCitizen.contains(citizen) || isFull() || citizen == null) {
             return false;
         }
 
@@ -68,96 +63,82 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
 
     /**
      * Action to do on assignment.
+     *
      * @param citizen the assigned citizen.
      */
     abstract void onAssignment(final ICitizenData citizen);
 
     /**
      * Action to do on un-assignment.
+     *
      * @param citizen the assigned citizen.
      */
     abstract void onRemoval(final ICitizenData citizen);
 
     @Override
-    public void onDestroyed()
-    {
-        for(final ICitizenData citizenData: new ArrayList<>(assignedCitizen))
-        {
+    public void onDestroyed() {
+        for (final ICitizenData citizenData : new ArrayList<>(assignedCitizen)) {
             removeCitizen(citizenData);
         }
     }
 
     @Override
-    public List<ICitizenData> getAssignedCitizen()
-    {
+    public List<ICitizenData> getAssignedCitizen() {
         return new ArrayList<>(assignedCitizen);
     }
 
     /**
      * Get the first citizen assigned to this module.
+     *
      * @return this citizen or null.
      */
     @Nullable
-    public ICitizenData getFirstCitizen()
-    {
+    public ICitizenData getFirstCitizen() {
         return assignedCitizen.isEmpty() ? null : assignedCitizen.get(0);
     }
 
     @Override
-    public boolean isFull()
-    {
+    public boolean isFull() {
         return assignedCitizen.size() >= getModuleMax();
     }
 
     @Override
-    public boolean hasAssignedCitizen(final ICitizenData citizen)
-    {
+    public boolean hasAssignedCitizen(final ICitizenData citizen) {
         return assignedCitizen.contains(citizen);
     }
 
     @Override
     @Nullable
-    public List<Optional<AbstractEntityCitizen>> getAssignedEntities()
-    {
+    public List<Optional<AbstractEntityCitizen>> getAssignedEntities() {
         return assignedCitizen.stream().filter(Objects::nonNull).map(ICitizenData::getEntity).collect(Collectors.toList());
     }
 
     @Override
-    public final boolean hasAssignedCitizen()
-    {
+    public final boolean hasAssignedCitizen() {
         return !assignedCitizen.isEmpty();
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
-        if (compound.contains(TAG_ASSIGNED))
-        {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
+        if (compound.contains(TAG_ASSIGNED)) {
             this.hiringMode = HiringMode.values()[compound.getCompound(TAG_ASSIGNED).getInt(TAG_HIRING_MODE)];
-        }
-        else if (compound.contains(getModuleSerializationIdentifier()))
-        {
+        } else if (compound.contains(getModuleSerializationIdentifier())) {
             this.hiringMode = HiringMode.values()[compound.getCompound(getModuleSerializationIdentifier()).getInt(TAG_HIRING_MODE)];
-        }
-        else
-        {
+        } else {
             this.hiringMode = HiringMode.values()[compound.getInt(TAG_HIRING_MODE)];
         }
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf) {
         super.serializeToView(buf);
         buf.writeInt(assignedCitizen.size());
-        for (@NotNull final ICitizenData citizen : assignedCitizen)
-        {
+        for (@NotNull final ICitizenData citizen : assignedCitizen) {
             buf.writeInt(citizen.getId());
         }
         buf.writeInt(hiringMode.ordinal());
@@ -165,15 +146,13 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     }
 
     @Override
-    public void setHiringMode(final HiringMode hiringMode)
-    {
+    public void setHiringMode(final HiringMode hiringMode) {
         this.hiringMode = hiringMode;
         this.markDirty();
     }
 
     @Override
-    public HiringMode getHiringMode()
-    {
+    public HiringMode getHiringMode() {
         return hiringMode;
     }
 
@@ -184,8 +163,7 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
      * @return a string identifier.
      */
     @Deprecated
-    protected String getModuleSerializationIdentifier()
-    {
+    protected String getModuleSerializationIdentifier() {
         return null;
     }
 

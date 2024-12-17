@@ -10,33 +10,28 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Block of the BarracksTower.
  */
-public class BlockHutBarracksTower extends AbstractBlockHut<BlockHutBarracksTower>
-{
+public class BlockHutBarracksTower extends AbstractBlockHut<BlockHutBarracksTower> {
     /**
      * Default constructor.
      */
-    public BlockHutBarracksTower()
-    {
+    public BlockHutBarracksTower() {
         //No different from Abstract parent
         super();
     }
 
     @Override
-    public boolean isVisible(@Nullable final CompoundTag beData)
-    {
+    public boolean isVisible(@Nullable final CompoundTag beData) {
         return false;
     }
 
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhutbarrackstower";
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.barracksTower.get();
     }
 }

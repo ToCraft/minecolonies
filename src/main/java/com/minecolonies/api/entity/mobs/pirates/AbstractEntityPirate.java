@@ -18,8 +18,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all pirate entities.
  */
-public abstract class AbstractEntityPirate extends AbstractEntityRaiderMob
-{
+public abstract class AbstractEntityPirate extends AbstractEntityRaiderMob {
     /**
      * Swim speed for pirates
      */
@@ -41,26 +40,22 @@ public abstract class AbstractEntityPirate extends AbstractEntityRaiderMob
      * @param type  the type.
      * @param world the world.
      */
-    public AbstractEntityPirate(final EntityType<? extends AbstractEntityPirate> type, final Level world)
-    {
+    public AbstractEntityPirate(final EntityType<? extends AbstractEntityPirate> type, final Level world) {
         super(type, world);
         this.textureId = new Random().nextInt(PIRATE_TEXTURES);
     }
 
     @Override
-    public void playAmbientSound()
-    {
+    public void playAmbientSound() {
         final SoundEvent soundevent = this.getAmbientSound();
 
-        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
-        {
+        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE) {
             this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }
     }
 
     @Override
-    public boolean checkSpawnRules(final LevelAccessor worldIn, final MobSpawnType spawnReasonIn)
-    {
+    public boolean checkSpawnRules(final LevelAccessor worldIn, final MobSpawnType spawnReasonIn) {
         return true;
     }
 
@@ -69,29 +64,25 @@ public abstract class AbstractEntityPirate extends AbstractEntityRaiderMob
      *
      * @return the texture id.
      */
-    public int getTextureId()
-    {
+    public int getTextureId() {
         return this.textureId;
     }
 
     @NotNull
     @Override
-    public AbstractAdvancedPathNavigate getNavigation()
-    {
+    public AbstractAdvancedPathNavigate getNavigation() {
         AbstractAdvancedPathNavigate navigator = super.getNavigation();
         navigator.getPathingOptions().withStartSwimCost(2.5D).withSwimCost(1.1D);
         return navigator;
     }
 
     @Override
-    public RaiderType getRaiderType()
-    {
+    public RaiderType getRaiderType() {
         return RaiderType.PIRATE;
     }
 
     @Override
-    public double getSwimSpeedFactor()
-    {
+    public double getSwimSpeedFactor() {
         return PIRATE_SWIM_BONUS;
     }
 }

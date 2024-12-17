@@ -1,8 +1,5 @@
 package com.minecolonies.core.colony.jobs;
 
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -10,12 +7,15 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.entity.ai.workers.guard.EntityAIKnight;
 import com.minecolonies.core.util.AttributeModifierUtils;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
@@ -27,8 +27,7 @@ import static com.minecolonies.api.util.constant.GuardConstants.KNIGHT_HP_BONUS;
  *
  * @author Asherslab
  */
-public class JobKnight extends AbstractJobGuard<JobKnight>
-{
+public class JobKnight extends AbstractJobGuard<JobKnight> {
     /**
      * Desc of knight job.
      */
@@ -39,48 +38,40 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
      *
      * @param entity the citizen data.
      */
-    public JobKnight(final ICitizenData entity)
-    {
+    public JobKnight(final ICitizenData entity) {
         super(entity);
     }
 
     @Override
-    public EntityAIKnight generateGuardAI()
-    {
+    public EntityAIKnight generateGuardAI() {
         return new EntityAIKnight(this);
     }
 
     @Override
-    public void onLevelUp()
-    {
+    public void onLevelUp() {
         // Bonus Health for knights(gets reset upon Firing)
-        if (getCitizen().getEntity().isPresent())
-        {
+        if (getCitizen().getEntity().isPresent()) {
             final AbstractEntityCitizen citizen = getCitizen().getEntity().get();
 
             // +1 Heart every 2 level
             final AttributeModifier healthModLevel =
-              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
-                getCitizen().getCitizenSkillHandler().getLevel(Skill.Stamina) + KNIGHT_HP_BONUS,
-                AttributeModifier.Operation.ADD_VALUE);
+                    new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
+                            getCitizen().getCitizenSkillHandler().getLevel(Skill.Stamina) + KNIGHT_HP_BONUS,
+                            AttributeModifier.Operation.ADD_VALUE);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }
 
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.KNIGHT_GUARD_ID;
     }
 
     @Override
-    public boolean ignoresDamage(@NotNull final DamageSource damageSource)
-    {
-        if(damageSource.is(DamageTypeTags.IS_EXPLOSION) && this.getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0
-                && InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD) != -1)
-        {
-            if (!this.getCitizen().getEntity().isPresent())
-            {
+    public boolean ignoresDamage(@NotNull final DamageSource damageSource) {
+        if (damageSource.is(DamageTypeTags.IS_EXPLOSION) && this.getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0
+                && InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD) != -1) {
+            if (!this.getCitizen().getEntity().isPresent()) {
                 return true;
             }
             final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();

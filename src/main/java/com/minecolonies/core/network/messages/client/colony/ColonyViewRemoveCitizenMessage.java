@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewRemoveCitizenMessage extends AbstractClientPlayMessage
-{
+public class ColonyViewRemoveCitizenMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_remove_citizen", ColonyViewRemoveCitizenMessage::new);
 
     private final int colonyId;
@@ -26,30 +25,26 @@ public class ColonyViewRemoveCitizenMessage extends AbstractClientPlayMessage
      * @param colony  Colony the citizen is in.
      * @param citizen Citizen ID.
      */
-    public ColonyViewRemoveCitizenMessage(@NotNull final Colony colony, final int citizen)
-    {
+    public ColonyViewRemoveCitizenMessage(@NotNull final Colony colony, final int citizen) {
         super(TYPE);
         this.colonyId = colony.getID();
         this.citizenId = citizen;
     }
 
-    protected ColonyViewRemoveCitizenMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ColonyViewRemoveCitizenMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         colonyId = buf.readInt();
         citizenId = buf.readInt();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         IColonyManager.getInstance().handleColonyViewRemoveCitizenMessage(colonyId, citizenId, player.level().dimension());
     }
 }

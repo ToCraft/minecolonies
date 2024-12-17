@@ -16,8 +16,7 @@ import static com.minecolonies.api.util.constant.translation.CommandTranslationC
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
 // TODO: Unused, maybe drop or add an auto delete feature
-public class CommandSetDeletable implements IMCOPCommand
-{
+public class CommandSetDeletable implements IMCOPCommand {
 
     private static final String DELETEABLE_ARG = "deletable";
 
@@ -27,19 +26,17 @@ public class CommandSetDeletable implements IMCOPCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
+        if (colony == null) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         colony.setCanBeAutoDeleted(BoolArgumentType.getBool(context, DELETEABLE_ARG));
         context.getSource()
-          .sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_DELETABLE_SUCCESS, colonyID, BoolArgumentType.getBool(context, DELETEABLE_ARG)), true);
+                .sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_DELETABLE_SUCCESS, colonyID, BoolArgumentType.getBool(context, DELETEABLE_ARG)), true);
         return 1;
     }
 
@@ -47,16 +44,14 @@ public class CommandSetDeletable implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "setDeleteable";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
-                         .then(IMCCommand.newArgument(DELETEABLE_ARG, BoolArgumentType.bool()).executes(this::checkPreConditionAndExecute)));
+                .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                        .then(IMCCommand.newArgument(DELETEABLE_ARG, BoolArgumentType.bool()).executes(this::checkPreConditionAndExecute)));
     }
 }

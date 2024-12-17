@@ -17,41 +17,35 @@ import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_M
 /**
  * Abstract Class for Guard Jobs.
  */
-public abstract class AbstractJobGuard<J extends AbstractJobGuard<J>> extends AbstractJob<AbstractEntityAIGuard<J, ? extends AbstractBuildingGuards>, J>
-{
+public abstract class AbstractJobGuard<J extends AbstractJobGuard<J>> extends AbstractJob<AbstractEntityAIGuard<J, ? extends AbstractBuildingGuards>, J> {
     /**
      * Initialize citizen data.
      *
      * @param entity the citizen data.
      */
-    public AbstractJobGuard(final ICitizenData entity)
-    {
+    public AbstractJobGuard(final ICitizenData entity) {
         super(entity);
     }
 
     protected abstract AbstractEntityAIGuard<J, ? extends AbstractBuildingGuards> generateGuardAI();
 
     @Override
-    public AbstractEntityAIGuard<J, ? extends AbstractBuildingGuards> generateAI()
-    {
+    public AbstractEntityAIGuard<J, ? extends AbstractBuildingGuards> generateAI() {
         return generateGuardAI();
     }
 
     @Override
-    public void triggerDeathAchievement(final DamageSource source, final AbstractEntityCitizen citizen)
-    {
+    public void triggerDeathAchievement(final DamageSource source, final AbstractEntityCitizen citizen) {
         super.triggerDeathAchievement(source, citizen);
     }
 
     @Override
-    public boolean allowsAvoidance()
-    {
+    public boolean allowsAvoidance() {
         return false;
     }
 
     @Override
-    public boolean isGuard()
-    {
+    public boolean isGuard() {
         return true;
     }
 
@@ -60,25 +54,22 @@ public abstract class AbstractJobGuard<J extends AbstractJobGuard<J>> extends Ab
      *
      * @return true if sleeping
      */
-    public boolean isAsleep()
-    {
+    public boolean isAsleep() {
         return getWorkerAI() != null && getWorkerAI().getState() == GUARD_SLEEP;
     }
 
     @Override
-    public void initEntityValues(AbstractEntityCitizen citizen)
-    {
+    public void initEntityValues(AbstractEntityCitizen citizen) {
         super.initEntityValues(citizen);
 
         final IBuilding workBuilding = citizen.getCitizenData().getWorkBuilding();
-        if (workBuilding instanceof AbstractBuildingGuards)
-        {
+        if (workBuilding instanceof AbstractBuildingGuards) {
             AttributeModifierUtils.addHealthModifier(citizen,
-              new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, ((AbstractBuildingGuards) workBuilding).getBonusHealth(), AttributeModifier.Operation.ADD_VALUE));
+                    new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, ((AbstractBuildingGuards) workBuilding).getBonusHealth(), AttributeModifier.Operation.ADD_VALUE));
             AttributeModifierUtils.addHealthModifier(citizen,
-              new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME,
-                MineColonies.getConfig().getServer().guardHealthMult.get() - 1.0,
-                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+                    new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME,
+                            MineColonies.getConfig().getServer().guardHealthMult.get() - 1.0,
+                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
         }
     }
 }

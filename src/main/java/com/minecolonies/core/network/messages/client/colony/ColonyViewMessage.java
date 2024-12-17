@@ -20,8 +20,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewMessage extends AbstractClientPlayMessage
-{
+public class ColonyViewMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view", ColonyViewMessage::new, true, false);
 
     /**
@@ -50,8 +49,7 @@ public class ColonyViewMessage extends AbstractClientPlayMessage
      * @param colony Colony of the view to update.
      * @param buf    the bytebuffer.
      */
-    public ColonyViewMessage(@NotNull final Colony colony, final RegistryFriendlyByteBuf buf)
-    {
+    public ColonyViewMessage(@NotNull final Colony colony, final RegistryFriendlyByteBuf buf) {
         super(TYPE);
         this.colonyId = colony.getID();
         this.dim = colony.getDimension();
@@ -63,14 +61,12 @@ public class ColonyViewMessage extends AbstractClientPlayMessage
      *
      * @param newSubscription
      */
-    public ColonyViewMessage setIsNewSubscription(final boolean newSubscription)
-    {
+    public ColonyViewMessage setIsNewSubscription(final boolean newSubscription) {
         isNewSubscription = newSubscription;
         return this;
     }
 
-    protected ColonyViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ColonyViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         colonyId = buf.readInt();
         isNewSubscription = buf.readBoolean();
@@ -79,8 +75,7 @@ public class ColonyViewMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         colonyBuffer.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
@@ -89,8 +84,7 @@ public class ColonyViewMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, @Nullable final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, @Nullable final Player player) {
         IColonyManager.getInstance().handleColonyViewMessage(colonyId, colonyBuffer, isNewSubscription, dim);
     }
 }

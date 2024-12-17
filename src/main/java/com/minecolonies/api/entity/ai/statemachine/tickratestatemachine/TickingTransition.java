@@ -13,8 +13,7 @@ import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.T
 /**
  * Transition with tickrate logic, allows to define an intended tickrate at which this transition will be checked.
  */
-public class TickingTransition<S extends IState> extends BasicTransition<S> implements ITickingTransition<S>
-{
+public class TickingTransition<S extends IState> extends BasicTransition<S> implements ITickingTransition<S> {
     /**
      * The tickrate at which the Target should be called, e.g. tickRate = 20 means call function every 20 Ticks
      */
@@ -41,11 +40,10 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
      * @param tickRate  The expected tickrate at which this transition should be checked.
      */
     public TickingTransition(
-      @NotNull final S state,
-      @NotNull final BooleanSupplier condition,
-      @NotNull final Supplier<S> nextState,
-      final int tickRate)
-    {
+            @NotNull final S state,
+            @NotNull final BooleanSupplier condition,
+            @NotNull final Supplier<S> nextState,
+            final int tickRate) {
         super(state, condition, nextState);
 
         // Limit rates
@@ -56,8 +54,7 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
         this.ticksToUpdate = tickOffsetVariant % this.tickRate;
         // Increase variant for next AITarget and reset variant at a certain point
         tickOffsetVariant++;
-        if (tickOffsetVariant >= MAX_TICKRATE_VARIANT)
-        {
+        if (tickOffsetVariant >= MAX_TICKRATE_VARIANT) {
             tickOffsetVariant = 0;
         }
     }
@@ -70,10 +67,9 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
      * @param tickRate  The expected tickrate at which this transition should be checked.
      */
     public TickingTransition(
-      @NotNull final BooleanSupplier condition,
-      @NotNull final Supplier<S> nextState,
-      final int tickRate)
-    {
+            @NotNull final BooleanSupplier condition,
+            @NotNull final Supplier<S> nextState,
+            final int tickRate) {
         super(condition, nextState);
 
         // Limit rates
@@ -84,8 +80,7 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
         this.ticksToUpdate = tickOffsetVariant % this.tickRate;
         // Increase variant for next AITarget and reset variant at a certain point
         tickOffsetVariant++;
-        if (tickOffsetVariant >= MAX_TICKRATE_VARIANT)
-        {
+        if (tickOffsetVariant >= MAX_TICKRATE_VARIANT) {
             tickOffsetVariant = 0;
         }
     }
@@ -96,8 +91,7 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
      * @return Tickrate
      */
     @Override
-    public int getTickRate()
-    {
+    public int getTickRate() {
         return tickRate;
     }
 
@@ -107,8 +101,7 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
      * @param tickRate rate at which the AITarget should tick
      */
     @Override
-    public void setTickRate(final int tickRate)
-    {
+    public void setTickRate(final int tickRate) {
         this.tickRate = tickRate;
     }
 
@@ -118,14 +111,12 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
      * @return random
      */
     @Override
-    public int countdownTicksToUpdate(final int reduction)
-    {
+    public int countdownTicksToUpdate(final int reduction) {
         return ticksToUpdate -= reduction;
     }
 
     @Override
-    public void setTicksToUpdate(final int ticksToUpdate)
-    {
+    public void setTicksToUpdate(final int ticksToUpdate) {
         this.ticksToUpdate = ticksToUpdate;
     }
 }

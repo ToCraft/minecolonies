@@ -15,38 +15,35 @@ import com.minecolonies.core.network.messages.server.GetColonyInfoMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_DONE_MESSAGE;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_DONE_MESSAGE;
 
 /**
  * Hut for the town hall. Sets the working range for the town hall in the constructor
  */
-public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
-{
-    public BlockHutTownHall()
-    {
+public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall> {
+    public BlockHutTownHall() {
         super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
     }
 
@@ -71,58 +68,41 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     public static long timeout = 0;
 
     @Override
-    public float getDestroyProgress(final BlockState state, @NotNull final Player player, @NotNull final BlockGetter blockReader, @NotNull final BlockPos pos)
-    {
-        if(MineColonies.getConfig().getServer().pvp_mode.get() && player.level() instanceof ServerLevel)
-        {
+    public float getDestroyProgress(final BlockState state, @NotNull final Player player, @NotNull final BlockGetter blockReader, @NotNull final BlockPos pos) {
+        if (MineColonies.getConfig().getServer().pvp_mode.get() && player.level() instanceof ServerLevel) {
             final IBuilding building = IColonyManager.getInstance().getBuilding(player.level(), pos);
             if (building != null && building.getColony().isCoordInColony(player.level(), pos)
-                  && building.getColony().getPermissions().getRank(player).isHostile())
-            {
+                    && building.getColony().getPermissions().getRank(player).isHostile()) {
                 final double localProgress = breakProgressOnTownHall;
                 final double hardness = state.getDestroySpeed(player.level(), pos) * 20.0 * 1.5;
 
-                if (localProgress >= hardness / 10.0 * 9.0 && localProgress <= hardness / 10.0 * 9.0 + 1)
-                {
+                if (localProgress >= hardness / 10.0 * 9.0 && localProgress <= hardness / 10.0 * 9.0 + 1) {
                     MessageUtils.format(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 90).sendTo(building.getColony()).forAllPlayers();
                 }
-                if (localProgress >= hardness / 4.0 * 3.0 && localProgress <= hardness / 4.0 * 3.0 + 1)
-                {
+                if (localProgress >= hardness / 4.0 * 3.0 && localProgress <= hardness / 4.0 * 3.0 + 1) {
                     MessageUtils.format(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 75).sendTo(building.getColony()).forAllPlayers();
-                }
-                else if (localProgress >= hardness / 2.0 && localProgress <= hardness / 2.0 + 1)
-                {
+                } else if (localProgress >= hardness / 2.0 && localProgress <= hardness / 2.0 + 1) {
                     MessageUtils.format(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 50).sendTo(building.getColony()).forAllPlayers();
-                }
-                else if (localProgress >= hardness / 4.0 && localProgress <= hardness / 4.0 + 1)
-                {
+                } else if (localProgress >= hardness / 4.0 && localProgress <= hardness / 4.0 + 1) {
                     MessageUtils.format(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 25).sendTo(building.getColony()).forAllPlayers();
                 }
 
-                if (localProgress >= hardness - 1)
-                {
+                if (localProgress >= hardness - 1) {
                     validTownHallBreak = true;
                 }
 
-                if (player.level().getGameTime() - lastTownHallBreakingTick < 10)
-                {
+                if (player.level().getGameTime() - lastTownHallBreakingTick < 10) {
                     breakProgressOnTownHall++;
-                }
-                else
-                {
+                } else {
                     MessageUtils.format(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 100).sendTo(building.getColony()).forAllPlayers();
                     breakProgressOnTownHall = 0;
                     validTownHallBreak = false;
                 }
                 lastTownHallBreakingTick = player.level().getGameTime();
-            }
-            else
-            {
+            } else {
                 validTownHallBreak = true;
             }
-        }
-        else if (!MineColonies.getConfig().getServer().pvp_mode.get())
-        {
+        } else if (!MineColonies.getConfig().getServer().pvp_mode.get()) {
             validTownHallBreak = true;
         }
         final float def = super.getDestroyProgress(state, player, player.level(), pos);
@@ -130,13 +110,11 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     }
 
     @Override
-    public List<MutableComponent> getRequirements(final ClientLevel level, final BlockPos pos, final LocalPlayer player)
-    {
+    public List<MutableComponent> getRequirements(final ClientLevel level, final BlockPos pos, final LocalPlayer player) {
         final List<MutableComponent> requirements = new ArrayList<>();
-        if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
-        {
+        if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1) {
             requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(
-              ChatFormatting.RED)));
+                    ChatFormatting.RED)));
         }
 
         return requirements;
@@ -144,23 +122,21 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 
     /**
      * Getter for the Block's state to breakable.
-     * @return  True if the block is eligible for destruction
+     *
+     * @return True if the block is eligible for destruction
      */
-    public boolean getValidBreak()
-    {
+    public boolean getValidBreak() {
         return validTownHallBreak;
     }
 
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhuttownhall";
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.townHall.get();
     }
 
@@ -178,29 +154,24 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     @NotNull
     @Override
     public ItemInteractionResult useItemOn(
-      final ItemStack stack,
-      final BlockState state,
-      final Level worldIn,
-      final BlockPos pos,
-      final Player player,
-      final InteractionHand hand,
-      final BlockHitResult ray)
-    {
+            final ItemStack stack,
+            final BlockState state,
+            final Level worldIn,
+            final BlockPos pos,
+            final Player player,
+            final InteractionHand hand,
+            final BlockHitResult ray) {
        /*
         If the world is client, open the gui of the building
          */
-        if (worldIn.isClientSide)
-        {
+        if (worldIn.isClientSide) {
             @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.dimension(), pos);
 
             if (building != null
-                  && building.getColony() != null
-                  && building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
-            {
+                    && building.getColony() != null
+                    && building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS)) {
                 building.openGui(player.isShiftKeyDown());
-            }
-            else if (System.currentTimeMillis() > timeout)
-            {
+            } else if (System.currentTimeMillis() > timeout) {
                 new GetColonyInfoMessage(pos).sendToServer();
                 timeout = System.currentTimeMillis() + 1000;
             }

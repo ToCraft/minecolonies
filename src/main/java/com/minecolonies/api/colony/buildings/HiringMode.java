@@ -5,8 +5,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Different hiring mode of buildings.
  */
-public enum HiringMode
-{
+public enum HiringMode {
     DEFAULT(HIRING_MODE_DEFAULT),
     AUTO(HIRING_MODE_AUTOMATIC),
     MANUAL(HIRING_MODE_MANUAL),
@@ -14,13 +13,11 @@ public enum HiringMode
 
     private final String translationKey;
 
-    HiringMode(String translationKey)
-    {
+    HiringMode(String translationKey) {
         this.translationKey = translationKey;
     }
 
-    public String getTranslationKey()
-    {
+    public String getTranslationKey() {
         return translationKey;
     }
 }

@@ -16,42 +16,33 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
  * Resolver that checks if a deliverable request is already in the station where the citizen is assigned to that requested things.
  */
-public class StationRequestResolver extends BuildingRequestResolver
-{
-    public StationRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
-    {
+public class StationRequestResolver extends BuildingRequestResolver {
+    public StationRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token) {
         super(location, token);
     }
 
     @Override
-    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> request)
-    {
-        if (!manager.getColony().getWorld().isClientSide)
-        {
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> request) {
+        if (!manager.getColony().getWorld().isClientSide) {
             final Optional<AbstractBuilding> building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r);
-            if (building.isPresent())
-            {
+            if (building.isPresent()) {
                 final AbstractBuilding theBuilding = building.get();
                 if (theBuilding instanceof BuildingWareHouse
-                      || theBuilding.getCitizenForRequest(request.getId()).isPresent()
-                      || theBuilding.hasModule(WorkerBuildingModule.class)
-                      || !theBuilding.hasModule(IAssignsCitizen.class))
-                {
+                        || theBuilding.getCitizenForRequest(request.getId()).isPresent()
+                        || theBuilding.hasModule(WorkerBuildingModule.class)
+                        || !theBuilding.hasModule(IAssignsCitizen.class)) {
                     return false;
                 }
 
-                for (final IAssignsCitizen module : theBuilding.getModulesByType(IAssignsCitizen.class))
-                {
-                    for (final ICitizenData citizen : module.getAssignedCitizen())
-                    {
-                        if (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getCitizenForRequest(request.getId()).isPresent())
-                        {
+                for (final IAssignsCitizen module : theBuilding.getModulesByType(IAssignsCitizen.class)) {
+                    for (final ICitizenData citizen : module.getAssignedCitizen()) {
+                        if (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getCitizenForRequest(request.getId()).isPresent()) {
                             return canResolveForBuilding(manager, request, theBuilding);
                         }
                     }
@@ -62,42 +53,34 @@ public class StationRequestResolver extends BuildingRequestResolver
     }
 
     @Override
-    public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
-    {
+    public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building) {
         if (building instanceof BuildingWareHouse
-              || building.getCitizenForRequest(request.getId()).isPresent()
-              || building.hasModule(WorkerBuildingModule.class)
-              || !building.hasModule(AbstractAssignedCitizenModule.class))
-        {
+                || building.getCitizenForRequest(request.getId()).isPresent()
+                || building.hasModule(WorkerBuildingModule.class)
+                || !building.hasModule(AbstractAssignedCitizenModule.class)) {
             return false;
         }
 
         boolean foundMatch = false;
-        for (final AbstractAssignedCitizenModule module : building.getModulesByType(AbstractAssignedCitizenModule.class))
-        {
-            for (final ICitizenData citizen : module.getAssignedCitizen())
-            {
-                if (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getCitizenForRequest(request.getId()).isPresent())
-                {
+        for (final AbstractAssignedCitizenModule module : building.getModulesByType(AbstractAssignedCitizenModule.class)) {
+            for (final ICitizenData citizen : module.getAssignedCitizen()) {
+                if (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getCitizenForRequest(request.getId()).isPresent()) {
                     foundMatch = true;
                     break;
                 }
             }
         }
 
-        if (!foundMatch)
-        {
+        if (!foundMatch) {
             return false;
         }
 
         final Predicate<ItemStack> pred = itemStack -> {
-            if (ItemStackUtils.isEmpty(itemStack) || !request.getRequest().matches(itemStack))
-            {
+            if (ItemStackUtils.isEmpty(itemStack) || !request.getRequest().matches(itemStack)) {
                 return false;
             }
 
-            if (!request.hasParent())
-            {
+            if (!request.hasParent()) {
                 return true;
             }
 

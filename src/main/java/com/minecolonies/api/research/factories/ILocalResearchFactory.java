@@ -12,29 +12,23 @@ import static com.minecolonies.api.util.constant.Constants.PARAMS_LOCAL_RESEARCH
 /**
  * Interface for the IResearchFactory which is responsible for creating and maintaining Research objects.
  */
-public interface ILocalResearchFactory extends IFactory<FactoryVoidInput, ILocalResearch>
-{
+public interface ILocalResearchFactory extends IFactory<FactoryVoidInput, ILocalResearch> {
     @NotNull
     @Override
-    default ILocalResearch getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput token, @NotNull final Object... context)
-    {
-        if (context.length < PARAMS_LOCAL_RESEARCH)
-        {
+    default ILocalResearch getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput token, @NotNull final Object... context) {
+        if (context.length < PARAMS_LOCAL_RESEARCH) {
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only " + PARAMS_LOCAL_RESEARCH + " are allowed!");
         }
 
-        if (!(context[0] instanceof ResourceLocation))
-        {
+        if (!(context[0] instanceof ResourceLocation)) {
             throw new IllegalArgumentException("First parameter is supposed to be the Research ID!");
         }
 
-        if (!(context[2] instanceof ResourceLocation))
-        {
+        if (!(context[2] instanceof ResourceLocation)) {
             throw new IllegalArgumentException("Third parameter is supposed to be the Branch (String)!");
         }
 
-        if (!(context[4] instanceof Integer))
-        {
+        if (!(context[4] instanceof Integer)) {
             throw new IllegalArgumentException("Fifth parameter is supposed to be the Depth (int)!");
         }
 

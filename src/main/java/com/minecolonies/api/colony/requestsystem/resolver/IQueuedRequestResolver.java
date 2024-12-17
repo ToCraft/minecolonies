@@ -4,8 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 
-public interface IQueuedRequestResolver<R extends IRequestable> extends IRequestResolver<R>
-{
+public interface IQueuedRequestResolver<R extends IRequestable> extends IRequestResolver<R> {
     /**
      * Method to get a list of all assigned tokens to this resolver.
      *

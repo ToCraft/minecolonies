@@ -8,8 +8,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
  * <p>
  * If a provider is added to his or her colony
  */
-public interface IRequestResolverProvider
-{
+public interface IRequestResolverProvider {
 
     /**
      * Unique token identifying this provider inside the request management system.

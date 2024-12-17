@@ -20,8 +20,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Check if we can walk on a surface, drop into, or neither.
  */
-public enum SurfaceType
-{
+public enum SurfaceType {
     WALKABLE,
     DROPABLE,
     NOT_PASSABLE;
@@ -34,8 +33,7 @@ public enum SurfaceType
      * @return true if the block at that location can be walked on.
      */
     @NotNull
-    public static SurfaceType getSurfaceType(final BlockGetter world, final BlockState blockState, final BlockPos pos)
-    {
+    public static SurfaceType getSurfaceType(final BlockGetter world, final BlockState blockState, final BlockPos pos) {
         return getSurfaceType(world, blockState, pos, null);
     }
 
@@ -48,16 +46,12 @@ public enum SurfaceType
      * @return true if the block at that location can be walked on.
      */
     @NotNull
-    public static SurfaceType getSurfaceType(final BlockGetter world, final BlockState blockState, final BlockPos pos, @Nullable final PathingOptions pathingOptions)
-    {
+    public static SurfaceType getSurfaceType(final BlockGetter world, final BlockState blockState, final BlockPos pos, @Nullable final PathingOptions pathingOptions) {
         final Block block = blockState.getBlock();
 
-        if (PathfindingUtils.isDangerous(blockState))
-        {
-            if (pathingOptions != null && pathingOptions.canPassDanger())
-            {
-                if (ShapeUtil.isEmpty(blockState.getCollisionShape(world, pos)))
-                {
+        if (PathfindingUtils.isDangerous(blockState)) {
+            if (pathingOptions != null && pathingOptions.canPassDanger()) {
+                if (ShapeUtil.isEmpty(blockState.getCollisionShape(world, pos))) {
                     return SurfaceType.DROPABLE;
                 }
                 return SurfaceType.WALKABLE;
@@ -67,60 +61,51 @@ public enum SurfaceType
         }
 
         if (block instanceof FenceBlock
-              || block instanceof FenceGateBlock
-              || block instanceof WallBlock
-              || block instanceof AbstractBlockMinecoloniesDefault
-              || block instanceof BambooStalkBlock
-              || block instanceof BambooSaplingBlock
-              || block instanceof DoorBlock)
-        {
+                || block instanceof FenceGateBlock
+                || block instanceof WallBlock
+                || block instanceof AbstractBlockMinecoloniesDefault
+                || block instanceof BambooStalkBlock
+                || block instanceof BambooSaplingBlock
+                || block instanceof DoorBlock) {
             return SurfaceType.NOT_PASSABLE;
         }
 
         final VoxelShape shape = blockState.getCollisionShape(world, pos);
         final double maxShapeY = ShapeUtil.max(shape, Direction.Axis.Y);
-        if (maxShapeY < 0.5 && PathfindingUtils.isDangerous(world.getBlockState(pos.below())))
-        {
-            if (pathingOptions != null && pathingOptions.canPassDanger())
-            {
+        if (maxShapeY < 0.5 && PathfindingUtils.isDangerous(world.getBlockState(pos.below()))) {
+            if (pathingOptions != null && pathingOptions.canPassDanger()) {
                 return SurfaceType.WALKABLE;
             }
 
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if ((block instanceof PanelBlock || block instanceof TrapdoorBlock) && !blockState.getValue(TrapdoorBlock.OPEN))
-        {
+        if ((block instanceof PanelBlock || block instanceof TrapdoorBlock) && !blockState.getValue(TrapdoorBlock.OPEN)) {
             return SurfaceType.WALKABLE;
         }
 
-        if (maxShapeY > 1.0)
-        {
+        if (maxShapeY > 1.0) {
             return SurfaceType.NOT_PASSABLE;
         }
 
         final FluidState fluid = world.getFluidState(pos);
-        if (PathfindingUtils.isWater(world, pos, blockState, fluid))
-        {
+        if (PathfindingUtils.isWater(world, pos, blockState, fluid)) {
             return SurfaceType.WALKABLE;
         }
 
-        if (PathfindingUtils.isLava(world, pos, blockState, fluid))
-        {
+        if (PathfindingUtils.isLava(world, pos, blockState, fluid)) {
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (block instanceof AbstractBlockMinecoloniesConstructionTape || block instanceof SignBlock || block instanceof VineBlock)
-        {
+        if (block instanceof AbstractBlockMinecoloniesConstructionTape || block instanceof SignBlock || block instanceof VineBlock) {
             return SurfaceType.DROPABLE;
         }
 
         if ((BlockUtils.isAnySolid(blockState) && ShapeUtil.max(shape, Direction.Axis.X) - ShapeUtil.min(shape, Direction.Axis.X) > 0.75
-               && (ShapeUtil.max(shape, Direction.Axis.Z) - ShapeUtil.min(shape, Direction.Axis.Z)) > 0.75)
-              || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
-              || block instanceof FloatingCarpetBlock
-              || block instanceof CarpetBlock)
-        {
+                && (ShapeUtil.max(shape, Direction.Axis.Z) - ShapeUtil.min(shape, Direction.Axis.Z)) > 0.75)
+                || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
+                || block instanceof FloatingCarpetBlock
+                || block instanceof CarpetBlock) {
             return SurfaceType.WALKABLE;
         }
 

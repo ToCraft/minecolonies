@@ -11,52 +11,50 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITickable
-{
+public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITickable {
     /**
      * True if the barrel has finished composting and the items are ready to harvest
      */
-    private              boolean done          = false;
+    private boolean done = false;
     /**
      * The number of items that the barrel contains
      */
-    private              int     items         = 0;
+    private int items = 0;
     /**
      * The timer for the composting process
      */
-    private              int     timer         = 0;
+    private int timer = 0;
     /**
      * The number the timer has to reach to finish composting. Number of Minecraft ticks in 2 whole days
      */
-    private static final int     TIMER_END     = 24000;
+    private static final int TIMER_END = 24000;
     /**
      * The average of ticks that passes between actually ticking the tileEntity
      */
-    private static final int     AVERAGE_TICKS = 20;
+    private static final int AVERAGE_TICKS = 20;
 
-    public TileEntityBarrel(final BlockPos pos, final BlockState state)
-    {
+    public TileEntityBarrel(final BlockPos pos, final BlockState state) {
         super(MinecoloniesTileEntities.BARREL.get(), pos, state);
     }
 
@@ -64,12 +62,10 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
      * Update method to be called by Minecraft every tick
      */
     @Override
-    public void tick()
-    {
+    public void tick() {
         final Level world = this.getLevel();
 
-        if (!world.isClientSide && (world.getGameTime() % (world.random.nextInt(AVERAGE_TICKS * 2) + 1) == 0))
-        {
+        if (!world.isClientSide && (world.getGameTime() % (world.random.nextInt(AVERAGE_TICKS * 2) + 1) == 0)) {
             this.updateTick(world, this.getBlockPos(), world.getBlockState(this.getBlockPos()), new Random());
         }
     }
@@ -82,26 +78,21 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
      * @param state   the state of the block
      * @param rand    Random class
      */
-    public void updateTick(final Level worldIn, final BlockPos pos, final BlockState state, final Random rand)
-    {
-        if (getItems() == AbstractTileEntityBarrel.MAX_ITEMS)
-        {
+    public void updateTick(final Level worldIn, final BlockPos pos, final BlockState state, final Random rand) {
+        if (getItems() == AbstractTileEntityBarrel.MAX_ITEMS) {
             doBarrelCompostTick(worldIn, pos, state);
         }
-        if (this.done)
-        {
+        if (this.done) {
             ((ServerLevel) worldIn).sendParticles(
-              ParticleTypes.HAPPY_VILLAGER, this.getBlockPos().getX() + 0.5,
-              this.getBlockPos().getY() + 1.5, this.getBlockPos().getZ() + 0.5,
-              1, 0.2, 0, 0.2, 0);
+                    ParticleTypes.HAPPY_VILLAGER, this.getBlockPos().getX() + 0.5,
+                    this.getBlockPos().getY() + 1.5, this.getBlockPos().getZ() + 0.5,
+                    1, 0.2, 0, 0.2, 0);
         }
     }
 
-    private void doBarrelCompostTick(final Level worldIn, final BlockPos pos, final BlockState blockState)
-    {
+    private void doBarrelCompostTick(final Level worldIn, final BlockPos pos, final BlockState blockState) {
         timer++;
-        if (timer >= TIMER_END / AVERAGE_TICKS)
-        {
+        if (timer >= TIMER_END / AVERAGE_TICKS) {
             timer = 0;
             items = 0;
             done = true;
@@ -118,20 +109,16 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
      *                  Passing null when composting is complete will insert resulting compost directly into inventory, spawning overflow as an ItemEntity
      * @return if the barrel took any item
      */
-    public boolean useBarrel(final Player playerIn, final ItemStack itemstack, @Nullable Direction hitFace)
-    {
-        if (done)
-        {
+    public boolean useBarrel(final Player playerIn, final ItemStack itemstack, @Nullable Direction hitFace) {
+        if (done) {
             ItemStack compostStack = new ItemStack(ModItems.compost, 6);
             if (hitFace != null) // Spawn all as ItemEntity
             {
                 playerIn.level().addFreshEntity(new ItemEntity(playerIn.level(), worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, hitFace.getStepX() / 5f, hitFace.getStepY() / 5f + 0.2f, hitFace.getStepZ() / 5f));
                 this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1, 1);
-            }
-            else // Insert directly into inventory, spawning overflow as ItemEntity
+            } else // Insert directly into inventory, spawning overflow as ItemEntity
             {
-                if(!playerIn.getInventory().add(compostStack))
-                {
+                if (!playerIn.getInventory().add(compostStack)) {
                     playerIn.level().addFreshEntity(new ItemEntity(playerIn.level(), worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, 0, 0.2f, 0));
                 }
                 this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1, 1);
@@ -141,25 +128,20 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
         }
 
         final RecipeHolder<CompostRecipe> recipe = findCompostRecipe(itemstack);
-        if (recipe == null)
-        {
+        if (recipe == null) {
             return false;
         }
 
-        if (items == AbstractTileEntityBarrel.MAX_ITEMS)
-        {
+        if (items == AbstractTileEntityBarrel.MAX_ITEMS) {
             MessageUtils.format("entity.barrel.working").sendTo(playerIn);
             return false;
-        }
-        else
-        {
+        } else {
             this.consumeNeededItems(itemstack, recipe);
             return true;
         }
     }
 
-    private void consumeNeededItems(final ItemStack itemStack, final RecipeHolder<CompostRecipe> recipe)
-    {
+    private void consumeNeededItems(final ItemStack itemStack, final RecipeHolder<CompostRecipe> recipe) {
         // the strength defined by the recipe determines how many "compostable items" each
         // item actually counts for.  (most items contribute 4 strength.)
         final int factor = recipe.value().getStrength();
@@ -178,8 +160,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     }
 
     @Nullable
-    private static RecipeHolder<CompostRecipe> findCompostRecipe(final ItemStack itemStack)
-    {
+    private static RecipeHolder<CompostRecipe> findCompostRecipe(final ItemStack itemStack) {
         return IColonyManager.getInstance().getCompatibilityManager()
                 .getCopyOfCompostRecipes().get(itemStack.getItem());
         // TODO: use the recipe to get the ferment time and output count?
@@ -191,19 +172,16 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
      *
      * @param worldIn the world
      */
-    public void updateBlock(final Level worldIn)
-    {
+    public void updateBlock(final Level worldIn) {
         final BlockState barrel = level.getBlockState(worldPosition);
-        if (barrel.getBlock() == ModBlocks.blockBarrel)
-        {
+        if (barrel.getBlock() == ModBlocks.blockBarrel) {
             worldIn.setBlockAndUpdate(worldPosition, AbstractBlockBarrel.changeStateOverFullness(this, barrel));
             setChanged();
         }
     }
 
     @Override
-    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.saveAdditional(compound, provider);
 
         compound.putInt("items", this.items);
@@ -212,8 +190,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     }
 
     @Override
-    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.loadAdditional(compound, provider);
         this.items = compound.getInt("items");
         this.timer = compound.getInt("timer");
@@ -221,38 +198,32 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket()
-    {
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider) {
         return saveWithId(provider);
     }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
-    {
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = packet.getTag();
         this.loadAdditional(compound, provider);
         setChanged();
     }
 
     @Override
-    public void setChanged()
-    {
-        if (level != null)
-        {
+    public void setChanged() {
+        if (level != null) {
             WorldUtil.markChunkDirty(level, worldPosition);
         }
     }
 
     @Override
-    public final void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider)
-    {
+    public final void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider) {
         this.items = tag.getInt("items");
         this.timer = tag.getInt("timer");
         this.done = tag.getBoolean("done");
@@ -264,8 +235,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
      * @return the number of items
      */
     @Override
-    public int getItems()
-    {
+    public int getItems() {
         return items;
     }
 
@@ -275,8 +245,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
      * @return true if done, false if not
      */
     @Override
-    public boolean isDone()
-    {
+    public boolean isDone() {
         return this.done;
     }
 
@@ -287,8 +256,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
      * @return true if the number of items is equal to the maximum. If not, false.
      */
     @Override
-    public boolean checkIfWorking()
-    {
+    public boolean checkIfWorking() {
         return this.items == MAX_ITEMS;
     }
 
@@ -298,11 +266,9 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
      * @return false if the item couldn't be cosumed. True if it could
      */
     @Override
-    public boolean addItem(final ItemStack item)
-    {
+    public boolean addItem(final ItemStack item) {
         final RecipeHolder<CompostRecipe> recipe = findCompostRecipe(item);
-        if (recipe != null && this.items < MAX_ITEMS)
-        {
+        if (recipe != null && this.items < MAX_ITEMS) {
             this.consumeNeededItems(item, recipe);
             this.updateBlock(this.level);
             return true;
@@ -315,10 +281,8 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
      * @return The generated compost. If the barrel is not ready yet to be harvested, it will return an empty itemStack.
      */
     @Override
-    public ItemStack retrieveCompost(final double multiplier)
-    {
-        if (this.done)
-        {
+    public ItemStack retrieveCompost(final double multiplier) {
+        if (this.done) {
             this.done = false;
             this.updateBlock(this.level);
             return new ItemStack(ModItems.compost, (int) (6 * multiplier));

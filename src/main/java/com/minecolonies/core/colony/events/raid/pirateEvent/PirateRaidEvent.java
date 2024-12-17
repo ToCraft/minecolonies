@@ -5,14 +5,12 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.events.raid.AbstractShipRaidEvent;
-
 import net.minecraft.core.HolderLookup;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.RAID_PIRATE;
@@ -20,8 +18,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RAID_PIRAT
 /**
  * The Pirate raid event, spawns a ship with pirate spawners onboard.
  */
-public class PirateRaidEvent extends AbstractShipRaidEvent
-{
+public class PirateRaidEvent extends AbstractShipRaidEvent {
     /**
      * This raids event id, registry entries use res locations as ids.
      */
@@ -37,20 +34,17 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
      *
      * @param colony the colony.
      */
-    public PirateRaidEvent(@NotNull final IColony colony)
-    {
+    public PirateRaidEvent(@NotNull final IColony colony) {
         super(colony);
     }
 
     @Override
-    public String getShipDesc()
-    {
+    public String getShipDesc() {
         return SHIP_NAME;
     }
 
     @Override
-    public ResourceLocation getEventTypeID()
-    {
+    public ResourceLocation getEventTypeID() {
         return PIRATE_RAID_EVENT_TYPE_ID;
     }
 
@@ -61,34 +55,29 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         final PirateRaidEvent raidEvent = new PirateRaidEvent(colony);
         raidEvent.deserializeNBT(provider, compound);
         return raidEvent;
     }
 
     @Override
-    public EntityType<?> getNormalRaiderType()
-    {
+    public EntityType<?> getNormalRaiderType() {
         return ModEntities.PIRATE;
     }
 
     @Override
-    public EntityType<?> getArcherRaiderType()
-    {
+    public EntityType<?> getArcherRaiderType() {
         return ModEntities.ARCHERPIRATE;
     }
 
     @Override
-    public EntityType<?> getBossRaiderType()
-    {
+    public EntityType<?> getBossRaiderType() {
         return ModEntities.CHIEFPIRATE;
     }
 
     @Override
-    protected MutableComponent getDisplayName()
-    {
+    protected MutableComponent getDisplayName() {
         return Component.translatableEscape(RAID_PIRATE);
     }
 }

@@ -11,13 +11,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FurnaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
-
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,8 +29,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Module for all workers that need a furnace.
  */
-public class FurnaceUserModule extends AbstractBuildingModule implements IPersistentModule, IModuleWithExternalBlocks, IAltersRequiredItems
-{
+public class FurnaceUserModule extends AbstractBuildingModule implements IPersistentModule, IModuleWithExternalBlocks, IAltersRequiredItems {
     /**
      * Tag to store the furnace position.
      */
@@ -56,35 +53,29 @@ public class FurnaceUserModule extends AbstractBuildingModule implements IPersis
     /**
      * Construct a new furnace user module.
      */
-    public FurnaceUserModule()
-    {
+    public FurnaceUserModule() {
         super();
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         final ListTag furnaceTagList = compound.getList(TAG_FURNACES, Tag.TAG_INT_ARRAY);
-        for (int i = 0; i < furnaceTagList.size(); ++i)
-        {
+        for (int i = 0; i < furnaceTagList.size(); ++i) {
             furnaces.add(NBTUtils.readBlockPos(furnaceTagList.get(i)));
         }
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         @NotNull final ListTag furnacesTagList = new ListTag();
-        for (@NotNull final BlockPos entry : furnaces)
-        {
+        for (@NotNull final BlockPos entry : furnaces) {
             furnacesTagList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_FURNACES, furnacesTagList);
     }
 
     @Override
-    public void alterItemsToBeKept(final TriConsumer<Predicate<ItemStack>, Integer, Boolean> consumer)
-    {
+    public void alterItemsToBeKept(final TriConsumer<Predicate<ItemStack>, Integer, Boolean> consumer) {
         consumer.accept(this::isAllowedFuel, STACKSIZE * building.getBuildingLevel(), false);
     }
 
@@ -93,8 +84,7 @@ public class FurnaceUserModule extends AbstractBuildingModule implements IPersis
      *
      * @param pos the position of it.
      */
-    public void removeFromFurnaces(final BlockPos pos)
-    {
+    public void removeFromFurnaces(final BlockPos pos) {
         furnaces.remove(pos);
     }
 
@@ -104,10 +94,8 @@ public class FurnaceUserModule extends AbstractBuildingModule implements IPersis
      * @param stack the itemStack to check.
      * @return true if so.
      */
-    public boolean isAllowedFuel(final ItemStack stack)
-    {
-        if (ItemStackUtils.isEmpty(stack))
-        {
+    public boolean isAllowedFuel(final ItemStack stack) {
+        if (ItemStackUtils.isEmpty(stack)) {
             return false;
         }
         return building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).isItemInList(new ItemStorage(stack));
@@ -118,23 +106,19 @@ public class FurnaceUserModule extends AbstractBuildingModule implements IPersis
      *
      * @return copy of the list
      */
-    public List<BlockPos> getFurnaces()
-    {
+    public List<BlockPos> getFurnaces() {
         return new ArrayList<>(furnaces);
     }
 
     @Override
-    public void onBlockPlacedInBuilding(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final Level world)
-    {
-        if (blockState.getBlock() instanceof FurnaceBlock && !furnaces.contains(pos))
-        {
+    public void onBlockPlacedInBuilding(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final Level world) {
+        if (blockState.getBlock() instanceof FurnaceBlock && !furnaces.contains(pos)) {
             furnaces.add(pos);
         }
     }
 
     @Override
-    public List<BlockPos> getRegisteredBlocks()
-    {
+    public List<BlockPos> getRegisteredBlocks() {
         return new ArrayList<>(furnaces);
     }
 }

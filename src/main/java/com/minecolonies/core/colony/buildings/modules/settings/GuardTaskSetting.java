@@ -22,66 +22,59 @@ import static com.minecolonies.core.colony.buildings.modules.settings.GuardPatro
 /**
  * Stores a guard task setting.
  */
-public class GuardTaskSetting extends StringSettingWithDesc
-{
+public class GuardTaskSetting extends StringSettingWithDesc {
     /**
      * Different setting possibilities.
      */
-    public static final String PATROL      = "com.minecolonies.core.guard.setting.patrol";
-    public static final String GUARD       = "com.minecolonies.core.guard.setting.guard";
-    public static final String FOLLOW      = "com.minecolonies.core.guard.setting.follow";
+    public static final String PATROL = "com.minecolonies.core.guard.setting.patrol";
+    public static final String GUARD = "com.minecolonies.core.guard.setting.guard";
+    public static final String FOLLOW = "com.minecolonies.core.guard.setting.follow";
     public static final String PATROL_MINE = "com.minecolonies.core.guard.setting.patrol_mine";
 
     /**
      * Different trigger button widths.
      */
     private static final int SET_POS_BUTTON_WIDTH = 60;
-    private static final int HELP_BUTTON_WIDTH    = 125;
+    private static final int HELP_BUTTON_WIDTH = 125;
 
     /**
      * Create a new guard task list setting.
      */
-    public GuardTaskSetting()
-    {
+    public GuardTaskSetting() {
         super(PATROL, GUARD, FOLLOW, PATROL_MINE);
     }
 
     /**
      * Create a new guard task list setting.
      */
-    public GuardTaskSetting(final String...list)
-    {
+    public GuardTaskSetting(final String... list) {
         super(list);
     }
 
     /**
      * Create a new string list setting.
-     * @param settings the overall list of settings.
+     *
+     * @param settings     the overall list of settings.
      * @param currentIndex the current selected index.
      */
-    public GuardTaskSetting(final List<String> settings, final int currentIndex)
-    {
+    public GuardTaskSetting(final List<String> settings, final int currentIndex) {
         super(settings, currentIndex);
     }
 
     @Override
-    public ResourceLocation getLayoutItem()
-    {
+    public ResourceLocation getLayoutItem() {
         return new ResourceLocation("minecolonies", "gui/layouthuts/layoutguardtasksetting.xml");
     }
 
     @Override
-    public void onUpdate(final IBuilding building, final ServerPlayer sender)
-    {
-        if (building instanceof AbstractBuildingGuards guardBuilding && getValue().equals(FOLLOW))
-        {
+    public void onUpdate(final IBuilding building, final ServerPlayer sender) {
+        if (building instanceof AbstractBuildingGuards guardBuilding && getValue().equals(FOLLOW)) {
             guardBuilding.setPlayerToFollow(sender);
         }
     }
 
     @Override
-    public void setupHandler(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
-    {
+    public void setupHandler(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window) {
         super.setupHandler(key, pane, settingsModuleView, building, window);
 
         final ButtonImage setPositionsButton = pane.findPaneOfTypeByID("setPositions", ButtonImage.class);
@@ -89,30 +82,25 @@ public class GuardTaskSetting extends StringSettingWithDesc
     }
 
     @Override
-    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
-    {
+    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window) {
         super.render(key, pane, settingsModuleView, building, window);
 
         final ButtonImage setPositionsButton = pane.findPaneOfTypeByID("setPositions", ButtonImage.class);
         final ButtonImage helpButton = pane.findPaneOfTypeByID("helpButton", ButtonImage.class);
 
-        switch (getValue())
-        {
-            case PATROL ->
-            {
+        switch (getValue()) {
+            case PATROL -> {
                 final String patrolMode = settingsModuleView.getSetting(PATROL_MODE).getValue();
                 setPositionsButton.setVisible(patrolMode.equals(MANUAL));
                 helpButton.setVisible(false);
             }
             case GUARD -> setPositionsButton.setVisible(true);
-            case PATROL_MINE ->
-            {
+            case PATROL_MINE -> {
                 setPositionsButton.setVisible(false);
                 helpButton.setVisible(true);
                 setPatrolMineHelpLabel(helpButton, (AbstractBuildingGuards.View) building);
             }
-            default ->
-            {
+            default -> {
                 setPositionsButton.setVisible(false);
                 helpButton.setVisible(false);
             }
@@ -120,12 +108,9 @@ public class GuardTaskSetting extends StringSettingWithDesc
     }
 
     @Override
-    protected int getButtonWidth(final ISettingsModuleView settingsModuleView)
-    {
-        return switch (getValue())
-        {
-            case PATROL ->
-            {
+    protected int getButtonWidth(final ISettingsModuleView settingsModuleView) {
+        return switch (getValue()) {
+            case PATROL -> {
                 final String patrolMode = settingsModuleView.getSetting(PATROL_MODE).getValue();
                 yield patrolMode.equals(MANUAL) ? SET_POS_BUTTON_WIDTH : MAX_BUTTON_WIDTH;
             }
@@ -141,20 +126,16 @@ public class GuardTaskSetting extends StringSettingWithDesc
      * @param button   the button instance.
      * @param building the building.
      */
-    private void setPatrolMineHelpLabel(final ButtonImage button, final AbstractBuildingGuards.View building)
-    {
+    private void setPatrolMineHelpLabel(final ButtonImage button, final AbstractBuildingGuards.View building) {
         Component component;
-        if (building.getMinePos() != null)
-        {
+        if (building.getMinePos() != null) {
             component = Component.translatableEscape("com.minecolonies.coremod.gui.worherhuts.patrollingmine", building.getMinePos().toShortString());
-        }
-        else
-        {
+        } else {
             component = Component.translatableEscape("com.minecolonies.coremod.job.guard.assignmine");
         }
         PaneBuilders.tooltipBuilder()
-          .append(component)
-          .hoverPane(button)
-          .build();
+                .append(component)
+                .hoverPane(button)
+                .build();
     }
 }

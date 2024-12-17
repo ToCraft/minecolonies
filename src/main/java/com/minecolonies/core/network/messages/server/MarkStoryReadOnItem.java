@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Mark that for a given item the story was already read.
  */
-public class MarkStoryReadOnItem extends AbstractServerPlayMessage
-{
+public class MarkStoryReadOnItem extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "mark_story_read", MarkStoryReadOnItem::new);
 
     /**
@@ -25,8 +24,7 @@ public class MarkStoryReadOnItem extends AbstractServerPlayMessage
     /**
      * Empty constructor used when registering the message
      */
-    public MarkStoryReadOnItem(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public MarkStoryReadOnItem(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(type);
         hand = InteractionHand.values()[buf.readInt()];
     }
@@ -36,21 +34,18 @@ public class MarkStoryReadOnItem extends AbstractServerPlayMessage
      *
      * @param hand the hand with the item.
      */
-    public MarkStoryReadOnItem(final InteractionHand hand)
-    {
+    public MarkStoryReadOnItem(final InteractionHand hand) {
         super(TYPE);
         this.hand = hand;
     }
 
     @Override
-    public void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(hand.ordinal());
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender) {
         SupplyData.updateItemStack(sender.getItemInHand(this.hand), supply -> supply.withSawStory(true));
     }
 }

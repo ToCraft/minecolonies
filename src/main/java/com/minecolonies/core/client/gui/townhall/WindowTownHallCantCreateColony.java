@@ -14,17 +14,15 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- *  UI to notify the player that a colony can't be created here.
+ * UI to notify the player that a colony can't be created here.
  */
-public class WindowTownHallCantCreateColony extends AbstractWindowSkeleton
-{
+public class WindowTownHallCantCreateColony extends AbstractWindowSkeleton {
     /**
      * Townhall position
      */
     private BlockPos pos;
 
-    public WindowTownHallCantCreateColony(final BlockPos pos, final MutableComponent warningMsg, final boolean displayConfigTooltip)
-    {
+    public WindowTownHallCantCreateColony(final BlockPos pos, final MutableComponent warningMsg, final boolean displayConfigTooltip) {
         super(MOD_ID + TOWNHALL_CANT_CREATE_GUI);
         mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
         this.pos = pos;
@@ -32,8 +30,7 @@ public class WindowTownHallCantCreateColony extends AbstractWindowSkeleton
         registerButton(BUTTON_PICKUP_BUILDING, this::pickup);
         final Text text = this.findPaneOfTypeByID("text1", Text.class);
         text.setText(warningMsg);
-        if (displayConfigTooltip)
-        {
+        if (displayConfigTooltip) {
             PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.core.configsetting"), text);
         }
     }
@@ -41,8 +38,7 @@ public class WindowTownHallCantCreateColony extends AbstractWindowSkeleton
     /**
      * When the pickup building button was clicked.
      */
-    private void pickup()
-    {
+    private void pickup() {
         new PickupBlockMessage(pos).sendToServer();
         close();
     }

@@ -6,8 +6,7 @@ import net.minecraft.core.BlockPos;
 /**
  * Contains the result of the path job to find water.
  */
-public class WaterPathResult extends PathResult<PathJobFindWater>
-{
+public class WaterPathResult extends PathResult<PathJobFindWater> {
     /**
      * The position of the parent (stand block).
      */

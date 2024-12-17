@@ -9,8 +9,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-public class BuildingMysticalSite extends AbstractBuilding implements IMysticalSite
-{
+public class BuildingMysticalSite extends AbstractBuilding implements IMysticalSite {
     private static final String MYSTICAL_SITE = "mysticalsite";
 
     /**
@@ -24,44 +23,38 @@ public class BuildingMysticalSite extends AbstractBuilding implements IMysticalS
      * @param c the colony
      * @param l the position
      */
-    public BuildingMysticalSite(@NotNull final IColony c, final BlockPos l)
-    {
+    public BuildingMysticalSite(@NotNull final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return MYSTICAL_SITE;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractBuildingView
-    {
+    public static class View extends AbstractBuildingView {
         /**
          * Instantiates the view of the building.
          *
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final IColonyView c, final BlockPos l)
-        {
+        public View(final IColonyView c, final BlockPos l) {
             super(c, l);
         }
 
         @NotNull
         @Override
-        public BOWindow getWindow()
-        {
+        public BOWindow getWindow() {
             return new WindowHutMinPlaceholder<>(this);
         }
     }

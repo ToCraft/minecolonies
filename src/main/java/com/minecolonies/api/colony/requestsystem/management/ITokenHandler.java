@@ -3,8 +3,7 @@ package com.minecolonies.api.colony.requestsystem.management;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 
-public interface ITokenHandler
-{
+public interface ITokenHandler {
     IRequestManager getManager();
 
     /**

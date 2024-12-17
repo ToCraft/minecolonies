@@ -4,8 +4,8 @@ import com.ldtteam.blockui.Loader;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.blockui.views.OverlayView;
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.blockui.views.OverlayView;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
@@ -18,8 +18,7 @@ import java.util.function.ObjIntConsumer;
 /**
  * Manage windows and their events.
  */
-public class DialogDoneCancel extends OverlayView implements ButtonHandler
-{
+public class DialogDoneCancel extends OverlayView implements ButtonHandler {
     /**
      * buttonid when cancel is pressed.
      */
@@ -65,8 +64,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @param window in which the dialog will be displayed
      */
-    public DialogDoneCancel(final BOWindow window)
-    {
+    public DialogDoneCancel(final BOWindow window) {
         super();
         Loader.createFromXMLFile(ResourceLocation.parse(Constants.MOD_ID + DIALOG_OK_CANCEL_SUFFIX), this);
         titleLabel = findPaneOfTypeByID("title", Text.class);
@@ -83,8 +81,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @return title for the dialog
      */
-    public String getTitle()
-    {
+    public String getTitle() {
         return titleLabel.getTextAsString();
     }
 
@@ -93,8 +90,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @param title for the dialog
      */
-    public void setTitle(final String title)
-    {
+    public void setTitle(final String title) {
         titleLabel.setText(Component.literal(title));
     }
 
@@ -103,8 +99,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @return The textual content displayed in the dialog
      */
-    public List<MutableComponent> getTextContent()
-    {
+    public List<MutableComponent> getTextContent() {
         return contentText.getTextAsList();
     }
 
@@ -113,8 +108,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @param content to display in the dialog
      */
-    public void setTextContent(final String content)
-    {
+    public void setTextContent(final String content) {
         contentText.setText(Component.literal(content));
     }
 
@@ -123,29 +117,22 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @param button which have been clicked on.
      */
-    public void onButtonClicked(final Button button)
-    {
+    public void onButtonClicked(final Button button) {
         this.setVisible(false);
-        if (handler == null)
-        {
+        if (handler == null) {
             Log.getLogger().error("DialogDoneCancel does not have a handler.");
             return;
         }
-        if (button == doneButton)
-        {
+        if (button == doneButton) {
             handler.accept(this, DONE);
-        }
-        else
-        {
+        } else {
             handler.accept(this, CANCEL);
         }
     }
 
     @Override
-    public void setVisible(final boolean visible)
-    {
-        if (visible)
-        {
+    public void setVisible(final boolean visible) {
+        if (visible) {
             setPosition(0, 0);
             setSize(window.getInteriorWidth(), window.getInteriorHeight());
             //Make sure we are on top
@@ -157,16 +144,14 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
     /**
      * Open the dialog.
      */
-    public void open()
-    {
+    public void open() {
         setVisible(true);
     }
 
     /**
      * Close the dialog.
      */
-    public void close()
-    {
+    public void close() {
         setVisible(true);
     }
 
@@ -175,8 +160,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @param h The new handler.
      */
-    public void setHandler(final ObjIntConsumer<DialogDoneCancel> h)
-    {
+    public void setHandler(final ObjIntConsumer<DialogDoneCancel> h) {
         handler = h;
     }
 }

@@ -7,10 +7,10 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.DirectPlaceMessage;
 import com.minecolonies.core.network.messages.server.SwitchBuildingWithToolMessage;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,8 +21,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Move Building Window.
  */
-public class WindowSuggestBuildTool extends AbstractWindowSkeleton
-{
+public class WindowSuggestBuildTool extends AbstractWindowSkeleton {
     /**
      * Position the player is trying to place at.
      */
@@ -48,8 +47,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      * @param state the block they are trying to place.
      * @param stack the stack to suggest it for.
      */
-    public WindowSuggestBuildTool(@NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final ItemStack stack)
-    {
+    public WindowSuggestBuildTool(@NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final ItemStack stack) {
         super(Constants.MOD_ID + SUGGEST_BUILDING_SOURCE_SUFFIX);
         this.pos = pos;
         this.building = state;
@@ -62,8 +60,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
     /**
      * Direct placement has been chosen.
      */
-    private void directClicked()
-    {
+    private void directClicked() {
         new DirectPlaceMessage(building, pos, stack).sendToServer();
         close();
     }
@@ -71,10 +68,8 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
     /**
      * Open buildtool GUI has been chosen.
      */
-    private void buildToolClicked()
-    {
-        if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(Minecraft.getInstance().player.getInventory()), ModItems.buildTool.get()) != -1)
-        {
+    private void buildToolClicked() {
+        if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(Minecraft.getInstance().player.getInventory()), ModItems.buildTool.get()) != -1) {
             new SwitchBuildingWithToolMessage(stack).sendToServer();
             new WindowExtendedBuildTool(this.pos, GROUNDSTYLE_RELATIVE, mc.level.registryAccess()).open();
             return;
@@ -86,8 +81,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
     /**
      * Cancel the current structure.
      */
-    private void cancelClicked()
-    {
+    private void cancelClicked() {
         close();
     }
 }

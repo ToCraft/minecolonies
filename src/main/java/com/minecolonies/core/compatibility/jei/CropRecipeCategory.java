@@ -37,8 +37,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JE
  * JEI crop recipe category renderer
  */
 @SuppressWarnings("MethodParameterOfConcreteClass")
-public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.CropRecipe>
-{
+public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.CropRecipe> {
     private final int WIDTH = 150;
     private final int HEIGHT = 54;
 
@@ -47,8 +46,7 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
     private final IDrawable slot;
     private final IDrawable chanceSlot;
 
-    public CropRecipeCategory(@NotNull final IGuiHelper guiHelper)
-    {
+    public CropRecipeCategory(@NotNull final IGuiHelper guiHelper) {
         this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Items.DIAMOND_HOE));
         this.slot = guiHelper.getSlotDrawable();
@@ -56,11 +54,9 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
     }
 
     @NotNull
-    public static List<CropRecipe> findRecipes()
-    {
+    public static List<CropRecipe> findRecipes() {
         final Set<Block> sourceBlocks = new HashSet<>();
-        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
-        {
+        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops()) {
             sourceBlocks.addAll(crop.getDroppedFrom());
         }
 
@@ -69,37 +65,32 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
 
     @NotNull
     @Override
-    public RecipeType<CropRecipe> getRecipeType()
-    {
+    public RecipeType<CropRecipe> getRecipeType() {
         return ModRecipeTypes.CROPS;
     }
 
     @NotNull
     @Override
-    public IDrawable getBackground()
-    {
+    public IDrawable getBackground() {
         return this.background;
     }
 
     @NotNull
     @Override
-    public IDrawable getIcon()
-    {
+    public IDrawable getIcon() {
         return this.icon;
     }
 
     @NotNull
     @Override
-    public Component getTitle()
-    {
+    public Component getTitle() {
         return Component.translatable(PARTIAL_JEI_INFO + "crops");
     }
 
     @Override
     public void setRecipe(@NotNull final IRecipeLayoutBuilder builder,
                           @NotNull final CropRecipe recipe,
-                          @NotNull final IFocusGroup focuses)
-    {
+                          @NotNull final IFocusGroup focuses) {
         final EquipmentTypeEntry requiredTool = ModEquipmentTypes.hoe.get();
         builder.addSlot(RecipeIngredientRole.CATALYST, WIDTH - 18, 0)
                 .setSlotName("tool")
@@ -123,26 +114,21 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
         int y = HEIGHT - rows * this.slot.getHeight() + 1;
         int c = 0;
 
-        for (final LootTableAnalyzer.LootDrop drop : drops)
-        {
+        for (final LootTableAnalyzer.LootDrop drop : drops) {
             final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
                     .setBackground(this.chanceSlot, -1, -1)
                     .addItemStacks(drop.getItemStacks());
             slot.addRichTooltipCallback(new JobBasedRecipeCategory.LootTableTooltipCallback(drop, recipe.source().getLootTable()));
-            if (++c >= columns)
-            {
+            if (++c >= columns) {
                 c = 0;
                 x = startX;
                 y += this.slot.getHeight();
-            }
-            else
-            {
+            } else {
                 x += this.slot.getWidth();
             }
         }
     }
 
-    public record CropRecipe(@NotNull Block source)
-    {
+    public record CropRecipe(@NotNull Block source) {
     }
 }

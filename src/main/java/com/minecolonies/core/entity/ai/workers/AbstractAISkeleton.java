@@ -12,7 +12,6 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -24,13 +23,12 @@ import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_A
  *
  * @param <J> the job this ai will have.
  */
-public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingStateAI
-{
+public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingStateAI {
     @NotNull
-    protected final J                     job;
+    protected final J job;
     @NotNull
     protected final AbstractEntityCitizen worker;
-    protected final ServerLevel           world;
+    protected final ServerLevel world;
 
     /**
      * The statemachine this AI uses
@@ -43,12 +41,10 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
      *
      * @param job the job class.
      */
-    protected AbstractAISkeleton(@NotNull final J job)
-    {
+    protected AbstractAISkeleton(@NotNull final J job) {
         super();
 
-        if (!job.getCitizen().getEntity().isPresent())
-        {
+        if (!job.getCitizen().getEntity().isPresent()) {
             throw new IllegalArgumentException("Cannot instantiate a AI from a Job that is attached to a Citizen without entity.");
         }
 
@@ -59,8 +55,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
     }
 
     @Override
-    public void tick()
-    {
+    public void tick() {
         stateMachine.tick();
     }
 
@@ -69,8 +64,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
      *
      * @param target the target to register.
      */
-    public void registerTarget(final TickingTransition<IAIState> target)
-    {
+    public void registerTarget(final TickingTransition<IAIState> target) {
         stateMachine.addTransition(target);
     }
 
@@ -79,13 +73,11 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
      *
      * @param targets a number of targets that need registration
      */
-    protected final void registerTargets(final TickingTransition<IAIState>... targets)
-    {
+    protected final void registerTargets(final TickingTransition<IAIState>... targets) {
         Arrays.asList(targets).forEach(this::registerTarget);
     }
 
-    protected void onException(final RuntimeException e)
-    {
+    protected void onException(final RuntimeException e) {
     }
 
     /**
@@ -93,8 +85,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
      *
      * @return The current IAIState.
      */
-    public final IAIState getState()
-    {
+    public final IAIState getState() {
         return stateMachine.getState();
     }
 
@@ -103,8 +94,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
      *
      * @return update rate
      */
-    public int getTickRate()
-    {
+    public int getTickRate() {
         return stateMachine.getTickRate();
     }
 
@@ -113,16 +103,14 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
      *
      * @return true if can be interrupted
      */
-    public boolean canBeInterrupted()
-    {
+    public boolean canBeInterrupted() {
         return getState().isOkayToEat();
     }
 
     /**
      * Resets the worker AI to Idle state, use with care interrupts all current Actions
      */
-    public void resetAI()
-    {
+    public void resetAI() {
         stateMachine.reset();
         worker.setRenderMetadata("");
     }
@@ -132,8 +120,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
      *
      * @return statemachine
      */
-    public ITickRateStateMachine<IAIState> getStateAI()
-    {
+    public ITickRateStateMachine<IAIState> getStateAI() {
         return stateMachine;
     }
 
@@ -141,8 +128,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
      * On removal of the AI.
      * Clean up equipment.
      */
-    public void onRemoval()
-    {
+    public void onRemoval() {
         worker.setItemSlot(EquipmentSlot.CHEST, ItemStackUtils.EMPTY);
         worker.setItemSlot(EquipmentSlot.FEET, ItemStackUtils.EMPTY);
         worker.setItemSlot(EquipmentSlot.HEAD, ItemStackUtils.EMPTY);
@@ -161,8 +147,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
      *
      * @param ticksToNextUpdate
      */
-    public void setCurrentDelay(final int ticksToNextUpdate)
-    {
+    public void setCurrentDelay(final int ticksToNextUpdate) {
         stateMachine.setCurrentDelay(ticksToNextUpdate);
     }
 }

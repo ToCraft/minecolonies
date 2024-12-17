@@ -15,65 +15,57 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class NBTUtils
-{
+public class NBTUtils {
 
-    public static Stream<CompoundTag> streamCompound(final ListTag list)
-    {
+    public static Stream<CompoundTag> streamCompound(final ListTag list) {
         return streamBase(list).filter(b -> b instanceof CompoundTag).map(b -> (CompoundTag) b);
     }
 
-    public static Stream<Tag> streamBase(final ListTag list)
-    {
+    public static Stream<Tag> streamBase(final ListTag list) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new TagListIterator(list), Spliterator.ORDERED), false);
     }
 
-    public static Collector<Tag, ?, ListTag> toListNBT()
-    {
+    public static Collector<Tag, ?, ListTag> toListNBT() {
         return Collectors.collectingAndThen(
-          Collectors.toList(),
-          list -> {
-              final ListTag tagList = new ListTag();
-              tagList.addAll(list);
+                Collectors.toList(),
+                list -> {
+                    final ListTag tagList = new ListTag();
+                    tagList.addAll(list);
 
-              return tagList;
-          });
+                    return tagList;
+                });
     }
 
-    public static BlockPos readBlockPos(@NotNull final CompoundTag compound, @NotNull final String name)
-    {
+    public static BlockPos readBlockPos(@NotNull final CompoundTag compound, @NotNull final String name) {
         int[] aint = compound.getIntArray(name);
         return aint.length == 3 ? new BlockPos(aint[0], aint[1], aint[2]) : null;
     }
 
-    public static BlockPos readBlockPos(@NotNull final Tag compound)
-    {
+    public static BlockPos readBlockPos(@NotNull final Tag compound) {
         int[] aint = ((IntArrayTag) compound).getAsIntArray();
         return aint.length == 3 ? new BlockPos(aint[0], aint[1], aint[2]) : null;
     }
 
-    public static Tag writeBlockPos(@NotNull final BlockPos pos)
-    {
+    public static Tag writeBlockPos(@NotNull final BlockPos pos) {
         return new IntArrayTag(new int[]{pos.getX(), pos.getY(), pos.getZ()});
     }
 
-    private static class TagListIterator implements Iterator<Tag>
-    {
+    private static class TagListIterator implements Iterator<Tag> {
 
         private final ListTag list;
-        private       int     currentIndex = 0;
+        private int currentIndex = 0;
 
-        private TagListIterator(final ListTag list) {this.list = list;}
+        private TagListIterator(final ListTag list) {
+            this.list = list;
+        }
 
         @Override
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return currentIndex < list.size();
         }
 
         @Override
-        public Tag next()
-        {
+        public Tag next() {
             return list.getCompound(currentIndex++);
         }
     }

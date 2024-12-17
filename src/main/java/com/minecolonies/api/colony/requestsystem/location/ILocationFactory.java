@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <T> The type of location.
  * @param <L> The location type.
  */
-public interface ILocationFactory<T, L extends ILocation> extends IFactory<T, L>
-{
+public interface ILocationFactory<T, L extends ILocation> extends IFactory<T, L> {
 
     /**
      * Method to get a new instance of the output given the input and additional context data.
@@ -24,10 +23,8 @@ public interface ILocationFactory<T, L extends ILocation> extends IFactory<T, L>
      */
     @NotNull
     @Override
-    default L getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
-    {
-        if (context.length != 0)
-        {
+    default L getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException {
+        if (context.length != 0) {
             throw new IllegalArgumentException("Unsupported context - Too many parameters. None is needed.!");
         }
 

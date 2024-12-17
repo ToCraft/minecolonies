@@ -8,30 +8,26 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 /**
  * Initializes the particle type.
  */
-public class ModParticleTypesInitializer
-{
+public class ModParticleTypesInitializer {
     /**
      * Particle type
      */
     public static final SimpleParticleType SLEEPINGPARTICLE_TYPE = new SimpleParticleType(true);
-    public static final ResourceLocation  SLEEPING_TEXTURE      = new ResourceLocation(Constants.MOD_ID, "particle/sleeping");
+    public static final ResourceLocation SLEEPING_TEXTURE = new ResourceLocation(Constants.MOD_ID, "particle/sleeping");
 
     /**
      * Register the particle
      */
     @EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
-    public static class CommonRegistration
-    {
+    public static class CommonRegistration {
         @SubscribeEvent
-        public static void registerParticles(final RegisterEvent event)
-        {
+        public static void registerParticles(final RegisterEvent event) {
             event.register(Registries.PARTICLE_TYPE, SLEEPING_TEXTURE, () -> SLEEPINGPARTICLE_TYPE);
         }
     }
@@ -40,11 +36,9 @@ public class ModParticleTypesInitializer
      * Register the client side factory
      */
     @EventBusSubscriber(modid = Constants.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
-    public static class ClientRegistration
-    {
+    public static class ClientRegistration {
         @SubscribeEvent
-        public static void registerParticleFactories(RegisterParticleProvidersEvent event)
-        {
+        public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
             event.registerSpriteSet(SLEEPINGPARTICLE_TYPE, SleepingParticle.Factory::new);
         }
     }

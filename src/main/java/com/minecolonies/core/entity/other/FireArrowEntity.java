@@ -13,24 +13,20 @@ import javax.annotation.Nullable;
 /**
  * Custom arrow entity for the fire arrows.
  */
-public class FireArrowEntity extends CustomArrowEntity
-{
-    public FireArrowEntity(EntityType<? extends Arrow> entity, Level world)
-    {
+public class FireArrowEntity extends CustomArrowEntity {
+    public FireArrowEntity(EntityType<? extends Arrow> entity, Level world) {
         super(entity, world);
     }
 
     @Override
-    public void setOwner(@Nullable final Entity shooter)
-    {
+    public void setOwner(@Nullable final Entity shooter) {
         super.setOwner(shooter);
         this.setPos(shooter.getX(), shooter.getEyeY() - (double) 0.1F, shooter.getZ());
     }
 
     @NotNull
     @Override
-    protected ItemStack getPickupItem()
-    {
+    protected ItemStack getPickupItem() {
         return new ItemStack(ModItems.firearrow, 1);
     }
 }

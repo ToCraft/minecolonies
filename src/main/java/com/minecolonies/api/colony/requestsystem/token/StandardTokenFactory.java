@@ -10,13 +10,11 @@ import java.util.UUID;
 /**
  * Factory for the standard request token, {@link StandardToken}
  */
-public class StandardTokenFactory extends AbstractTokenFactory<UUID>
-{
+public class StandardTokenFactory extends AbstractTokenFactory<UUID> {
 
     @NotNull
     @Override
-    public TypeToken<UUID> getFactoryInputType()
-    {
+    public TypeToken<UUID> getFactoryInputType() {
         return TypeConstants.UUID;
     }
 
@@ -28,14 +26,12 @@ public class StandardTokenFactory extends AbstractTokenFactory<UUID>
      */
     @NotNull
     @Override
-    public StandardToken getNewInstance(@NotNull final UUID input)
-    {
+    public StandardToken getNewInstance(@NotNull final UUID input) {
         return new StandardToken(input);
     }
 
     @Override
-    public short getSerializationId()
-    {
+    public short getSerializationId() {
         return SerializationIdentifierConstants.STANDARD_TOKEN_ID;
     }
 }

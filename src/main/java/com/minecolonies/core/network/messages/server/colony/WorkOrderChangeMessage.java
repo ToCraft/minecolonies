@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates the WorkOrderChangeMessage which is responsible for changes in priority or removal of workOrders.
  */
-public class WorkOrderChangeMessage extends AbstractColonyServerMessage
-{
+public class WorkOrderChangeMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "work_order_change", WorkOrderChangeMessage::new);
 
     /**
@@ -40,8 +39,7 @@ public class WorkOrderChangeMessage extends AbstractColonyServerMessage
      * @param removeWorkOrder remove the workOrder?
      * @param priority        the new priority.
      */
-    public WorkOrderChangeMessage(@NotNull final IBuildingView building, final int workOrderId, final boolean removeWorkOrder, final int priority)
-    {
+    public WorkOrderChangeMessage(@NotNull final IBuildingView building, final int workOrderId, final boolean removeWorkOrder, final int priority) {
         super(TYPE, building.getColony());
         this.workOrderId = workOrderId;
         this.removeWorkOrder = removeWorkOrder;
@@ -53,8 +51,7 @@ public class WorkOrderChangeMessage extends AbstractColonyServerMessage
      *
      * @param buf the used byteBuffer.
      */
-    protected WorkOrderChangeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected WorkOrderChangeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         workOrderId = buf.readInt();
         priority = buf.readInt();
@@ -67,8 +64,7 @@ public class WorkOrderChangeMessage extends AbstractColonyServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(workOrderId);
         buf.writeInt(priority);
@@ -76,14 +72,10 @@ public class WorkOrderChangeMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
-        if (removeWorkOrder)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
+        if (removeWorkOrder) {
             colony.getWorkManager().removeWorkOrder(workOrderId);
-        }
-        else if (colony.getWorkManager().getWorkOrder(workOrderId) != null)
-        {
+        } else if (colony.getWorkManager().getWorkOrder(workOrderId) != null) {
             colony.getWorkManager().getWorkOrder(workOrderId).setPriority(priority);
         }
     }

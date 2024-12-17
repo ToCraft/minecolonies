@@ -12,8 +12,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.BASE_ENV_DAMAGE
 /**
  * Class for the Chief Pirate entity.
  */
-public class EntityCaptainPirate extends AbstractEntityPirate implements ICaptainPirateEntity
-{
+public class EntityCaptainPirate extends AbstractEntityPirate implements ICaptainPirateEntity {
 
     /**
      * Constructor of the entity.
@@ -21,14 +20,12 @@ public class EntityCaptainPirate extends AbstractEntityPirate implements ICaptai
      * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityCaptainPirate(final EntityType<? extends EntityCaptainPirate> type, final Level worldIn)
-    {
+    public EntityCaptainPirate(final EntityType<? extends EntityCaptainPirate> type, final Level worldIn) {
         super(type, worldIn);
     }
 
     @Override
-    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
-    {
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage) {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
         this.getAttribute(Attributes.ARMOR).setBaseValue(-1);
         this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage + 2.0);

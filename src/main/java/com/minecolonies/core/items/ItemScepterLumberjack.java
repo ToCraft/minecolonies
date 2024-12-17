@@ -28,8 +28,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Lumberjack Scepter Item class. Used to give tasks to Lumberjacks.
  */
-public class ItemScepterLumberjack extends AbstractItemMinecolonies implements IBlockOverlayItem
-{
+public class ItemScepterLumberjack extends AbstractItemMinecolonies implements IBlockOverlayItem {
     private static final int RED_OVERLAY = 0xFFFF0000;
     private static final int GREEN_OVERLAY = 0xFF00FF00;
 
@@ -38,17 +37,14 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
      *
      * @param properties the properties.
      */
-    public ItemScepterLumberjack(final Properties properties)
-    {
+    public ItemScepterLumberjack(final Properties properties) {
         super("scepterlumberjack", properties.stacksTo(1).component(ModDataComponents.POS_SELECTION, PosSelection.EMPTY));
     }
 
     @NotNull
     @Override
-    public InteractionResult useOn(final UseOnContext context)
-    {
-        if (context.getLevel().isClientSide)
-        {
+    public InteractionResult useOn(final UseOnContext context) {
+        if (context.getLevel().isClientSide) {
             return InteractionResult.FAIL;
         }
 
@@ -61,10 +57,8 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
     }
 
     @Override
-    public boolean canAttackBlock(@NotNull final BlockState state, @NotNull final Level world, @NotNull final BlockPos pos, @NotNull final Player player)
-    {
-        if (!world.isClientSide)
-        {
+    public boolean canAttackBlock(@NotNull final BlockState state, @NotNull final Level world, @NotNull final BlockPos pos, @NotNull final Player player) {
+        if (!world.isClientSide) {
             final ItemStack scepter = player.getMainHandItem();
             MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_POSITION_A_SET).sendTo(player);
             PosSelection.updateItemStack(scepter, selection -> selection.setEndpos(pos));
@@ -78,13 +72,11 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
         return 3.4028235E38F;
     }
 
-    private void storeRestrictedArea(final Player player, final ItemStack scepter, final Level worldIn)
-    {
+    private void storeRestrictedArea(final Player player, final ItemStack scepter, final Level worldIn) {
         final PosSelection component = PosSelection.readFromItemStack(scepter);
         final Tuple<BlockPos, BlockPos> box = getBox(worldIn, scepter, component);
 
-        if (box == null)
-        {
+        if (box == null) {
             return;
         }
         assert box.getA() != null && box.getB() != null;
@@ -104,14 +96,12 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
         final int volume = distX * distY * distZ;
         final int maxVolume = (int) Math.floor(2 * Math.pow(EntityAIWorkLumberjack.SEARCH_RANGE, 3));
 
-        if (volume > maxVolume)
-        {
+        if (volume > maxVolume) {
             MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_AREA_TOO_BIG, volume, maxVolume).sendTo(player);
             return;
         }
 
-        if (!(BuildingId.readBuildingFromItemStack(scepter) instanceof final BuildingLumberjack hut))
-        {
+        if (!(BuildingId.readBuildingFromItemStack(scepter) instanceof final BuildingLumberjack hut)) {
             return;
         }
 
@@ -121,18 +111,15 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
 
     @NotNull
     @Override
-    public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack)
-    {
+    public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack) {
         final PosSelection component = PosSelection.readFromItemStack(stack);
         final BuildingId buildingId = BuildingId.readFromItemStack(stack);
         final Tuple<BlockPos, BlockPos> box = getBox(world, stack, component);
 
-        if (buildingId.hasId())
-        {
+        if (buildingId.hasId()) {
             final OverlayBox anchorBox = new OverlayBox(buildingId.id(), RED_OVERLAY, 0.02f, true);
 
-            if (box != null && box.getA() != null && box.getB() != null)
-            {
+            if (box != null && box.getA() != null && box.getB() != null) {
                 final AABB bounds = AABB.encapsulatingFullBlocks(box.getA(), box.getB().offset(1, 1, 1)).inflate(1);
                 // inflate(1) is due to implementation of BlockPosUtil.isInArea
 
@@ -146,22 +133,18 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
     }
 
     @Nullable
-    private Tuple<BlockPos, BlockPos> getBox(@NotNull final Level world, final ItemStack stack, final PosSelection selection)
-    {
+    private Tuple<BlockPos, BlockPos> getBox(@NotNull final Level world, final ItemStack stack, final PosSelection selection) {
         final BlockPos start = selection.startPos().orElse(null);
         final BlockPos end = selection.endPos().orElse(null);
 
-        if (world.isClientSide())
-        {
+        if (world.isClientSide()) {
             return new Tuple<>(start, end);
         }
 
-        if (BuildingId.readBuildingFromItemStack(stack) instanceof final BuildingLumberjack hut)
-        {
+        if (BuildingId.readBuildingFromItemStack(stack) instanceof final BuildingLumberjack hut) {
             final BlockPos startRestriction = start != null ? start : Objects.requireNonNullElse(hut.getStartRestriction(), BlockPos.ZERO);
             final BlockPos endRestriction = end != null ? end : Objects.requireNonNullElse(hut.getEndRestriction(), BlockPos.ZERO);
-            if (!startRestriction.equals(BlockPos.ZERO) && !endRestriction.equals(BlockPos.ZERO))
-            {
+            if (!startRestriction.equals(BlockPos.ZERO) && !endRestriction.equals(BlockPos.ZERO)) {
                 return new Tuple<>(startRestriction, endRestriction);
             }
         }

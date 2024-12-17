@@ -28,11 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public interface IColonyManager
-{
+public interface IColonyManager {
 
-    static IColonyManager getInstance()
-    {
+    static IColonyManager getInstance() {
         return IMinecoloniesAPI.getInstance().getColonyManager();
     }
 
@@ -426,6 +424,7 @@ public interface IColonyManager
 
     /**
      * Open the new reactivation window.
+     *
      * @param pos the pos to open it at.
      */
     void openReactivationWindow(final BlockPos pos);
@@ -439,13 +438,15 @@ public interface IColonyManager
 
     /**
      * Add claim data of a colony.
-     * @param colony the colony from which to add the claim data.
+     *
+     * @param colony    the colony from which to add the claim data.
      * @param claimData the claim data to add.
      */
     void addClaimData(IColony colony, Long2ObjectMap<ChunkClaimData> claimData);
 
     /**
      * Get the claim data for the whole dimension.
+     *
      * @param dimension the dim.
      * @return the claim data.
      */
@@ -453,16 +454,18 @@ public interface IColonyManager
 
     /**
      * Get the claim data for a dimension and pos.
+     *
      * @param dimension the dim.
-     * @param pos the pos.
+     * @param pos       the pos.
      * @return the claim data.
      */
     IChunkClaimData getClaimData(ResourceKey<Level> dimension, ChunkPos pos);
 
     /**
      * New chunk to track claim of.
-     * @param colony the colony claiming it.
-     * @param pos the chunk pos.
+     *
+     * @param colony         the colony claiming it.
+     * @param pos            the chunk pos.
      * @param chunkClaimData the claim data to track.
      */
     void addNewChunk(Colony colony, ChunkPos pos, ChunkClaimData chunkClaimData);

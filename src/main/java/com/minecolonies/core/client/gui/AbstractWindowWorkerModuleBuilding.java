@@ -27,8 +27,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  *
  * @param <B> Class extending {@link AbstractBuildingView}
  */
-public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView> extends AbstractWindowModuleBuilding<B>
-{
+public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView> extends AbstractWindowModuleBuilding<B> {
     /**
      * Id of the hire/fire button in the GUI.
      */
@@ -80,8 +79,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
      * @param building class extending {@link AbstractBuildingView}.
      * @param resource Resource of the window.
      */
-    protected AbstractWindowWorkerModuleBuilding(final B building, final String resource)
-    {
+    protected AbstractWindowWorkerModuleBuilding(final B building, final String resource) {
         super(building, resource);
 
         super.registerButton(BUTTON_HIRE, this::hireClicked);
@@ -91,44 +89,35 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
         super.registerButton(BUTTON_FORCE_PICKUP, this::forcePickup);
     }
 
-    private void updatePriorityLabel()
-    {
+    private void updatePriorityLabel() {
         Component component;
-        if (prio == 0)
-        {
+        if (prio == 0) {
             component = Component.translatableEscape(TEXT_PICKUP_PRIORITY)
-              .append(Component.translatableEscape(TEXT_PICKUP_PRIORITY_NEVER));
-        }
-        else
-        {
+                    .append(Component.translatableEscape(TEXT_PICKUP_PRIORITY_NEVER));
+        } else {
             component = Component.translatableEscape(TEXT_PICKUP_PRIORITY)
-              .append(Component.literal(prio + "/10"));
+                    .append(Component.literal(prio + "/10"));
         }
         findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(component);
     }
 
-    private void deliveryPriorityUp()
-    {
-        if (prio != 10)
-        {
+    private void deliveryPriorityUp() {
+        if (prio != 10) {
             prio++;
         }
         new ChangeDeliveryPriorityMessage(building, true).sendToServer();
         updatePriorityLabel();
     }
 
-    private void deliveryPriorityDown()
-    {
-        if (prio != 0)
-        {
+    private void deliveryPriorityDown() {
+        if (prio != 0) {
             prio--;
         }
         new ChangeDeliveryPriorityMessage(building, false).sendToServer();
         updatePriorityLabel();
     }
 
-    private void forcePickup()
-    {
+    private void forcePickup() {
         new ForcePickupMessage(building).sendToServer();
     }
 
@@ -137,10 +126,8 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
      *
      * @param button the clicked button.
      */
-    protected void hireClicked(@NotNull final Button button)
-    {
-        if (!building.allowsAssignment())
-        {
+    protected void hireClicked(@NotNull final Button button) {
+        if (!building.allowsAssignment()) {
             MessageUtils.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0).sendTo(Minecraft.getInstance().player);
             return;
         }
@@ -151,45 +138,36 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
     /**
      * Action when a recall button is clicked.
      */
-    private void recallClicked()
-    {
+    private void recallClicked() {
         new RecallCitizenMessage(building).sendToServer();
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         final List<Tuple<String, Integer>> workers = new ArrayList<>();
 
-        for (final WorkerBuildingModuleView module : buildingView.getModuleViews(WorkerBuildingModuleView.class))
-        {
-            for (final int worker : module.getAssignedCitizens())
-            {
+        for (final WorkerBuildingModuleView module : buildingView.getModuleViews(WorkerBuildingModuleView.class)) {
+            for (final int worker : module.getAssignedCitizens()) {
                 workers.add(new Tuple<>(Component.translatableEscape(module.getJobEntry().getTranslationKey()).getString(), worker));
             }
         }
 
-        if (findPaneByID(LIST_WORKERS) != null)
-        {
+        if (findPaneByID(LIST_WORKERS) != null) {
             ScrollingList workerList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);
-            workerList.setDataProvider(new ScrollingList.DataProvider()
-            {
+            workerList.setDataProvider(new ScrollingList.DataProvider() {
                 @Override
-                public int getElementCount()
-                {
+                public int getElementCount() {
                     return workers.size();
                 }
 
                 @Override
-                public void updateElement(final int index, @NotNull final Pane rowPane)
-                {
+                public void updateElement(final int index, @NotNull final Pane rowPane) {
 
                     final ICitizenDataView worker = building.getColony().getCitizen(workers.get(index).getB());
-                    if (worker != null)
-                    {
+                    if (worker != null) {
                         rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class)
-                          .setText(Component.literal(Component.translatableEscape(workers.get(index).getA()).getString() + ": " + worker.getName()));
+                                .setText(Component.literal(Component.translatableEscape(workers.get(index).getA()).getString() + ": " + worker.getName()));
                     }
                 }
             });

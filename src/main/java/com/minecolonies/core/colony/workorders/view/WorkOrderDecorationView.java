@@ -9,18 +9,14 @@ import net.minecraft.network.chat.Component;
 /**
  * The client side representation for a work order that the builder can take to build decorations.
  */
-public class WorkOrderDecorationView extends AbstractWorkOrderView
-{
+public class WorkOrderDecorationView extends AbstractWorkOrderView {
     @Override
-    public Component getDisplayName()
-    {
+    public Component getDisplayName() {
         return getOrderTypePrefix(Component.translatableEscape(getTranslationKey()));
     }
 
-    private Component getOrderTypePrefix(Component nameComponent)
-    {
-        switch (this.getWorkOrderType())
-        {
+    private Component getOrderTypePrefix(Component nameComponent) {
+        switch (this.getWorkOrderType()) {
             case BUILD:
                 return Component.translatableEscape(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
             case UPGRADE:
@@ -35,8 +31,7 @@ public class WorkOrderDecorationView extends AbstractWorkOrderView
     }
 
     @Override
-    public boolean shouldShowIn(IBuildingView view)
-    {
+    public boolean shouldShowIn(IBuildingView view) {
         return view instanceof ITownHallView || view instanceof BuildingBuilder.View;
     }
 }

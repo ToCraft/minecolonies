@@ -10,38 +10,32 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.I
 /**
  * The AI behind the {@link JobSwineHerder} for Breeding and Killing Pigs.
  */
-public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerder, BuildingSwineHerder>
-{
+public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerder, BuildingSwineHerder> {
     /**
      * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
      */
-    public EntityAIWorkSwineHerder(@NotNull final JobSwineHerder job)
-    {
+    public EntityAIWorkSwineHerder(@NotNull final JobSwineHerder job) {
         super(job);
     }
 
     @Override
-    protected void updateRenderMetaData()
-    {
+    protected void updateRenderMetaData() {
         String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
-        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.CARROT))
-        {
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.CARROT)) {
             renderMeta += EntityAIWorkRabbitHerder.RENDER_META_CARROT;
         }
         worker.setRenderMetadata(renderMeta);
     }
 
     @Override
-    public Class<BuildingSwineHerder> getExpectedBuildingClass()
-    {
+    public Class<BuildingSwineHerder> getExpectedBuildingClass() {
         return BuildingSwineHerder.class;
     }
 
     @Override
-    public double getButcheringAttackDamage()
-    {
+    public double getButcheringAttackDamage() {
         return Math.max(1.0, getPrimarySkillLevel() / 10.0);
     }
 }

@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "hire_fire", HireFireMessage::new);
 
     /**
@@ -42,8 +41,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param hire      hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(@NotNull final IBuildingView building, final boolean hire, final int citizenID, final int moduleId)
-    {
+    public HireFireMessage(@NotNull final IBuildingView building, final boolean hire, final int citizenID, final int moduleId) {
         super(TYPE, building);
         this.hire = hire;
         this.citizenID = citizenID;
@@ -55,8 +53,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
      *
      * @param buf the used byteBuffer.
      */
-    protected HireFireMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected HireFireMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         hire = buf.readBoolean();
         citizenID = buf.readInt();
@@ -69,8 +66,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeBoolean(hire);
         buf.writeInt(citizenID);
@@ -78,18 +74,13 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (building.getModule(moduleId) instanceof final IAssignsJob module)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (building.getModule(moduleId) instanceof final IAssignsJob module) {
             final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
             citizen.setPaused(false);
-            if (hire)
-            {
+            if (hire) {
                 module.assignCitizen(citizen);
-            }
-            else
-            {
+            } else {
                 module.removeCitizen(citizen);
             }
         }

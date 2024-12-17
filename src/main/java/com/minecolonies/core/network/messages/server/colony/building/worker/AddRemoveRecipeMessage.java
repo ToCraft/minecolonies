@@ -34,8 +34,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.UNABLE_TO_
 /**
  * Message class to add and remove recipes.
  */
-public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "add_remove_recipe", AddRemoveRecipeMessage::new);
 
     /**
@@ -59,10 +58,9 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param building the building we're executing on.
      * @param remove   true if remove.
      * @param storage  the recipe storage.
-     * @param id the unique id of the module.
+     * @param id       the unique id of the module.
      */
-    public AddRemoveRecipeMessage(final IBuildingView building, final boolean remove, final IRecipeStorage storage, final int id)
-    {
+    public AddRemoveRecipeMessage(final IBuildingView building, final boolean remove, final IRecipeStorage storage, final int id) {
         super(TYPE, building);
         this.remove = remove;
         this.storage = storage;
@@ -72,35 +70,31 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     /**
      * Create a message to add or remove recipes. This constructor creates the recipeStorage on its own.
      *
-     * @param input         the input.
-     * @param gridSize      the gridSize.
-     * @param primaryOutput the primary output.
-     * @param remove        true if remove.
-     * @param building      the building we're executing on.
-     * @param id module id.
+     * @param input             the input.
+     * @param gridSize          the gridSize.
+     * @param primaryOutput     the primary output.
+     * @param remove            true if remove.
+     * @param building          the building we're executing on.
+     * @param id                module id.
      * @param additionalOutputs the additional outputs.
      */
-    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final List<ItemStack> additionalOutputs, final boolean remove, final int id)
-    {
+    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final List<ItemStack> additionalOutputs, final boolean remove, final int id) {
         super(TYPE, building);
         this.remove = remove;
-        if (gridSize == 1)
-        {
+        if (gridSize == 1) {
             storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input,
-              gridSize,
-              primaryOutput, Blocks.FURNACE);
-        }
-        else
-        {
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    input,
+                    gridSize,
+                    primaryOutput, Blocks.FURNACE);
+        } else {
             storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input,
-              gridSize,
-              primaryOutput, Blocks.AIR, null, null, null, additionalOutputs);
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    input,
+                    gridSize,
+                    primaryOutput, Blocks.AIR, null, null, null, additionalOutputs);
         }
         this.id = id;
     }
@@ -113,24 +107,20 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param primaryOutput the primary output.
      * @param remove        true if remove.
      * @param building      the building we're executing on.
-     * @param intermediary intermediate block.
-     * @param id the module id.
+     * @param intermediary  intermediate block.
+     * @param id            the module id.
      */
-    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final boolean remove, final Block intermediary, final int id)
-    {
+    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final boolean remove, final Block intermediary, final int id) {
         super(TYPE, building);
         this.remove = remove;
-        if (gridSize == 1)
-        {
+        if (gridSize == 1) {
             storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input,
-              gridSize,
-              primaryOutput, intermediary);
-        }
-        else
-        {
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    input,
+                    gridSize,
+                    primaryOutput, intermediary);
+        } else {
             throw new UnsupportedOperationException("Not used now, implement it later if needed..");
         }
         this.id = id;
@@ -141,8 +131,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      *
      * @param buf the used byteBuffer.
      */
-    protected AddRemoveRecipeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected AddRemoveRecipeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         storage = StandardFactoryController.getInstance().deserialize(buf);
         remove = buf.readBoolean();
@@ -155,8 +144,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         StandardFactoryController.getInstance().serialize(buf, storage);
         buf.writeBoolean(remove);
@@ -164,28 +152,20 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (!(building.getModule(id) instanceof final AbstractCraftingBuildingModule module))
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (!(building.getModule(id) instanceof final AbstractCraftingBuildingModule module)) {
             return;
         }
 
-        if (remove)
-        {
+        if (remove) {
             module.removeRecipe(storage.getToken());
             SoundUtils.playSuccessSound(player, player.blockPosition());
-        }
-        else
-        {
+        } else {
             final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
-            if (!module.addRecipe(token))
-            {
+            if (!module.addRecipe(token)) {
                 SoundUtils.playErrorSound(player, player.blockPosition());
                 MessageUtils.format(UNABLE_TO_ADD_RECIPE_MESSAGE, Component.translatableEscape(building.getBuildingDisplayName())).sendTo(player);
-            }
-            else
-            {
+            } else {
                 SoundUtils.playSuccessSound(player, player.blockPosition());
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.BUILDING_ADD_RECIPE.get().trigger(playerMP, this.storage));
                 MessageUtils.format(MESSAGE_RECIPE_SAVED).sendTo(player);

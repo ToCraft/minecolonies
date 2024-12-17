@@ -29,8 +29,7 @@ import static com.minecolonies.api.util.constant.translation.BaseGameTranslation
 /**
  * BrewingStand crafting gui.
  */
-public class WindowBrewingstandCrafting extends AbstractContainerScreen<ContainerCraftingBrewingstand>
-{
+public class WindowBrewingstandCrafting extends AbstractContainerScreen<ContainerCraftingBrewingstand> {
     private static final ResourceLocation BREWING_STAND_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/container/brewing_stand.png");
 
     /**
@@ -75,8 +74,7 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
      * @param playerInventory the player inv.
      * @param iTextComponent  the display text component.
      */
-    public WindowBrewingstandCrafting(final ContainerCraftingBrewingstand container, final Inventory playerInventory, final Component iTextComponent)
-    {
+    public WindowBrewingstandCrafting(final ContainerCraftingBrewingstand container, final Inventory playerInventory, final Component iTextComponent) {
         super(container, playerInventory, iTextComponent);
         this.container = container;
         this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level().dimension(), container.getPos());
@@ -84,14 +82,12 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
     }
 
     @NotNull
-    public AbstractBuildingView getBuildingView()
-    {
+    public AbstractBuildingView getBuildingView() {
         return building;
     }
 
     @Override
-    protected void init()
-    {
+    protected void init() {
         super.init();
         final Component buttonDisplay = Component.translatableEscape(module.canLearn(ModCraftingTypes.BREWING.get()) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
         /*
@@ -99,19 +95,15 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
          */
         final Button doneButton = new Button.Builder(buttonDisplay, new WindowBrewingstandCrafting.OnButtonPress()).pos(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS).size(BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(doneButton);
-        if (!module.canLearn(ModCraftingTypes.BREWING.get()))
-        {
+        if (!module.canLearn(ModCraftingTypes.BREWING.get())) {
             doneButton.active = false;
         }
     }
 
-    public class OnButtonPress implements Button.OnPress
-    {
+    public class OnButtonPress implements Button.OnPress {
         @Override
-        public void onPress(@NotNull final Button button)
-        {
-            if (module.canLearn(ModCraftingTypes.BREWING.get()))
-            {
+        public void onPress(@NotNull final Button button) {
+            if (module.canLearn(ModCraftingTypes.BREWING.get())) {
                 final List<ItemStorage> input = new ArrayList<>();
                 input.add(new ItemStorage(container.slots.get(0).getItem()));
                 input.add(new ItemStorage(container.slots.get(1).getItem()));
@@ -119,11 +111,10 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
                 input.add(new ItemStorage(container.slots.get(3).getItem()));
 
                 final ItemStack
-                  primaryOutput = PotionBrewing.EMPTY.mix(container.slots.get(3).getItem(), container.slots.get(0).getItem()).copy();
+                        primaryOutput = PotionBrewing.EMPTY.mix(container.slots.get(3).getItem(), container.slots.get(0).getItem()).copy();
                 primaryOutput.setCount(3);
 
-                if (!ItemStackUtils.isEmpty(primaryOutput))
-                {
+                if (!ItemStackUtils.isEmpty(primaryOutput)) {
                     new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false, Blocks.BREWING_STAND, module.getProducer().getRuntimeID()).sendToServer();
                 }
             }
@@ -131,14 +122,12 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
     }
 
     @Override
-    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
-    {
+    public void render(@NotNull final GuiGraphics stack, int x, int y, float z) {
         super.render(stack, x, y, z);
         this.renderTooltip(stack, x, y);
     }
 
-    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
-    {
+    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY) {
         stack.blit(BREWING_STAND_LOCATION, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
         int l = Mth.clamp((20 - 1) / 20, 0, 18);
         if (l > 0) {

@@ -5,8 +5,7 @@ import com.minecolonies.api.colony.IVisitorData;
 /**
  * Visitor manager to manage visiting entities
  */
-public interface IVisitorManager extends IEntityManager
-{
+public interface IVisitorManager extends IEntityManager {
     /**
      * Gets the visitor data for the given citizen
      *

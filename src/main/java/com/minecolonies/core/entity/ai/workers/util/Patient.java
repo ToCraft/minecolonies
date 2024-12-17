@@ -8,13 +8,11 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STATUS;
 /**
  * Class representing a patient.
  */
-public class Patient
-{
+public class Patient {
     /**
      * Different patient states.
      */
-    public enum PatientState
-    {
+    public enum PatientState {
         NEW,
         REQUESTED,
         TREATED
@@ -35,8 +33,7 @@ public class Patient
      *
      * @param id the id of the patient.
      */
-    public Patient(final int id)
-    {
+    public Patient(final int id) {
         this.id = id;
     }
 
@@ -45,8 +42,7 @@ public class Patient
      *
      * @param patientCompound the nbt to load it from.
      */
-    public Patient(final CompoundTag patientCompound)
-    {
+    public Patient(final CompoundTag patientCompound) {
         this.id = patientCompound.getInt(TAG_ID);
         this.state = PatientState.values()[patientCompound.getInt(TAG_STATUS)];
     }
@@ -56,8 +52,7 @@ public class Patient
      *
      * @return the int id.
      */
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
@@ -66,8 +61,7 @@ public class Patient
      *
      * @return the enum state.
      */
-    public PatientState getState()
-    {
+    public PatientState getState() {
         return state;
     }
 
@@ -76,8 +70,7 @@ public class Patient
      *
      * @param state the state to set.
      */
-    public void setState(final PatientState state)
-    {
+    public void setState(final PatientState state) {
         this.state = state;
     }
 
@@ -86,8 +79,7 @@ public class Patient
      *
      * @param compoundNBT the compound to write it to.
      */
-    public void write(final CompoundTag compoundNBT)
-    {
+    public void write(final CompoundTag compoundNBT) {
         compoundNBT.putInt(TAG_ID, id);
         compoundNBT.putInt(TAG_STATUS, state.ordinal());
     }

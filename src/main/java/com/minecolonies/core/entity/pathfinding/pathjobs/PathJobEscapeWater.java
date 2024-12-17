@@ -21,8 +21,7 @@ import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSIT
 /**
  * Job that handles moving away from something.
  */
-public class PathJobEscapeWater extends AbstractPathJob implements IDestinationPathJob
-{
+public class PathJobEscapeWater extends AbstractPathJob implements IDestinationPathJob {
     /**
      * Position to run to, in order to avoid something.
      */
@@ -43,20 +42,17 @@ public class PathJobEscapeWater extends AbstractPathJob implements IDestinationP
      * @param entity the entity.
      */
     public PathJobEscapeWater(
-      final Level world,
-      @NotNull final BlockPos start,
-      final int range,
-      final Mob entity)
-    {
+            final Level world,
+            @NotNull final BlockPos start,
+            final int range,
+            final Mob entity) {
         super(world, start, 500, new PathResult<PathJobEscapeWater>(), entity);
 
         this.avoid = start;
         preferredDirection = entity.blockPosition().offset(entity.blockPosition().subtract(avoid).multiply(range));
-        if (entity instanceof AbstractEntityCitizen)
-        {
+        if (entity instanceof AbstractEntityCitizen) {
             final IColony colony = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getColonyOrRegister();
-            if (colony != null)
-            {
+            if (colony != null) {
                 preferredDirection = colony.getCenter();
             }
         }
@@ -69,12 +65,10 @@ public class PathJobEscapeWater extends AbstractPathJob implements IDestinationP
      */
     @Nullable
     @Override
-    protected Path search()
-    {
-        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
-        {
+    protected Path search() {
+        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE) {
             Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]",
-              start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
+                    start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
         }
 
         return super.search();
@@ -86,8 +80,7 @@ public class PathJobEscapeWater extends AbstractPathJob implements IDestinationP
      * @return heuristic as a double - Manhatten Distance with tie-breaker.
      */
     @Override
-    protected double computeHeuristic(final int x, final int y, final int z)
-    {
+    protected double computeHeuristic(final int x, final int y, final int z) {
         return BlockPosUtil.dist(preferredDirection, x, y, z) * 2 / (y / 10.0);
     }
 
@@ -98,16 +91,14 @@ public class PathJobEscapeWater extends AbstractPathJob implements IDestinationP
      * @return true if so.
      */
     @Override
-    protected boolean isAtDestination(@NotNull final MNode n)
-    {
+    protected boolean isAtDestination(@NotNull final MNode n) {
         return cachedBlockLookup.getBlockState(n.x, n.y, n.z).isAir() && cachedBlockLookup.getBlockState(n.x, n.y + 1, n.z).isAir()
-                 && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
-                      == SurfaceType.WALKABLE;
+                && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                == SurfaceType.WALKABLE;
     }
 
     @Override
-    public void setPathingOptions(final PathingOptions pathingOptions)
-    {
+    public void setPathingOptions(final PathingOptions pathingOptions) {
         super.setPathingOptions(pathingOptions);
         getPathingOptions().setWalkUnderWater(true);
         getPathingOptions().swimCost = 1;
@@ -116,8 +107,7 @@ public class PathJobEscapeWater extends AbstractPathJob implements IDestinationP
     }
 
     @Override
-    public BlockPos getDestination()
-    {
+    public BlockPos getDestination() {
         return preferredDirection;
     }
 }

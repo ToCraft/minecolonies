@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to set add or remove a worker to gather from.
  */
-public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<BuildingEnchanter>
-{
+public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<BuildingEnchanter> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "enchanter_worker_set", EnchanterWorkerSetMessage::new);
 
     /**
@@ -37,37 +36,30 @@ public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<Bui
      * @param worker   the worker to add/remove.
      * @param add      true if add, else false
      */
-    public EnchanterWorkerSetMessage(@NotNull final IBuildingView building, final BlockPos worker, final boolean add)
-    {
+    public EnchanterWorkerSetMessage(@NotNull final IBuildingView building, final BlockPos worker, final boolean add) {
         super(TYPE, building);
         this.worker = worker;
         this.add = add;
     }
 
-    protected EnchanterWorkerSetMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected EnchanterWorkerSetMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         worker = buf.readBlockPos();
         add = buf.readBoolean();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeBlockPos(worker);
         buf.writeBoolean(add);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingEnchanter building)
-    {
-        if (add)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingEnchanter building) {
+        if (add) {
             building.getFirstModuleOccurance(EnchanterStationsModule.class).addWorker(worker);
-        }
-        else
-        {
+        } else {
             building.getFirstModuleOccurance(EnchanterStationsModule.class).removeWorker(worker);
         }
     }

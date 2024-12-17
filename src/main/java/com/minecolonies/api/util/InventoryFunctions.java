@@ -11,13 +11,11 @@ import java.util.function.*;
  * Java8 functional interfaces for inventories. Most methods will be remapping of parameters to reduce duplication. Because of erasure clashes, not
  * all combinations are supported.
  */
-public final class InventoryFunctions
-{
+public final class InventoryFunctions {
     /**
      * Private constructor to hide implicit one.
      */
-    private InventoryFunctions()
-    {
+    private InventoryFunctions() {
         /*
          * Intentionally left empty.
          */
@@ -30,8 +28,7 @@ public final class InventoryFunctions
      * @param tester   the function to use for testing slots
      * @return true if it found a stack
      */
-    public static boolean matchFirstInProvider(final IItemHandlerCapProvider provider, @NotNull final Predicate<ItemStack> tester)
-    {
+    public static boolean matchFirstInProvider(final IItemHandlerCapProvider provider, @NotNull final Predicate<ItemStack> tester) {
         return matchInProvider(provider, inv -> slot -> tester, true);
     }
 
@@ -44,28 +41,22 @@ public final class InventoryFunctions
      * @return true if it found a stack
      */
     private static boolean matchInProvider(
-      @Nullable final IItemHandlerCapProvider provider,
-      @NotNull final Function<IItemHandlerCapProvider, Function<Integer, Predicate<ItemStack>>> tester,
-      final boolean stopAfterFirst)
-    {
-        if (provider == null)
-        {
+            @Nullable final IItemHandlerCapProvider provider,
+            @NotNull final Function<IItemHandlerCapProvider, Function<Integer, Predicate<ItemStack>>> tester,
+            final boolean stopAfterFirst) {
+        if (provider == null) {
             return false;
         }
 
         boolean foundOne = false;
-        for (final IItemHandler handler : InventoryUtils.getItemHandlersFromProvider(provider))
-        {
+        for (final IItemHandler handler : InventoryUtils.getItemHandlersFromProvider(provider)) {
             final int size = handler.getSlots();
-            for (int slot = 0; slot < size; slot++)
-            {
+            for (int slot = 0; slot < size; slot++) {
                 final ItemStack stack = handler.getStackInSlot(slot);
                 //Unchain the function and apply it
-                if (tester.apply(provider).apply(slot).test(stack))
-                {
+                if (tester.apply(provider).apply(slot).test(stack)) {
                     foundOne = true;
-                    if (stopAfterFirst)
-                    {
+                    if (stopAfterFirst) {
                         return true;
                     }
                 }
@@ -101,22 +92,20 @@ public final class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInProviderWithAction(
-      final IItemHandlerCapProvider provider,
-      @NotNull final Predicate<ItemStack> tester,
-      @NotNull final IMatchActionResult action)
-    {
+            final IItemHandlerCapProvider provider,
+            @NotNull final Predicate<ItemStack> tester,
+            @NotNull final IMatchActionResult action) {
         return matchInProvider(
-          provider,
-          inv -> slot -> stack ->
-          {
-              if (tester.test(stack))
-              {
-                  action.accept(provider, slot);
-                  return true;
-              }
-              return false;
-          },
-          true);
+                provider,
+                inv -> slot -> stack ->
+                {
+                    if (tester.test(stack)) {
+                        action.accept(provider, slot);
+                        return true;
+                    }
+                    return false;
+                },
+                true);
     }
 
     /**
@@ -128,21 +117,19 @@ public final class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInHandlerWithAction(
-      @NotNull final IItemHandler itemHandler,
-      @NotNull final Predicate<ItemStack> tester,
-      @NotNull final IMatchActionResultHandler action)
-    {
+            @NotNull final IItemHandler itemHandler,
+            @NotNull final Predicate<ItemStack> tester,
+            @NotNull final IMatchActionResultHandler action) {
         return matchInHandler(
-          itemHandler,
-          inv -> slot -> stack ->
-          {
-              if (tester.test(stack))
-              {
-                  action.accept(itemHandler, slot);
-                  return true;
-              }
-              return false;
-          });
+                itemHandler,
+                inv -> slot -> stack ->
+                {
+                    if (tester.test(stack)) {
+                        action.accept(itemHandler, slot);
+                        return true;
+                    }
+                    return false;
+                });
     }
 
     /**
@@ -153,21 +140,17 @@ public final class InventoryFunctions
      * @return true if it found a stack
      */
     private static boolean matchInHandler(
-      @Nullable final IItemHandler handler,
-      @NotNull final Function<IItemHandler, Function<Integer, Predicate<ItemStack>>> tester)
-    {
-        if (handler == null)
-        {
+            @Nullable final IItemHandler handler,
+            @NotNull final Function<IItemHandler, Function<Integer, Predicate<ItemStack>>> tester) {
+        if (handler == null) {
             return false;
         }
 
         final int size = handler.getSlots();
-        for (int slot = 0; slot < size; slot++)
-        {
+        for (int slot = 0; slot < size; slot++) {
             final ItemStack stack = handler.getStackInSlot(slot);
             //Unchain the function and apply it
-            if (tester.apply(handler).apply(slot).test(stack))
-            {
+            if (tester.apply(handler).apply(slot).test(stack)) {
                 return true;
             }
         }
@@ -184,22 +167,20 @@ public final class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInProviderWithSimpleAction(
-      final IItemHandlerCapProvider provider,
-      @NotNull final Predicate<ItemStack> tester,
-      @NotNull final Consumer<Integer> action)
-    {
+            final IItemHandlerCapProvider provider,
+            @NotNull final Predicate<ItemStack> tester,
+            @NotNull final Consumer<Integer> action) {
         return matchInProvider(
-          provider,
-          inv -> slot -> stack ->
-          {
-              if (tester.test(stack))
-              {
-                  action.accept(slot);
-                  return true;
-              }
-              return false;
-          },
-          true);
+                provider,
+                inv -> slot -> stack ->
+                {
+                    if (tester.test(stack)) {
+                        action.accept(slot);
+                        return true;
+                    }
+                    return false;
+                },
+                true);
     }
 
     /**
@@ -209,8 +190,7 @@ public final class InventoryFunctions
      * @param tester    the function to use for testing slots
      * @return true if it found a stack
      */
-    public static boolean matchFirstInProvider(final IItemHandlerCapProvider inventory, @NotNull final BiPredicate<Integer, ItemStack> tester)
-    {
+    public static boolean matchFirstInProvider(final IItemHandlerCapProvider inventory, @NotNull final BiPredicate<Integer, ItemStack> tester) {
         return matchInProvider(inventory, inv -> slot -> stack -> tester.test(slot, stack), true);
     }
 
@@ -218,8 +198,7 @@ public final class InventoryFunctions
      * Functional interface describing a Action that is executed ones a Match (the given ItemStack) is found in the given slot.
      */
     @FunctionalInterface
-    public interface IMatchActionResult extends ObjIntConsumer<IItemHandlerCapProvider>
-    {
+    public interface IMatchActionResult extends ObjIntConsumer<IItemHandlerCapProvider> {
         /**
          * Method executed when a match has been found.
          *
@@ -234,8 +213,7 @@ public final class InventoryFunctions
      * Functional interface describing a Action that is executed ones a Match (the given ItemStack) is found in the given slot.
      */
     @FunctionalInterface
-    public interface IMatchActionResultHandler extends ObjIntConsumer<IItemHandler>
-    {
+    public interface IMatchActionResultHandler extends ObjIntConsumer<IItemHandler> {
         /**
          * Method executed when a match has been found.
          *

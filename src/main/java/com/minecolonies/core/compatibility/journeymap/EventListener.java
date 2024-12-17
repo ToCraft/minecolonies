@@ -18,33 +18,28 @@ import java.util.Set;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
-public class EventListener
-{
+public class EventListener {
     @NotNull
     private final Journeymap jmap;
     private boolean viewsUpdated;
 
-    public EventListener(@NotNull final Journeymap jmap)
-    {
+    public EventListener(@NotNull final Journeymap jmap) {
         this.jmap = jmap;
 
         NeoForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
-    public void onPlayerLogout(@NotNull final ClientPlayerNetworkEvent.LoggingOut event)
-    {
+    public void onPlayerLogout(@NotNull final ClientPlayerNetworkEvent.LoggingOut event) {
         ColonyDeathpoints.clear();
         this.jmap.getApi().removeAll(MOD_ID);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
-    public void onChunkLoaded(@NotNull final ChunkEvent.Load event)
-    {
+    public void onChunkLoaded(@NotNull final ChunkEvent.Load event) {
         if (!event.getLevel().isClientSide()) return;
 
-        if (event.getLevel() instanceof final Level level)
-        {
+        if (event.getLevel() instanceof final Level level) {
             final ResourceKey<Level> dimension = level.dimension();
 
             ColonyBorderMapping.updateChunk(this.jmap, dimension, event.getChunk());
@@ -53,8 +48,7 @@ public class EventListener
     }
 
     @SubscribeEvent
-    public void onColonyViewUpdated(@NotNull final ColonyViewUpdatedEvent event)
-    {
+    public void onColonyViewUpdated(@NotNull final ColonyViewUpdatedEvent event) {
         final IColonyView colony = event.getColony();
         final Set<BlockPos> graves = colony.getGraveManager().getGraves().keySet();
 
@@ -63,13 +57,10 @@ public class EventListener
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
-    public void onClientTick(@NotNull final ClientTickEvent.Pre event)
-    {
+    public void onClientTick(@NotNull final ClientTickEvent.Pre event) {
         final Level world = Minecraft.getInstance().level;
-        if (world != null)
-        {
-            if (viewsUpdated)
-            {
+        if (world != null) {
+            if (viewsUpdated) {
                 viewsUpdated = false;
                 ColonyBorderMapping.queueChunks(this.jmap, world.dimension());
             }

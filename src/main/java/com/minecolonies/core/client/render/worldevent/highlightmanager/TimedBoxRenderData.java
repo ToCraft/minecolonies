@@ -10,8 +10,7 @@ import java.util.List;
 /**
  * Highlight render data for marking blocks in the world with potential warnings on them.
  */
-public class TimedBoxRenderData implements IHighlightRenderData
-{
+public class TimedBoxRenderData implements IHighlightRenderData {
     /**
      * List of texts to display.
      */
@@ -35,34 +34,29 @@ public class TimedBoxRenderData implements IHighlightRenderData
     /**
      * Default constructor.
      */
-    public TimedBoxRenderData(final BlockPos pos)
-    {
+    public TimedBoxRenderData(final BlockPos pos) {
         this.pos = pos;
     }
 
     @Override
-    public void render(final WorldEventContext context)
-    {
+    public void render(final WorldEventContext context) {
         context.pushPoseCameraToPos(pos);
         context.renderLineBoxWithShadow(BlockPos.ZERO, argbColor, WorldEventContext.DEFAULT_LINE_WIDTH);
-        if (!text.isEmpty())
-        {
+        if (!text.isEmpty()) {
             context.renderDebugText(BlockPos.ZERO, text, true, 3);
         }
         context.popPose();
     }
 
     @Override
-    public Duration getDuration()
-    {
+    public Duration getDuration() {
         return duration;
     }
 
     /**
      * Duration of the box.
      */
-    public TimedBoxRenderData setDuration(final Duration duration)
-    {
+    public TimedBoxRenderData setDuration(final Duration duration) {
         this.duration = duration;
         return this;
     }
@@ -70,8 +64,7 @@ public class TimedBoxRenderData implements IHighlightRenderData
     /**
      * List of strings to display
      */
-    public TimedBoxRenderData addText(final String text)
-    {
+    public TimedBoxRenderData addText(final String text) {
         this.text.add(text);
         return this;
     }
@@ -79,8 +72,7 @@ public class TimedBoxRenderData implements IHighlightRenderData
     /**
      * Color code for the box, argb format
      */
-    public TimedBoxRenderData setColor(final int argbColor)
-    {
+    public TimedBoxRenderData setColor(final int argbColor) {
         this.argbColor = argbColor;
         return this;
     }

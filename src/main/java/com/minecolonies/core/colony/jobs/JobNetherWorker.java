@@ -6,7 +6,6 @@ import com.minecolonies.core.entity.ai.workers.production.EntityAIWorkNether;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
@@ -19,8 +18,7 @@ import java.util.Queue;
 import static com.minecolonies.api.research.util.ResearchConstants.FIRE_DAMAGE_PREDICATE;
 import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
 
-public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobNetherWorker>
-{
+public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobNetherWorker> {
     /**
      * Is the worker in the nether?
      */
@@ -29,7 +27,7 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
     /**
      * Queue of items produced from the initial crafting, containing tokens to be processed
      */
-    private Queue<ItemStack> craftedResults =new LinkedList<>();
+    private Queue<ItemStack> craftedResults = new LinkedList<>();
 
     /**
      * Post processed queue, no longer contains tokens, or items that were unable to be 'mined' due to tool breakage
@@ -51,14 +49,12 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
      */
     private final String TAG_PROCESSED = "processedResults";
 
-    public JobNetherWorker(ICitizenData entity)
-    {
+    public JobNetherWorker(ICitizenData entity) {
         super(entity);
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
 
         @NotNull final ListTag craftedList = new ListTag();
@@ -78,63 +74,51 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
 
         final ListTag craftedList = compound.getList(TAG_CRAFTED, CompoundTag.TAG_COMPOUND);
-        for (int i = 0; i < craftedList.size(); ++i)
-        {
+        for (int i = 0; i < craftedList.size(); ++i) {
             final CompoundTag itemCompound = craftedList.getCompound(i);
             craftedResults.add(ItemStack.parseOptional(provider, itemCompound));
         }
 
         final ListTag processedList = compound.getList(TAG_PROCESSED, CompoundTag.TAG_COMPOUND);
-        for (int i = 0; i < processedList.size(); ++i)
-        {
+        for (int i = 0; i < processedList.size(); ++i) {
             final CompoundTag itemCompound = processedList.getCompound(i);
             processedResults.add(ItemStack.parseOptional(provider, itemCompound));
         }
 
 
-        if (compound.contains(TAG_IN_NETHER))
-        {
+        if (compound.contains(TAG_IN_NETHER)) {
             citizenInNether = compound.getBoolean(TAG_IN_NETHER);
         }
     }
 
     @Override
-    public EntityAIWorkNether generateAI()
-    {
+    public EntityAIWorkNether generateAI() {
         return new EntityAIWorkNether(this);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.NETHERWORKER_ID;
     }
 
     @Override
-    public double getDiseaseModifier()
-    {
-        if(this.getCitizen().getEntity().isPresent() && this.getCitizen().getEntity().get().isInvisible())
-        {
+    public double getDiseaseModifier() {
+        if (this.getCitizen().getEntity().isPresent() && this.getCitizen().getEntity().get().isInvisible()) {
             return 0;
         }
         return super.getDiseaseModifier();
     }
 
     @Override
-    public int getIdleSeverity(boolean isDemand)
-    {
-        if(isDemand)
-        {
+    public int getIdleSeverity(boolean isDemand) {
+        if (isDemand) {
             return super.getIdleSeverity(isDemand);
-        }
-        else
-        {
+        } else {
             // Shorten the time for asking for materials. 
             return 4;
         }
@@ -142,18 +126,17 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
 
     /**
      * Mark the worker as in the nether or not.
+     *
      * @param away true if in the nether
      */
-    public void setInNether(boolean away)
-    {
+    public void setInNether(boolean away) {
         citizenInNether = away;
     }
 
     /**
      * Check if the citizen is in the nether currently
      */
-    public boolean isInNether()
-    {
+    public boolean isInNether() {
         return citizenInNether;
     }
 
@@ -161,18 +144,17 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
      * Get the queue of CraftedResults
      * This queue is not immutable and OK to modify
      */
-    public Queue<ItemStack> getCraftedResults()
-    {
+    public Queue<ItemStack> getCraftedResults() {
         return craftedResults;
     }
 
     /**
      * Add a list of items to the crafted results list
+     *
      * @param newResults items to add
      * @return true if success
      */
-    public boolean addCraftedResultsList(Collection<ItemStack> newResults)
-    {
+    public boolean addCraftedResultsList(Collection<ItemStack> newResults) {
         return craftedResults.addAll(newResults);
     }
 
@@ -180,26 +162,23 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
      * Get the queue of ProcessedResults
      * This queue is not immutable and OK to modify
      */
-    public Queue<ItemStack> getProcessedResults()
-    {
+    public Queue<ItemStack> getProcessedResults() {
         return processedResults;
     }
 
     /**
      * Add a list of items to the processed results list
+     *
      * @param newResults items to add
      * @return true if success
      */
-    public boolean addProcessedResultsList(Collection<ItemStack> newResults)
-    {
+    public boolean addProcessedResultsList(Collection<ItemStack> newResults) {
         return processedResults.addAll(newResults);
     }
 
     @Override
-    public boolean ignoresDamage(@NotNull final DamageSource damageSource)
-    {
-        if (damageSource.typeHolder().is(FIRE_DAMAGE_PREDICATE))
-        {
+    public boolean ignoresDamage(@NotNull final DamageSource damageSource) {
+        if (damageSource.typeHolder().is(FIRE_DAMAGE_PREDICATE)) {
             return getColony().getResearchManager().getResearchEffects().getEffectStrength(FIRE_RES) > 0;
         }
 

@@ -9,8 +9,7 @@ import net.minecraft.world.level.material.MapColor;
 /**
  * This block is a waypoint, which makes citizens path to it.
  */
-public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
-{
+public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint> {
     /**
      * The hardness this block has.
      */
@@ -29,14 +28,12 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
     /**
      * Constructor for the waypoint. Sets the creative tab, as well as the resistance and the hardness.
      */
-    public BlockWaypoint()
-    {
+    public BlockWaypoint() {
         super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
     }
 
     @Override
-    public ResourceLocation getRegistryName()
-    {
+    public ResourceLocation getRegistryName() {
         return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 }

@@ -8,19 +8,15 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Update fix to restaurant.
  */
-public class ResetRSToUpdateRestaurantResolver implements IUpdateStep
-{
+public class ResetRSToUpdateRestaurantResolver implements IUpdateStep {
     @Override
-    public int updatesToVersion()
-    {
+    public int updatesToVersion() {
         return 14;
     }
 
     @Override
-    public void update(@NotNull final UpdateType type, @NotNull final IStandardRequestManager manager)
-    {
-        if (type == UpdateType.DATA_LOAD)
-        {
+    public void update(@NotNull final UpdateType type, @NotNull final IStandardRequestManager manager) {
+        if (type == UpdateType.DATA_LOAD) {
             manager.reset();
         }
     }

@@ -12,8 +12,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.DETAILS_KEY;
 /**
  * Raid adjustment reward.
  */
-public class RaidAdjustmentRewardTemplate implements IQuestRewardTemplate
-{
+public class RaidAdjustmentRewardTemplate implements IQuestRewardTemplate {
     /**
      * The raid adjustment quantity (can be negative).
      */
@@ -21,27 +20,27 @@ public class RaidAdjustmentRewardTemplate implements IQuestRewardTemplate
 
     /**
      * Setup the research reward.
+     *
      * @param qty the research.
      */
-    public RaidAdjustmentRewardTemplate(final int qty)
-    {
+    public RaidAdjustmentRewardTemplate(final int qty) {
         this.qty = qty;
     }
 
     /**
      * Create the reward.
+     *
      * @param jsonObject the json to read from.
      * @return the reward object.
      */
-    public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
-    {
+    public static IQuestRewardTemplate createReward(final JsonObject jsonObject) {
         final JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int change = details.get(CHANGE_KEY).getAsInt();
         return new RaidAdjustmentRewardTemplate(change);
     }
+
     @Override
-    public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)
-    {
+    public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest) {
         colony.getRaiderManager().setNightsSinceLastRaid(colony.getRaiderManager().getNightsSinceLastRaid() + qty);
     }
 }

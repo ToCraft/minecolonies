@@ -28,10 +28,8 @@ import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JE
  * The JEI recipe category for the fisherman.
  */
 @OnlyIn(Dist.CLIENT)
-public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRecipeCategory.FishingRecipe>
-{
-    public FishermanRecipeCategory(@NotNull final IGuiHelper guiHelper)
-    {
+public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRecipeCategory.FishingRecipe> {
+    public FishermanRecipeCategory(@NotNull final IGuiHelper guiHelper) {
         super(ModJobs.fisherman.get().produceJob(null), ModRecipeTypes.FISHING,
                 new ItemStack(ModBuildings.fisherman.get().getBuildingBlock()), guiHelper);
     }
@@ -41,8 +39,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
 
     @NotNull
     @Override
-    protected List<Component> generateInfoBlocks(@NotNull FishingRecipe recipe)
-    {
+    protected List<Component> generateInfoBlocks(@NotNull FishingRecipe recipe) {
         return Collections.singletonList(
                 Component.translatableEscape(PARTIAL_JEI_INFO + "onelevelrestriction",
                         recipe.getLevel()));
@@ -51,12 +48,10 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
     @Override
     public void setRecipe(@NotNull final IRecipeLayoutBuilder builder,
                           @NotNull final FishingRecipe recipe,
-                          @NotNull final IFocusGroup focuses)
-    {
+                          @NotNull final IFocusGroup focuses) {
         addToolSlot(builder, ModEquipmentTypes.fishing_rod.get(), WIDTH - 18, CITIZEN_Y - 20, true);
 
-        if (!recipe.getDrops().isEmpty())
-        {
+        if (!recipe.getDrops().isEmpty()) {
             final int initialColumns = LOOT_SLOTS_W / this.slot.getWidth();
             final int rows = (recipe.getDrops().size() + initialColumns - 1) / initialColumns;
             final int columns = (recipe.getDrops().size() + rows - 1) / rows;
@@ -65,20 +60,16 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
             int y = CITIZEN_Y + CITIZEN_H - rows * this.slot.getHeight() + 1;
             int c = 0;
 
-            for (final LootTableAnalyzer.LootDrop drop : recipe.getDrops())
-            {
+            for (final LootTableAnalyzer.LootDrop drop : recipe.getDrops()) {
                 builder.addOutputSlot(x, y)
                         .setBackground(this.chanceSlot, -1, -1)
                         .addItemStacks(drop.getItemStacks())
                         .addRichTooltipCallback(new LootTableTooltipCallback(drop, recipe.getId()));
-                if (++c >= columns)
-                {
+                if (++c >= columns) {
                     c = 0;
                     x = startX;
                     y += this.slot.getHeight();
-                }
-                else
-                {
+                } else {
                     x += this.slot.getWidth();
                 }
             }
@@ -86,13 +77,11 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
     }
 
     @NotNull
-    public static List<FishingRecipe> findRecipes()
-    {
+    public static List<FishingRecipe> findRecipes() {
         final List<LootTableAnalyzer.LootDrop> commonDrops = CustomRecipeManager.getInstance().getLootDrops(ModLootTables.FISHING);
 
         final List<FishingRecipe> recipes = new ArrayList<>();
-        for (final Map.Entry<Integer, ResourceKey<LootTable>> level : ModLootTables.FISHERMAN_BONUS.entrySet())
-        {
+        for (final Map.Entry<Integer, ResourceKey<LootTable>> level : ModLootTables.FISHERMAN_BONUS.entrySet()) {
             final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(commonDrops);
             drops.addAll(CustomRecipeManager.getInstance().getLootDrops(level.getValue()));
             recipes.add(new FishingRecipe(level.getValue(), level.getKey(), drops));
@@ -100,34 +89,29 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
         return recipes;
     }
 
-    public static class FishingRecipe
-    {
+    public static class FishingRecipe {
         private final ResourceKey<LootTable> id;
         private final int level;
         @NotNull
         private final List<LootTableAnalyzer.LootDrop> drops;
 
-        public FishingRecipe(@NotNull final ResourceKey<LootTable> id, final int level, @NotNull final List<LootTableAnalyzer.LootDrop> drops)
-        {
+        public FishingRecipe(@NotNull final ResourceKey<LootTable> id, final int level, @NotNull final List<LootTableAnalyzer.LootDrop> drops) {
             this.id = id;
             this.level = level;
             this.drops = drops.size() > 18 ? LootTableAnalyzer.consolidate(drops) : drops;
         }
 
         @NotNull
-        public ResourceKey<LootTable> getId()
-        {
+        public ResourceKey<LootTable> getId() {
             return id;
         }
 
-        public int getLevel()
-        {
+        public int getLevel() {
             return level;
         }
 
         @NotNull
-        public List<LootTableAnalyzer.LootDrop> getDrops()
-        {
+        public List<LootTableAnalyzer.LootDrop> getDrops() {
             return drops;
         }
     }

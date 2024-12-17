@@ -11,7 +11,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -26,13 +25,11 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BOOKCASES;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * Creates a new building for the Library.
  */
-public class BuildingLibrary extends AbstractBuilding
-{
+public class BuildingLibrary extends AbstractBuilding {
     /**
      * Description of the block used to set this block.
      */
@@ -64,8 +61,7 @@ public class BuildingLibrary extends AbstractBuilding
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingLibrary(final IColony c, final BlockPos l)
-    {
+    public BuildingLibrary(final IColony c, final BlockPos l) {
         super(c, l);
 
         studyItems = parseFromConfig();
@@ -76,18 +72,14 @@ public class BuildingLibrary extends AbstractBuilding
      *
      * @return the list of study items
      */
-    private List<StudyItem> parseFromConfig()
-    {
+    private List<StudyItem> parseFromConfig() {
         final List<StudyItem> studyItemList = new ArrayList<>();
 
-        for (final String entry : MineColonies.getConfig().getServer().configListStudyItems.get())
-        {
+        for (final String entry : MineColonies.getConfig().getServer().configListStudyItems.get()) {
 
-            try
-            {
+            try {
                 final String[] entries = entry.split(";");
-                if (entries.length < 3)
-                {
+                if (entries.length < 3) {
                     Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
                     continue;
                 }
@@ -95,8 +87,7 @@ public class BuildingLibrary extends AbstractBuilding
                 final int skillChance = Integer.parseInt(entries[1]);
                 final int breakChance = Integer.parseInt(entries[2]);
 
-                if (item == null || skillChance < 100 || skillChance > 1000 || breakChance > 100 || breakChance < 0)
-                {
+                if (item == null || skillChance < 100 || skillChance > 1000 || breakChance > 100 || breakChance < 0) {
                     Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
                     continue;
                 }
@@ -104,9 +95,7 @@ public class BuildingLibrary extends AbstractBuilding
                 studyItemList.add(new StudyItem(item, skillChance, breakChance));
                 // Keep a certain part of the items in the Chest
                 keepX.put(itemStack -> itemStack.getItem() == item, new Tuple<>(breakChance < 5 ? 5 : breakChance, true));
-            }
-            catch (NumberFormatException | ClassCastException e)
-            {
+            } catch (NumberFormatException | ClassCastException e) {
                 Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry + " Exception:" + e.getMessage());
             }
         }
@@ -115,35 +104,29 @@ public class BuildingLibrary extends AbstractBuilding
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return LIBRARY_HUT_NAME;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         final ListTag furnaceTagList = compound.getList(TAG_BOOKCASES, Tag.TAG_INT_ARRAY);
-        for (int i = 0; i < furnaceTagList.size(); ++i)
-        {
+        for (int i = 0; i < furnaceTagList.size(); ++i) {
             bookCases.add(NBTUtils.readBlockPos(furnaceTagList.get(i)));
         }
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
         @NotNull final ListTag bookcaseTagList = new ListTag();
-        for (@NotNull final BlockPos entry : bookCases)
-        {
+        for (@NotNull final BlockPos entry : bookCases) {
             bookcaseTagList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_BOOKCASES, bookcaseTagList);
@@ -152,11 +135,9 @@ public class BuildingLibrary extends AbstractBuilding
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
-    {
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world) {
         super.registerBlockPosition(block, pos, world);
-        if (block.defaultBlockState().is(Tags.Blocks.BOOKSHELVES))
-        {
+        if (block.defaultBlockState().is(Tags.Blocks.BOOKSHELVES)) {
             bookCases.add(pos);
         }
     }
@@ -166,23 +147,19 @@ public class BuildingLibrary extends AbstractBuilding
      *
      * @return the position of it.
      */
-    public BlockPos getRandomBookShelf()
-    {
-        if (bookCases.isEmpty())
-        {
+    public BlockPos getRandomBookShelf() {
+        if (bookCases.isEmpty()) {
             return getPosition();
         }
         final BlockPos returnPos = bookCases.get(random.nextInt(bookCases.size()));
-        if (colony.getWorld().getBlockState(returnPos).is(Tags.Blocks.BOOKSHELVES))
-        {
+        if (colony.getWorld().getBlockState(returnPos).is(Tags.Blocks.BOOKSHELVES)) {
             return returnPos;
         }
         bookCases.remove(returnPos);
         return getPosition();
     }
 
-    public List<StudyItem> getStudyItems()
-    {
+    public List<StudyItem> getStudyItems() {
         return studyItems;
     }
 }

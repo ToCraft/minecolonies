@@ -58,8 +58,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 /**
  * Tile entity for the warehouse shelves.
  */
-public class TileEntityRack extends AbstractTileEntityRack implements IMateriallyTexturedBlockEntity
-{
+public class TileEntityRack extends AbstractTileEntityRack implements IMateriallyTexturedBlockEntity {
     /**
      * All Racks current version id
      */
@@ -94,25 +93,25 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
      * Static texture mappings
      */
     private static final List<ResourceLocation> textureMapping = ImmutableList.<ResourceLocation>builder()
-        .add(ResourceLocation.withDefaultNamespace("block/bricks"))
-        .add(ResourceLocation.withDefaultNamespace("block/sand"))
-        .add(ResourceLocation.withDefaultNamespace("block/orange_wool"))
-        .add(ResourceLocation.withDefaultNamespace("block/dirt"))
-        .add(ResourceLocation.withDefaultNamespace("block/obsidian"))
-        .add(ResourceLocation.withDefaultNamespace("block/polished_andesite"))
-        .add(ResourceLocation.withDefaultNamespace("block/andesite"))
-        .add(ResourceLocation.withDefaultNamespace("block/blue_wool")).build();
+            .add(ResourceLocation.withDefaultNamespace("block/bricks"))
+            .add(ResourceLocation.withDefaultNamespace("block/sand"))
+            .add(ResourceLocation.withDefaultNamespace("block/orange_wool"))
+            .add(ResourceLocation.withDefaultNamespace("block/dirt"))
+            .add(ResourceLocation.withDefaultNamespace("block/obsidian"))
+            .add(ResourceLocation.withDefaultNamespace("block/polished_andesite"))
+            .add(ResourceLocation.withDefaultNamespace("block/andesite"))
+            .add(ResourceLocation.withDefaultNamespace("block/blue_wool")).build();
 
     private static final List<ResourceLocation> secondarytextureMapping = ImmutableList.<ResourceLocation>builder()
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/oak_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/spruce_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/birch_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/jungle_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/acacia_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/dark_oak_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/mangrove_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/crimson_stem"))
-                                                                            .build();
+            .add(ResourceLocation.withDefaultNamespace("block/oak_log"))
+            .add(ResourceLocation.withDefaultNamespace("block/spruce_log"))
+            .add(ResourceLocation.withDefaultNamespace("block/birch_log"))
+            .add(ResourceLocation.withDefaultNamespace("block/jungle_log"))
+            .add(ResourceLocation.withDefaultNamespace("block/acacia_log"))
+            .add(ResourceLocation.withDefaultNamespace("block/dark_oak_log"))
+            .add(ResourceLocation.withDefaultNamespace("block/mangrove_log"))
+            .add(ResourceLocation.withDefaultNamespace("block/crimson_stem"))
+            .build();
 
     /**
      * Cached resmap.
@@ -126,25 +125,25 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
 
     /**
      * Create a new rack.
-     * @param type the specific block entity type.
-     * @param pos the position.
+     *
+     * @param type  the specific block entity type.
+     * @param pos   the position.
      * @param state its state.
      */
-    public TileEntityRack(final BlockEntityType<? extends TileEntityRack> type, final BlockPos pos, final BlockState state)
-    {
+    public TileEntityRack(final BlockEntityType<? extends TileEntityRack> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
         this.freeSlots = inventory.getSlots();
     }
 
     /**
      * Create a rack with a specific inventory size.
-     * @param type the specific block entity type.
-     * @param pos the position.
+     *
+     * @param type  the specific block entity type.
+     * @param pos   the position.
      * @param state its state.
-     * @param size the ack size.
+     * @param size  the ack size.
      */
-    public TileEntityRack(final BlockEntityType<? extends TileEntityRack> type, final BlockPos pos, final BlockState state, final int size)
-    {
+    public TileEntityRack(final BlockEntityType<? extends TileEntityRack> type, final BlockPos pos, final BlockState state, final int size) {
         super(type, pos, state, size);
         this.size = ((size - DEFAULT_SIZE) / SLOT_PER_LINE);
         this.freeSlots = inventory.getSlots();
@@ -152,68 +151,57 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
 
     /**
      * Create a new default rack.
-     * @param pos the position.
+     *
+     * @param pos   the position.
      * @param state its state.
      */
-    public TileEntityRack(final BlockPos pos, final BlockState state)
-    {
+    public TileEntityRack(final BlockPos pos, final BlockState state) {
         super(MinecoloniesTileEntities.RACK.get(), pos, state);
     }
 
     @Override
-    public void setInWarehouse(final Boolean isInWarehouse)
-    {
+    public void setInWarehouse(final Boolean isInWarehouse) {
         this.inWarehouse = isInWarehouse;
     }
 
     @Override
-    public int getFreeSlots()
-    {
+    public int getFreeSlots() {
         return freeSlots;
     }
 
     @Override
-    public boolean hasItemStack(final ItemStack stack, final int count, final boolean ignoreDamageValue)
-    {
+    public boolean hasItemStack(final ItemStack stack, final int count, final boolean ignoreDamageValue) {
         final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
 
         return content.getOrDefault(checkItem, 0) >= count;
     }
 
     @Override
-    public boolean hasItemStorage(final ItemStorage storage, final int count)
-    {
+    public boolean hasItemStorage(final ItemStorage storage, final int count) {
         return content.getOrDefault(storage, 0) >= count;
     }
 
     @Override
-    public int getCount(final ItemStack stack, final boolean ignoreDamageValue, final boolean ignoreNBT)
-    {
+    public int getCount(final ItemStack stack, final boolean ignoreDamageValue, final boolean ignoreNBT) {
         final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue, ignoreNBT);
         return getCount(checkItem);
     }
 
     @Override
-    protected void updateBlockState()
-    {
+    protected void updateBlockState() {
 
     }
 
     @Override
-    public int getCount(final ItemStorage storage)
-    {
-        if (storage.ignoreDamageValue() || storage.ignoreNBT())
-        {
-            if (!content.containsKey(storage))
-            {
+    public int getCount(final ItemStorage storage) {
+        if (storage.ignoreDamageValue() || storage.ignoreNBT()) {
+            if (!content.containsKey(storage)) {
                 return 0;
             }
 
             int count = 0;
-            for (final Map.Entry<ItemStorage, Integer> contentStorage : content.entrySet())
-            {
-                if (contentStorage.getKey().equals(storage))
-                {
+            for (final Map.Entry<ItemStorage, Integer> contentStorage : content.entrySet()) {
+                if (contentStorage.getKey().equals(storage)) {
                     count += contentStorage.getValue();
                 }
             }
@@ -224,12 +212,9 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     }
 
     @Override
-    public boolean hasItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            if (itemStackSelectionPredicate.test(entry.getKey().getItemStack()))
-            {
+    public boolean hasItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate) {
+        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet()) {
+            if (itemStackSelectionPredicate.test(entry.getKey().getItemStack())) {
                 return true;
             }
         }
@@ -237,18 +222,14 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     }
 
     @Override
-    public boolean hasSimilarStack(@NotNull final ItemStack stack)
-    {
+    public boolean hasSimilarStack(@NotNull final ItemStack stack) {
         final ItemStorage checkItem = new ItemStorage(stack, true, true);
-        if (content.containsKey(checkItem))
-        {
+        if (content.containsKey(checkItem)) {
             return true;
         }
 
-        for (final ItemStorage storage : content.keySet())
-        {
-            if (IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(checkItem) == IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(storage))
-            {
+        for (final ItemStorage storage : content.keySet()) {
+            if (IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(checkItem) == IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(storage)) {
                 return true;
             }
         }
@@ -261,18 +242,15 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
      *
      * @return the map of content.
      */
-    public Map<ItemStorage, Integer> getAllContent()
-    {
+    public Map<ItemStorage, Integer> getAllContent() {
         return content;
     }
 
     @Override
-    public void upgradeRackSize()
-    {
+    public void upgradeRackSize() {
         ++size;
         final RackInventory tempInventory = new RackInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
+        for (int slot = 0; slot < inventory.getSlots(); slot++) {
             tempInventory.setStackInSlot(slot, inventory.getStackInSlot(slot));
         }
 
@@ -283,13 +261,10 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     }
 
     @Override
-    public int getItemCount(final Predicate<ItemStack> predicate)
-    {
+    public int getItemCount(final Predicate<ItemStack> predicate) {
         int matched = 0;
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            if (predicate.test(entry.getKey().getItemStack()))
-            {
+        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet()) {
+            if (predicate.test(entry.getKey().getItemStack())) {
                 matched += entry.getValue();
             }
         }
@@ -297,34 +272,28 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     }
 
     @Override
-    public void updateItemStorage()
-    {
-        if (level != null && !level.isClientSide)
-        {
+    public void updateItemStorage() {
+        if (level != null && !level.isClientSide) {
             final boolean beforeEmpty = content.isEmpty();
             updateContent();
-            if (getBlockState().getBlock() == ModBlocks.blockRack)
-            {
+            if (getBlockState().getBlock() == ModBlocks.blockRack) {
                 boolean afterEmpty = content.isEmpty();
                 @Nullable final BlockEntity potentialNeighbor = getOtherChest();
-                if (potentialNeighbor instanceof TileEntityRack && !((TileEntityRack) potentialNeighbor).isEmpty())
-                {
+                if (potentialNeighbor instanceof TileEntityRack && !((TileEntityRack) potentialNeighbor).isEmpty()) {
                     afterEmpty = false;
                 }
 
-                if ((beforeEmpty && !afterEmpty) || (!beforeEmpty && afterEmpty))
-                {
+                if ((beforeEmpty && !afterEmpty) || (!beforeEmpty && afterEmpty)) {
                     level.setBlockAndUpdate(getBlockPos(),
-                      getBlockState().setValue(AbstractBlockMinecoloniesRack.VARIANT,
-                        getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT).getInvBasedVariant(afterEmpty)));
+                            getBlockState().setValue(AbstractBlockMinecoloniesRack.VARIANT,
+                                    getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT).getInvBasedVariant(afterEmpty)));
 
 
-                    if (potentialNeighbor != null)
-                    {
+                    if (potentialNeighbor != null) {
                         level.setBlockAndUpdate(potentialNeighbor.getBlockPos(),
-                          potentialNeighbor.getBlockState()
-                            .setValue(AbstractBlockMinecoloniesRack.VARIANT,
-                              potentialNeighbor.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT).getInvBasedVariant(afterEmpty)));
+                                potentialNeighbor.getBlockState()
+                                        .setValue(AbstractBlockMinecoloniesRack.VARIANT,
+                                                potentialNeighbor.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT).getInvBasedVariant(afterEmpty)));
                     }
                 }
             }
@@ -335,24 +304,20 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     /**
      * Just do the content update.
      */
-    private void updateContent()
-    {
+    private void updateContent() {
         content.clear();
         freeSlots = 0;
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
+        for (int slot = 0; slot < inventory.getSlots(); slot++) {
             final ItemStack stack = inventory.getStackInSlot(slot);
 
-            if (ItemStackUtils.isEmpty(stack))
-            {
+            if (ItemStackUtils.isEmpty(stack)) {
                 freeSlots++;
                 continue;
             }
 
             final ItemStorage storage = new ItemStorage(stack.copy());
             int amount = ItemStackUtils.getSize(stack);
-            if (content.containsKey(storage))
-            {
+            if (content.containsKey(storage)) {
                 amount += content.remove(storage);
             }
             content.put(storage, amount);
@@ -360,22 +325,18 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     }
 
     @Override
-    public AbstractTileEntityRack getOtherChest()
-    {
-        if (getBlockState().getBlock() != ModBlocks.blockRack)
-        {
+    public AbstractTileEntityRack getOtherChest() {
+        if (getBlockState().getBlock() != ModBlocks.blockRack) {
             return null;
         }
 
         final RackType type = getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT);
-        if (!type.isDoubleVariant())
-        {
+        if (!type.isDoubleVariant()) {
             return null;
         }
 
         final BlockEntity tileEntity = level.getBlockEntity(worldPosition.relative(getBlockState().getValue(AbstractBlockMinecoloniesRack.FACING)));
-        if (tileEntity instanceof TileEntityRack && !(tileEntity instanceof AbstractTileEntityColonyBuilding))
-        {
+        if (tileEntity instanceof TileEntityRack && !(tileEntity instanceof AbstractTileEntityColonyBuilding)) {
             return (AbstractTileEntityRack) tileEntity;
         }
 
@@ -383,40 +344,31 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     }
 
     @Override
-    public ItemStackHandler createInventory(final int slots)
-    {
+    public ItemStackHandler createInventory(final int slots) {
         return new RackInventory(slots);
     }
 
     @Override
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return content.isEmpty();
     }
 
     @Override
-    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.loadAdditional(compound, provider);
-        if (compound.contains(TAG_SIZE))
-        {
+        if (compound.contains(TAG_SIZE)) {
             size = compound.getInt(TAG_SIZE);
             inventory = createInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
         }
 
         final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
-        for (int i = 0; i < inventoryTagList.size(); i++)
-        {
+        for (int i = 0; i < inventoryTagList.size(); i++) {
             final CompoundTag compoundTag = inventoryTagList.getCompound(i);
-            if (!compoundTag.contains(TAG_EMPTY))
-            {
-                if (compoundTag.contains("Count"))
-                {
+            if (!compoundTag.contains(TAG_EMPTY)) {
+                if (compoundTag.contains("Count")) {
                     CompoundTag fixedTag = DataFixerUtils.runDataFixer(compoundTag, References.ITEM_STACK, DataVersion.v1_20_1);
                     inventory.setStackInSlot(i, ItemStack.parseOptional(provider, fixedTag));
-                }
-                else
-                {
+                } else {
                     inventory.setStackInSlot(i, ItemStack.parseOptional(provider, compoundTag));
                 }
             }
@@ -425,28 +377,24 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
         updateContent();
 
         this.inWarehouse = compound.getBoolean(TAG_IN_WAREHOUSE);
-        if (compound.contains(TAG_POS))
-        {
+        if (compound.contains(TAG_POS)) {
             this.buildingPos = BlockPosUtil.read(compound, TAG_POS);
         }
         version = compound.getByte(TAG_VERSION);
 
         invalidateCap();
 
-        if (level != null && level.isClientSide)
-        {
+        if (level != null && level.isClientSide) {
             refreshTextureCache();
         }
     }
 
     @Override
-    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.saveAdditional(compound, provider);
         compound.putInt(TAG_SIZE, size);
         @NotNull final ListTag inventoryTagList = new ListTag();
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
+        for (int slot = 0; slot < inventory.getSlots(); slot++) {
             inventoryTagList.add(inventory.getStackInSlot(slot).saveOptional(provider));
         }
         compound.put(TAG_INVENTORY, inventoryTagList);
@@ -456,76 +404,58 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket()
-    {
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider) {
         return this.saveWithId(provider);
     }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
-    {
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider) {
         this.loadAdditional(packet.getTag(), provider);
     }
 
     @Override
-    public void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider)
-    {
+    public void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider) {
         this.loadAdditional(tag, provider);
     }
 
     @Override
     @Nullable
-    public IItemHandler getItemHandlerCap(Direction direction)
-    {
-        if (version != VERSION)
-        {
+    public IItemHandler getItemHandlerCap(Direction direction) {
+        if (version != VERSION) {
             version = VERSION;
         }
 
-        if (remove)
-        {
+        if (remove) {
             lastItemHandlerCap = new RackInventory(0);
         }
 
-        if (lastItemHandlerCap != null)
-        {
+        if (lastItemHandlerCap != null) {
             return lastItemHandlerCap;
         }
 
-        if (getBlockState().getBlock() != ModBlocks.blockRack)
-        {
+        if (getBlockState().getBlock() != ModBlocks.blockRack) {
             lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());
             return lastItemHandlerCap;
         }
 
         final RackType type = getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT);
-        if (!type.isDoubleVariant())
-        {
+        if (!type.isDoubleVariant()) {
             lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());
             return lastItemHandlerCap;
-        }
-        else
-        {
+        } else {
             final AbstractTileEntityRack other = getOtherChest();
-            if (other == null)
-            {
+            if (other == null) {
                 lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());
-            }
-            else
-            {
-                if (type != RackType.EMPTY)
-                {
+            } else {
+                if (type != RackType.EMPTY) {
                     lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory(), other.getInventory());
-                }
-                else
-                {
+                } else {
                     lastItemHandlerCap = new CombinedItemHandler(RACK, other.getInventory(), getInventory());
                 }
             }
@@ -536,16 +466,13 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
 
 
     @Override
-    public int getUpgradeSize()
-    {
+    public int getUpgradeSize() {
         return size;
     }
 
     @Override
-    public void setChanged()
-    {
-        if (level != null)
-        {
+    public void setChanged() {
+        if (level != null) {
             WorldUtil.markChunkDirty(level, worldPosition);
             super.setChanged();
         }
@@ -553,22 +480,19 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
-    {
+    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player) {
         refreshTextureCache();
         return new ContainerRack(id, inv, getBlockPos(), getOtherChest() == null ? BlockPos.ZERO : getOtherChest().getBlockPos());
     }
 
     @NotNull
     @Override
-    public Component getDisplayName()
-    {
+    public Component getDisplayName() {
         return Component.literal("Rack");
     }
 
     @Override
-    public void setRemoved()
-    {
+    public void setRemoved() {
         super.setRemoved();
         invalidateCap();
     }
@@ -576,23 +500,20 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     /**
      * Invalidates the cap
      */
-    private void invalidateCap()
-    {
+    private void invalidateCap() {
         invalidateCapabilities();
         lastItemHandlerCap = null;
     }
 
     @Override
-    public void updateTextureDataWith(final MaterialTextureData materialTextureData)
-    {
+    public void updateTextureDataWith(final MaterialTextureData materialTextureData) {
         // noop
     }
 
     /**
      * Refresh the texture mapping.
      */
-    private void refreshTextureCache()
-    {
+    private void refreshTextureCache() {
         final Map<ResourceLocation, Block> resMap = new HashMap<>();
         final int displayPerSlots = this.getInventory().getSlots() / 4;
         int index = 0;
@@ -600,10 +521,8 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
         boolean alreadyAddedItem = false;
 
         final HashMap<ItemStorage, Integer> mapCopy = new HashMap<>(content);
-        if (this.getOtherChest() instanceof TileEntityRack neighborRack)
-        {
-            for (final Map.Entry<ItemStorage, Integer> entry : neighborRack.content.entrySet())
-            {
+        if (this.getOtherChest() instanceof TileEntityRack neighborRack) {
+            for (final Map.Entry<ItemStorage, Integer> entry : neighborRack.content.entrySet()) {
                 int value = entry.getValue() + mapCopy.getOrDefault(entry.getKey(), 0);
                 mapCopy.put(entry.getKey(), value);
             }
@@ -612,61 +531,45 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
 
         final Queue<Block> extraBlockQueue = new ArrayDeque<>();
         final Queue<Block> itemQueue = new ArrayDeque<>();
-        for (final Map.Entry<ItemStorage, Integer> entry : list)
-        {
+        for (final Map.Entry<ItemStorage, Integer> entry : list) {
             // Need more solid checks!
-            if (index < textureMapping.size())
-            {
+            if (index < textureMapping.size()) {
                 Block block = Blocks.BARREL;
                 boolean isBlockItem = false;
-                if (entry.getKey().getItemStack().getItem() instanceof BlockItem blockItem)
-                {
+                if (entry.getKey().getItemStack().getItem() instanceof BlockItem blockItem) {
                     block = blockItem.getBlock();
                     isBlockItem = true;
                 }
 
                 int displayRows = (int) Math.ceil((Math.max(1.0, (double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize())) / displayPerSlots);
-                if (displayRows > 1)
-                {
-                    for (int i = 0; i < displayRows - 1; i++)
-                    {
-                        if (isBlockItem)
-                        {
+                if (displayRows > 1) {
+                    for (int i = 0; i < displayRows - 1; i++) {
+                        if (isBlockItem) {
                             extraBlockQueue.add(block);
-                        }
-                        else
-                        {
+                        } else {
                             itemQueue.add(block);
                         }
                     }
                 }
 
-                if (!isBlockItem)
-                {
-                    if (alreadyAddedItem)
-                    {
+                if (!isBlockItem) {
+                    if (alreadyAddedItem) {
                         itemQueue.add(block);
                         continue;
-                    }
-                    else
-                    {
+                    } else {
                         alreadyAddedItem = true;
                     }
                 }
 
-                if (entry.getValue() < 16 && !extraBlockQueue.isEmpty())
-                {
+                if (entry.getValue() < 16 && !extraBlockQueue.isEmpty()) {
                     block = extraBlockQueue.poll();
                 }
 
                 final ResourceLocation secondaryResLoc = secondarytextureMapping.get(index);
-                if (!block.defaultBlockState().isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO))
-                {
+                if (!block.defaultBlockState().isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO)) {
                     resMap.put(secondaryResLoc, block);
                     block = Blocks.BARREL;
-                }
-                else
-                {
+                } else {
                     resMap.put(secondaryResLoc, Blocks.AIR);
                 }
 
@@ -674,37 +577,29 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
                 resMap.put(resLoc, block);
 
                 if (this.textureDataCache == null
-                      || !this.textureDataCache.getTexturedComponents().getOrDefault(resLoc, Blocks.BEDROCK).equals(resMap.get(resLoc))
-                      || !this.textureDataCache.getTexturedComponents().getOrDefault(secondaryResLoc, Blocks.BEDROCK).equals(resMap.get(secondaryResLoc)))
-                {
+                        || !this.textureDataCache.getTexturedComponents().getOrDefault(resLoc, Blocks.BEDROCK).equals(resMap.get(resLoc))
+                        || !this.textureDataCache.getTexturedComponents().getOrDefault(secondaryResLoc, Blocks.BEDROCK).equals(resMap.get(secondaryResLoc))) {
                     update = true;
                 }
                 index++;
-            }
-            else
-            {
+            } else {
                 break;
             }
         }
 
         extraBlockQueue.addAll(itemQueue);
 
-        for (int i = index; i < textureMapping.size(); i++)
-        {
+        for (int i = index; i < textureMapping.size(); i++) {
             Block block = Blocks.AIR;
-            if (!extraBlockQueue.isEmpty())
-            {
+            if (!extraBlockQueue.isEmpty()) {
                 block = extraBlockQueue.poll();
             }
 
             final ResourceLocation secondaryResLoc = secondarytextureMapping.get(i);
-            if (block != Blocks.AIR && !block.defaultBlockState().isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO))
-            {
+            if (block != Blocks.AIR && !block.defaultBlockState().isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO)) {
                 resMap.put(secondaryResLoc, block);
                 block = Blocks.BARREL;
-            }
-            else
-            {
+            } else {
                 resMap.put(secondaryResLoc, Blocks.AIR);
             }
 
@@ -712,19 +607,16 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
             resMap.put(resLoc, block);
 
             if (this.textureDataCache == null
-                  || !this.textureDataCache.getTexturedComponents().getOrDefault(resLoc, Blocks.BEDROCK).equals(resMap.get(resLoc))
-                  || !this.textureDataCache.getTexturedComponents().getOrDefault(secondaryResLoc, Blocks.BEDROCK).equals(resMap.get(secondaryResLoc)))
-            {
+                    || !this.textureDataCache.getTexturedComponents().getOrDefault(resLoc, Blocks.BEDROCK).equals(resMap.get(resLoc))
+                    || !this.textureDataCache.getTexturedComponents().getOrDefault(secondaryResLoc, Blocks.BEDROCK).equals(resMap.get(secondaryResLoc))) {
                 update = true;
             }
         }
 
-        if (update)
-        {
+        if (update) {
             this.textureDataCache = new MaterialTextureData(resMap);
             this.requestModelDataUpdate();
-            if (level != null)
-            {
+            if (level != null) {
                 level.sendBlockUpdated(getBlockPos(), Blocks.AIR.defaultBlockState(), getBlockState(), Block.UPDATE_ALL);
             }
         }
@@ -732,22 +624,19 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
 
     @NotNull
     @Override
-    public ModelData getModelData()
-    {
-        if (!checkedAfterStartup && level != null)
-        {
+    public ModelData getModelData() {
+        if (!checkedAfterStartup && level != null) {
             checkedAfterStartup = true;
             refreshTextureCache();
         }
 
         return ModelData.builder()
-                 .with(ModProperties.MATERIAL_TEXTURE_PROPERTY, textureDataCache)
-                 .build();
+                .with(ModProperties.MATERIAL_TEXTURE_PROPERTY, textureDataCache)
+                .build();
     }
 
     @Override
-    public @NotNull MaterialTextureData getTextureData()
-    {
+    public @NotNull MaterialTextureData getTextureData() {
         return textureDataCache;
     }
 }

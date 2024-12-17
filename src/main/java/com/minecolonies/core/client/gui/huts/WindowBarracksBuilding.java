@@ -24,8 +24,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * BOWindow for the barracks building.
  */
-public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<BuildingBarracks.View>
-{
+public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<BuildingBarracks.View> {
     /**
      * Id of the positions list.
      */
@@ -34,7 +33,7 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
     /**
      * Id of the position label.
      */
-    private static final String LABEL_POS      = "pos";
+    private static final String LABEL_POS = "pos";
     /**
      * Id of the position label.
      */
@@ -85,16 +84,14 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
      *
      * @param building View of the home building.
      */
-    public WindowBarracksBuilding(final BuildingBarracks.View building)
-    {
+    public WindowBarracksBuilding(final BuildingBarracks.View building) {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
         view = building.getColony();
         positionsList = findPaneOfTypeByID(LIST_POSITIONS, ScrollingList.class);
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());
         registerButton(SPIES_BUTTON, this::hireSpiesClicked);
 
-        if (building.getBuildingLevel() < 3)
-        {
+        if (building.getBuildingLevel() < 3) {
             findPaneOfTypeByID(SPIES_BUTTON, ButtonImage.class).setVisible(false);
             findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setVisible(false);
         }
@@ -105,41 +102,32 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
      *
      * @param button the clicked button.
      */
-    private void hireSpiesClicked(final Button button)
-    {
+    private void hireSpiesClicked(final Button button) {
         new WindowsBarracksSpies(this.building, this.building.getID()).open();
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
-        if (building.getBuildingLevel() >= BUILDING_LEVEL_FOR_LIST)
-        {
+        if (building.getBuildingLevel() >= BUILDING_LEVEL_FOR_LIST) {
             final List<BlockPos> spawnPoints = view.getLastSpawnPoints();
-            if (spawnPoints.size() == 0)
-            {
+            if (spawnPoints.size() == 0) {
                 return;
             }
 
-            if (view.isRaiding())
-            {
+            if (view.isRaiding()) {
                 findPaneOfTypeByID(LABEL_CURRENNT, Text.class).setText(mountDistanceString(spawnPoints.get(spawnPoints.size() - 1)));
             }
-            positionsList.setDataProvider(new ScrollingList.DataProvider()
-            {
+            positionsList.setDataProvider(new ScrollingList.DataProvider() {
                 @Override
-                public int getElementCount()
-                {
+                public int getElementCount() {
                     return spawnPoints.size() - (view.isRaiding() ? 1 : 0);
                 }
 
                 @Override
-                public void updateElement(final int index, @NotNull final Pane rowPane)
-                {
+                public void updateElement(final int index, @NotNull final Pane rowPane) {
                     final BlockPos pos = spawnPoints.get(index);
-                    if (!(view.isRaiding() && index == spawnPoints.size() - 1))
-                    {
+                    if (!(view.isRaiding() && index == spawnPoints.size() - 1)) {
                         rowPane.findPaneOfTypeByID(LABEL_POS, Text.class).setText(Component.literal((index + 1) + ": " + mountDistanceString(pos)));
                     }
                 }
@@ -153,25 +141,19 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
      * @param pos the position.
      * @return the component containing the nice human-readable string.
      */
-    private Component mountDistanceString(final BlockPos pos)
-    {
+    private Component mountDistanceString(final BlockPos pos) {
         final long distance = BlockPosUtil.getDistance2D(pos, building.getPosition());
         final String distanceDesc;
-        if (distance < QUITE_CLOSE)
-        {
+        if (distance < QUITE_CLOSE) {
             distanceDesc = QUITE_CLOSE_DESC;
-        }
-        else if (distance < QUITE_FAR)
-        {
+        } else if (distance < QUITE_FAR) {
             distanceDesc = QUITE_FAR_DESC;
-        }
-        else
-        {
+        } else {
             distanceDesc = REALLY_FAR_DESC;
         }
         final Component directionDest = BlockPosUtil.calcDirection(building.getPosition(), pos).getLongText();
         return Component.translatableEscape(distanceDesc)
-                 .append(" ")
-                 .append(directionDest);
+                .append(" ")
+                .append(directionDest);
     }
 }

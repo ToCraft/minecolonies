@@ -19,8 +19,7 @@ import java.util.Optional;
 /**
  * Adjust the skill level of the citizen.
  */
-public class AdjustSkillCitizenMessage extends AbstractColonyServerMessage
-{
+public class AdjustSkillCitizenMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "adjust_skill_citizen", AdjustSkillCitizenMessage::new);
 
     /**
@@ -46,16 +45,14 @@ public class AdjustSkillCitizenMessage extends AbstractColonyServerMessage
      * @param skill           the skill to alter.
      * @param colony          the colony of the network message
      */
-    public AdjustSkillCitizenMessage(final IColony colony, @NotNull final ICitizenDataView citizenDataView, final int quantity, final Skill skill)
-    {
+    public AdjustSkillCitizenMessage(final IColony colony, @NotNull final ICitizenDataView citizenDataView, final int quantity, final Skill skill) {
         super(TYPE, colony);
         this.citizenId = citizenDataView.getId();
         this.quantity = quantity;
         this.skill = skill;
     }
 
-    protected AdjustSkillCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected AdjustSkillCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         citizenId = buf.readInt();
         quantity = buf.readInt();
@@ -63,8 +60,7 @@ public class AdjustSkillCitizenMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(citizenId);
         buf.writeInt(quantity);
@@ -72,25 +68,21 @@ public class AdjustSkillCitizenMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
-        if (citizenData == null)
-        {
+        if (citizenData == null) {
             Log.getLogger().warn("AdjustSkillCitizenMessage citizenData is null");
             return;
         }
 
         final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
-        if (!optionalEntityCitizen.isPresent())
-        {
+        if (!optionalEntityCitizen.isPresent()) {
             Log.getLogger().warn("AdjustSkillCitizenMessage entity citizen is null");
             return;
         }
 
         final boolean isCreative = player.isCreative();
-        if (!isCreative)
-        {
+        if (!isCreative) {
             Log.getLogger().warn("AdjustSkillCitizenMessage player must be creative.");
             return;
         }

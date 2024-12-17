@@ -6,32 +6,27 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerChunkCache;
-import net.minecraft.server.level.ServerLevel;
 
 /**
  * Cleanup task to remove the force flag from all loaded chunks.
  */
-public class CommandUnloadForcedChunks implements IMCCommand
-{
+public class CommandUnloadForcedChunks implements IMCCommand {
     /**
      * What happens when the command is executed
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         final Entity sender = context.getSource().getEntity();
-        if (sender instanceof final Player player && player.level() instanceof final ServerLevel serverLevel)
-        {
+        if (sender instanceof final Player player && player.level() instanceof final ServerLevel serverLevel) {
             final Level world = sender.level();
-            for (long chunk : serverLevel.getChunkSource().chunkMap.visibleChunkMap.keySet())
-            {
+            for (long chunk : serverLevel.getChunkSource().chunkMap.visibleChunkMap.keySet()) {
                 serverLevel.setChunkForced(ChunkPos.getX(chunk), ChunkPos.getZ(chunk), false);
             }
             MessageUtils.format(Component.literal("Successfully removed forceload flag!")).sendTo(player);
@@ -41,8 +36,7 @@ public class CommandUnloadForcedChunks implements IMCCommand
     }
 
     @Override
-    public boolean checkPreCondition(final CommandContext<CommandSourceStack> context)
-    {
+    public boolean checkPreCondition(final CommandContext<CommandSourceStack> context) {
         final Entity sender = context.getSource().getEntity();
         return sender instanceof Player && ((Player) sender).isCreative();
     }
@@ -53,14 +47,12 @@ public class CommandUnloadForcedChunks implements IMCCommand
      * @return this commands name.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "forceunloadchunks";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName()).executes(this::checkPreConditionAndExecute);
     }
 }

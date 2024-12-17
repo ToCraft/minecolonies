@@ -16,8 +16,7 @@ import java.util.Set;
 /**
  * Manager interface for managing entities for a colony
  */
-public interface IEntityManager
-{
+public interface IEntityManager {
     /**
      * Register a civilian entity with the colony
      *
@@ -53,8 +52,8 @@ public interface IEntityManager
      * @param newSubscribers   new subscribers
      */
     void sendPackets(
-      @NotNull Set<ServerPlayer> closeSubscribers,
-      @NotNull Set<ServerPlayer> newSubscribers);
+            @NotNull Set<ServerPlayer> closeSubscribers,
+            @NotNull Set<ServerPlayer> newSubscribers);
 
     /**
      * Returns a map of civilian in the colony. The map has ID as key, and civilian data as value.

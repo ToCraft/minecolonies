@@ -11,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> the type of the value.
  */
-public interface IResearchEffect<T>
-{
+public interface IResearchEffect<T> {
     /**
      * Get the absolute effect of the research.
      *
@@ -65,6 +64,7 @@ public interface IResearchEffect<T>
 
     /**
      * Write the ResearchEffect's traits to NBT, to simplify serialization for client-viewable data.
+     *
      * @return an NBT file containing at least the necessary traits to reassemble user-visible traits of the effect.
      */
     CompoundTag writeToNBT();

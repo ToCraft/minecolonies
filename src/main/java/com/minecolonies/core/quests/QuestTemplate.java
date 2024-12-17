@@ -12,8 +12,7 @@ import java.util.function.Function;
 /**
  * Instance of a specific quest type
  */
-public class QuestTemplate implements IQuestTemplate
-{
+public class QuestTemplate implements IQuestTemplate {
     /**
      * The unique id of this quest.
      */
@@ -45,19 +44,19 @@ public class QuestTemplate implements IQuestTemplate
 
     /**
      * Create new quest data.
-     * @param questID the id of the quest.
-     * @param name the name of the quest.
-     * @param parents the parent quests.
-     * @param maxOccurrence the max num of occurrences.
+     *
+     * @param questID          the id of the quest.
+     * @param name             the name of the quest.
+     * @param parents          the parent quests.
+     * @param maxOccurrence    the max num of occurrences.
      * @param questTriggerList the list of triggers.
-     * @param questObjectives the quest objectives.
-     * @param questTimeout the time until it times out.
-     * @param questRewards its rewards
+     * @param questObjectives  the quest objectives.
+     * @param questTimeout     the time until it times out.
+     * @param questRewards     its rewards
      */
     public QuestTemplate(final ResourceLocation questID, final Component name,
-      final List<ResourceLocation> parents,
-      final int maxOccurrence, final Function<IColony, List<ITriggerReturnData<?>>> questTriggerList, final List<IQuestObjectiveTemplate> questObjectives, final int questTimeout, final List<IQuestRewardTemplate> questRewards)
-    {
+                         final List<ResourceLocation> parents,
+                         final int maxOccurrence, final Function<IColony, List<ITriggerReturnData<?>>> questTriggerList, final List<IQuestObjectiveTemplate> questObjectives, final int questTimeout, final List<IQuestRewardTemplate> questRewards) {
         this.questID = questID;
         this.name = name;
         this.parents = parents;
@@ -69,59 +68,49 @@ public class QuestTemplate implements IQuestTemplate
     }
 
     @Override
-    public IQuestInstance attemptStart(final IColony colony)
-    {
+    public IQuestInstance attemptStart(final IColony colony) {
         final List<ITriggerReturnData<?>> triggerReturnData = questTriggerList.apply(colony);
         return (triggerReturnData == null || triggerReturnData.isEmpty()) ? null : new QuestInstance(questID, colony, triggerReturnData);
     }
 
     @Override
-    public int getQuestTimeout()
-    {
+    public int getQuestTimeout() {
         return questTimeout;
     }
 
     @Override
-    public int getMaxOccurrence()
-    {
+    public int getMaxOccurrence() {
         return maxOccurrence;
     }
 
     @Override
-    public void unlockQuestRewards(final IColony colony, final Player player, final IQuestInstance colonyQuest, final List<Integer> unlockedRewards)
-    {
+    public void unlockQuestRewards(final IColony colony, final Player player, final IQuestInstance colonyQuest, final List<Integer> unlockedRewards) {
         int index = 0;
-        for (final IQuestRewardTemplate questReward : questRewards)
-        {
-            if (unlockedRewards.contains(index))
-            {
+        for (final IQuestRewardTemplate questReward : questRewards) {
+            if (unlockedRewards.contains(index)) {
                 questReward.applyReward(colony, player, colonyQuest);
             }
-            index+=1;
+            index += 1;
         }
     }
 
     @Override
-    public IQuestObjectiveTemplate getObjective(final int index)
-    {
+    public IQuestObjectiveTemplate getObjective(final int index) {
         return objectives.get(index);
     }
 
     @Override
-    public int getObjectiveCount()
-    {
+    public int getObjectiveCount() {
         return objectives.size();
     }
 
     @Override
-    public Component getName()
-    {
+    public Component getName() {
         return this.name;
     }
 
     @Override
-    public List<ResourceLocation> getParents()
-    {
+    public List<ResourceLocation> getParents() {
         return this.parents;
     }
 }

@@ -23,8 +23,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 /**
  * Delivery type objective.
  */
-public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplateTemplate implements IQuestDeliveryObjective
-{
+public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplateTemplate implements IQuestDeliveryObjective {
     /**
      * The stack to be delivered.
      */
@@ -57,10 +56,9 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
      * @param target   the target to receive the delivery.
      * @param item     the item to be delivered.
      * @param quantity the quantity to be delivered.
-     * @param rewards the rewards this unlocks.
+     * @param rewards  the rewards this unlocks.
      */
-    public DeliveryObjectiveTemplateTemplate(final int target, final ItemStack item, final int quantity, final int nextObjective, final List<Integer> rewards, final String nbtMode)
-    {
+    public DeliveryObjectiveTemplateTemplate(final int target, final ItemStack item, final int quantity, final int nextObjective, final List<Integer> rewards, final String nbtMode) {
         super(target, null, rewards);
         this.item = item;
         this.quantity = quantity;
@@ -69,8 +67,7 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
         this.buildDialogueTrees();
     }
 
-    private void buildDialogueTrees()
-    {
+    private void buildDialogueTrees() {
         final Component ready = Component.translatableEscape("com.minecolonies.coremod.questobjectives.delivery.ready", item.getDisplayName());
         final AnswerElement ready1 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.delivery.ready.give"),
                 new IQuestDialogueAnswer.NextObjectiveDialogueAnswer(this.nextObjective));
@@ -88,11 +85,11 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
 
     /**
      * Parse the dialogue objective from json.
+     *
      * @param jsonObject the json to parse it from.
      * @return a new objective object.
      */
-    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject)
-    {
+    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject) {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
         final ItemStack item = Utils.deserializeCodecMessFromJson(ItemStack.CODEC, provider, details.get(ITEM_KEY));
@@ -102,35 +99,30 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
     }
 
     @Override
-    public boolean hasItem(final Player player, final IQuestInstance colonyQuest)
-    {
+    public boolean hasItem(final Player player, final IQuestInstance colonyQuest) {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, item, !nbtMode.equals("any"), !nbtMode.equals("any"))) >= quantity;
     }
 
     @Override
-    public boolean tryDiscountItem(final Player player, final IQuestInstance colonyQuest)
-    {
+    public boolean tryDiscountItem(final Player player, final IQuestInstance colonyQuest) {
         return InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()), this.item, this.quantity, nbtMode.equals("any"), nbtMode.equals("any"));
     }
 
     @Override
-    public DialogueElement getDialogueTree()
-    {
+    public DialogueElement getDialogueTree() {
         return waitingDialogueElement;
     }
 
     @Override
-    public DialogueElement getReadyDialogueTree()
-    {
+    public DialogueElement getReadyDialogueTree() {
         return readyDialogueElement;
     }
 
     @Override
-    public Component getProgressText(final IQuestInstance quest, final Style style)
-    {
+    public Component getProgressText(final IQuestInstance quest, final Style style) {
         return Component.translatableEscape("com.minecolonies.coremod.questobjectives.delivery.progress",
-          0,
-          quantity,
-          item.getDisplayName().plainCopy().setStyle(style));
+                0,
+                quantity,
+                item.getDisplayName().plainCopy().setStyle(style));
     }
 }

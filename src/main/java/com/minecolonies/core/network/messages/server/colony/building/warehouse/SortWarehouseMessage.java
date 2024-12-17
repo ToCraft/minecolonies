@@ -15,8 +15,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Sort the warehouse if level bigger than 3.
  */
-public class SortWarehouseMessage extends AbstractBuildingServerMessage<BuildingWareHouse>
-{
+public class SortWarehouseMessage extends AbstractBuildingServerMessage<BuildingWareHouse> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "sort_warehouse_message", SortWarehouseMessage::new);
 
     /**
@@ -24,23 +23,18 @@ public class SortWarehouseMessage extends AbstractBuildingServerMessage<Building
      */
     private static final int REQUIRED_LEVEL_TO_SORT_WAREHOUSE = 3;
 
-    public SortWarehouseMessage(final IBuildingView building)
-    {
+    public SortWarehouseMessage(final IBuildingView building) {
         super(TYPE, building);
     }
 
-    protected SortWarehouseMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected SortWarehouseMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingWareHouse building)
-    {
-        if (building.getBuildingLevel() >= REQUIRED_LEVEL_TO_SORT_WAREHOUSE)
-        {
-            if (building.getItemHandlerCap() instanceof final CombinedItemHandler combinedInv)
-            {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingWareHouse building) {
+        if (building.getBuildingLevel() >= REQUIRED_LEVEL_TO_SORT_WAREHOUSE) {
+            if (building.getItemHandlerCap() instanceof final CombinedItemHandler combinedInv) {
                 SortingUtils.sort(player.level().registryAccess(), combinedInv);
             }
         }

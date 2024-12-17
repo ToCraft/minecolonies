@@ -18,8 +18,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the warehouse building.
  */
-public class BuildingDeliveryman extends AbstractBuilding implements IBuildingDeliveryman
-{
+public class BuildingDeliveryman extends AbstractBuilding implements IBuildingDeliveryman {
 
     private static final String DELIVERYMAN = "deliveryman";
 
@@ -29,39 +28,32 @@ public class BuildingDeliveryman extends AbstractBuilding implements IBuildingDe
      * @param c the colony.
      * @param l the location
      */
-    public BuildingDeliveryman(final IColony c, final BlockPos l)
-    {
+    public BuildingDeliveryman(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return DELIVERYMAN;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public boolean canEat(final ItemStack stack)
-    {
+    public boolean canEat(final ItemStack stack) {
         final ICitizenData citizenData = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
-        if (citizenData != null)
-        {
+        if (citizenData != null) {
             final JobDeliveryman job = (JobDeliveryman) citizenData.getJob();
             final IRequest<? extends IRequestable> currentTask = job.getCurrentTask();
-            if (currentTask == null)
-            {
+            if (currentTask == null) {
                 return super.canEat(stack);
             }
             final IRequestable request = currentTask.getRequest();
-            if (request instanceof Delivery && ItemStack.isSameItem(((Delivery) request).getStack(), stack))
-            {
+            if (request instanceof Delivery && ItemStack.isSameItem(((Delivery) request).getStack(), stack)) {
                 return false;
             }
         }

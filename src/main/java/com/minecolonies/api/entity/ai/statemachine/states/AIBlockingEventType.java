@@ -3,8 +3,7 @@ package com.minecolonies.api.entity.ai.statemachine.states;
 /**
  * Event types used in statemachine events.
  */
-public enum AIBlockingEventType implements IStateEventType
-{
+public enum AIBlockingEventType implements IStateEventType {
     /*###Priority NonStates###*/
     /**
      * Highest priority state for AITargets, if returning true it stops further execution of the AI this tick. Checked regardless of current state

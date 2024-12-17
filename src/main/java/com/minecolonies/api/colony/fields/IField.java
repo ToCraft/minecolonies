@@ -15,8 +15,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Interface for field instances.
  */
-public interface IField extends IModuleContainer<IFieldModule>
-{
+public interface IField extends IModuleContainer<IFieldModule> {
     /**
      * Return the field type for this field.
      *

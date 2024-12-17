@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PublicCrafting extends AbstractCrafting
-{
+public class PublicCrafting extends AbstractCrafting {
     /**
      * Set of type tokens belonging to this class.
      */
@@ -30,8 +29,7 @@ public class PublicCrafting extends AbstractCrafting
      * @param stack the required stack.
      * @param count the crafting count.
      */
-    public PublicCrafting(@NotNull final ItemStack stack, final int count, final IToken<?> recipeToken)
-    {
+    public PublicCrafting(@NotNull final ItemStack stack, final int count, final IToken<?> recipeToken) {
         super(stack, count, count, recipeToken);
     }
 
@@ -42,8 +40,7 @@ public class PublicCrafting extends AbstractCrafting
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final PublicCrafting input)
-    {
+    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final PublicCrafting input) {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_STACK, input.getStack().saveOptional(provider));
         compound.putInt(NBT_COUNT, input.getCount());
@@ -59,13 +56,11 @@ public class PublicCrafting extends AbstractCrafting
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static PublicCrafting deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
-    {
+    public static PublicCrafting deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound) {
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK), provider);
         final int count = compound.getInt(NBT_COUNT);
         IToken<?> token = null;
-        if (compound.contains(NBT_TOKEN))
-        {
+        if (compound.contains(NBT_TOKEN)) {
             token = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompound(NBT_TOKEN));
         }
         return new PublicCrafting(stack, count, token);
@@ -78,8 +73,7 @@ public class PublicCrafting extends AbstractCrafting
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final PublicCrafting input)
-    {
+    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final PublicCrafting input) {
         Utils.serializeCodecMess(buffer, input.getStack());
         buffer.writeInt(input.getCount());
         StandardFactoryController.getInstance().serialize(buffer, input.getRecipeID());
@@ -92,8 +86,7 @@ public class PublicCrafting extends AbstractCrafting
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static PublicCrafting deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
-    {
+    public static PublicCrafting deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer) {
         final ItemStack stack = Utils.deserializeCodecMess(buffer);
         final int count = buffer.readInt();
         final IToken<?> token = StandardFactoryController.getInstance().deserialize(buffer);
@@ -102,8 +95,7 @@ public class PublicCrafting extends AbstractCrafting
     }
 
     @Override
-    public Set<TypeToken<?>> getSuperClasses()
-    {
+    public Set<TypeToken<?>> getSuperClasses() {
         return TYPE_TOKENS;
     }
 }

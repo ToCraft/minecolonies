@@ -31,8 +31,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_SE
  *     <li>All working positions must have water directly overhead of them, else the seagrass won't be able to grow.</li>
  * </ol>
  */
-public class SeagrassPlantModule extends BoneMealedPlantModule
-{
+public class SeagrassPlantModule extends BoneMealedPlantModule {
     /**
      * Default constructor.
      *
@@ -41,45 +40,38 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public SeagrassPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
-    {
+    public SeagrassPlantModule(final IField field, final String fieldTag, final String workTag, final Item item) {
         super(field, fieldTag, workTag, item);
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
-    {
+    public ResourceLocation getRequiredResearchEffect() {
         return PLANTATION_SEA;
     }
 
     @Override
-    public void applyBonemeal(final AbstractEntityCitizen worker, final BlockPos workPosition, final ItemStack stackInSlot, final Player fakePlayer)
-    {
+    public void applyBonemeal(final AbstractEntityCitizen worker, final BlockPos workPosition, final ItemStack stackInSlot, final Player fakePlayer) {
         BoneMealItem.growWaterPlant(stackInSlot, worker.level(), workPosition.above(), Direction.UP);
         BoneMealItem.addGrowthParticles(worker.level(), workPosition.above(), 1);
     }
 
     @Override
-    public EquipmentTypeEntry getRequiredTool()
-    {
+    public EquipmentTypeEntry getRequiredTool() {
         return ModEquipmentTypes.none.get();
     }
 
     @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
+    protected boolean isValidHarvestBlock(final BlockState blockState) {
         return blockState.getFluidState().is(Fluids.WATER) && (blockState.getBlock() == Blocks.SEAGRASS || blockState.getBlock() == Blocks.TALL_SEAGRASS);
     }
 
     @Override
-    protected boolean isValidBonemealLocation(final BlockState blockState)
-    {
+    protected boolean isValidBonemealLocation(final BlockState blockState) {
         return blockState.is(Blocks.WATER);
     }
 
     @Override
-    public @NonNull List<Item> getValidBonemeal()
-    {
+    public @NonNull List<Item> getValidBonemeal() {
         // Only base minecraft bonemeal has water growing capabilities.
         // Compost (by design) should not inherit this functionality.
         return List.of(Items.BONE_MEAL);

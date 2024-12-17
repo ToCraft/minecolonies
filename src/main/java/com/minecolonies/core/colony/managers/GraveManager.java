@@ -6,16 +6,16 @@ import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.managers.interfaces.IGraveManager;
-import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.tileentities.TileEntityGrave;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -36,10 +35,10 @@ import java.util.Map;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.research.util.ResearchConstants.GRAVE_DECAY_BONUS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_GRAVE_LAVA;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_GRAVE_WATER;
 
-public class GraveManager implements IGraveManager
-{
+public class GraveManager implements IGraveManager {
     /**
      * List of grave in the colony.
      */
@@ -56,8 +55,7 @@ public class GraveManager implements IGraveManager
      *
      * @param colony the colony.
      */
-    public GraveManager(final Colony colony)
-    {
+    public GraveManager(final Colony colony) {
         this.colony = colony;
     }
 
@@ -67,15 +65,12 @@ public class GraveManager implements IGraveManager
      * @param compound the compound.
      */
     @Override
-    public void read(@NotNull final CompoundTag compound)
-    {
+    public void read(@NotNull final CompoundTag compound) {
         graves.clear();
         final ListTag gravesTagList = compound.getList(TAG_GRAVE, Tag.TAG_COMPOUND);
-        for (int i = 0; i < gravesTagList.size(); ++i)
-        {
+        for (int i = 0; i < gravesTagList.size(); ++i) {
             final CompoundTag graveCompound = gravesTagList.getCompound(i);
-            if (graveCompound.contains(TAG_POS) && graveCompound.contains(TAG_RESERVED))
-            {
+            if (graveCompound.contains(TAG_POS) && graveCompound.contains(TAG_RESERVED)) {
                 graves.put(BlockPosUtil.read(graveCompound, TAG_POS), graveCompound.getBoolean(TAG_RESERVED));
             }
         }
@@ -87,11 +82,9 @@ public class GraveManager implements IGraveManager
      * @param compound the compound.
      */
     @Override
-    public void write(@NotNull final CompoundTag compound)
-    {
+    public void write(@NotNull final CompoundTag compound) {
         @NotNull final ListTag gravesTagList = new ListTag();
-        for (@NotNull final BlockPos blockPos : graves.keySet())
-        {
+        for (@NotNull final BlockPos blockPos : graves.keySet()) {
             @NotNull final CompoundTag graveCompound = new CompoundTag();
             BlockPosUtil.write(graveCompound, TAG_POS, blockPos);
             graveCompound.putBoolean(TAG_RESERVED, graves.get(blockPos));
@@ -106,26 +99,21 @@ public class GraveManager implements IGraveManager
      * @param colony the colony which is being ticked.
      */
     @Override
-    public void onColonyTick(final IColony colony)
-    {
-        for (final Iterator<BlockPos> iterator = graves.keySet().iterator(); iterator.hasNext(); )
-        {
+    public void onColonyTick(final IColony colony) {
+        for (final Iterator<BlockPos> iterator = graves.keySet().iterator(); iterator.hasNext(); ) {
             final BlockPos pos = iterator.next();
-            if (!WorldUtil.isBlockLoaded(colony.getWorld(), pos))
-            {
+            if (!WorldUtil.isBlockLoaded(colony.getWorld(), pos)) {
                 continue;
             }
 
             final BlockEntity graveEntity = colony.getWorld().getBlockEntity(pos);
-            if (!(graveEntity instanceof TileEntityGrave))
-            {
+            if (!(graveEntity instanceof TileEntityGrave)) {
                 iterator.remove();
                 colony.markDirty();
                 continue;
             }
 
-            if (!((TileEntityGrave) graveEntity).onColonyTick(MAX_TICKRATE))
-            {
+            if (!((TileEntityGrave) graveEntity).onColonyTick(MAX_TICKRATE)) {
                 iterator.remove();
                 colony.markDirty();
             }
@@ -139,8 +127,7 @@ public class GraveManager implements IGraveManager
      */
     @NotNull
     @Override
-    public Map<BlockPos, Boolean> getGraves()
-    {
+    public Map<BlockPos, Boolean> getGraves() {
         return graves;
     }
 
@@ -151,16 +138,13 @@ public class GraveManager implements IGraveManager
      * @return the grave that was created and added.
      */
     @Override
-    public boolean addNewGrave(@NotNull final BlockPos pos)
-    {
+    public boolean addNewGrave(@NotNull final BlockPos pos) {
         final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getBlockEntity(pos);
-        if (graveEntity == null)
-        {
+        if (graveEntity == null) {
             return false;
         }
 
-        if (graves.containsKey(pos))
-        {
+        if (graves.containsKey(pos)) {
             return true;
         }
 
@@ -175,8 +159,7 @@ public class GraveManager implements IGraveManager
      * @param pos position of the TileEntityGrave to remove.
      */
     @Override
-    public void removeGrave(@NotNull final BlockPos pos)
-    {
+    public void removeGrave(@NotNull final BlockPos pos) {
         graves.remove(pos);
         colony.markDirty();
     }
@@ -188,10 +171,8 @@ public class GraveManager implements IGraveManager
      * @return is the grave successfully reserved.
      */
     @Override
-    public boolean reserveGrave(@NotNull final BlockPos pos)
-    {
-        if (!graves.containsKey(pos) || graves.get(pos))
-        {
+    public boolean reserveGrave(@NotNull final BlockPos pos) {
+        if (!graves.containsKey(pos) || graves.get(pos)) {
             return false;
         }
 
@@ -201,10 +182,8 @@ public class GraveManager implements IGraveManager
     }
 
     @Override
-    public void unReserveGrave(@NotNull final BlockPos pos)
-    {
-        if (graves.containsKey(pos) && graves.get(pos))
-        {
+    public void unReserveGrave(@NotNull final BlockPos pos) {
+        if (graves.containsKey(pos) && graves.get(pos)) {
             graves.put(pos, false);
             colony.markDirty();
         }
@@ -216,24 +195,19 @@ public class GraveManager implements IGraveManager
      * @return the grave successfully reserved or null if none available
      */
     @Override
-    public BlockPos reserveNextFreeGrave()
-    {
-        for (@NotNull final BlockPos pos : new ArrayList<>(graves.keySet()))
-        {
-            if (!WorldUtil.isBlockLoaded(colony.getWorld(), pos))
-            {
+    public BlockPos reserveNextFreeGrave() {
+        for (@NotNull final BlockPos pos : new ArrayList<>(graves.keySet())) {
+            if (!WorldUtil.isBlockLoaded(colony.getWorld(), pos)) {
                 continue;
             }
 
             final BlockEntity graveEntity = colony.getWorld().getBlockEntity(pos);
-            if (!(graveEntity instanceof TileEntityGrave))
-            {
+            if (!(graveEntity instanceof TileEntityGrave)) {
                 graves.remove(pos);
                 continue;
             }
 
-            if (reserveGrave(pos))
-            {
+            if (reserveGrave(pos)) {
                 return pos;
             }
         }
@@ -251,58 +225,46 @@ public class GraveManager implements IGraveManager
      * @param citizenData The citizenData
      */
     @Override
-    public boolean createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData)
-    {
+    public boolean createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData) {
         final BlockState here = world.getBlockState(pos);
-        if (here.getBlock() == Blocks.LAVA)
-        {
+        if (here.getBlock() == Blocks.LAVA) {
             MessageUtils.format(WARNING_GRAVE_LAVA).sendTo(colony).forManagers();
             return false;
         }
 
         BlockPos firstValidPosition = null;
-        if (here.getBlock() == Blocks.WATER)
-        {
-            for (int i = 1; i <= 10; i++)
-            {
-                if (world.getBlockState(pos.above(i)).getBlock() instanceof AirBlock)
-                {
+        if (here.getBlock() == Blocks.WATER) {
+            for (int i = 1; i <= 10; i++) {
+                if (world.getBlockState(pos.above(i)).getBlock() instanceof AirBlock) {
                     firstValidPosition = BlockPosUtil.findAround(world, pos, 1, 16,
-                      (blockAccess, current) ->
-                        blockAccess.getBlockState(current).isAir() &&
-                          BlockUtils.isAnySolid(blockAccess.getBlockState(current.below())));
+                            (blockAccess, current) ->
+                                    blockAccess.getBlockState(current).isAir() &&
+                                            BlockUtils.isAnySolid(blockAccess.getBlockState(current.below())));
                     break;
                 }
             }
 
-            if (firstValidPosition == null)
-            {
+            if (firstValidPosition == null) {
                 MessageUtils.format(WARNING_GRAVE_WATER).sendTo(colony).forManagers();
             }
-        }
-        else
-        {
+        } else {
             firstValidPosition = BlockPosUtil.findAround(world, pos, 10, 10,
-              (blockAccess, current) ->
-                blockAccess.getBlockState(current).isAir() &&
-                  BlockUtils.isAnySolid(blockAccess.getBlockState(current.below())));
+                    (blockAccess, current) ->
+                            blockAccess.getBlockState(current).isAir() &&
+                                    BlockUtils.isAnySolid(blockAccess.getBlockState(current.below())));
         }
 
 
-        if (firstValidPosition != null)
-        {
+        if (firstValidPosition != null) {
             world.setBlockAndUpdate(firstValidPosition,
-              BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.defaultBlockState(), firstValidPosition));
+                    BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.defaultBlockState(), firstValidPosition));
             final TileEntityGrave graveEntity = (TileEntityGrave) world.getBlockEntity(firstValidPosition);
-            if (!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory()))
-            {
+            if (!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory())) {
                 InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());
             }
-            for (final EquipmentSlot equipmentSlot : EquipmentSlot.values())
-            {
+            for (final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
                 final ItemStack stack = citizenData.getInventory().getArmorInSlot(equipmentSlot);
-                if (!InventoryUtils.addItemStackToItemHandler(graveEntity.getInventory(), stack))
-                {
+                if (!InventoryUtils.addItemStackToItemHandler(graveEntity.getInventory(), stack)) {
                     InventoryUtils.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
                 }
             }
@@ -312,8 +274,7 @@ public class GraveManager implements IGraveManager
 
             GraveData graveData = new GraveData();
             graveData.setCitizenName(citizenData.getName());
-            if (citizenData.getJob() != null)
-            {
+            if (citizenData.getJob() != null) {
                 final Component jobName = Component.translatableEscape(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
                 graveData.setCitizenJobName(jobName.getString());
             }
@@ -322,9 +283,7 @@ public class GraveManager implements IGraveManager
 
             colony.getGraveManager().addNewGrave(firstValidPosition);
             return true;
-        }
-        else
-        {
+        } else {
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());
         }
         return false;

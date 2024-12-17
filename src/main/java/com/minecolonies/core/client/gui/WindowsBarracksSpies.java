@@ -3,15 +3,15 @@ package com.minecolonies.core.client.gui;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.colony.HireSpiesMessage;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
-import net.minecraft.core.BlockPos;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
@@ -20,8 +20,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.DESCRIPTIO
 /**
  * UI for hiring spies on the barracks
  */
-public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
-{
+public class WindowsBarracksSpies extends BOWindow implements ButtonHandler {
     /**
      * The xml file for this gui
      */
@@ -59,8 +58,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
      */
     private final IBuildingView buildingView;
 
-    public WindowsBarracksSpies(final IBuildingView buildingView, final BlockPos buildingPos)
-    {
+    public WindowsBarracksSpies(final IBuildingView buildingView, final BlockPos buildingPos) {
         super(ResourceLocation.parse(Constants.MOD_ID + SPIES_GUI_XML));
         this.buildingView = buildingView;
 
@@ -72,25 +70,20 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
         int goldCount = InventoryUtils.getItemCountInItemHandler(playerInv, Items.GOLD_INGOT);
         goldCount += InventoryUtils.getItemCountInItemHandler(rackInv, Items.GOLD_INGOT);
 
-        if (!buildingView.getColony().isRaiding() || goldCount < GOLD_COST || buildingView.getColony().areSpiesEnabled())
-        {
+        if (!buildingView.getColony().isRaiding() || goldCount < GOLD_COST || buildingView.getColony().areSpiesEnabled()) {
             findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();
         }
         findPaneOfTypeByID(TEXT_ID, Text.class).setText(Component.translatableEscape(DESCRIPTION_BARRACKS_HIRE_SPIES));
     }
 
     @Override
-    public void onButtonClicked(final Button button)
-    {
-        switch (button.getID())
-        {
-            case BUTTON_CANCEL:
-            {
+    public void onButtonClicked(final Button button) {
+        switch (button.getID()) {
+            case BUTTON_CANCEL: {
                 this.close();
                 break;
             }
-            case BUTTON_HIRE:
-            {
+            case BUTTON_HIRE: {
                 findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();
                 new HireSpiesMessage(buildingView.getColony()).sendToServer();
                 this.close();

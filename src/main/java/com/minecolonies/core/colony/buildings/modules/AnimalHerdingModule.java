@@ -8,7 +8,6 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -22,16 +21,14 @@ import java.util.function.Predicate;
 /**
  * Provides some basic definitions used by the animal herding AI (and JEI).
  */
-public class AnimalHerdingModule extends AbstractBuildingModule
-{
+public class AnimalHerdingModule extends AbstractBuildingModule {
     private final JobEntry jobEntry;
     private final Predicate<Animal> animalPredicate;
     private final ItemStack breedingItem;
 
     public AnimalHerdingModule(@NotNull final JobEntry jobEntry,
                                @NotNull final Predicate<Animal> animalPredicate,
-                               @NotNull final ItemStack breedingItem)
-    {
+                               @NotNull final ItemStack breedingItem) {
         this.jobEntry = jobEntry;
         this.animalPredicate = animalPredicate;
         this.breedingItem = breedingItem;
@@ -43,8 +40,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule
      * @return The job.
      */
     @NotNull
-    public IJob<?> getHerdingJob()
-    {
+    public IJob<?> getHerdingJob() {
         return jobEntry.produceJob(null);
     }
 
@@ -54,8 +50,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule
      * @param animal the animal to check.
      * @return true if so.
      */
-    public boolean isCompatible(@NotNull final Animal animal)
-    {
+    public boolean isCompatible(@NotNull final Animal animal) {
         return animalPredicate.test(animal);
     }
 
@@ -65,8 +60,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule
      * @return The animal's preferred breeding item (as a list of alternatives).
      */
     @NotNull
-    public List<ItemStack> getBreedingItems()
-    {
+    public List<ItemStack> getBreedingItems() {
         return Collections.singletonList(breedingItem);
     }
 
@@ -78,23 +72,21 @@ public class AnimalHerdingModule extends AbstractBuildingModule
      * @param animal An example animal. (Don't use specific properties of this; it's only for checking type.)
      * @return The list of loot table ids
      */
-    public List<ResourceKey<LootTable>> getLootTables(@NotNull final Animal animal)
-    {
+    public List<ResourceKey<LootTable>> getLootTables(@NotNull final Animal animal) {
         return Collections.singletonList(animal.getLootTable());
     }
 
     /**
      * Get a list of "recipes" for items obtainable by herding the given animal.  This can include loot drops
      * for killing the animal as well as anything else acquired through other means.
-     *
+     * <p>
      * These are purely for JEI display purposes and don't have to represent actual crafting recipes.
      *
      * @param animal An example animal. (Don't use specific properties of this; it's only for checking type.)
      * @return the list of additional display recipes.
      */
     @NotNull
-    public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull final Animal animal)
-    {
+    public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull final Animal animal) {
         return Collections.singletonList(new GenericRecipe(BuiltInRegistries.ENTITY_TYPE.getKey(animal.getType()),
                 ItemStack.EMPTY,
                 Collections.emptyList(),

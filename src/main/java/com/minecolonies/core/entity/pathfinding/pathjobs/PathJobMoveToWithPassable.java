@@ -12,8 +12,7 @@ import java.util.function.Function;
 /**
  * Moves to the given location, with a special passable check.
  */
-public class PathJobMoveToWithPassable extends PathJobMoveToLocation
-{
+public class PathJobMoveToWithPassable extends PathJobMoveToLocation {
     /**
      * Additional cost to special passing rule
      */
@@ -35,40 +34,33 @@ public class PathJobMoveToWithPassable extends PathJobMoveToLocation
      * @param isPassable passable check
      */
     public PathJobMoveToWithPassable(
-      final Level world,
-      @NotNull final BlockPos start,
-      @NotNull final BlockPos end, final int range, final Mob entity, final Function<BlockState, Boolean> isPassable)
-    {
+            final Level world,
+            @NotNull final BlockPos start,
+            @NotNull final BlockPos end, final int range, final Mob entity, final Function<BlockState, Boolean> isPassable) {
         super(world, start, end, range, entity);
         this.isPassable = isPassable;
     }
 
     @Override
-    protected boolean isPassable(@NotNull final BlockState block, final int x, final int y, final int z, final MNode parent, final boolean head)
-    {
+    protected boolean isPassable(@NotNull final BlockState block, final int x, final int y, final int z, final MNode parent, final boolean head) {
         return super.isPassable(block, x, y, z, parent, head) || isPassable.apply(block);
     }
 
     @Override
     protected double modifyCost(
-      final double cost,
-      final MNode parent,
-      final boolean swimstart,
-      final boolean swimming,
-      final int x,
-      final int y,
-      final int z,
-      final BlockState state, final BlockState below)
-    {
-        if (!state.isAir() && isPassable.apply(state))
-        {
+            final double cost,
+            final MNode parent,
+            final boolean swimstart,
+            final boolean swimming,
+            final int x,
+            final int y,
+            final int z,
+            final BlockState state, final BlockState below) {
+        if (!state.isAir() && isPassable.apply(state)) {
             return cost * PASSING_COST;
-        }
-        else
-        {
+        } else {
             final BlockState above = cachedBlockLookup.getBlockState(x, y + 1, z);
-            if (!above.isAir() && isPassable.apply(above))
-            {
+            if (!above.isAir() && isPassable.apply(above)) {
                 return cost * PASSING_COST;
             }
         }

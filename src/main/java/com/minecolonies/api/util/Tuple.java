@@ -11,58 +11,48 @@ import java.util.Objects;
  * @param <A> The first obj.
  * @param <B> The second obj.
  */
-public class Tuple<A, B>
-{
+public class Tuple<A, B> {
     private A a;
     private B b;
 
-    public Tuple(@Nullable final A aIn, @Nullable final B bIn)
-    {
+    public Tuple(@Nullable final A aIn, @Nullable final B bIn) {
         this.a = aIn;
         this.b = bIn;
     }
 
-    public Tuple(final Pair<A, B> codecPair)
-    {
+    public Tuple(final Pair<A, B> codecPair) {
         this(codecPair.getFirst(), codecPair.getSecond());
     }
 
     @Nullable
-    public A getA()
-    {
+    public A getA() {
         return this.a;
     }
 
     @Nullable
-    public B getB()
-    {
+    public B getB() {
         return this.b;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(a, b);
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         final Tuple<?, ?> tuple = (Tuple<?, ?>) o;
         return Objects.equals(a, tuple.a) &&
-                 Objects.equals(b, tuple.b);
+                Objects.equals(b, tuple.b);
     }
 
-    public Pair<A, B> toCodecPair()
-    {
-        return new Pair<A,B>(a, b);
+    public Pair<A, B> toCodecPair() {
+        return new Pair<A, B>(a, b);
     }
 }

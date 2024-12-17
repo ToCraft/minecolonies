@@ -28,8 +28,7 @@ import java.util.Set;
 /**
  * Client side representation of the crafting module.
  */
-public class CraftingModuleView extends AbstractBuildingModuleView
-{
+public class CraftingModuleView extends AbstractBuildingModuleView {
     /**
      * The id of this crafting module view.
      */
@@ -66,49 +65,38 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     private boolean isVisible = false;
 
     @Override
-    public void deserialize(@NotNull RegistryFriendlyByteBuf buf)
-    {
-        if (buf.readBoolean())
-        {
+    public void deserialize(@NotNull RegistryFriendlyByteBuf buf) {
+        if (buf.readBoolean()) {
             this.jobEntry = buf.readById(MinecoloniesAPIProxy.getInstance().getJobRegistry()::byIdOrThrow);
-        }
-        else
-        {
+        } else {
             this.jobEntry = null;
         }
 
         recipeTypeSet.clear();
         final int size = buf.readVarInt();
-        for (int i = 0; i < size; ++i)
-        {
+        for (int i = 0; i < size; ++i) {
             final CraftingType type = buf.readById(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry()::byIdOrThrow);
-            if (type != null)
-            {
+            if (type != null) {
                 recipeTypeSet.add(type);
             }
         }
 
-        if (buf.readBoolean())
-        {
+        if (buf.readBoolean()) {
             recipes.clear();
             disabledRecipes.clear();
 
             final int recipesSize = buf.readInt();
-            for (int i = 0; i < recipesSize; i++)
-            {
+            for (int i = 0; i < recipesSize; i++) {
                 final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf);
-                if (storage != null)
-                {
+                if (storage != null) {
                     recipes.add(storage);
                 }
             }
 
             final int disabledRecipeSize = buf.readInt();
-            for (int i = 0; i < disabledRecipeSize; i++)
-            {
+            for (int i = 0; i < disabledRecipeSize; i++) {
                 final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf);
-                if (storage != null)
-                {
+                if (storage != null) {
                     disabledRecipes.add(storage);
                 }
             }
@@ -121,128 +109,116 @@ public class CraftingModuleView extends AbstractBuildingModuleView
 
     /**
      * Gets the job associated with this crafting module.
+     *
      * @return The job, or null if there was no such job.
      */
     @Nullable
-    public JobEntry getJobEntry()
-    {
+    public JobEntry getJobEntry() {
         return this.jobEntry;
     }
 
     /**
      * Check if recipes can be taught.
+     *
      * @return true if so.
      */
-    public boolean isRecipeAlterationAllowed()
-    {
+    public boolean isRecipeAlterationAllowed() {
         return !recipeTypeSet.isEmpty();
     }
 
     /**
      * Check if the worker can learn a certain type of recipe.
+     *
      * @param type the type to check for.
      * @return true if so.
      */
-    public boolean canLearn(final CraftingType type)
-    {
+    public boolean canLearn(final CraftingType type) {
         return getSupportedCraftingTypes().contains(type);
     }
 
     /**
      * Get the supported crafting types.
+     *
      * @return a set of types.
      */
-    public Set<CraftingType> getSupportedCraftingTypes()
-    {
+    public Set<CraftingType> getSupportedCraftingTypes() {
         return recipeTypeSet;
     }
 
     /**
      * Unique id of the crafting module view.
+     *
      * @return the id.
      */
     @Deprecated
-    public String getId()
-    {
+    public String getId() {
         return this.id;
     }
 
     @Override
-    public boolean isPageVisible()
-    {
+    public boolean isPageVisible() {
         return isVisible;
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new WindowListRecipes(buildingView, Constants.MOD_ID + ":gui/layouthuts/layoutlistrecipes.xml", this);
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return id;
     }
 
     @Override
-    public String getDesc()
-    {
-        return "com.minecolonies.coremod.gui.workerhuts.recipe." + id ;
+    public String getDesc() {
+        return "com.minecolonies.coremod.gui.workerhuts.recipe." + id;
     }
 
     /**
      * Get a list of all recipes.
+     *
      * @return the list.
      */
-    public List<IRecipeStorage> getRecipes()
-    {
+    public List<IRecipeStorage> getRecipes() {
         return recipes;
     }
 
     /**
      * Remove the recipe at index.
+     *
      * @param index the index to remove.
      */
-    public void removeRecipe(int index)
-    {
+    public void removeRecipe(int index) {
         recipes.remove(index);
     }
 
     /**
      * Switch order in recipe list.
+     *
      * @param i first index.
      * @param j second index.
      */
-    public void switchOrder(final int i, final int j, final boolean fullMove)
-    {
-        if (fullMove)
-        {
-            if (i > j)
-            {
+    public void switchOrder(final int i, final int j, final boolean fullMove) {
+        if (fullMove) {
+            if (i > j) {
                 recipes.add(0, recipes.remove(i));
-            }
-            else
-            {
+            } else {
                 recipes.add(recipes.remove(i));
             }
-        }
-        else if (i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
-        {
+        } else if (i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0) {
             final IRecipeStorage storage = recipes.get(i);
             recipes.set(i, recipes.get(j));
             recipes.set(j, storage);
         }
     }
 
-    public int getMaxRecipes()
-    {
+    public int getMaxRecipes() {
         return maxRecipes;
     }
 
-    public void openCraftingGUI()
-    {
+    public void openCraftingGUI() {
         final BlockPos pos = buildingView.getPosition();
         Minecraft.getInstance().player.openMenu((MenuProvider) Minecraft.getInstance().level.getBlockEntity(pos));
         new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, this.getProducer().getRuntimeID()).sendToServer();
@@ -250,28 +226,25 @@ public class CraftingModuleView extends AbstractBuildingModuleView
 
     /**
      * Enable/disable a recipe.
+     *
      * @param row the location of the recipe.
      */
-    public void toggle(final int row)
-    {
+    public void toggle(final int row) {
         final IRecipeStorage storage = recipes.get(row);
-        if (disabledRecipes.contains(storage))
-        {
+        if (disabledRecipes.contains(storage)) {
             disabledRecipes.remove(storage);
-        }
-        else
-        {
+        } else {
             disabledRecipes.add(storage);
         }
     }
 
     /**
      * Check if a recipe is disabled.
+     *
      * @param recipe the recipe to check for.
      * @return true if so.
      */
-    public boolean isDisabled(final IRecipeStorage recipe)
-    {
+    public boolean isDisabled(final IRecipeStorage recipe) {
         return disabledRecipes.contains(recipe);
     }
 }

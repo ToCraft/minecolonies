@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The message used to synchronize global quest data from a server to a remote client.
  */
-public class GlobalQuestSyncMessage extends AbstractClientPlayMessage
-{
+public class GlobalQuestSyncMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "global_quest_sync", GlobalQuestSyncMessage::new, true, false);
 
     /**
@@ -28,28 +27,24 @@ public class GlobalQuestSyncMessage extends AbstractClientPlayMessage
      *
      * @param buf the bytebuffer.
      */
-    public GlobalQuestSyncMessage(final RegistryFriendlyByteBuf buf)
-    {
+    public GlobalQuestSyncMessage(final RegistryFriendlyByteBuf buf) {
         super(TYPE);
         this.questBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(buf.copy()), buf.registryAccess());
     }
 
-    protected GlobalQuestSyncMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected GlobalQuestSyncMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         questBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         questBuffer.resetReaderIndex();
         buf.writeByteArray(questBuffer.array());
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         QuestJsonListener.readGlobalQuestPackets(questBuffer);
     }
 }

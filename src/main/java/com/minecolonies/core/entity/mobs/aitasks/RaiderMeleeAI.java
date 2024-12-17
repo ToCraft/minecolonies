@@ -23,14 +23,13 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 /**
  * Raider AI for melee attacking a target
  */
-public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntity> extends AttackMoveAI<T>
-{
+public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntity> extends AttackMoveAI<T> {
     /**
      * Extended reach based on difficulty
      */
     private static final double EXTENDED_REACH_DIFFICULTY = 1.9;
-    private static final double EXTENDED_REACH            = 0.4;
-    private static final double MIN_DISTANCE_FOR_ATTACK   = 2.5;
+    private static final double EXTENDED_REACH = 0.4;
+    private static final double MIN_DISTANCE_FOR_ATTACK = 2.5;
 
     /**
      * Attack delay
@@ -41,26 +40,21 @@ public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntit
      * Additional movement speed difficulty
      */
     private static final double ADD_SPEED_DIFFICULTY = 2.3;
-    private static final double BONUS_SPEED          = 1.2;
-    private static final double BASE_COMBAT_SPEED    = 1.2;
+    private static final double BONUS_SPEED = 1.2;
+    private static final double BASE_COMBAT_SPEED = 1.2;
 
     public RaiderMeleeAI(
-      final T owner,
-      final ITickRateStateMachine<IState> stateMachine)
-    {
+            final T owner,
+            final ITickRateStateMachine<IState> stateMachine) {
         super(owner, stateMachine);
     }
 
     @Override
-    protected void doAttack(final LivingEntity target)
-    {
+    protected void doAttack(final LivingEntity target) {
         double damageToBeDealt = user.getAttribute(MOB_ATTACK_DAMAGE).getValue();
-        if (user.getName().getContents() instanceof TranslatableContents translatableContents)
-        {
+        if (user.getName().getContents() instanceof TranslatableContents translatableContents) {
             target.hurt(target.level().damageSources().source(ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, translatableContents.getKey().replace("entity.minecolonies.", ""))), user), (float) damageToBeDealt);
-        }
-        else
-        {
+        } else {
             target.hurt(target.level().damageSources().mobAttack(user), (float) damageToBeDealt);
         }
         user.swing(InteractionHand.MAIN_HAND);
@@ -69,39 +63,33 @@ public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntit
     }
 
     @Override
-    protected double getAttackDistance()
-    {
+    protected double getAttackDistance() {
         return user.getDifficulty() < EXTENDED_REACH_DIFFICULTY ? MIN_DISTANCE_FOR_ATTACK : MIN_DISTANCE_FOR_ATTACK + EXTENDED_REACH;
     }
 
     @Override
-    protected int getAttackDelay()
-    {
+    protected int getAttackDelay() {
         return ATTACK_DELAY;
     }
 
     @Override
-    protected PathResult moveInAttackPosition(final LivingEntity target)
-    {
+    protected PathResult moveInAttackPosition(final LivingEntity target) {
         return user.getNavigation()
-                 .moveToXYZ(target.getX(), target.getY(), target.getZ(), user.getDifficulty() < ADD_SPEED_DIFFICULTY ? BASE_COMBAT_SPEED : BASE_COMBAT_SPEED * BONUS_SPEED);
+                .moveToXYZ(target.getX(), target.getY(), target.getZ(), user.getDifficulty() < ADD_SPEED_DIFFICULTY ? BASE_COMBAT_SPEED : BASE_COMBAT_SPEED * BONUS_SPEED);
     }
 
     @Override
-    protected boolean isAttackableTarget(final LivingEntity target)
-    {
+    protected boolean isAttackableTarget(final LivingEntity target) {
         return (target instanceof EntityCitizen && !target.isInvisible()) || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
     }
 
     @Override
-    protected boolean isWithinPersecutionDistance(final LivingEntity target)
-    {
+    protected boolean isWithinPersecutionDistance(final LivingEntity target) {
         return true;
     }
 
     @Override
-    protected int getSearchRange()
-    {
+    protected int getSearchRange() {
         return 0;
     }
 }

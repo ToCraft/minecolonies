@@ -3,16 +3,15 @@ package com.minecolonies.api.colony.requestsystem.requestable.deliveryman;
 /**
  * Abstract class for all deliveryman-requests
  */
-public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequestable
-{
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequestable {
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
     protected static final String NBT_PRIORITY = "Priority";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
 
-    public static final    int MAX_BUILDING_PRIORITY     = 10;
+    public static final int MAX_BUILDING_PRIORITY = 10;
     protected static final int DEFAULT_DELIVERY_PRIORITY = 13;
-    private static final   int MAX_AGING_PRIORITY        = 14;
-    private static final int PLAYER_ACTION_PRIORITY    = 15;
+    private static final int MAX_AGING_PRIORITY = 14;
+    private static final int PLAYER_ACTION_PRIORITY = 15;
 
     protected int priority = 0;
 
@@ -21,8 +20,7 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
      *
      * @param priority The priority of the request. Higher priority equals earlier delivery/pickup
      */
-    protected AbstractDeliverymanRequestable(final int priority)
-    {
+    protected AbstractDeliverymanRequestable(final int priority) {
         this.priority = priority;
     }
 
@@ -31,8 +29,7 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
      * aging-algorithm, which always increments by 1, slower. The function can be anything - a linear scaler, quadratic, exponential, whatever. Adapt over time to find the best
      * solution.
      */
-    public static int scaledPriority(final int priority)
-    {
+    public static int scaledPriority(final int priority) {
         // This version makes the increase quadratic
         // return (int) Math.pow(priority, 2);
 
@@ -45,8 +42,7 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
      * @param returnScaled true if the value should be returned scaled
      * @return the scaled/unscaled priority
      */
-    public static int getMaxBuildingPriority(final boolean returnScaled)
-    {
+    public static int getMaxBuildingPriority(final boolean returnScaled) {
         return returnScaled ? scaledPriority(MAX_BUILDING_PRIORITY) : MAX_BUILDING_PRIORITY;
     }
 
@@ -56,8 +52,7 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
      * @param returnScaled true if the value should be returned scaled
      * @return the scaled/unscaled priority
      */
-    public static int getDefaultDeliveryPriority(final boolean returnScaled)
-    {
+    public static int getDefaultDeliveryPriority(final boolean returnScaled) {
         return returnScaled ? scaledPriority(DEFAULT_DELIVERY_PRIORITY) : DEFAULT_DELIVERY_PRIORITY;
     }
 
@@ -67,8 +62,7 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
      * @param returnScaled true if the value should be returned scaled
      * @return the scaled/unscaled priority
      */
-    public static int getMaxAgingPriority(final boolean returnScaled)
-    {
+    public static int getMaxAgingPriority(final boolean returnScaled) {
         return returnScaled ? scaledPriority(MAX_AGING_PRIORITY) : MAX_AGING_PRIORITY;
     }
 
@@ -78,42 +72,35 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
      * @param returnScaled true if the value should be returned scaled
      * @return the scaled/unscaled priority
      */
-    public static int getPlayerActionPriority(final boolean returnScaled)
-    {
+    public static int getPlayerActionPriority(final boolean returnScaled) {
         return returnScaled ? scaledPriority(PLAYER_ACTION_PRIORITY) : PLAYER_ACTION_PRIORITY;
     }
 
     @Override
-    public int getPriority()
-    {
+    public int getPriority() {
         return priority;
     }
 
     @Override
-    public void incrementPriorityDueToAging()
-    {
+    public void incrementPriorityDueToAging() {
         // The priority set by by the aging mechanism can actually exceed the maximum priority that requesters can choose.
         // Worst case, the priority queue turns into a FIFO queue for really old requests, with new maximum-priority requests having to wait.
         priority = Math.min(getMaxAgingPriority(true), priority + 1);
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof AbstractDeliverymanRequestable))
-        {
+        if (!(o instanceof AbstractDeliverymanRequestable)) {
             return false;
         }
         return getPriority() == ((AbstractDeliverymanRequestable) o).getPriority();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return getPriority();
     }
 }

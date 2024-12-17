@@ -31,56 +31,46 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_VOLUME;
  * Handles the citizens interaction with an item with the world.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class CitizenItemUtils
-{
+public class CitizenItemUtils {
     /**
      * Citizen will try to pick up a certain item.
      *
      * @param itemEntity the item he wants to pickup.
      */
-    public static void tryPickupItemEntity(@NotNull final AbstractEntityCitizen citizen, @NotNull final ItemEntity itemEntity)
-    {
-        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
-        {
-            if (itemEntity.hasPickUpDelay())
-            {
+    public static void tryPickupItemEntity(@NotNull final AbstractEntityCitizen citizen, @NotNull final ItemEntity itemEntity) {
+        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide) {
+            if (itemEntity.hasPickUpDelay()) {
                 return;
             }
 
             final ItemStack itemStack = itemEntity.getItem();
             final ItemStack compareStack = itemStack.copy();
 
-            if (citizen.getCitizenJobHandler().getColonyJob() == null || citizen.getCitizenJobHandler().getColonyJob().pickupSuccess(compareStack))
-            {
+            if (citizen.getCitizenJobHandler().getColonyJob() == null || citizen.getCitizenJobHandler().getColonyJob().pickupSuccess(compareStack)) {
                 final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), itemStack);
                 final int resultingStackSize = ItemStackUtils.isEmpty(resultStack) ? 0 : ItemStackUtils.getSize(resultStack);
 
-                if (ItemStackUtils.isEmpty(resultStack) || ItemStackUtils.getSize(resultStack) != ItemStackUtils.getSize(compareStack))
-                {
+                if (ItemStackUtils.isEmpty(resultStack) || ItemStackUtils.getSize(resultStack) != ItemStackUtils.getSize(compareStack)) {
                     CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
-                      citizen.blockPosition(),
-                      SoundEvents.ITEM_PICKUP,
-                      SoundSource.AMBIENT,
-                      (float) DEFAULT_VOLUME,
-                      (float) ((citizen.getRandom().nextGaussian() * DEFAULT_PITCH_MULTIPLIER + 1.0D) * 2.0D));
+                            citizen.blockPosition(),
+                            SoundEvents.ITEM_PICKUP,
+                            SoundSource.AMBIENT,
+                            (float) DEFAULT_VOLUME,
+                            (float) ((citizen.getRandom().nextGaussian() * DEFAULT_PITCH_MULTIPLIER + 1.0D) * 2.0D));
                     citizen.take(itemEntity, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                     final ItemStack overrulingStack = itemStack.copy();
                     overrulingStack.setCount(ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
-                    if (citizen.getCitizenJobHandler().getColonyJob() != null)
-                    {
+                    if (citizen.getCitizenJobHandler().getColonyJob() != null) {
                         citizen.getCitizenJobHandler().getColonyJob().onStackPickUp(overrulingStack);
                     }
 
-                    if (ItemStackUtils.isEmpty(resultStack))
-                    {
+                    if (ItemStackUtils.isEmpty(resultStack)) {
                         itemEntity.remove(Entity.RemovalReason.DISCARDED);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 itemEntity.remove(Entity.RemovalReason.DISCARDED);
             }
         }
@@ -89,8 +79,7 @@ public class CitizenItemUtils
     /**
      * Removes the currently held item.
      */
-    public static void removeHeldItem(AbstractEntityCitizen citizen)
-    {
+    public static void removeHeldItem(AbstractEntityCitizen citizen) {
         citizen.setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
     }
 
@@ -100,15 +89,11 @@ public class CitizenItemUtils
      * @param hand what hand we're setting
      * @param slot from the inventory slot.
      */
-    public static void setHeldItem(@NotNull final AbstractEntityCitizen citizen, final InteractionHand hand, final int slot)
-    {
+    public static void setHeldItem(@NotNull final AbstractEntityCitizen citizen, final InteractionHand hand, final int slot) {
         citizen.getCitizenData().getInventory().setHeldItem(hand, slot);
-        if (hand.equals(InteractionHand.MAIN_HAND))
-        {
+        if (hand.equals(InteractionHand.MAIN_HAND)) {
             citizen.setItemSlot(EquipmentSlot.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
-        }
-        else if (hand.equals(InteractionHand.OFF_HAND))
-        {
+        } else if (hand.equals(InteractionHand.OFF_HAND)) {
             citizen.setItemSlot(EquipmentSlot.OFFHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
         }
     }
@@ -118,8 +103,7 @@ public class CitizenItemUtils
      *
      * @param slot from the inventory slot.
      */
-    public static void setMainHeldItem(@NotNull final AbstractEntityCitizen citizen, final int slot)
-    {
+    public static void setMainHeldItem(@NotNull final AbstractEntityCitizen citizen, final int slot) {
         citizen.getCitizenData().getInventory().setHeldItem(InteractionHand.MAIN_HAND, slot);
         citizen.setItemSlot(EquipmentSlot.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
     }
@@ -131,10 +115,8 @@ public class CitizenItemUtils
      *
      * @param blockPos Block position.
      */
-    public static void hitBlockWithToolInHand(@NotNull final AbstractEntityCitizen citizen, @Nullable final BlockPos blockPos)
-    {
-        if (blockPos == null)
-        {
+    public static void hitBlockWithToolInHand(@NotNull final AbstractEntityCitizen citizen, @Nullable final BlockPos blockPos) {
+        if (blockPos == null) {
             return;
         }
         hitBlockWithToolInHand(citizen, blockPos, false);
@@ -149,10 +131,8 @@ public class CitizenItemUtils
      * @param breakBlock if we want to break this block.
      */
 
-    public static void hitBlockWithToolInHand(@NotNull final AbstractEntityCitizen citizen, @Nullable final BlockPos blockPos, final boolean breakBlock)
-    {
-        if (blockPos == null)
-        {
+    public static void hitBlockWithToolInHand(@NotNull final AbstractEntityCitizen citizen, @Nullable final BlockPos blockPos, final boolean breakBlock) {
+        if (blockPos == null) {
             return;
         }
 
@@ -162,39 +142,34 @@ public class CitizenItemUtils
 
         final BlockState blockState = CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos);
         final Block block = blockState.getBlock();
-        if (breakBlock)
-        {
-            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
-            {
+        if (breakBlock) {
+            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide) {
                 new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK)
-                    .sendToTargetPoint((ServerLevel) citizen.level(), null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE);
+                        .sendToTargetPoint((ServerLevel) citizen.level(), null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE);
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
-              blockPos,
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
-              SoundSource.BLOCKS,
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
+                    blockPos,
+                    block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
+                    SoundSource.BLOCKS,
+                    block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
+                    block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
             WorldUtil.removeBlock(CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, false);
 
             damageItemInHand(citizen, citizen.getUsedItemHand(), 1);
-        }
-        else
-        {
-            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
-            {
+        } else {
+            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide) {
                 final BlockPos vector = blockPos.subtract(citizen.blockPosition());
                 final Direction facing = BlockPosUtil.directionFromDelta(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
                 new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal())
-                    .sendToTargetPoint((ServerLevel) citizen.level(), null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE);
+                        .sendToTargetPoint((ServerLevel) citizen.level(), null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE);
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
-              blockPos,
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
-              SoundSource.BLOCKS,
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
+                    blockPos,
+                    block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
+                    SoundSource.BLOCKS,
+                    block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
+                    block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
         }
     }
 
@@ -203,39 +178,32 @@ public class CitizenItemUtils
      *
      * @param damage amount of damage.
      */
-    public static void damageItemInHand(@NotNull final AbstractEntityCitizen citizen, final InteractionHand hand, final int damage)
-    {
+    public static void damageItemInHand(@NotNull final AbstractEntityCitizen citizen, final InteractionHand hand, final int damage) {
         final ItemStack heldItem = citizen.getCitizenData().getInventory().getHeldItem(hand);
         //If we hit with bare hands, ignore
-        if (heldItem == null || heldItem.isEmpty())
-        {
+        if (heldItem == null || heldItem.isEmpty()) {
             return;
         }
 
         //Check if the effect exists first, to avoid unnecessary calls to random number generator.
-        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0)
-        {
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0) {
             if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
-                                                               .getColonyOrRegister()
-                                                               .getResearchManager()
-                                                               .getResearchEffects()
-                                                               .getEffectStrength(TOOL_DURABILITY))))
-            {
+                    .getColonyOrRegister()
+                    .getResearchManager()
+                    .getResearchEffects()
+                    .getEffectStrength(TOOL_DURABILITY)))) {
                 return;
             }
         }
 
         //check if tool breaks
         if (citizen.getCitizenData()
-              .getInventory()
-              .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> {}))
-        {
-            if (hand == InteractionHand.MAIN_HAND)
-            {
+                .getInventory()
+                .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> {
+                })) {
+            if (hand == InteractionHand.MAIN_HAND) {
                 citizen.setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
-            }
-            else
-            {
+            } else {
                 citizen.setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
             }
         }
@@ -244,15 +212,12 @@ public class CitizenItemUtils
     /**
      * Pick up all items in a range around the citizen.
      */
-    public static void pickupItems(AbstractEntityCitizen citizen)
-    {
+    public static void pickupItems(AbstractEntityCitizen citizen) {
         for (final ItemEntity item : CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesOfClass(ItemEntity.class,
-          new AABB(citizen.blockPosition())
-            .expandTowards(2.0F, 1.0F, 2.0F)
-            .expandTowards(-2.0F, -1.0F, -2.0F)))
-        {
-            if (item != null && item.isAlive())
-            {
+                new AABB(citizen.blockPosition())
+                        .expandTowards(2.0F, 1.0F, 2.0F)
+                        .expandTowards(-2.0F, -1.0F, -2.0F))) {
+            if (item != null && item.isAlive()) {
                 tryPickupItemEntity(citizen, item);
             }
         }
@@ -265,10 +230,8 @@ public class CitizenItemUtils
      *
      * @param blockPos Block position.
      */
-    public static void breakBlockWithToolInHand(@NotNull final AbstractEntityCitizen citizen, @Nullable final BlockPos blockPos)
-    {
-        if (blockPos == null)
-        {
+    public static void breakBlockWithToolInHand(@NotNull final AbstractEntityCitizen citizen, @Nullable final BlockPos blockPos) {
+        if (blockPos == null) {
             return;
         }
         hitBlockWithToolInHand(citizen, blockPos, true);
@@ -280,8 +243,7 @@ public class CitizenItemUtils
      * @param itemstack to drop.
      * @return the dropped item.
      */
-    public static ItemEntity entityDropItem(@NotNull final AbstractEntityCitizen citizen, @NotNull final ItemStack itemstack)
-    {
+    public static ItemEntity entityDropItem(@NotNull final AbstractEntityCitizen citizen, @NotNull final ItemStack itemstack) {
         return citizen.spawnAtLocation(itemstack, 0.0F);
     }
 
@@ -290,25 +252,20 @@ public class CitizenItemUtils
      *
      * @param damage damage dealt.
      */
-    public static void updateArmorDamage(@NotNull final AbstractEntityCitizen citizen, final double damage)
-    {
-        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
-        {
+    public static void updateArmorDamage(@NotNull final AbstractEntityCitizen citizen, final double damage) {
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0) {
             if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
-                                                               .getColonyOrRegister()
-                                                               .getResearchManager()
-                                                               .getResearchEffects()
-                                                               .getEffectStrength(ARMOR_DURABILITY))))
-            {
+                    .getColonyOrRegister()
+                    .getResearchManager()
+                    .getResearchEffects()
+                    .getEffectStrength(ARMOR_DURABILITY)))) {
                 return;
             }
         }
 
         final int armorDmg = Math.max(1, (int) (damage / 4));
-        for (EquipmentSlot equipmentSlot : EquipmentSlot.values())
-        {
-            if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR)
-            {
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
                 final ItemStack equipment = citizen.getInventoryCitizen().getArmorInSlot(equipmentSlot);
                 equipment.hurtAndBreak(armorDmg, (ServerLevel) citizen.level(), citizen, (s) -> {
                     citizen.onArmorRemove(equipment, equipmentSlot);
@@ -318,29 +275,22 @@ public class CitizenItemUtils
         }
     }
 
-    public static double applyMending(@NotNull final AbstractEntityCitizen citizen, final double xp)
-    {
+    public static double applyMending(@NotNull final AbstractEntityCitizen citizen, final double xp) {
         double localXp = xp;
 
-        for (final EquipmentSlot equipmentSlot : EquipmentSlot.values())
-        {
-            if (localXp <= 0)
-            {
+        for (final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            if (localXp <= 0) {
                 break;
             }
 
             final ItemStack tool;
-            if (equipmentSlot.isArmor())
-            {
+            if (equipmentSlot.isArmor()) {
                 tool = citizen.getInventoryCitizen().getArmorInSlot(equipmentSlot);
-            }
-            else
-            {
+            } else {
                 tool = citizen.getInventoryCitizen().getHeldItem(equipmentSlot == EquipmentSlot.MAINHAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
             }
 
-            if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged() && tool.isEnchanted() && EnchantmentHelper.getTagEnchantmentLevel(Utils.getRegistryValue(Enchantments.MENDING, citizen.level()), tool) > 0)
-            {
+            if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged() && tool.isEnchanted() && EnchantmentHelper.getTagEnchantmentLevel(Utils.getRegistryValue(Enchantments.MENDING, citizen.level()), tool) > 0) {
                 //2 xp to heal 1 dmg
                 final double dmgHealed = Math.min(localXp / 2, tool.getDamageValue());
                 localXp -= dmgHealed * 2;

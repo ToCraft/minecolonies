@@ -13,8 +13,7 @@ import java.util.List;
 /**
  * The interface of the citizen manager.
  */
-public interface ICitizenManager extends IEntityManager
-{
+public interface ICitizenManager extends IEntityManager {
 
     /**
      * Spawn a brand new Citizen.
@@ -28,8 +27,7 @@ public interface ICitizenManager extends IEntityManager
      * @param world the world to spawn it in.
      * @return the citizen data of the spawned citizen.
      */
-    default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final Level world)
-    {
+    default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final Level world) {
         return this.spawnOrCreateCivilian(data, world, null, false);
     }
 
@@ -41,8 +39,7 @@ public interface ICitizenManager extends IEntityManager
      * @param spawnPos the Blockposition to spawn at
      * @return the new citizen.
      */
-    default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final Level world, final BlockPos spawnPos)
-    {
+    default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final Level world, final BlockPos spawnPos) {
         return this.spawnOrCreateCivilian(data, world, spawnPos, false);
     }
 
@@ -66,9 +63,9 @@ public interface ICitizenManager extends IEntityManager
      * Resurrect a citizen from its saved NBT.
      *
      * @param compoundNBT the saved citizen NBT
-     * @param resetId if true, will calculate a new citizen ID
+     * @param resetId     if true, will calculate a new citizen ID
      * @param world
-     * @param spawnPos position where to resurrect the citizen
+     * @param spawnPos    position where to resurrect the citizen
      * @return the citizenData of the resurrected citizen
      */
     ICitizenData resurrectCivilianData(@NotNull final CompoundTag compoundNBT, final boolean resetId, @NotNull final Level world, final BlockPos spawnPos);

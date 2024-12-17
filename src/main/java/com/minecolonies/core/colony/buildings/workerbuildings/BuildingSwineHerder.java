@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates a new building for the Swine Herder.
  */
-public class BuildingSwineHerder extends AbstractBuilding
-{
+public class BuildingSwineHerder extends AbstractBuilding {
     /**
      * Description of the job executed in the hut.
      */
@@ -33,29 +32,24 @@ public class BuildingSwineHerder extends AbstractBuilding
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingSwineHerder(final IColony c, final BlockPos l)
-    {
+    public BuildingSwineHerder(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return JOB;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public boolean canEat(final ItemStack stack)
-    {
-        if (stack.getItem() == Items.CARROT)
-        {
+    public boolean canEat(final ItemStack stack) {
+        if (stack.getItem() == Items.CARROT) {
             return false;
         }
         return super.canEat(stack);

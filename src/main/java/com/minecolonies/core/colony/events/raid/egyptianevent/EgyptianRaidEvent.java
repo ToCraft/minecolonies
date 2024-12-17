@@ -26,8 +26,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EGYPT
 /**
  * Egyptian raid event for the colony, triggers a horde of egyptians that spawn and attack the colony.
  */
-public class EgyptianRaidEvent extends HordeRaidEvent
-{
+public class EgyptianRaidEvent extends HordeRaidEvent {
     /**
      * This raids event id, registry entries use res locations as ids.
      */
@@ -38,66 +37,55 @@ public class EgyptianRaidEvent extends HordeRaidEvent
      */
     private int musicCooldown = 0;
 
-    public EgyptianRaidEvent(IColony colony)
-    {
+    public EgyptianRaidEvent(IColony colony) {
         super(colony);
     }
 
     @Override
-    public ResourceLocation getEventTypeID()
-    {
+    public ResourceLocation getEventTypeID() {
         return EGYPTIAN_RAID_EVENT_TYPE_ID;
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
         PlayAudioMessage.sendToAll(getColony(), true, false, new PlayAudioMessage(RaidSounds.DESERT_RAID_WARNING));
     }
 
     @Override
-    protected void updateRaidBar()
-    {
+    protected void updateRaidBar() {
         super.updateRaidBar();
         raidBar.setDarkenScreen(true);
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
 
-        if (--musicCooldown <= 0)
-        {
+        if (--musicCooldown <= 0) {
             PlayAudioMessage.sendToAll(getColony(), true, true, new PlayAudioMessage(RaidSounds.DESERT_RAID));
             musicCooldown = 12;
         }
     }
 
     @Override
-    public void registerEntity(final Entity entity)
-    {
-        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())
-        {
+    public void registerEntity(final Entity entity) {
+        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive()) {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
-        if (entity instanceof EntityPharao && boss.keySet().size() < horde.numberOfBosses)
-        {
+        if (entity instanceof EntityPharao && boss.keySet().size() < horde.numberOfBosses) {
             boss.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityArcherMummy && archers.keySet().size() < horde.numberOfArchers)
-        {
+        if (entity instanceof EntityArcherMummy && archers.keySet().size() < horde.numberOfArchers) {
             archers.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityMummy && normal.keySet().size() < horde.numberOfRaiders)
-        {
+        if (entity instanceof EntityMummy && normal.keySet().size() < horde.numberOfRaiders) {
             normal.put(entity, entity.getUUID());
             return;
         }
@@ -106,36 +94,30 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    public void onEntityDeath(final LivingEntity entity)
-    {
+    public void onEntityDeath(final LivingEntity entity) {
         super.onEntityDeath(entity);
-        if (!(entity instanceof AbstractEntityRaiderMob))
-        {
+        if (!(entity instanceof AbstractEntityRaiderMob)) {
             return;
         }
 
-        if (entity instanceof EntityPharao)
-        {
+        if (entity instanceof EntityPharao) {
             boss.remove(entity);
             horde.numberOfBosses--;
         }
 
-        if (entity instanceof EntityArcherMummy)
-        {
+        if (entity instanceof EntityArcherMummy) {
             archers.remove(entity);
             horde.numberOfArchers--;
         }
 
-        if (entity instanceof EntityMummy)
-        {
+        if (entity instanceof EntityMummy) {
             normal.remove(entity);
             horde.numberOfRaiders--;
         }
 
         horde.hordeSize--;
 
-        if (horde.hordeSize == 0)
-        {
+        if (horde.hordeSize == 0) {
             status = EventStatus.DONE;
         }
 
@@ -149,34 +131,29 @@ public class EgyptianRaidEvent extends HordeRaidEvent
      * @param compound NBTcompound with saved values
      * @return the raid event.
      */
-    public static EgyptianRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public static EgyptianRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         EgyptianRaidEvent event = new EgyptianRaidEvent(colony);
         event.deserializeNBT(provider, compound);
         return event;
     }
 
     @Override
-    public EntityType<?> getNormalRaiderType()
-    {
+    public EntityType<?> getNormalRaiderType() {
         return MUMMY;
     }
 
     @Override
-    public EntityType<?> getArcherRaiderType()
-    {
+    public EntityType<?> getArcherRaiderType() {
         return ARCHERMUMMY;
     }
 
     @Override
-    public EntityType<?> getBossRaiderType()
-    {
+    public EntityType<?> getBossRaiderType() {
         return PHARAO;
     }
 
     @Override
-    protected MutableComponent getDisplayName()
-    {
+    protected MutableComponent getDisplayName() {
         return Component.translatableEscape(RAID_EGYPTIAN);
     }
 }

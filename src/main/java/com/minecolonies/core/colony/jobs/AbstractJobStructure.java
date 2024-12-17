@@ -11,11 +11,11 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.entity.ai.workers.AbstractAISkeleton;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,8 +25,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 /**
  * Common job object for all structure AIs.
  */
-public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J extends AbstractJobStructure<AI, J>> extends AbstractJob<AI, J>
-{
+public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J extends AbstractJobStructure<AI, J>> extends AbstractJob<AI, J> {
     /**
      * Tag to store the workOrder id.
      */
@@ -47,8 +46,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @param entity the citizen data.
      */
-    public AbstractJobStructure(final ICitizenData entity)
-    {
+    public AbstractJobStructure(final ICitizenData entity) {
         super(entity);
     }
 
@@ -59,8 +57,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @return true if there is a loaded structure for this Job
      */
-    public boolean hasBlueprint()
-    {
+    public boolean hasBlueprint() {
         return blueprint != null;
     }
 
@@ -69,8 +66,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @return StructureProxy loaded by the Job
      */
-    public Blueprint getBlueprint()
-    {
+    public Blueprint getBlueprint() {
         return blueprint;
     }
 
@@ -79,8 +75,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @param blueprint {@link Blueprint} object
      */
-    public void setBlueprint(final Blueprint blueprint)
-    {
+    public void setBlueprint(final Blueprint blueprint) {
         this.blueprint = blueprint;
     }
 
@@ -89,8 +84,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @return UUID of the Work Order claimed by this Job, or null
      */
-    public int getWorkOrderId()
-    {
+    public int getWorkOrderId() {
         return workOrderId;
     }
 
@@ -99,10 +93,8 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @return true if there is a Work Order claimed by this Job
      */
-    public boolean hasWorkOrder()
-    {
-        if (workOrderId == 0 || getWorkOrder() == null)
-        {
+    public boolean hasWorkOrder() {
+        if (workOrderId == 0 || getWorkOrder() == null) {
             workOrderId = 0;
             return false;
         }
@@ -110,11 +102,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
-        if (workOrderId != 0)
-        {
+        if (workOrderId != 0) {
             compound.putInt(TAG_WORK_ORDER, workOrderId);
         }
 
@@ -122,11 +112,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
-        if (compound.contains(TAG_WORK_ORDER))
-        {
+        if (compound.contains(TAG_WORK_ORDER)) {
             workOrderId = compound.getInt(TAG_WORK_ORDER);
         }
     }
@@ -134,26 +122,19 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     /**
      * Do final completion when the Job's current work is complete.
      */
-    public void complete()
-    {
+    public void complete() {
         getWorkOrder().onCompleted(getCitizen().getColony(), this.getCitizen());
 
-        if (blueprint != null)
-        {
+        if (blueprint != null) {
             final CompoundTag[][][] tileEntityData = blueprint.getTileEntities();
-            for (short x = 0; x < blueprint.getSizeX(); x++)
-            {
-                for (short y = 0; y < blueprint.getSizeY(); y++)
-                {
-                    for (short z = 0; z < blueprint.getSizeZ(); z++)
-                    {
+            for (short x = 0; x < blueprint.getSizeX(); x++) {
+                for (short y = 0; y < blueprint.getSizeY(); y++) {
+                    for (short z = 0; z < blueprint.getSizeZ(); z++) {
                         final CompoundTag compoundNBT = tileEntityData[y][z][x];
-                        if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
-                        {
+                        if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA)) {
                             final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
                             final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
-                            if (te instanceof IBlueprintDataProviderBE)
-                            {
+                            if (te instanceof IBlueprintDataProviderBE) {
                                 final CompoundTag tagData = compoundNBT.getCompound(TAG_BLUEPRINTDATA);
                                 final String schematicPath = tagData.getString(TAG_NAME);
                                 final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), schematicPath));
@@ -161,12 +142,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                                 tagData.putString(TAG_NAME, location);
                                 tagData.putString(NbtTagConstants.TAG_PACK, blueprint.getPackName());
 
-                                try
-                                {
+                                try {
                                     ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(compoundNBT);
-                                }
-                                catch (final Exception e)
-                                {
+                                } catch (final Exception e) {
                                     Log.getLogger().warn("Broken deco-controller at: " + x + " " + y + " " + z);
                                 }
                                 ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
@@ -188,19 +166,16 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @return WorkOrderBuildDecoration for the Build
      */
-    public IWorkOrder getWorkOrder()
-    {
+    public IWorkOrder getWorkOrder() {
         return getColony().getWorkManager().getWorkOrder(workOrderId, IWorkOrder.class);
     }
 
     /**
      * Reset the needed items list.
      */
-    private void resetNeededItems()
-    {
+    private void resetNeededItems() {
         final IBuilding workerBuilding = this.getCitizen().getWorkBuilding();
-        if (workerBuilding instanceof AbstractBuildingStructureBuilder)
-        {
+        if (workerBuilding instanceof AbstractBuildingStructureBuilder) {
             ((AbstractBuildingStructureBuilder) workerBuilding).resetNeededResources();
         }
     }
@@ -210,15 +185,11 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @param order Work Order to associate with this job, or null
      */
-    public void setWorkOrder(@Nullable final IWorkOrder order)
-    {
-        if (order == null)
-        {
+    public void setWorkOrder(@Nullable final IWorkOrder order) {
+        if (order == null) {
             workOrderId = 0;
             resetNeededItems();
-        }
-        else
-        {
+        } else {
             workOrderId = order.getID();
         }
     }

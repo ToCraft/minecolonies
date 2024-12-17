@@ -12,14 +12,12 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobSifter;
-import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.core.util.WorkerUtil;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.chat.Component;
-
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -29,8 +27,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.SIFTER_NO_
 /**
  * Sifter AI class.
  */
-public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, BuildingSifter>
-{
+public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, BuildingSifter> {
     /**
      * Max level which should have an effect on the speed of the worker.
      */
@@ -61,30 +58,26 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
      *
      * @param job a sifter job to use.
      */
-    public EntityAIWorkSifter(@NotNull final JobSifter job)
-    {
+    public EntityAIWorkSifter(@NotNull final JobSifter job) {
         super(job);
         super.registerTargets(
-          new AITarget(SIFT, this::sift, TICK_DELAY)
+                new AITarget(SIFT, this::sift, TICK_DELAY)
         );
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    public Class<BuildingSifter> getExpectedBuildingClass()
-    {
+    public Class<BuildingSifter> getExpectedBuildingClass() {
         return BuildingSifter.class;
     }
 
     @Override
-    protected int getActionsDoneUntilDumping()
-    {
+    protected int getActionsDoneUntilDumping() {
         return 1;
     }
 
     @Override
-    protected IAIState decide()
-    {
+    protected IAIState decide() {
         return SIFT;
     }
 
@@ -93,54 +86,43 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
      *
      * @return the next AiState to go to.
      */
-    protected IAIState sift()
-    {
+    protected IAIState sift() {
         final BuildingSifter sifterBuilding = building;
 
         // Go idle if we can't do any more today
-        if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getMaxDailyQuantity())
-        {
+        if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getMaxDailyQuantity()) {
             return IDLE;
         }
 
-        if (walkToBuilding())
-        {
+        if (walkToBuilding()) {
             return getState();
         }
 
-        if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
-        {
+        if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen())) {
             return INVENTORY_FULL;
         }
 
-        if (currentRecipeStorage == null)
-        {
+        if (currentRecipeStorage == null) {
             final ICraftingBuildingModule module = building.getFirstModuleOccurance(BuildingSifter.CraftingModule.class);
             currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
         }
 
-        if (currentRecipeStorage == null)
-        {
-            if (InventoryUtils.hasBuildingEnoughElseCount(sifterBuilding, i -> i.is(ModTags.meshes), 1) == 0)
-            {
-                if (InventoryUtils.getItemCountInProvider(worker, i -> i.is(ModTags.meshes)) > 0)
-                {
+        if (currentRecipeStorage == null) {
+            if (InventoryUtils.hasBuildingEnoughElseCount(sifterBuilding, i -> i.is(ModTags.meshes), 1) == 0) {
+                if (InventoryUtils.getItemCountInProvider(worker, i -> i.is(ModTags.meshes)) > 0) {
                     // We don't want the mesh in our inventory, we 'craft' out of the building
                     incrementActionsDone();
                     return INVENTORY_FULL;
                 }
-                if (worker.getCitizenData() != null)
-                {
+                if (worker.getCitizenData() != null) {
                     worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(SIFTER_NO_MESH), ChatPriority.IMPORTANT));
                     setDelay(NO_MESH_DELAY);
                 }
             }
-            if (!ItemStackUtils.isEmpty(worker.getMainHandItem()))
-            {
+            if (!ItemStackUtils.isEmpty(worker.getMainHandItem())) {
                 worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             }
-            if (!ItemStackUtils.isEmpty(worker.getOffhandItem()))
-            {
+            if (!ItemStackUtils.isEmpty(worker.getOffhandItem())) {
                 worker.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
             }
 
@@ -150,25 +132,22 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         final ItemStack meshItem = currentRecipeStorage.getCraftingTools().get(0);
         final ItemStack inputItem = currentRecipeStorage.getCleanedInput().stream()
-                                      .map(ItemStorage::getItemStack)
-                                      .filter(item -> !ItemStackUtils.compareItemStacksIgnoreStackSize(item, meshItem, false, true))
-                                      .findFirst().orElse(ItemStack.EMPTY);
+                .map(ItemStorage::getItemStack)
+                .filter(item -> !ItemStackUtils.compareItemStacksIgnoreStackSize(item, meshItem, false, true))
+                .findFirst().orElse(ItemStack.EMPTY);
 
-        if (meshItem.isEmpty() || inputItem.isEmpty())
-        {
+        if (meshItem.isEmpty() || inputItem.isEmpty()) {
             currentRecipeStorage = null;
             return getState();
         }
 
-        if (!inputItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getMainHandItem()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getMainHandItem(), inputItem)))
-        {
+        if (!inputItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getMainHandItem()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getMainHandItem(), inputItem))) {
             worker.setItemInHand(InteractionHand.MAIN_HAND, inputItem);
         }
         if (!meshItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getOffhandItem()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getOffhandItem(),
-          meshItem,
-          false,
-          true)))
-        {
+                meshItem,
+                false,
+                true))) {
             worker.setItemInHand(InteractionHand.OFF_HAND, meshItem);
         }
 
@@ -176,16 +155,13 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         progress++;
 
-        if (progress > MAX_LEVEL - (getEffectiveSkillLevel(getSecondarySkillLevel()) / 2))
-        {
+        if (progress > MAX_LEVEL - (getEffectiveSkillLevel(getSecondarySkillLevel()) / 2)) {
             progress = 0;
             sifterBuilding.setCurrentDailyQuantity(sifterBuilding.getCurrentDailyQuantity() + 1);
-            if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getMaxDailyQuantity() || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV)
-            {
+            if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getMaxDailyQuantity() || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV) {
                 incrementActionsDoneAndDecSaturation();
             }
-            if (!currentRecipeStorage.fullfillRecipe(getLootContext(), sifterBuilding.getHandlers()))
-            {
+            if (!currentRecipeStorage.fullfillRecipe(getLootContext(), sifterBuilding.getHandlers())) {
                 currentRecipeStorage = null;
                 return getState();
             }

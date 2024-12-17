@@ -7,21 +7,18 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Crafts food related things.
  */
-public class EntityAIWorkChef extends AbstractEntityAIRequestSmelter<JobChef, BuildingKitchen>
-{
+public class EntityAIWorkChef extends AbstractEntityAIRequestSmelter<JobChef, BuildingKitchen> {
     /**
      * Initialize the Chef.
      *
      * @param jobChef the job he has.
      */
-    public EntityAIWorkChef(@NotNull final JobChef jobChef)
-    {
+    public EntityAIWorkChef(@NotNull final JobChef jobChef) {
         super(jobChef);
     }
 
     @Override
-    public Class<BuildingKitchen> getExpectedBuildingClass()
-    {
+    public Class<BuildingKitchen> getExpectedBuildingClass() {
         return BuildingKitchen.class;
     }
 }

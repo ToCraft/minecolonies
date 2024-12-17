@@ -1,23 +1,21 @@
 package com.minecolonies.core.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkCook;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The cook job class.
  */
-public class JobCook extends AbstractJob<EntityAIWorkCook, JobCook>
-{
+public class JobCook extends AbstractJob<EntityAIWorkCook, JobCook> {
     /**
      * Create a cook job.
      *
      * @param entity the lumberjack.
      */
-    public JobCook(final ICitizenData entity)
-    {
+    public JobCook(final ICitizenData entity) {
         super(entity);
     }
 
@@ -28,8 +26,7 @@ public class JobCook extends AbstractJob<EntityAIWorkCook, JobCook>
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.COOK_ID;
     }
 
@@ -40,8 +37,7 @@ public class JobCook extends AbstractJob<EntityAIWorkCook, JobCook>
      */
     @NotNull
     @Override
-    public EntityAIWorkCook generateAI()
-    {
+    public EntityAIWorkCook generateAI() {
         return new EntityAIWorkCook(this);
     }
 }

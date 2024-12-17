@@ -13,8 +13,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.CHIEF_BONUS_ARM
 /**
  * Class for the Amazon Chief entity.
  */
-public class EntityAmazonChief extends AbstractEntityAmazon implements IAmazonChief
-{
+public class EntityAmazonChief extends AbstractEntityAmazon implements IAmazonChief {
 
     /**
      * Constructor of the entity.
@@ -22,14 +21,12 @@ public class EntityAmazonChief extends AbstractEntityAmazon implements IAmazonCh
      * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityAmazonChief(final EntityType<? extends EntityAmazonChief> type, final Level worldIn)
-    {
+    public EntityAmazonChief(final EntityType<? extends EntityAmazonChief> type, final Level worldIn) {
         super(type, worldIn);
     }
 
     @Override
-    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
-    {
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage) {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
         final double chiefArmor = difficulty * CHIEF_BONUS_ARMOR * 2;
         this.getAttribute(Attributes.ARMOR).setBaseValue(chiefArmor);

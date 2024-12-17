@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public interface IWorkManager
-{
+public interface IWorkManager {
     /**
      * Removes a work order from the work manager.
      *

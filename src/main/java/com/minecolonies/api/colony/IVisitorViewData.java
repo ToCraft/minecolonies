@@ -5,8 +5,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * View data for visitors
  */
-public interface IVisitorViewData extends ICitizenDataView
-{
+public interface IVisitorViewData extends ICitizenDataView {
     /**
      * Gets the visitors recruitment cost
      *

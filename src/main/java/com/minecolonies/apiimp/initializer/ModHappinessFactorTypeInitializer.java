@@ -2,8 +2,7 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
-import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.HappinessFactorTypeEntry;
-import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.HappinessFunctionEntry;
+import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.*;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.TimeBasedHappinessModifier;
 import com.minecolonies.api.util.constant.Constants;
@@ -19,19 +18,16 @@ import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenHappin
 /**
  * Happiness factory initializer of the values.
  */
-public final class ModHappinessFactorTypeInitializer
-{
+public final class ModHappinessFactorTypeInitializer {
     public final static DeferredRegister<HappinessFactorTypeEntry>
-                                                                 DEFERRED_REGISTER_HAPPINESS_FACTOR   = DeferredRegister.create(CommonMinecoloniesAPIImpl.HAPPINESS_FACTOR_TYPES, Constants.MOD_ID);
+            DEFERRED_REGISTER_HAPPINESS_FACTOR = DeferredRegister.create(CommonMinecoloniesAPIImpl.HAPPINESS_FACTOR_TYPES, Constants.MOD_ID);
     public final static DeferredRegister<HappinessFunctionEntry> DEFERRED_REGISTER_HAPPINESS_FUNCTION = DeferredRegister.create(CommonMinecoloniesAPIImpl.HAPPINESS_FUNCTION, Constants.MOD_ID);
 
-    private ModHappinessFactorTypeInitializer()
-    {
+    private ModHappinessFactorTypeInitializer() {
         throw new IllegalStateException("Tried to initialize: ModHappinessFactorTypeInitializer but this is a Utility class.");
     }
 
-    static
-    {
+    static {
         HappinessRegistry.staticHappinessModifier = DEFERRED_REGISTER_HAPPINESS_FACTOR.register(STATIC_MODIFIER.getPath(), () -> new HappinessFactorTypeEntry(StaticHappinessModifier::new));
 
         HappinessRegistry.expirationBasedHappinessModifier = DEFERRED_REGISTER_HAPPINESS_FACTOR.register(EXPIRATION_MODIFIER.getPath(), () -> new HappinessFactorTypeEntry(ExpirationBasedHappinessModifier::new));
@@ -47,7 +43,7 @@ public final class ModHappinessFactorTypeInitializer
         HappinessRegistry.housingFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(HOUSING_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.getHomeBuilding() == null ? 0.0 : data.getHomeBuilding().getBuildingLevel() / 3.0));
         HappinessRegistry.unemploymentFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(UNEMPLOYMENT_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.isChild() ? 1.0 : (data.getWorkBuilding() == null ? 0.5 : data.getWorkBuilding().getBuildingLevel() > 3 ? 2.0 : 1.0)));
         HappinessRegistry.healthFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(HEALTH_FUNCTION.getPath(),
-            () -> new HappinessFunctionEntry(data -> data.getEntity().isPresent() ? (data.getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0));
+                () -> new HappinessFunctionEntry(data -> data.getEntity().isPresent() ? (data.getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0));
         HappinessRegistry.idleatjobFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(IDLEATJOB_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.isIdleAtJob() ? 0.5 : 1.0));
 
         HappinessRegistry.sleptTonightFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(SLEPTTONIGHT_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.getJob() instanceof AbstractJobGuard ? 1 : 0.5));

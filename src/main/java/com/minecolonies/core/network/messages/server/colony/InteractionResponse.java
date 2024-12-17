@@ -18,8 +18,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to trigger a response handler on the server side.
  */
-public class InteractionResponse extends AbstractColonyServerMessage
-{
+public class InteractionResponse extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "interaction_response", InteractionResponse::new);
 
     /**
@@ -47,12 +46,11 @@ public class InteractionResponse extends AbstractColonyServerMessage
      * @param responseId the response to trigger.
      */
     public InteractionResponse(
-      final int colonyId,
-      final int citizenId,
-      final ResourceKey<Level> dimension,
-      @NotNull final Component key,
-      final int responseId)
-    {
+            final int colonyId,
+            final int citizenId,
+            final ResourceKey<Level> dimension,
+            @NotNull final Component key,
+            final int responseId) {
         super(TYPE, dimension, colonyId);
         this.citizenId = citizenId;
         this.key = key;
@@ -64,8 +62,7 @@ public class InteractionResponse extends AbstractColonyServerMessage
      *
      * @param buf the used byteBuffer.
      */
-    protected InteractionResponse(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected InteractionResponse(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.citizenId = buf.readInt();
         this.key = Utils.deserializeCodecMess(ComponentSerialization.STREAM_CODEC, buf);
@@ -78,8 +75,7 @@ public class InteractionResponse extends AbstractColonyServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(this.citizenId);
         Utils.serializeCodecMess(ComponentSerialization.STREAM_CODEC, buf, key);
@@ -87,16 +83,13 @@ public class InteractionResponse extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
-        if (citizenData == null)
-        {
+        if (citizenData == null) {
             citizenData = colony.getVisitorManager().getVisitor(citizenId);
         }
 
-        if (citizenData != null && player != null)
-        {
+        if (citizenData != null && player != null) {
             citizenData.onResponseTriggered(key, responseId, player);
         }
     }

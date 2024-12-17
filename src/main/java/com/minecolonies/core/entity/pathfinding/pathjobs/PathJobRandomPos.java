@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job that handles random pathing.
  */
-public class PathJobRandomPos extends AbstractPathJob implements IDestinationPathJob
-{
+public class PathJobRandomPos extends AbstractPathJob implements IDestinationPathJob {
     /**
      * Direction to walk to.
      */
@@ -37,7 +36,7 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
     /**
      * Box restriction area
      */
-    private AABB     restrictionBox = null;
+    private AABB restrictionBox = null;
 
     /**
      * Modifier to the heuristics
@@ -54,20 +53,18 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
      * @param entity           the entity.
      */
     public PathJobRandomPos(
-      final Level world,
-      @NotNull final BlockPos start,
-      final int minDistFromStart,
-      final int range,
-      final Mob entity)
-    {
+            final Level world,
+            @NotNull final BlockPos start,
+            final int minDistFromStart,
+            final int range,
+            final Mob entity) {
         super(world, start, range, new PathResult<PathJobRandomPos>(), entity);
         this.minDistFromStart = minDistFromStart;
         this.maxDistToDest = -1;
 
         this.destination = BlockPosUtil.getRandomPosAround(start, minDistFromStart);
 
-        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator)
-        {
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator) {
             heuristicModifier = ((IDynamicHeuristicNavigator) entity.getNavigation()).getAvgHeuristicModifier();
         }
     }
@@ -82,14 +79,13 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
      * @param entity           the entity.
      */
     public PathJobRandomPos(
-      final Level world,
-      @NotNull final BlockPos start,
-      final int minDistFromStart,
-      final int searchRange,
-      final int maxDistToDest,
-      final Mob entity,
-      @NotNull final BlockPos dest)
-    {
+            final Level world,
+            @NotNull final BlockPos start,
+            final int minDistFromStart,
+            final int searchRange,
+            final int maxDistToDest,
+            final Mob entity,
+            @NotNull final BlockPos dest) {
         super(world, start, searchRange, new PathResult<PathJobRandomPos>(), entity);
         this.minDistFromStart = minDistFromStart;
         this.maxDistToDest = maxDistToDest;
@@ -106,22 +102,21 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
      * @param entity           the entity.
      */
     public PathJobRandomPos(
-      final Level world,
-      @NotNull final BlockPos start,
-      final int minDistFromStart,
-      final int range,
-      final Mob entity,
-      final BlockPos startRestriction,
-      final BlockPos endRestriction)
-    {
+            final Level world,
+            @NotNull final BlockPos start,
+            final int minDistFromStart,
+            final int range,
+            final Mob entity,
+            final BlockPos startRestriction,
+            final BlockPos endRestriction) {
         super(world, start, range, new PathResult<PathJobRandomPos>(), entity);
 
         restrictionBox = new AABB(Math.min(startRestriction.getX(), endRestriction.getX()),
-          Math.min(startRestriction.getY(), endRestriction.getY()),
-          Math.min(startRestriction.getZ(), endRestriction.getZ()),
-          Math.max(startRestriction.getX(), endRestriction.getX()),
-          Math.max(startRestriction.getY(), endRestriction.getY()),
-          Math.max(startRestriction.getZ(), endRestriction.getZ()));
+                Math.min(startRestriction.getY(), endRestriction.getY()),
+                Math.min(startRestriction.getZ(), endRestriction.getZ()),
+                Math.max(startRestriction.getX(), endRestriction.getX()),
+                Math.max(startRestriction.getY(), endRestriction.getY()),
+                Math.max(startRestriction.getZ(), endRestriction.getZ()));
 
         this.minDistFromStart = minDistFromStart;
         this.maxDistToDest = -1;
@@ -130,35 +125,30 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
     }
 
     @Override
-    protected double computeHeuristic(final int x, final int y, final int z)
-    {
+    protected double computeHeuristic(final int x, final int y, final int z) {
         return BlockPosUtil.distManhattan(destination, x, y, z) * heuristicModifier;
     }
 
     @Override
-    protected boolean isAtDestination(@NotNull final MNode n)
-    {
+    protected boolean isAtDestination(@NotNull final MNode n) {
         if ((restrictionBox == null || restrictionBox.contains(n.x, n.y, n.z))
-              && BlockPosUtil.distSqr(start, n.x, n.y, n.z) > minDistFromStart * minDistFromStart
-              && (maxDistToDest == -1 || BlockPosUtil.distSqr(destination, n.x, n.y, n.z) < this.maxDistToDest * this.maxDistToDest)
-              && (getPathingOptions().canWalkUnderWater() || !PathfindingUtils.isWater(cachedBlockLookup, tempWorldPos.set(n.x, n.y - 1, n.z)))
-              && SurfaceType.getSurfaceType(cachedBlockLookup, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
-                   == SurfaceType.WALKABLE)
-        {
+                && BlockPosUtil.distSqr(start, n.x, n.y, n.z) > minDistFromStart * minDistFromStart
+                && (maxDistToDest == -1 || BlockPosUtil.distSqr(destination, n.x, n.y, n.z) < this.maxDistToDest * this.maxDistToDest)
+                && (getPathingOptions().canWalkUnderWater() || !PathfindingUtils.isWater(cachedBlockLookup, tempWorldPos.set(n.x, n.y - 1, n.z)))
+                && SurfaceType.getSurfaceType(cachedBlockLookup, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                == SurfaceType.WALKABLE) {
             return true;
         }
         return false;
     }
 
     @Override
-    protected double getEndNodeScore(@NotNull final MNode n)
-    {
+    protected double getEndNodeScore(@NotNull final MNode n) {
         return BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
     }
 
     @Override
-    public void setPathingOptions(final PathingOptions pathingOptions)
-    {
+    public void setPathingOptions(final PathingOptions pathingOptions) {
         super.setPathingOptions(pathingOptions);
         getPathingOptions().canDrop = false;
     }
@@ -170,14 +160,12 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
      * @param pos   dest to look from
      * @return
      */
-    public boolean posAndRangeMatch(final int range, final BlockPos pos)
-    {
+    public boolean posAndRangeMatch(final int range, final BlockPos pos) {
         return destination != null && pos != null && range == maxDistToDest && destination.equals(pos);
     }
 
     @Override
-    public BlockPos getDestination()
-    {
+    public BlockPos getDestination() {
         return destination;
     }
 }

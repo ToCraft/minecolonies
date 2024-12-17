@@ -11,12 +11,10 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A tagging interface for Amazon Entities.
  */
-public interface IAmazonEntity extends Enemy, IItemHandlerCapProvider
-{
+public interface IAmazonEntity extends Enemy, IItemHandlerCapProvider {
     @Override
     @Nullable
-    default IItemHandler getItemHandlerCap(final Direction direction)
-    {
+    default IItemHandler getItemHandlerCap(final Direction direction) {
         // LivingEntities have cap registered by forge
         return ItemHandler.ENTITY.getCapability((LivingEntity) this, null);
     }

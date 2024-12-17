@@ -13,27 +13,23 @@ import net.minecraft.network.chat.Component;
 
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
-public class CommandRSReset implements IMCCommand
-{
+public class CommandRSReset implements IMCCommand {
     /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
+        if (colony == null) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
-        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseResetCommand.get())
-        {
+        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseResetCommand.get()) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
             return 0;
         }
@@ -48,15 +44,13 @@ public class CommandRSReset implements IMCCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "requestsystem-reset";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
+                .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
     }
 }

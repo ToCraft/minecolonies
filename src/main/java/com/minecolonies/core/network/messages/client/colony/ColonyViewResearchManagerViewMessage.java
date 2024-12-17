@@ -20,11 +20,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to synch research manager to colony.
  */
-public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMessage
-{
+public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_research_manager_view", ColonyViewResearchManagerViewMessage::new);
 
-    private final int             colonyId;
+    private final int colonyId;
     private final CompoundTag researchManagerData;
 
     /**
@@ -34,11 +33,11 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
 
     /**
      * Creates a message to send the research manager to the client.
-     * @param colony the colony.
+     *
+     * @param colony          the colony.
      * @param researchManager the research manager.
      */
-    public ColonyViewResearchManagerViewMessage(final IColony colony, @NotNull final IResearchManager researchManager)
-    {
+    public ColonyViewResearchManagerViewMessage(final IColony colony, @NotNull final IResearchManager researchManager) {
         super(TYPE);
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
@@ -48,8 +47,7 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
         this.researchManagerData = researchCompound;
     }
 
-    public ColonyViewResearchManagerViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public ColonyViewResearchManagerViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
@@ -57,19 +55,16 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
         buf.writeNbt(researchManagerData);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, dimension);
-        if (colonyView != null)
-        {
+        if (colonyView != null) {
             colonyView.handleColonyViewResearchManagerUpdate(player.level().registryAccess(), researchManagerData);
         }
     }

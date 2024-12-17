@@ -9,7 +9,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -26,8 +25,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * Crafting container for the recipe teaching of normal crafting recipes.
  */
-public class ContainerCrafting extends AbstractContainerMenu
-{
+public class ContainerCrafting extends AbstractContainerMenu {
     /**
      * The crafting matrix inventory (2x2).
      */
@@ -91,8 +89,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerCrafting fromFriendlyByteBuf(final int windowId, final Inventory inv, final RegistryFriendlyByteBuf packetBuffer)
-    {
+    public static ContainerCrafting fromFriendlyByteBuf(final int windowId, final Inventory inv, final RegistryFriendlyByteBuf packetBuffer) {
         final boolean complete = packetBuffer.readBoolean();
         final BlockPos tePos = packetBuffer.readBlockPos();
         final int moduleId = packetBuffer.readInt();
@@ -106,60 +103,47 @@ public class ContainerCrafting extends AbstractContainerMenu
      * @param inv      the inventory.
      * @param moduleId the module id.
      */
-    public ContainerCrafting(final int windowId, final Inventory inv, final boolean complete, final BlockPos pos, final int moduleId)
-    {
+    public ContainerCrafting(final int windowId, final Inventory inv, final boolean complete, final BlockPos pos, final int moduleId) {
         super(ModContainers.craftingGrid.get(), windowId);
         this.moduleId = moduleId;
         this.world = inv.player.level();
         this.inv = inv;
         this.complete = complete;
         this.pos = pos;
-        if (complete)
-        {
+        if (complete) {
             craftMatrix = new TransientCraftingContainer(this, 3, 3);
-        }
-        else
-        {
+        } else {
             craftMatrix = new TransientCraftingContainer(this, 2, 2);
         }
 
-        this.craftResultSlot = this.addSlot(new ResultSlot(inv.player, this.craftMatrix, craftResult, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT)
-        {
+        this.craftResultSlot = this.addSlot(new ResultSlot(inv.player, this.craftMatrix, craftResult, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT) {
             @Override
-            public boolean mayPickup(final Player playerIn)
-            {
+            public boolean mayPickup(final Player playerIn) {
                 return false;
             }
         });
 
-        for (int i = 0; i < craftMatrix.getWidth(); ++i)
-        {
-            for (int j = 0; j < craftMatrix.getHeight(); ++j)
-            {
-                this.addSlot(new Slot(this.craftMatrix, j + i * (complete ? 3 : 2), X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH)
-                {
+        for (int i = 0; i < craftMatrix.getWidth(); ++i) {
+            for (int j = 0; j < craftMatrix.getHeight(); ++j) {
+                this.addSlot(new Slot(this.craftMatrix, j + i * (complete ? 3 : 2), X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH) {
                     @Override
-                    public int getMaxStackSize()
-                    {
+                    public int getMaxStackSize() {
                         return 1;
                     }
 
                     @NotNull
                     @Override
-                    public ItemStack remove(final int par1)
-                    {
+                    public ItemStack remove(final int par1) {
                         return ItemStack.EMPTY;
                     }
 
                     @Override
-                    public boolean mayPlace(final ItemStack par1ItemStack)
-                    {
+                    public boolean mayPlace(final ItemStack par1ItemStack) {
                         return true;
                     }
 
                     @Override
-                    public boolean mayPickup(final Player par1PlayerEntity)
-                    {
+                    public boolean mayPickup(final Player par1PlayerEntity) {
                         return false;
                     }
                 });
@@ -169,25 +153,22 @@ public class ContainerCrafting extends AbstractContainerMenu
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
         int i;
-        for (i = 0; i < INVENTORY_ROWS; i++)
-        {
-            for (int j = 0; j < INVENTORY_COLUMNS; j++)
-            {
+        for (i = 0; i < INVENTORY_ROWS; i++) {
+            for (int j = 0; j < INVENTORY_COLUMNS; j++) {
                 addSlot(new Slot(
-                  inv,
-                  j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                  PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                  PLAYER_INVENTORY_INITIAL_Y_OFFSET_CRAFTING + i * PLAYER_INVENTORY_OFFSET_EACH
+                        inv,
+                        j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET_CRAFTING + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
 
-        for (i = 0; i < INVENTORY_COLUMNS; i++)
-        {
+        for (i = 0; i < INVENTORY_COLUMNS; i++) {
             addSlot(new Slot(
-              inv, i,
-              PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-              PLAYER_INVENTORY_HOTBAR_OFFSET_CRAFTING
+                    inv, i,
+                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                    PLAYER_INVENTORY_HOTBAR_OFFSET_CRAFTING
             ));
         }
 
@@ -205,10 +186,8 @@ public class ContainerCrafting extends AbstractContainerMenu
      * Callback for when the crafting matrix is changed.
      */
     @Override
-    public void slotsChanged(final Container inventoryIn)
-    {
-        if (!world.isClientSide)
-        {
+    public void slotsChanged(final Container inventoryIn) {
+        if (!world.isClientSide) {
             final ServerPlayer player = (ServerPlayer) inv.player;
             final List<RecipeHolder<CraftingRecipe>> recipes = player.server.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, craftMatrix.asCraftInput(), world)
                     .stream().filter(recipe -> recipe.value().isSpecial()
@@ -216,13 +195,10 @@ public class ContainerCrafting extends AbstractContainerMenu
                             || player.getRecipeBook().contains(recipe)
                             || player.isCreative())
                     .toList();
-            if (recipes.isEmpty())
-            {
+            if (recipes.isEmpty()) {
                 this.switchableSlot.set(0);
                 this.craftResultSlot.set(ItemStack.EMPTY);
-            }
-            else
-            {
+            } else {
                 this.switchableSlot.set(recipes.size());
                 this.recipeIndexSlot.set(this.recipeIndexSlot.get() % recipes.size());
                 final ItemStack stack = recipes.get(this.recipeIndexSlot.get()).value()
@@ -237,36 +213,30 @@ public class ContainerCrafting extends AbstractContainerMenu
     /**
      * @return true if recipe switching is possible.
      */
-    public boolean canSwitchRecipes()
-    {
+    public boolean canSwitchRecipes() {
         return this.switchableSlot.get() > 1;
     }
 
     /**
      * Switch to the next possible recipe (when more than one are available).
      */
-    public void switchRecipes()
-    {
+    public void switchRecipes() {
         this.recipeIndexSlot.set(this.recipeIndexSlot.get() + 1);
         this.slotsChanged(this.craftMatrix);
     }
 
     @Override
-    public boolean stillValid(@NotNull final Player playerIn)
-    {
+    public boolean stillValid(@NotNull final Player playerIn) {
         return true;
     }
 
     @Override
-    public void clicked(final int slotId, final int clickedButton, final @NotNull ClickType mode, final @NotNull Player playerIn)
-    {
-        if (slotId >= 1 && slotId < CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0))
-        {
+    public void clicked(final int slotId, final int clickedButton, final @NotNull ClickType mode, final @NotNull Player playerIn) {
+        if (slotId >= 1 && slotId < CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0)) {
             // 1 is shift-click
             if (mode == ClickType.PICKUP
-                  || mode == ClickType.PICKUP_ALL
-                  || mode == ClickType.SWAP)
-            {
+                    || mode == ClickType.PICKUP_ALL
+                    || mode == ClickType.SWAP) {
                 final Slot slot = this.slots.get(slotId);
                 handleSlotClick(slot, this.getCarried());
                 return;
@@ -275,8 +245,7 @@ public class ContainerCrafting extends AbstractContainerMenu
             return;
         }
 
-        if (mode == ClickType.QUICK_MOVE)
-        {
+        if (mode == ClickType.QUICK_MOVE) {
             return;
         }
 
@@ -290,16 +259,12 @@ public class ContainerCrafting extends AbstractContainerMenu
      * @param stack the used stack.
      * @return the result.
      */
-    public ItemStack handleSlotClick(final Slot slot, final ItemStack stack)
-    {
-        if (stack.getCount() > 0)
-        {
+    public ItemStack handleSlotClick(final Slot slot, final ItemStack stack) {
+        if (stack.getCount() > 0) {
             final ItemStack copy = stack.copy();
             copy.setCount(1);
             slot.set(copy);
-        }
-        else if (slot.getItem().getCount() > 0)
-        {
+        } else if (slot.getItem().getCount() > 0) {
             slot.set(ItemStack.EMPTY);
         }
 
@@ -308,11 +273,9 @@ public class ContainerCrafting extends AbstractContainerMenu
 
     @NotNull
     @Override
-    public ItemStack quickMoveStack(final Player playerIn, final int index)
-    {
+    public ItemStack quickMoveStack(final Player playerIn, final int index) {
         final int total_crafting_slots = CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0);
-        if (index <= total_crafting_slots)
-        {
+        if (index <= total_crafting_slots) {
             return ItemStack.EMPTY;
         }
 
@@ -320,41 +283,29 @@ public class ContainerCrafting extends AbstractContainerMenu
 
         ItemStack itemstack = ItemStack.EMPTY;
         final Slot slot = this.slots.get(index);
-        if (slot != null && slot.hasItem())
-        {
+        if (slot != null && slot.hasItem()) {
             final ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
-            if (index == 0)
-            {
-                if (!this.moveItemStackTo(itemstack1, total_crafting_slots, total_slots, true))
-                {
+            if (index == 0) {
+                if (!this.moveItemStackTo(itemstack1, total_crafting_slots, total_slots, true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.onQuickCraft(itemstack1, itemstack);
-            }
-            else if (index < HOTBAR_START)
-            {
-                if (!this.moveItemStackTo(itemstack1, HOTBAR_START, total_slots, false))
-                {
+            } else if (index < HOTBAR_START) {
+                if (!this.moveItemStackTo(itemstack1, HOTBAR_START, total_slots, false)) {
                     return ItemStack.EMPTY;
                 }
-            }
-            else if ((index < total_slots
-                        && !this.moveItemStackTo(itemstack1, total_crafting_slots, HOTBAR_START, false))
-                       || !this.moveItemStackTo(itemstack1, total_crafting_slots, total_slots, false))
-            {
+            } else if ((index < total_slots
+                    && !this.moveItemStackTo(itemstack1, total_crafting_slots, HOTBAR_START, false))
+                    || !this.moveItemStackTo(itemstack1, total_crafting_slots, total_slots, false)) {
                 return ItemStack.EMPTY;
             }
-            if (itemstack1.getCount() == 0)
-            {
+            if (itemstack1.getCount() == 0) {
                 slot.set(ItemStack.EMPTY);
-            }
-            else
-            {
+            } else {
                 slot.setChanged();
             }
-            if (itemstack1.getCount() == itemstack.getCount())
-            {
+            if (itemstack1.getCount() == itemstack.getCount()) {
                 return ItemStack.EMPTY;
             }
         }
@@ -362,8 +313,7 @@ public class ContainerCrafting extends AbstractContainerMenu
     }
 
     @Override
-    public boolean canTakeItemForPickAll(final ItemStack stack, final Slot slotIn)
-    {
+    public boolean canTakeItemForPickAll(final ItemStack stack, final Slot slotIn) {
         return slotIn != this.craftResultSlot && super.canTakeItemForPickAll(stack, slotIn);
     }
 
@@ -372,8 +322,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      *
      * @return the world obj.
      */
-    public Level getWorldObj()
-    {
+    public Level getWorldObj() {
         return world;
     }
 
@@ -382,8 +331,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      *
      * @return the player.
      */
-    public Player getPlayer()
-    {
+    public Player getPlayer() {
         return inv.player;
     }
 
@@ -392,8 +340,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      *
      * @return true if 3x3 and false for 2x2.
      */
-    public boolean isComplete()
-    {
+    public boolean isComplete() {
         return complete;
     }
 
@@ -402,8 +349,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      *
      * @return the inv.
      */
-    public CraftingContainer getInv()
-    {
+    public CraftingContainer getInv() {
         return craftMatrix;
     }
 
@@ -412,26 +358,22 @@ public class ContainerCrafting extends AbstractContainerMenu
      *
      * @return the position.
      */
-    public BlockPos getPos()
-    {
+    public BlockPos getPos() {
         return pos;
     }
 
     /**
-     * Get for the remaining items. 
+     * Get for the remaining items.
+     *
      * @return
      */
-    public List<ItemStack> getRemainingItems()
-    {
+    public List<ItemStack> getRemainingItems() {
         final Optional<RecipeHolder<CraftingRecipe>> iRecipe = this.world.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix.asCraftInput(), world);
-        if (iRecipe.isPresent())
-        {
+        if (iRecipe.isPresent()) {
             List<ItemStack> ri = iRecipe.get().value().getRemainingItems(this.craftMatrix.asCraftInput());
             remainingItems.clear();
-            for(int i = 0; i< ri.size(); i++)
-            {
-                if(!ri.get(i).isEmpty())
-                {
+            for (int i = 0; i < ri.size(); i++) {
+                if (!ri.get(i).isEmpty()) {
                     remainingItems.add(ri.get(i));
                 }
             }
@@ -441,10 +383,10 @@ public class ContainerCrafting extends AbstractContainerMenu
 
     /**
      * Getter for the module id.
+     *
      * @return the id.
      */
-    public int getModuleId()
-    {
+    public int getModuleId() {
         return this.moduleId;
     }
 }

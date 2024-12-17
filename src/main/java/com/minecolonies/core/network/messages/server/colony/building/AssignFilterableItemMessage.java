@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message which handles the assignment of items to filterable item lists.
  */
-public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<AbstractBuilding>
-{
+public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<AbstractBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "assign_filterable_item_message", AssignFilterableItemMessage::new);
 
     /**
@@ -44,16 +43,14 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
      * @param item     the item to assign
      * @param building the building we're executing on.
      */
-    public AssignFilterableItemMessage(final IBuildingView building, final int id, final ItemStorage item, final boolean assign)
-    {
+    public AssignFilterableItemMessage(final IBuildingView building, final int id, final ItemStorage item, final boolean assign) {
         super(TYPE, building);
         this.assign = assign;
         this.item = item;
         this.id = id;
     }
 
-    protected AssignFilterableItemMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected AssignFilterableItemMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
 
         this.assign = buf.readBoolean();
@@ -62,8 +59,7 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
 
         buf.writeBoolean(this.assign);
@@ -72,16 +68,11 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
-    {
-        if (building.getModule(id) instanceof final ItemListModule module)
-        {
-            if (assign)
-            {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building) {
+        if (building.getModule(id) instanceof final ItemListModule module) {
+            if (assign) {
                 module.addItem(item);
-            }
-            else
-            {
+            } else {
                 module.removeItem(item);
             }
         }

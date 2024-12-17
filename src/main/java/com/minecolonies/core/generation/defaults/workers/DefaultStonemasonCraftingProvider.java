@@ -21,25 +21,21 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTI
 /**
  * Datagen for Stonemason
  */
-public class DefaultStonemasonCraftingProvider extends CustomRecipeProvider
-{
+public class DefaultStonemasonCraftingProvider extends CustomRecipeProvider {
     private static final String STONEMASON = ModJobs.STONEMASON_ID.getPath();
 
-    public DefaultStonemasonCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultStonemasonCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "DefaultStonemasonCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
         convert(consumer, Items.COBBLESTONE, Items.SAND, Items.SANDSTONE);
         convert(consumer, Items.COBBLESTONE, Items.RED_SAND, Items.RED_SANDSTONE);
         convert(consumer, Items.COBBLESTONE, Items.PRISMARINE_SHARD, Items.PRISMARINE);
@@ -56,10 +52,9 @@ public class DefaultStonemasonCraftingProvider extends CustomRecipeProvider
     private void convert(@NotNull final Consumer<CustomRecipeBuilder> consumer,
                          @NotNull final ItemLike input1,
                          @NotNull final ItemLike input2,
-                         @NotNull final ItemLike output)
-    {
+                         @NotNull final ItemLike output) {
         recipe(STONEMASON, MODULE_CRAFTING,
-                        BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
+                BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input1)), new ItemStorage(new ItemStack(input2))))
                 .result(new ItemStack(output))
                 .build(consumer);

@@ -9,11 +9,9 @@ import com.minecolonies.api.colony.buildings.modules.ITickingModule;
 /**
  * The tavern living module for citizen to call their home.
  */
-public class TavernLivingBuildingModule extends LivingBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule
-{
+public class TavernLivingBuildingModule extends LivingBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule {
     @Override
-    public int getModuleMax()
-    {
+    public int getModuleMax() {
         return building.getBuildingLevel() > 0 ? 4 : 0;
     }
 }

@@ -25,15 +25,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class GatherDataHandler
-{
+public class GatherDataHandler {
     /**
      * This method is for adding datagenerators. this does not run during normal client operations, only during building.
      *
      * @param event event sent when you run the "runData" gradle task
      */
-    public static void dataGeneratorSetup(final GatherDataEvent event)
-    {
+    public static void dataGeneratorSetup(final GatherDataEvent event) {
         final DataGenerator generator = event.getGenerator();
         RegistrySetBuilder enchRegBuilder = new RegistrySetBuilder().add(Registries.ENCHANTMENT, DefaultEnchantmentProvider::bootstrap);
         DatapackBuiltinEntriesProvider enchRegProvider = new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(), event.getLookupProvider(), enchRegBuilder, Set.of(Constants.MOD_ID, "minecraft"));
@@ -87,27 +85,24 @@ public class GatherDataHandler
     }
 
     // todo: move this back to SimpleLootTableProvider?
-    private static final class LootTableProviders extends LootTableProvider
-    {
-        public LootTableProviders(final PackOutput packOutput, CompletableFuture<HolderLookup.Provider> provider)
-        {
+    private static final class LootTableProviders extends LootTableProvider {
+        public LootTableProviders(final PackOutput packOutput, CompletableFuture<HolderLookup.Provider> provider) {
             super(packOutput, Set.of(), List.of(
-                new SubProviderEntry(DefaultFishermanLootProvider::new, LootContextParamSets.FISHING),
-                new SubProviderEntry(DefaultRecipeLootProvider::new, LootContextParamSets.ALL_PARAMS),
-                new SubProviderEntry(DefaultSupplyLootProvider::new, LootContextParamSets.CHEST),
-                new SubProviderEntry(DefaultCropsLootProvider::new, LootContextParamSets.BLOCK),
-                new SubProviderEntry(DefaultEntityLootProvider::new, LootContextParamSets.ENTITY),
-                new SubProviderEntry(DefaultBlockLootTableProvider::new, LootContextParamSets.BLOCK),
-                new SubProviderEntry(DefaultLuckyOreLootProvider::new, LootContextParamSets.BLOCK)
+                    new SubProviderEntry(DefaultFishermanLootProvider::new, LootContextParamSets.FISHING),
+                    new SubProviderEntry(DefaultRecipeLootProvider::new, LootContextParamSets.ALL_PARAMS),
+                    new SubProviderEntry(DefaultSupplyLootProvider::new, LootContextParamSets.CHEST),
+                    new SubProviderEntry(DefaultCropsLootProvider::new, LootContextParamSets.BLOCK),
+                    new SubProviderEntry(DefaultEntityLootProvider::new, LootContextParamSets.ENTITY),
+                    new SubProviderEntry(DefaultBlockLootTableProvider::new, LootContextParamSets.BLOCK),
+                    new SubProviderEntry(DefaultLuckyOreLootProvider::new, LootContextParamSets.BLOCK)
             ), provider);
         }
 
         @Override
         protected void validate(
-          final WritableRegistry<LootTable> writableregistry,
-          final ValidationContext validationcontext,
-          final ProblemReporter.Collector problemreporter$collector)
-        {
+                final WritableRegistry<LootTable> writableregistry,
+                final ValidationContext validationcontext,
+                final ProblemReporter.Collector problemreporter$collector) {
             // todo this might be a bit aggressive, someone should adjust this.
         }
 

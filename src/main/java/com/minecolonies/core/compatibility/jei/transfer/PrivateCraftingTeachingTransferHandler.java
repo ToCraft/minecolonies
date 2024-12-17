@@ -28,33 +28,28 @@ import java.util.*;
 /**
  * JEI recipe transfer handler for teaching crafting recipes
  */
-public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCrafting, RecipeHolder<CraftingRecipe>>
-{
+public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCrafting, RecipeHolder<CraftingRecipe>> {
     private final IRecipeTransferHandlerHelper handlerHelper;
 
-    public PrivateCraftingTeachingTransferHandler(@NotNull final IRecipeTransferHandlerHelper handlerHelper)
-    {
+    public PrivateCraftingTeachingTransferHandler(@NotNull final IRecipeTransferHandlerHelper handlerHelper) {
         this.handlerHelper = handlerHelper;
     }
 
     @NotNull
     @Override
-    public Optional<MenuType<ContainerCrafting>> getMenuType()
-    {
+    public Optional<MenuType<ContainerCrafting>> getMenuType() {
         return Optional.empty();
     }
 
     @NotNull
     @Override
-    public Class<ContainerCrafting> getContainerClass()
-    {
+    public Class<ContainerCrafting> getContainerClass() {
         return ContainerCrafting.class;
     }
 
     @NotNull
     @Override
-    public RecipeType<RecipeHolder<CraftingRecipe>> getRecipeType()
-    {
+    public RecipeType<RecipeHolder<CraftingRecipe>> getRecipeType() {
         return RecipeTypes.CRAFTING;
     }
 
@@ -66,8 +61,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
             @NotNull final IRecipeSlotsView recipeSlots,
             @NotNull final Player player,
             final boolean maxTransfer,
-            final boolean doTransfer)
-    {
+            final boolean doTransfer) {
         // compact the crafting grid into a 2x2 area
         final Map<Integer, ItemStack> guiIngredients = new HashMap<>();
         guiIngredients.put(0, ItemStackUtils.EMPTY);
@@ -77,28 +71,22 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
 
         // indexes that do not fit into the player crafting grid
         final Set<Integer> badIndexes;
-        if (craftingGUIBuilding.isComplete())
-        {
+        if (craftingGUIBuilding.isComplete()) {
             guiIngredients.put(2, ItemStackUtils.EMPTY);
             guiIngredients.put(5, ItemStackUtils.EMPTY);
             guiIngredients.put(6, ItemStackUtils.EMPTY);
             guiIngredients.put(7, ItemStackUtils.EMPTY);
             guiIngredients.put(8, ItemStackUtils.EMPTY);
             badIndexes = ImmutableSet.of();
-        }
-        else
-        {
+        } else {
             badIndexes = ImmutableSet.of(2, 5, 6, 7, 8);
         }
 
         int inputIndex = 0;
         final List<IRecipeSlotView> slots = recipeSlots.getSlotViews(RecipeIngredientRole.INPUT);
-        for (final IRecipeSlotView slot : slots)
-        {
-            if (slot.getAllIngredients().findAny().isPresent())
-            {
-                if (badIndexes.contains(inputIndex))
-                {
+        for (final IRecipeSlotView slot : slots) {
+            if (slot.getAllIngredients().findAny().isPresent()) {
+                if (badIndexes.contains(inputIndex)) {
                     final Component tooltipMessage = Component.translatableEscape("jei.tooltip.error.recipe.transfer.too.large.player.getInventory()");
                     final List<IRecipeSlotView> badSlots = badIndexes.stream().map(index -> slots.get(index)).toList();
                     return handlerHelper.createUserErrorForMissingSlots(tooltipMessage, badSlots);
@@ -108,11 +96,9 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
             inputIndex++;
         }
 
-        if (doTransfer)
-        {
+        if (doTransfer) {
             final CraftingContainer craftMatrix = craftingGUIBuilding.getInv();
-            if (craftingGUIBuilding.isComplete())
-            {
+            if (craftingGUIBuilding.isComplete()) {
                 craftMatrix.setItem(0, guiIngredients.get(0));
                 craftMatrix.setItem(1, guiIngredients.get(1));
                 craftMatrix.setItem(2, guiIngredients.get(2));
@@ -122,9 +108,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
                 craftMatrix.setItem(6, guiIngredients.get(6));
                 craftMatrix.setItem(7, guiIngredients.get(7));
                 craftMatrix.setItem(8, guiIngredients.get(8));
-            }
-            else
-            {
+            } else {
                 craftMatrix.setItem(0, guiIngredients.get(0));
                 craftMatrix.setItem(1, guiIngredients.get(1));
                 craftMatrix.setItem(2, guiIngredients.get(3));

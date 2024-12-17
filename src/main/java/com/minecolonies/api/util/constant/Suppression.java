@@ -5,8 +5,7 @@ import org.jetbrains.annotations.NonNls;
 /**
  * Constants for suppression keys.
  */
-public final class Suppression
-{
+public final class Suppression {
     /**
      * Suppress warnings for unchecked type conversions.
      * <p>
@@ -111,8 +110,7 @@ public final class Suppression
     @NonNls
     public static final String TOO_MANY_RETURNS = "squid:S1142";
 
-    private Suppression()
-    {
+    private Suppression() {
         //empty default
     }
 }

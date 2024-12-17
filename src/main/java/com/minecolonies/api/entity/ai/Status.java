@@ -3,8 +3,7 @@ package com.minecolonies.api.entity.ai;
 /**
  * Used for chat messages, sounds, and other need based interactions.
  */
-public enum Status
-{
+public enum Status {
     IDLE,
     SLEEPING,
     MOURN,

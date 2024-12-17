@@ -23,8 +23,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
-public interface IBuildingView extends IRequester, IModuleContainerView
-{
+public interface IBuildingView extends IRequester, IModuleContainerView {
     /**
      * Gets the id for this building.
      *
@@ -102,8 +101,7 @@ public interface IBuildingView extends IRequester, IModuleContainerView
      *
      * @return the name (or translation key).
      */
-    default String getBuildingDisplayName()
-    {
+    default String getBuildingDisplayName() {
         final String customName = getCustomName();
         return customName.isEmpty() ? getBuildingType().getTranslationKey() : customName;
     }
@@ -197,9 +195,9 @@ public interface IBuildingView extends IRequester, IModuleContainerView
 
     @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
-      @NotNull ICitizenDataView citizenData,
-      Class<R> requestType,
-      Predicate<IRequest<? extends R>> filter);
+            @NotNull ICitizenDataView citizenData,
+            Class<R> requestType,
+            Predicate<IRequest<? extends R>> filter);
 
     /**
      * Get the delivery priority of the building.
@@ -226,24 +224,28 @@ public interface IBuildingView extends IRequester, IModuleContainerView
 
     /**
      * Get the Building type
+     *
      * @return building type
      */
     BuildingEntry getBuildingType();
 
     /**
      * Set the building type
+     *
      * @param buildingType
      */
     void setBuildingType(BuildingEntry buildingType);
 
     /**
      * Get the citizen ids of all assigned citizens to this building.
+     *
      * @return the set of ids.
      */
     Set<Integer> getAllAssignedCitizens();
 
     /**
      * Check if the building currently allows assignment of citizens.
+     *
      * @return true if so.
      */
     boolean allowsAssignment();

@@ -7,13 +7,11 @@ import java.util.List;
 /**
  * The citizen name file of a specific style of names.
  */
-public class CitizenNameFile
-{
+public class CitizenNameFile {
     /**
      * Current types of name order.
      */
-    public enum NameOrder
-    {
+    public enum NameOrder {
         EASTERN,
         WESTERN
     }
@@ -45,19 +43,19 @@ public class CitizenNameFile
 
     /**
      * Create a new instance of a specific name file.
-     * @param parts the number of parts.
-     * @param order the name order.
-     * @param maleFirstNames the male first names.
+     *
+     * @param parts            the number of parts.
+     * @param order            the name order.
+     * @param maleFirstNames   the male first names.
      * @param femaleFirstNames the female first names.
-     * @param surnames the surnames.
+     * @param surnames         the surnames.
      */
     public CitizenNameFile(
-      final int parts,
-      @NotNull final NameOrder order,
-      @NotNull final List<String> maleFirstNames,
-      @NotNull final List<String> femaleFirstNames,
-      @NotNull final List<String> surnames)
-    {
+            final int parts,
+            @NotNull final NameOrder order,
+            @NotNull final List<String> maleFirstNames,
+            @NotNull final List<String> femaleFirstNames,
+            @NotNull final List<String> surnames) {
         this.parts = parts;
         this.order = order;
         this.maleFirstNames = maleFirstNames;

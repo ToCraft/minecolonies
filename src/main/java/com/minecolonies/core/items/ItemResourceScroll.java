@@ -5,10 +5,9 @@ import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.items.component.BuildingId;
 import com.minecolonies.api.items.component.WarehouseSnapshot;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.core.client.gui.WindowResourceList;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.core.client.gui.WindowResourceList;
 import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
@@ -36,35 +35,30 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Class describing the resource scroll item.
  */
-public class ItemResourceScroll extends AbstractItemMinecolonies
-{
+public class ItemResourceScroll extends AbstractItemMinecolonies {
     /**
      * Sets the name, creative tab, and registers the resource scroll item.
      *
      * @param properties the properties.
      */
-    public ItemResourceScroll(final Item.Properties properties)
-    {
+    public ItemResourceScroll(final Item.Properties properties) {
         super("resourcescroll", properties.stacksTo(1));
     }
 
     /**
      * Opens the scroll window if there is a valid builder linked
      *
-     * @param stack the item compound
-     * @param player   the player entity opening the window
+     * @param stack  the item compound
+     * @param player the player entity opening the window
      */
-    private static void openWindow(final ItemStack stack, final Player player)
-    {
+    private static void openWindow(final ItemStack stack, final Player player) {
         final IBuildingView buildingView = BuildingId.readBuildingViewFromItemStack(stack);
-        if (!(buildingView instanceof final BuildingBuilder.View builderBuildingView))
-        {
+        if (!(buildingView instanceof final BuildingBuilder.View builderBuildingView)) {
             MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
             return;
         }
@@ -74,16 +68,12 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final boolean snapshotNeedsUpdate = !Objects.equals(currentHash, warehouseSnapshotComponent.hash());
 
         Map<String, Integer> warehouseSnapshot = new HashMap<>();
-        if (snapshotNeedsUpdate)
-        {
+        if (snapshotNeedsUpdate) {
             // If the hashes no longer match one another, the NBT data is out of sync, inform the server to wipe the NBT.
             new ResourceScrollSaveWarehouseSnapshotMessage(buildingView.getID()).sendToServer();
-        }
-        else
-        {
+        } else {
             // If the hashes are still up-to-date, load the old snapshot data from the NBT, if any exists.
-            if (!warehouseSnapshotComponent.hash().isEmpty())
-            {
+            if (!warehouseSnapshotComponent.hash().isEmpty()) {
                 warehouseSnapshot = warehouseSnapshotComponent.snapshot();
             }
         }
@@ -98,15 +88,13 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      * @return the work order hash.
      */
     @NotNull
-    private static String getWorkOrderHash(final IBuildingView buildingView)
-    {
+    private static String getWorkOrderHash(final IBuildingView buildingView) {
         final Optional<IWorkOrderView> currentWorkOrder = buildingView.getColony()
-                                                            .getWorkOrders()
-                                                            .stream()
-                                                            .filter(o -> o.getClaimedBy().equals(buildingView.getID()))
-                                                            .max(Comparator.comparingInt(IWorkOrderView::getPriority));
-        if (currentWorkOrder.isEmpty())
-        {
+                .getWorkOrders()
+                .stream()
+                .filter(o -> o.getClaimedBy().equals(buildingView.getID()))
+                .max(Comparator.comparingInt(IWorkOrderView::getPriority));
+        if (currentWorkOrder.isEmpty()) {
             return "";
         }
 
@@ -121,12 +109,10 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      * @param stack        the stack.
      * @param player       the player entity who clicked the warehouse.
      */
-    private static void updateWarehouseSnapshot(final BlockPos warehousePos, final ItemStack stack, final Player player)
-    {
+    private static void updateWarehouseSnapshot(final BlockPos warehousePos, final ItemStack stack, final Player player) {
         final IBuildingView buildingView = BuildingId.readBuildingViewFromItemStack(stack);
 
-        if (!(buildingView instanceof BuildingBuilder.View))
-        {
+        if (!(buildingView instanceof BuildingBuilder.View)) {
             MessageUtils.format(COM_MINECOLONIES_SCROLL_NO_COLONY).sendTo(player);
             return;
         }
@@ -134,12 +120,9 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final String currentHash = getWorkOrderHash(buildingView);
         final WarehouseSnapshot warehouseSnapshotData = gatherWarehouseSnapshot(buildingView, warehousePos, currentHash, player);
 
-        if (warehouseSnapshotData != null)
-        {
+        if (warehouseSnapshotData != null) {
             new ResourceScrollSaveWarehouseSnapshotMessage(buildingView.getID(), warehouseSnapshotData.snapshot(), warehouseSnapshotData.hash()).sendToServer();
-        }
-        else
-        {
+        } else {
             new ResourceScrollSaveWarehouseSnapshotMessage(buildingView.getID()).sendToServer();
         }
     }
@@ -155,37 +138,31 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     @Nullable
     private static WarehouseSnapshot gatherWarehouseSnapshot(
-      final IBuildingView buildingView,
-      final BlockPos warehouseBlockPos,
-      final String hash,
-      final Player player)
-    {
+            final IBuildingView buildingView,
+            final BlockPos warehouseBlockPos,
+            final String hash,
+            final Player player) {
         final IBuildingView warehouse = buildingView.getColony().getBuilding(warehouseBlockPos);
 
-        if (warehouse == null)
-        {
+        if (warehouse == null) {
             MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_COLONY).sendTo(player);
             return null;
         }
 
-        if (hash.isBlank())
-        {
+        if (hash.isBlank()) {
             return null;
         }
 
         final BuildingResourcesModuleView resourcesModule = buildingView.getModuleViewByType(BuildingResourcesModuleView.class);
 
         final Map<String, Integer> items = new HashMap<>();
-        for (final BlockPos container : warehouse.getContainerList())
-        {
+        for (final BlockPos container : warehouse.getContainerList()) {
             final BlockEntity blockEntity = warehouse.getColony().getWorld().getBlockEntity(container);
-            if (blockEntity instanceof TileEntityRack rack)
-            {
+            if (blockEntity instanceof TileEntityRack rack) {
                 rack.getAllContent().forEach((item, amount) -> {
                     final int hashCode = item.getItemStack().getComponentsPatch().hashCode();
                     final String key = item.getItemStack().getDescriptionId() + "-" + hashCode;
-                    if (!resourcesModule.getResources().containsKey(key))
-                    {
+                    if (!resourcesModule.getResources().containsKey(key)) {
                         return;
                     }
 
@@ -206,40 +183,27 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public InteractionResult useOn(UseOnContext ctx)
-    {
+    public InteractionResult useOn(UseOnContext ctx) {
         final ItemStack scroll = ctx.getPlayer().getItemInHand(ctx.getHand());
 
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
-        if (ctx.getLevel().isClientSide)
-        {
-            if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity)
-            {
-                if (buildingEntity instanceof TileEntityWareHouse)
-                {
+        if (ctx.getLevel().isClientSide) {
+            if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity) {
+                if (buildingEntity instanceof TileEntityWareHouse) {
                     updateWarehouseSnapshot(buildingEntity.getTilePos(), scroll, ctx.getPlayer());
                 }
-            }
-            else
-            {
+            } else {
                 openWindow(scroll, ctx.getPlayer());
             }
-        }
-        else if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity)
-        {
-            if (buildingEntity.getBuilding() instanceof BuildingBuilder)
-            {
+        } else if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity) {
+            if (buildingEntity.getBuilding() instanceof BuildingBuilder) {
                 buildingEntity.getBuilding().writeToItemStack(scroll);
 
                 MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
-            }
-            else if (buildingEntity.getBuilding() instanceof BuildingWareHouse)
-            {
+            } else if (buildingEntity.getBuilding() instanceof BuildingWareHouse) {
                 MessageUtils.format(COM_MINECOLONIES_SCROLL_SNAPSHOT).sendTo(ctx.getPlayer());
-            }
-            else if (buildingEntity.getBuilding() != null)
-            {
+            } else if (buildingEntity.getBuilding() != null) {
                 final MutableComponent buildingTypeComponent = MessageUtils.format(buildingEntity.getBuilding().getBuildingType().getTranslationKey()).create();
                 MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_BUILDING, buildingTypeComponent, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
@@ -259,14 +223,12 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     @Override
     @NotNull
     public InteractionResultHolder<ItemStack> use(
-      final Level worldIn,
-      final Player playerIn,
-      final InteractionHand hand)
-    {
+            final Level worldIn,
+            final Player playerIn,
+            final InteractionHand hand) {
         final ItemStack resourceScroll = playerIn.getItemInHand(hand);
 
-        if (!worldIn.isClientSide)
-        {
+        if (!worldIn.isClientSide) {
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, resourceScroll);
         }
 
@@ -277,17 +239,15 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable TooltipContext ctx, List<Component> tooltip, TooltipFlag flagIn)
-    {
+    public void appendHoverText(ItemStack stack, @Nullable TooltipContext ctx, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, ctx, tooltip, flagIn);
 
         final IBuildingView buildingView = BuildingId.readBuildingViewFromItemStack(stack);
-        if (buildingView instanceof BuildingBuilder.View builderBuildingView)
-        {
+        if (buildingView instanceof BuildingBuilder.View builderBuildingView) {
             String name = builderBuildingView.getWorkerName();
             tooltip.add(name != null && !name.trim().isEmpty()
-                          ? Component.literal(ChatFormatting.DARK_PURPLE + name)
-                          : Component.translatableEscape(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
+                    ? Component.literal(ChatFormatting.DARK_PURPLE + name)
+                    : Component.translatableEscape(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
         }
     }
 }

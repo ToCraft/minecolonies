@@ -25,8 +25,7 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_STATE_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 
-public class ColonyPackageManager implements IColonyPackageManager
-{
+public class ColonyPackageManager implements IColonyPackageManager {
     /**
      * List of players close to the colony receiving updates. Populated by chunk entry events
      */
@@ -68,36 +67,30 @@ public class ColonyPackageManager implements IColonyPackageManager
      *
      * @param colony the colony.
      */
-    public ColonyPackageManager(final Colony colony)
-    {
+    public ColonyPackageManager(final Colony colony) {
         this.colony = colony;
     }
 
     @Override
-    public int getLastContactInHours()
-    {
+    public int getLastContactInHours() {
         return lastContactInHours;
     }
 
     @Override
-    public void setLastContactInHours(final int lastContactInHours)
-    {
+    public void setLastContactInHours(final int lastContactInHours) {
         this.lastContactInHours = lastContactInHours;
     }
 
     @Override
-    public Set<ServerPlayer> getCloseSubscribers()
-    {
+    public Set<ServerPlayer> getCloseSubscribers() {
         return closeSubscribers;
     }
 
     @Override
-    public void updateSubscribers()
-    {
+    public void updateSubscribers() {
         final Level world = colony.getWorld();
         // If the world or server is null, don't try to update the closeSubscribers this tick.
-        if (world == null || world.getServer() == null)
-        {
+        if (world == null || world.getServer() == null) {
             return;
         }
 
@@ -108,27 +101,22 @@ public class ColonyPackageManager implements IColonyPackageManager
     /**
      * Updates currently close players to the colony
      */
-    private void updateClosePlayers()
-    {
-        for (Iterator<ServerPlayer> iterator = closeSubscribers.iterator(); iterator.hasNext(); )
-        {
+    private void updateClosePlayers() {
+        for (Iterator<ServerPlayer> iterator = closeSubscribers.iterator(); iterator.hasNext(); ) {
             final ServerPlayer player = iterator.next();
 
-            if (!player.isAlive() || colony.getWorld() != player.level() || !WorldUtil.isChunkLoaded(player.level(), player.chunkPosition().x, player.chunkPosition().z))
-            {
+            if (!player.isAlive() || colony.getWorld() != player.level() || !WorldUtil.isChunkLoaded(player.level(), player.chunkPosition().x, player.chunkPosition().z)) {
                 iterator.remove();
                 continue;
             }
 
             final LevelChunk chunk = colony.getWorld().getChunk(player.chunkPosition().x, player.chunkPosition().z);
-            if (chunk.isEmpty())
-            {
+            if (chunk.isEmpty()) {
                 iterator.remove();
                 continue;
             }
 
-            if (ColonyUtils.getOwningColony(chunk) != colony.getID())
-            {
+            if (ColonyUtils.getOwningColony(chunk) != colony.getID()) {
                 iterator.remove();
             }
         }
@@ -138,20 +126,15 @@ public class ColonyPackageManager implements IColonyPackageManager
      * Updates the away timer for the colony.
      */
     @Override
-    public void updateAwayTime()
-    {
-        if (importantColonyPlayers.isEmpty())
-        {
-            if (ticksPassed >= TICKS_HOUR)
-            {
+    public void updateAwayTime() {
+        if (importantColonyPlayers.isEmpty()) {
+            if (ticksPassed >= TICKS_HOUR) {
                 ticksPassed = 0;
                 lastContactInHours++;
                 colony.markDirty();
             }
             ticksPassed += UPDATE_STATE_INTERVAL;
-        }
-        else if (lastContactInHours != 0)
-        {
+        } else if (lastContactInHours != 0) {
             lastContactInHours = 0;
             ticksPassed = 0;
             colony.markDirty();
@@ -161,10 +144,8 @@ public class ColonyPackageManager implements IColonyPackageManager
     /**
      * Update the closeSubscribers of the colony.
      */
-    public void updateColonyViews()
-    {
-        if (!closeSubscribers.isEmpty() || !newSubscribers.isEmpty())
-        {
+    public void updateColonyViews() {
+        if (!closeSubscribers.isEmpty() || !newSubscribers.isEmpty()) {
             //  Send each type of update packet as appropriate:
             //      - To close Subscribers if the data changes
             //      - To New Subscribers even if it hasn't changed
@@ -184,8 +165,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             colony.getResearchManager().sendPackets(closeSubscribers, newSubscribers);
         }
 
-        if (newSubscribers.isEmpty())
-        {
+        if (newSubscribers.isEmpty()) {
             isDirty = false;
         }
         colony.getPermissions().clearDirty();
@@ -197,22 +177,18 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void sendColonyViewPackets()
-    {
-        if (isDirty || !newSubscribers.isEmpty())
-        {
+    public void sendColonyViewPackets() {
+        if (isDirty || !newSubscribers.isEmpty()) {
             final RegistryFriendlyByteBuf colonyFriendlyByteBuf = new RegistryFriendlyByteBuf(Unpooled.buffer(), colony.getWorld().registryAccess());
             ColonyView.serializeNetworkData(colony, colonyFriendlyByteBuf, !newSubscribers.isEmpty());
             final Set<ServerPlayer> players = new HashSet<>();
-            if (isDirty)
-            {
+            if (isDirty) {
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
 
             final ColonyViewMessage message = new ColonyViewMessage(colony, colonyFriendlyByteBuf);
-            for (ServerPlayer player : players)
-            {
+            for (ServerPlayer player : players) {
                 message.setIsNewSubscription(newSubscribers.contains(player));
                 message.sendToPlayer(player);
             }
@@ -221,14 +197,11 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void sendPermissionsPackets()
-    {
+    public void sendPermissionsPackets() {
         final Permissions permissions = colony.getPermissions();
-        if (permissions.isDirty() || !newSubscribers.isEmpty())
-        {
+        if (permissions.isDirty() || !newSubscribers.isEmpty()) {
             final Set<ServerPlayer> players = new HashSet<>();
-            if (isDirty)
-            {
+            if (isDirty) {
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
@@ -237,11 +210,9 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void sendWorkOrderPackets()
-    {
+    public void sendWorkOrderPackets() {
         final IWorkManager workManager = colony.getWorkManager();
-        if (workManager.isDirty() || !newSubscribers.isEmpty())
-        {
+        if (workManager.isDirty() || !newSubscribers.isEmpty()) {
             final Set<ServerPlayer> players = new HashSet<>();
 
             players.addAll(closeSubscribers);
@@ -255,22 +226,18 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void setDirty()
-    {
+    public void setDirty() {
         this.isDirty = true;
     }
 
     @Override
-    public void addCloseSubscriber(@NotNull final ServerPlayer subscriber)
-    {
-        if (subscriber instanceof FakePlayer)
-        {
+    public void addCloseSubscriber(@NotNull final ServerPlayer subscriber) {
+        if (subscriber instanceof FakePlayer) {
             Log.getLogger().warn("Adding fakeplayer as subscriber: this should not happen", new Exception());
             return;
         }
 
-        if (!closeSubscribers.contains(subscriber))
-        {
+        if (!closeSubscribers.contains(subscriber)) {
             closeSubscribers.add(subscriber);
             newSubscribers.add(subscriber);
             updateColonyViews();
@@ -278,8 +245,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void removeCloseSubscriber(@NotNull final ServerPlayer player)
-    {
+    public void removeCloseSubscriber(@NotNull final ServerPlayer player) {
         newSubscribers.remove(player);
         closeSubscribers.remove(player);
     }
@@ -288,10 +254,8 @@ public class ColonyPackageManager implements IColonyPackageManager
      * On login we're adding global subscribers.
      */
     @Override
-    public void addImportantColonyPlayer(@NotNull final ServerPlayer subscriber)
-    {
-        if (subscriber instanceof FakePlayer)
-        {
+    public void addImportantColonyPlayer(@NotNull final ServerPlayer subscriber) {
+        if (subscriber instanceof FakePlayer) {
             Log.getLogger().warn("Adding fakeplayer as important subscriber: this should not happen", new Exception());
             return;
         }
@@ -304,8 +268,7 @@ public class ColonyPackageManager implements IColonyPackageManager
      * On logoff we're removing global subscribers.
      */
     @Override
-    public void removeImportantColonyPlayer(@NotNull final ServerPlayer subscriber)
-    {
+    public void removeImportantColonyPlayer(@NotNull final ServerPlayer subscriber) {
         importantColonyPlayers.remove(subscriber);
         newSubscribers.remove(subscriber);
     }
@@ -314,8 +277,7 @@ public class ColonyPackageManager implements IColonyPackageManager
      * Returns the list of online global subscribers of the colony.
      */
     @Override
-    public Set<ServerPlayer> getImportantColonyPlayers()
-    {
+    public Set<ServerPlayer> getImportantColonyPlayers() {
         return importantColonyPlayers;
     }
 }

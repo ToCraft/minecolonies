@@ -28,8 +28,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * The Pirate raid event, spawns a ship with pirate spawners onboard.
  */
-public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
-{
+public class DrownedPirateRaidEvent extends AbstractShipRaidEvent {
     /**
      * This raids event id, registry entries use res locations as ids.
      */
@@ -50,58 +49,48 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
      *
      * @param colony the colony.
      */
-    public DrownedPirateRaidEvent(@NotNull final IColony colony)
-    {
+    public DrownedPirateRaidEvent(@NotNull final IColony colony) {
         super(colony);
     }
 
     @Override
-    public String getShipDesc()
-    {
+    public String getShipDesc() {
         return SHIP_NAME;
     }
 
     @Override
-    public ResourceLocation getEventTypeID()
-    {
+    public ResourceLocation getEventTypeID() {
         return PIRATE_RAID_EVENT_TYPE_ID;
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         status = EventStatus.PREPARING;
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STORAGE_STYLE,
-          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint", colony.getWorld().registryAccess()), colony.getWorld(), (blueprint -> {
+                "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint", colony.getWorld().registryAccess()), colony.getWorld(), (blueprint -> {
             blueprint.setRotationMirror(shipRotationMirror, colony.getWorld());
 
-            if (spawnPathResult != null && spawnPathResult.isDone())
-            {
+            if (spawnPathResult != null && spawnPathResult.isDone()) {
                 final Path path = spawnPathResult.getPath();
-                if (path != null && path.canReach())
-                {
+                if (path != null && path.canReach()) {
                     final BlockPos endpoint = path.getEndNode().asBlockPos().below();
-                    if (ShipBasedRaiderUtils.canPlaceShipAt(endpoint, blueprint, colony.getWorld(), DEPTH_REQ))
-                    {
+                    if (ShipBasedRaiderUtils.canPlaceShipAt(endpoint, blueprint, colony.getWorld(), DEPTH_REQ)) {
                         spawnPoint = endpoint;
                     }
                 }
                 this.wayPoints = ShipBasedRaiderUtils.createWaypoints(colony.getWorld(), path, WAYPOINT_SPACING);
             }
 
-            if (!ShipBasedRaiderUtils.canPlaceShipAt(spawnPoint, blueprint, colony.getWorld(), DEPTH_REQ))
-            {
+            if (!ShipBasedRaiderUtils.canPlaceShipAt(spawnPoint, blueprint, colony.getWorld(), DEPTH_REQ)) {
                 spawnPoint = spawnPoint.below();
             }
 
-            while (PathfindingUtils.isLiquid(colony.getWorld().getBlockState(spawnPoint)) )
-            {
+            while (PathfindingUtils.isLiquid(colony.getWorld().getBlockState(spawnPoint))) {
                 spawnPoint = spawnPoint.below();
             }
 
-            if (!ShipBasedRaiderUtils.spawnPirateShip(spawnPoint, colony, blueprint, this))
-            {
+            if (!ShipBasedRaiderUtils.spawnPirateShip(spawnPoint, colony, blueprint, this)) {
                 // Ship event not successfully started.
                 status = EventStatus.CANCELED;
                 return;
@@ -110,8 +99,8 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
             updateRaidBar();
 
             MessageUtils.format(RAID_EVENT_MESSAGE_U_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText(), colony.getName())
-              .withPriority(MessageUtils.MessagePriority.DANGER)
-              .sendTo(colony).forManagers();
+                    .withPriority(MessageUtils.MessagePriority.DANGER)
+                    .sendTo(colony).forManagers();
             colony.markDirty();
         })));
     }
@@ -123,57 +112,48 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         final DrownedPirateRaidEvent raidEvent = new DrownedPirateRaidEvent(colony);
         raidEvent.deserializeNBT(provider, compound);
         return raidEvent;
     }
 
     @Override
-    public boolean isUnderWater()
-    {
+    public boolean isUnderWater() {
         return true;
     }
 
     @Override
-    public EntityType<?> getNormalRaiderType()
-    {
+    public EntityType<?> getNormalRaiderType() {
         return ModEntities.DROWNED_PIRATE;
     }
 
     @Override
-    public EntityType<?> getArcherRaiderType()
-    {
+    public EntityType<?> getArcherRaiderType() {
         return null;
     }
 
     @Override
-    public EntityType<?> getBossRaiderType()
-    {
+    public EntityType<?> getBossRaiderType() {
         return ModEntities.DROWNED_CHIEFPIRATE;
     }
 
     @Override
-    protected MutableComponent getDisplayName()
-    {
+    protected MutableComponent getDisplayName() {
         return Component.translatable(RAID_PIRATE);
     }
 
     @Override
-    protected void updateRaidBar()
-    {
+    protected void updateRaidBar() {
         super.updateRaidBar();
         raidBar.setDarkenScreen(true);
     }
 
     @Override
-    public void onFinish()
-    {
+    public void onFinish() {
         MessageUtils.format(DROWNED_PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText(), colony.getName())
-          .sendTo(colony).forManagers();
-        for (final Entity entity : raiders.keySet())
-        {
+                .sendTo(colony).forManagers();
+        for (final Entity entity : raiders.keySet()) {
             entity.remove(Entity.RemovalReason.DISCARDED);
         }
 

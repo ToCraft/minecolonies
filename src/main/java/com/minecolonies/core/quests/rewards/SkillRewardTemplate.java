@@ -13,8 +13,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 /**
  * Skill addition quest reward.
  */
-public class SkillRewardTemplate implements IQuestRewardTemplate
-{
+public class SkillRewardTemplate implements IQuestRewardTemplate {
     /**
      * The skill to assign to a target citizen.
      */
@@ -33,8 +32,7 @@ public class SkillRewardTemplate implements IQuestRewardTemplate
     /**
      * Setup the item reward.
      */
-    public SkillRewardTemplate(final Skill skill, final int target, final int qty)
-    {
+    public SkillRewardTemplate(final Skill skill, final int target, final int qty) {
         this.skill = skill;
         this.target = target;
         this.qty = qty;
@@ -42,11 +40,11 @@ public class SkillRewardTemplate implements IQuestRewardTemplate
 
     /**
      * Create the reward.
+     *
      * @param jsonObject the json to read from.
      * @return the reward object.
      */
-    public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
-    {
+    public static IQuestRewardTemplate createReward(final JsonObject jsonObject) {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
         final int qty = details.get(QUANTITY_KEY).getAsInt();
@@ -54,15 +52,12 @@ public class SkillRewardTemplate implements IQuestRewardTemplate
 
         return new SkillRewardTemplate(skill, target, qty);
     }
+
     @Override
-    public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)
-    {
-        if (target == 0)
-        {
+    public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest) {
+        if (target == 0) {
             ((CitizenData) colonyQuest.getQuestGiver()).getCitizenSkillHandler().incrementLevel(skill, qty);
-        }
-        else
-        {
+        } else {
             ((CitizenData) colonyQuest.getParticipant(target)).getCitizenSkillHandler().incrementLevel(skill, qty);
         }
     }

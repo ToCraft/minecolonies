@@ -17,47 +17,37 @@ import org.jetbrains.annotations.NotNull;
 /**
  * ----------------------- Not Documented Object ---------------------
  */
-public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestResolver
-{
+public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestResolver {
     public WarehouseConcreteRequestResolver(
-      @NotNull final ILocation location,
-      @NotNull final IToken<?> token)
-    {
+            @NotNull final ILocation location,
+            @NotNull final IToken<?> token) {
         super(location, token);
     }
 
     @Override
-    protected int getWarehouseInternalCount(final BuildingWareHouse wareHouse, final IRequest<? extends IDeliverable> requestToCheck)
-    {
+    protected int getWarehouseInternalCount(final BuildingWareHouse wareHouse, final IRequest<? extends IDeliverable> requestToCheck) {
         final IDeliverable deliverable = requestToCheck.getRequest();
-        if (!(deliverable instanceof IConcreteDeliverable))
-        {
+        if (!(deliverable instanceof IConcreteDeliverable)) {
             return 0;
         }
 
         boolean ignoreNBT = false;
         boolean ignoreDamage = false;
-        if (deliverable instanceof Stack stack)
-        {
+        if (deliverable instanceof Stack stack) {
             ignoreNBT = !stack.matchNBT();
             ignoreDamage = !stack.matchDamage();
         }
         int totalCount = 0;
-        for (final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
-        {
-            if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable neDeliverable)
-            {
+        for (final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems()) {
+            if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable neDeliverable) {
                 totalCount += Math.max(0, InventoryUtils.hasBuildingEnoughElseCount(wareHouse,
-                  new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getCount() + neDeliverable.getLeftOver()) - neDeliverable.getLeftOver());
-            }
-            else
-            {
+                        new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getCount() + neDeliverable.getLeftOver()) - neDeliverable.getLeftOver());
+            } else {
                 totalCount += InventoryUtils.hasBuildingEnoughElseCount(wareHouse,
-                  new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getCount());
+                        new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getCount());
             }
 
-            if (totalCount >= requestToCheck.getRequest().getCount())
-            {
+            if (totalCount >= requestToCheck.getRequest().getCount()) {
                 return totalCount;
             }
         }
@@ -65,8 +55,7 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
     }
 
     @Override
-    public boolean isValid()
-    {
+    public boolean isValid() {
         // Always valid
         return true;
     }

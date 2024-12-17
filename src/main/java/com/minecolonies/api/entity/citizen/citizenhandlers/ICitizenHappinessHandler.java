@@ -12,8 +12,7 @@ import java.util.List;
 /**
  * The citizen happiness handler interface.
  */
-public interface ICitizenHappinessHandler
-{
+public interface ICitizenHappinessHandler {
     /**
      * Add the modifier to the handler.
      *

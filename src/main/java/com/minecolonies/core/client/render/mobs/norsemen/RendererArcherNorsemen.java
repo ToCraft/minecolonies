@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for archer amazons.
  */
-public class RendererArcherNorsemen extends AbstractRendererNorsemen<AbstractEntityNorsemen, ModelArcherNorsemen>
-{
+public class RendererArcherNorsemen extends AbstractRendererNorsemen<AbstractEntityNorsemen, ModelArcherNorsemen> {
     /**
      * Texture of the entity.
      */
@@ -23,17 +22,14 @@ public class RendererArcherNorsemen extends AbstractRendererNorsemen<AbstractEnt
      *
      * @param context the renderManager
      */
-    public RendererArcherNorsemen(final EntityRendererProvider.Context context)
-    {
+    public RendererArcherNorsemen(final EntityRendererProvider.Context context) {
         super(context, new ModelArcherNorsemen(context.bakeLayer(ClientRegistryHandler.NORSEMEN_ARCHER)), 0.5F);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityNorsemen entity)
-    {
-        if (entity.getTextureId() == 1)
-        {
+    public ResourceLocation getTextureLocation(final AbstractEntityNorsemen entity) {
+        if (entity.getTextureId() == 1) {
             return TEXTURE2;
         }
         return TEXTURE1;

@@ -18,8 +18,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.CITIZEN_WIDTH;
 /**
  * Message for vanilla particles around a citizen, in villager-like shape.
  */
-public class VanillaParticleMessage extends AbstractClientPlayMessage
-{
+public class VanillaParticleMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "vanilla_particle_message", VanillaParticleMessage::new);
 
     /**
@@ -34,8 +33,7 @@ public class VanillaParticleMessage extends AbstractClientPlayMessage
      */
     private final SimpleParticleType type;
 
-    public VanillaParticleMessage(final double x, final double y, final double z, final SimpleParticleType type)
-    {
+    public VanillaParticleMessage(final double x, final double y, final double z, final SimpleParticleType type) {
         super(TYPE);
         this.x = x;
         this.y = y;
@@ -43,8 +41,7 @@ public class VanillaParticleMessage extends AbstractClientPlayMessage
         this.type = type;
     }
 
-    protected VanillaParticleMessage(final RegistryFriendlyByteBuf byteBuf, final PlayMessageType<?> type)
-    {
+    protected VanillaParticleMessage(final RegistryFriendlyByteBuf byteBuf, final PlayMessageType<?> type) {
         super(byteBuf, type);
         x = byteBuf.readDouble();
         y = byteBuf.readDouble();
@@ -53,8 +50,7 @@ public class VanillaParticleMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf byteBuf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf byteBuf) {
         byteBuf.writeDouble(x);
         byteBuf.writeDouble(y);
         byteBuf.writeDouble(z);
@@ -62,8 +58,7 @@ public class VanillaParticleMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    public void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    public void onExecute(final IPayloadContext ctxIn, final Player player) {
         spawnParticles(type, player.level(), x, y, z);
     }
 
@@ -76,21 +71,19 @@ public class VanillaParticleMessage extends AbstractClientPlayMessage
      * @param y            y pos
      * @param z            z pos
      */
-    private void spawnParticles(SimpleParticleType particleType, Level world, double x, double y, double z)
-    {
+    private void spawnParticles(SimpleParticleType particleType, Level world, double x, double y, double z) {
         final Random rand = new Random();
-        for (int i = 0; i < 5; ++i)
-        {
+        for (int i = 0; i < 5; ++i) {
             double d0 = rand.nextGaussian() * 0.02D;
             double d1 = rand.nextGaussian() * 0.02D;
             double d2 = rand.nextGaussian() * 0.02D;
             world.addParticle(particleType,
-              x + (rand.nextFloat() * CITIZEN_WIDTH * 2.0F) - CITIZEN_WIDTH,
-              y + 1.0D + (rand.nextFloat() * CITIZEN_HEIGHT),
-              z + (rand.nextFloat() * CITIZEN_WIDTH * 2.0F) - CITIZEN_WIDTH,
-              d0,
-              d1,
-              d2);
+                    x + (rand.nextFloat() * CITIZEN_WIDTH * 2.0F) - CITIZEN_WIDTH,
+                    y + 1.0D + (rand.nextFloat() * CITIZEN_HEIGHT),
+                    z + (rand.nextFloat() * CITIZEN_WIDTH * 2.0F) - CITIZEN_WIDTH,
+                    d0,
+                    d1,
+                    d2);
         }
     }
 }

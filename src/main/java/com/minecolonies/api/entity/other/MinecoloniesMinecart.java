@@ -29,8 +29,7 @@ import java.util.Map;
 /**
  * Special minecolonies minecart that doesn't collide.
  */
-public class MinecoloniesMinecart extends Minecart
-{
+public class MinecoloniesMinecart extends Minecart {
     /**
      * Railshape matrix.
      */
@@ -59,14 +58,12 @@ public class MinecoloniesMinecart extends Minecart
      * @param type  the entity type.
      * @param world the world.
      */
-    public MinecoloniesMinecart(final EntityType<?> type, final Level world)
-    {
+    public MinecoloniesMinecart(final EntityType<?> type, final Level world) {
         super(type, world);
     }
 
     @Override
-    protected void moveAlongTrack(BlockPos pos, BlockState state)
-    {
+    protected void moveAlongTrack(BlockPos pos, BlockState state) {
         this.fallDistance = 0.0F;
         double x = this.getX();
         double y = this.getY();
@@ -76,15 +73,13 @@ public class MinecoloniesMinecart extends Minecart
         boolean isPowered = false;
         boolean flag = false;
         BaseRailBlock abstractrailblock = (BaseRailBlock) state.getBlock();
-        if (abstractrailblock instanceof PoweredRailBlock && !((PoweredRailBlock) abstractrailblock).isActivatorRail())
-        {
+        if (abstractrailblock instanceof PoweredRailBlock && !((PoweredRailBlock) abstractrailblock).isActivatorRail()) {
             isPowered = state.getValue(PoweredRailBlock.POWERED);
             flag = !isPowered;
         }
 
         RailShape railshape = ((BaseRailBlock) state.getBlock()).getRailDirection(state, this.level(), pos, this);
-        switch (railshape)
-        {
+        switch (railshape) {
             case ASCENDING_EAST:
             case ASCENDING_WEST:
             case ASCENDING_NORTH:
@@ -104,8 +99,7 @@ public class MinecoloniesMinecart extends Minecart
         double zDif = (vecOut.getZ() - vecIn.getZ());
         double difSq = Math.sqrt(xDif * xDif + zDif * zDif);
         double difMotion = motion.x * xDif + motion.z * zDif;
-        if (difMotion < 0.0D)
-        {
+        if (difMotion < 0.0D) {
             xDif = -xDif;
             zDif = -zDif;
         }
@@ -114,15 +108,11 @@ public class MinecoloniesMinecart extends Minecart
         motion = new Vec3(veloc * xDif / difSq, motion.y, veloc * zDif / difSq);
         this.setDeltaMovement(motion);
 
-        if (flag && shouldDoRailFunctions())
-        {
+        if (flag && shouldDoRailFunctions()) {
             double tempMot = Math.sqrt(this.getDeltaMovement().horizontalDistanceSqr());
-            if (tempMot < 0.03D)
-            {
+            if (tempMot < 0.03D) {
                 this.setDeltaMovement(Vec3.ZERO);
-            }
-            else
-            {
+            } else {
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.5D, 0.0D, 0.5D));
             }
         }
@@ -134,16 +124,11 @@ public class MinecoloniesMinecart extends Minecart
         xDif = xOutDif - xInDif;
         zDif = zOutDif - zInDif;
         double xzDif;
-        if (xDif == 0.0D)
-        {
+        if (xDif == 0.0D) {
             xzDif = z - (double) pos.getZ();
-        }
-        else if (zDif == 0.0D)
-        {
+        } else if (zDif == 0.0D) {
             xzDif = x - (double) pos.getX();
-        }
-        else
-        {
+        } else {
             double d15 = x - xInDif;
             double d16 = z - zInDif;
             xzDif = (d15 * xDif + d16 * zDif) * 2.0D;
@@ -153,24 +138,19 @@ public class MinecoloniesMinecart extends Minecart
         z = zInDif + zDif * xzDif;
         this.setPos(x, y, z);
         this.moveMinecartOnRail(pos);
-        if (vecIn.getY() != 0 && Mth.floor(this.getX()) - pos.getX() == vecIn.getX() && Mth.floor(this.getZ()) - pos.getZ() == vecIn.getZ())
-        {
+        if (vecIn.getY() != 0 && Mth.floor(this.getX()) - pos.getX() == vecIn.getX() && Mth.floor(this.getZ()) - pos.getZ() == vecIn.getZ()) {
             this.setPos(this.getX(), this.getY() + (double) vecIn.getY(), this.getZ());
-        }
-        else if (vecOut.getY() != 0 && Mth.floor(this.getX()) - pos.getX() == vecOut.getX() && Mth.floor(this.getZ()) - pos.getZ() == vecOut.getZ())
-        {
+        } else if (vecOut.getY() != 0 && Mth.floor(this.getX()) - pos.getX() == vecOut.getX() && Mth.floor(this.getZ()) - pos.getZ() == vecOut.getZ()) {
             this.setPos(this.getX(), this.getY() + (double) vecOut.getY(), this.getZ());
         }
 
         this.applyNaturalSlowdown();
         Vec3 newPos = this.getPos(this.getX(), this.getY(), this.getZ());
-        if (newPos != null && posVec != null)
-        {
+        if (newPos != null && posVec != null) {
             double yMot = (posVec.y - newPos.y) * 0.05D;
             Vec3 tempMot = this.getDeltaMovement();
             double tempVeloc = Math.sqrt(tempMot.horizontalDistanceSqr());
-            if (tempVeloc > 0.0D)
-            {
+            if (tempVeloc > 0.0D) {
                 this.setDeltaMovement(tempMot.multiply((tempVeloc + yMot) / tempVeloc, 1.0D, (tempVeloc + yMot) / tempVeloc));
             }
 
@@ -179,55 +159,39 @@ public class MinecoloniesMinecart extends Minecart
 
         int xFloor = Mth.floor(this.getX());
         int zFloor = Mth.floor(this.getZ());
-        if (xFloor != pos.getX() || zFloor != pos.getZ())
-        {
+        if (xFloor != pos.getX() || zFloor != pos.getZ()) {
             Vec3 tempMot = this.getDeltaMovement();
             double temoVeloc = Math.sqrt(tempMot.horizontalDistanceSqr());
             this.setDeltaMovement(temoVeloc * (double) (xFloor - pos.getX()), tempMot.y, temoVeloc * (double) (zFloor - pos.getZ()));
         }
 
-        if (shouldDoRailFunctions())
-        {
+        if (shouldDoRailFunctions()) {
             ((BaseRailBlock) state.getBlock()).onMinecartPass(state, level(), pos, this);
         }
 
-        if (isPowered && shouldDoRailFunctions())
-        {
+        if (isPowered && shouldDoRailFunctions()) {
             Vec3 tempMot = this.getDeltaMovement();
             double tempVeloc = Math.sqrt(tempMot.horizontalDistanceSqr());
-            if (tempVeloc > 0.01D)
-            {
+            if (tempVeloc > 0.01D) {
                 this.setDeltaMovement(tempMot.add(tempMot.x / tempVeloc * 0.06D, 0.0D, tempMot.z / tempVeloc * 0.06D));
-            }
-            else
-            {
+            } else {
                 Vec3 mot = this.getDeltaMovement();
                 double tempX = mot.x;
                 double tempZ = mot.z;
-                if (railshape == RailShape.EAST_WEST)
-                {
-                    if (this.isNormalCube(pos.west()))
-                    {
+                if (railshape == RailShape.EAST_WEST) {
+                    if (this.isNormalCube(pos.west())) {
                         tempX = 0.02D;
-                    }
-                    else if (this.isNormalCube(pos.east()))
-                    {
+                    } else if (this.isNormalCube(pos.east())) {
                         tempX = -0.02D;
                     }
-                }
-                else
-                {
-                    if (railshape != RailShape.NORTH_SOUTH)
-                    {
+                } else {
+                    if (railshape != RailShape.NORTH_SOUTH) {
                         return;
                     }
 
-                    if (this.isNormalCube(pos.north()))
-                    {
+                    if (this.isNormalCube(pos.north())) {
                         tempZ = 0.02D;
-                    }
-                    else if (this.isNormalCube(pos.south()))
-                    {
+                    } else if (this.isNormalCube(pos.south())) {
                         tempZ = -0.02D;
                     }
                 }
@@ -238,94 +202,74 @@ public class MinecoloniesMinecart extends Minecart
     }
 
     @Override
-    public void destroy(final DamageSource source)
-    {
+    public void destroy(final DamageSource source) {
         this.kill();
     }
 
-    private boolean isNormalCube(BlockPos pos)
-    {
+    private boolean isNormalCube(BlockPos pos) {
         return this.level().getBlockState(pos).isRedstoneConductor(this.level(), pos);
     }
 
-    private static Pair<Vec3i, Vec3i> getShapeMatrix(RailShape p_226573_0_)
-    {
+    private static Pair<Vec3i, Vec3i> getShapeMatrix(RailShape p_226573_0_) {
         return MATRIX.get(p_226573_0_);
     }
 
     @Override
-    public InteractionResult interact(final Player p_184230_1_, final InteractionHand p_184230_2_)
-    {
+    public InteractionResult interact(final Player p_184230_1_, final InteractionHand p_184230_2_) {
         return InteractionResult.FAIL;
     }
 
     @Override
-    public boolean isPickable()
-    {
+    public boolean isPickable() {
         return false;
     }
 
     @NotNull
-    public AbstractMinecart.Type getMinecartType()
-    {
+    public AbstractMinecart.Type getMinecartType() {
         return AbstractMinecart.Type.RIDEABLE;
     }
 
     @Override
-    public void push(@NotNull final Entity entityIn)
-    {
+    public void push(@NotNull final Entity entityIn) {
         // Do nothing
     }
 
     @Override
-    public void playerTouch(final Player entityIn)
-    {
+    public void playerTouch(final Player entityIn) {
         // Do nothing
     }
 
     @Override
-    public boolean isPushable()
-    {
+    public boolean isPushable() {
         return false;
     }
 
     @Override
-    public boolean canCollideWith(final Entity p_38168_)
-    {
+    public boolean canCollideWith(final Entity p_38168_) {
         return false;
     }
 
     @Override
-    public void tick()
-    {
-        if (this.getHurtTime() > 0)
-        {
+    public void tick() {
+        if (this.getHurtTime() > 0) {
             this.setHurtTime(this.getHurtTime() - 1);
         }
 
-        if (this.getDamage() > 0.0F)
-        {
+        if (this.getDamage() > 0.0F) {
             this.setDamage(this.getDamage() - 1.0F);
         }
 
         this.checkBelowWorld();
-        if (this.level().isClientSide)
-        {
-            if (this.lerpSteps > 0)
-            {
+        if (this.level().isClientSide) {
+            if (this.lerpSteps > 0) {
                 this.lerpPositionAndRotationStep(this.lerpSteps, this.lerpX, this.lerpY, this.lerpZ, this.lerpYRot, this.lerpXRot);
                 --this.lerpSteps;
-            }
-            else
-            {
+            } else {
                 this.reapplyPosition();
                 this.setRot(this.getYRot(), this.getXRot());
             }
-        }
-        else
-        {
-            if (!this.isNoGravity())
-            {
+        } else {
+            if (!this.isNoGravity()) {
                 double d0 = this.isInWater() ? -0.005D : -0.04D;
                 this.setDeltaMovement(this.getDeltaMovement().add(0.0D, d0, 0.0D));
             }
@@ -333,23 +277,18 @@ public class MinecoloniesMinecart extends Minecart
             int k = Mth.floor(this.getX());
             int i = Mth.floor(this.getY());
             int j = Mth.floor(this.getZ());
-            if (this.level().getBlockState(new BlockPos(k, i - 1, j)).is(BlockTags.RAILS))
-            {
+            if (this.level().getBlockState(new BlockPos(k, i - 1, j)).is(BlockTags.RAILS)) {
                 --i;
             }
 
             BlockPos blockpos = new BlockPos(k, i, j);
             BlockState blockstate = this.level().getBlockState(blockpos);
-            if (canUseRail() && BaseRailBlock.isRail(blockstate))
-            {
+            if (canUseRail() && BaseRailBlock.isRail(blockstate)) {
                 this.moveAlongTrack(blockpos, blockstate);
-                if (blockstate.getBlock() instanceof PoweredRailBlock && ((PoweredRailBlock) blockstate.getBlock()).isActivatorRail())
-                {
+                if (blockstate.getBlock() instanceof PoweredRailBlock && ((PoweredRailBlock) blockstate.getBlock()).isActivatorRail()) {
                     this.activateMinecart(k, i, j, blockstate.getValue(PoweredRailBlock.POWERED));
                 }
-            }
-            else
-            {
+            } else {
                 this.comeOffTrack();
             }
 
@@ -357,26 +296,22 @@ public class MinecoloniesMinecart extends Minecart
             this.setXRot(0.0F);
             double d1 = this.xo - this.getX();
             double d3 = this.zo - this.getZ();
-            if (d1 * d1 + d3 * d3 > 0.001D)
-            {
+            if (d1 * d1 + d3 * d3 > 0.001D) {
                 this.setYRot((float) (Mth.atan2(d3, d1) * 180.0D / Math.PI));
-                if (this.flipped)
-                {
+                if (this.flipped) {
                     this.setYRot(this.getYRot() + 180.0F);
                 }
             }
 
             double d4 = (double) Mth.wrapDegrees(this.getYRot() - this.yRotO);
-            if (d4 < -170.0D || d4 >= 170.0D)
-            {
+            if (d4 < -170.0D || d4 >= 170.0D) {
                 this.setYRot(this.getYRot() + 180.0F);
                 this.flipped = !this.flipped;
             }
 
             this.setRot(this.getYRot(), this.getXRot());
             this.updateInWaterStateAndDoFluidPushing();
-            if (this.isInLava())
-            {
+            if (this.isInLava()) {
                 this.lavaHurt();
                 this.fallDistance *= 0.5F;
             }
@@ -384,8 +319,7 @@ public class MinecoloniesMinecart extends Minecart
             this.firstTick = false;
         }
 
-        if (this.tickCount % 20 == 19 && getPassengers().isEmpty())
-        {
+        if (this.tickCount % 20 == 19 && getPassengers().isEmpty()) {
             this.remove(RemovalReason.DISCARDED);
         }
     }

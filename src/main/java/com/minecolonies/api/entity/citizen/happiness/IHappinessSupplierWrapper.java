@@ -7,10 +7,10 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 /**
  * Wrapper to deal with happiness suppliers.
  */
-public interface IHappinessSupplierWrapper extends INBTSerializable<CompoundTag>
-{
+public interface IHappinessSupplierWrapper extends INBTSerializable<CompoundTag> {
     /**
      * Get the matching value.
+     *
      * @param citizenData the context.
      * @return the value.
      */
@@ -18,6 +18,7 @@ public interface IHappinessSupplierWrapper extends INBTSerializable<CompoundTag>
 
     /**
      * Get the last cache value in absence of the citizen.
+     *
      * @return the last cached value.
      */
     double getLastCachedValue();

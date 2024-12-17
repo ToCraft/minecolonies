@@ -17,25 +17,20 @@ import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingBar
 /**
  * Message for hiring spies at the cost of gold.
  */
-public class HireSpiesMessage extends AbstractColonyServerMessage
-{
+public class HireSpiesMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "hire_spies", HireSpiesMessage::new);
 
-    public HireSpiesMessage(final IColony colony)
-    {
+    public HireSpiesMessage(final IColony colony) {
         super(TYPE, colony);
     }
 
-    protected HireSpiesMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected HireSpiesMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
-        if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), stack -> stack.getItem() == Items.GOLD_INGOT) >= SPIES_GOLD_COST)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
+        if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), stack -> stack.getItem() == Items.GOLD_INGOT) >= SPIES_GOLD_COST) {
             InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), new ItemStack(Items.GOLD_INGOT), SPIES_GOLD_COST);
             colony.getRaiderManager().setSpiesEnabled(true);
             colony.markDirty();

@@ -1,18 +1,23 @@
 package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.ItemListModuleView;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -21,8 +26,7 @@ import static org.jline.utils.AttributedStyle.WHITE;
 /**
  * BOWindow for all the filterable lists.
  */
-public class ItemListModuleWindow extends AbstractModuleWindow
-{
+public class ItemListModuleWindow extends AbstractModuleWindow {
     /**
      * Resource scrolling list.
      */
@@ -60,14 +64,13 @@ public class ItemListModuleWindow extends AbstractModuleWindow
 
     /**
      * @param building   the building it belongs to.
-     * @param res   the building res id.
-     * @param moduleView   the assigned module view.
+     * @param res        the building res id.
+     * @param moduleView the assigned module view.
      */
     public ItemListModuleWindow(
-      final String res,
-      final IBuildingView building,
-      final IItemListModuleView moduleView)
-    {
+            final String res,
+            final IBuildingView building,
+            final IItemListModuleView moduleView) {
         super(building, res);
 
         registerButton(BUTTON_SWITCH, this::switchClicked);
@@ -83,8 +86,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
 
         window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
-            if (!newFilter.equals(filter))
-            {
+            if (!newFilter.equals(filter)) {
                 filter = newFilter;
                 this.tick = 10;
             }
@@ -93,17 +95,14 @@ public class ItemListModuleWindow extends AbstractModuleWindow
 
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         updateResources();
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
-        if (tick > 0 && --tick == 0)
-        {
+        if (tick > 0 && --tick == 0) {
             updateResources();
         }
     }
@@ -113,20 +112,16 @@ public class ItemListModuleWindow extends AbstractModuleWindow
      *
      * @param button clicked button.
      */
-    private void switchClicked(@NotNull final Button button)
-    {
+    private void switchClicked(@NotNull final Button button) {
         final int row = resourceList.getListElementIndexByPane(button);
         final ItemStorage item = currentDisplayedList.get(row);
         final boolean on = button.getText().equals(Component.translatableEscape(ON));
         final boolean add = (on && isInverted) || (!on && !isInverted);
         final IItemListModuleView module = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id));
 
-        if (add)
-        {
+        if (add) {
             module.addItem(item);
-        }
-        else
-        {
+        } else {
             module.removeItem(item);
         }
 
@@ -136,8 +131,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     /**
      * Fired when reset to default has been clicked.
      */
-    private void reset()
-    {
+    private void reset() {
         final IItemListModuleView module = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id));
 
         module.clearItems();
@@ -148,16 +142,13 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     /**
      * Update the item list.
      */
-    private void updateResources()
-    {
+    private void updateResources() {
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
-                                                                || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
+                || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         currentDisplayedList.clear();
-        for (final ItemStorage storage : groupedItemList)
-        {
-            if (filterPredicate.test(storage.getItemStack()))
-            {
+        for (final ItemStorage storage : groupedItemList) {
+            if (filterPredicate.test(storage.getItemStack())) {
                 currentDisplayedList.add(storage);
             }
         }
@@ -167,24 +158,18 @@ public class ItemListModuleWindow extends AbstractModuleWindow
         updateResourceList();
     }
 
-    protected void applySorting(final List<ItemStorage> displayedList)
-    {
+    protected void applySorting(final List<ItemStorage> displayedList) {
         displayedList.sort((o1, o2) -> {
 
             boolean o1Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o1);
 
             boolean o2Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o2);
 
-            if(!o1Allowed && o2Allowed)
-            {
+            if (!o1Allowed && o2Allowed) {
                 return isInverted ? -1 : 1;
-            }
-            else if(o1Allowed && !o2Allowed)
-            {
+            } else if (o1Allowed && !o2Allowed) {
                 return isInverted ? 1 : -1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
         });
@@ -193,21 +178,18 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     /**
      * Updates the resource list in the GUI with the info we need.
      */
-    protected void updateResourceList()
-    {
+    protected void updateResourceList() {
         resourceList.enable();
         resourceList.show();
 
         //Creates a dataProvider for the unemployed resourceList.
-        resourceList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        resourceList.setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return currentDisplayedList.size();
             }
 
@@ -217,22 +199,18 @@ public class ItemListModuleWindow extends AbstractModuleWindow
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final ItemStack resource = currentDisplayedList.get(index).getItemStack();
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
                 resourceLabel.setText(resource.getHoverName());
                 resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(new ItemStorage(resource));
+                final boolean isAllowedItem = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(new ItemStorage(resource));
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
-                if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))
-                {
+                if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem)) {
                     switchButton.setText(Component.translatableEscape(ON));
-                }
-                else
-                {
+                } else {
                     switchButton.setText(Component.translatableEscape(OFF));
                 }
             }

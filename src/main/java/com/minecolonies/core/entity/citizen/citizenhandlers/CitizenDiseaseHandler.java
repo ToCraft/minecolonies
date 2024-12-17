@@ -22,8 +22,7 @@ import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_HE
 /**
  * Handler taking care of citizens getting stuck.
  */
-public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
-{
+public class CitizenDiseaseHandler implements ICitizenDiseaseHandler {
     /**
      * Health at which citizens seek a doctor.
      */
@@ -69,16 +68,15 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      * The initial citizen count
      */
     private static final int initialCitizenCount = IMinecoloniesAPI.getInstance()
-      .getConfig()
-      .getServer().initialCitizenAmount.get();
+            .getConfig()
+            .getServer().initialCitizenAmount.get();
 
     /**
      * Constructor for the experience handler.
      *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenDiseaseHandler(final ICitizenData citizen)
-    {
+    public CitizenDiseaseHandler(final ICitizenData citizen) {
         this.citizenData = citizen;
     }
 
@@ -86,28 +84,23 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      * Called in the citizen every few ticks to check for illness. Called every 60 ticks
      */
     @Override
-    public void update(final int tickRate)
-    {
-        if (canBecomeSick())
-        {
+    public void update(final int tickRate) {
+        if (canBecomeSick()) {
             final double citizenModifier = citizenData.getDiseaseModifier();
             final int configModifier = MineColonies.getConfig().getServer().diseaseModifier.get();
 
             if (!IColonyManager.getInstance().getCompatibilityManager().getDiseases().isEmpty() &&
-                citizenData.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier * 10)
-            {
+                    citizenData.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier * 10) {
                 this.disease = IColonyManager.getInstance().getCompatibilityManager().getRandomDisease();
             }
         }
 
-        if (immunityTicks > 0)
-        {
+        if (immunityTicks > 0) {
             immunityTicks -= tickRate;
         }
     }
 
-    public void setDisease(final String disease)
-    {
+    public void setDisease(final String disease) {
         this.disease = disease;
     }
 
@@ -116,46 +109,39 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      *
      * @return true if so.
      */
-    private boolean canBecomeSick()
-    {
+    private boolean canBecomeSick() {
         return !isSick()
-            && citizenData.getEntity().isPresent()
-            && citizenData.getColony().isActive()
-            && !(citizenData.getJob() instanceof JobHealer)
-                 && immunityTicks <= 0
-            && citizenData.getColony().getCitizenManager().getCurrentCitizenCount() > initialCitizenCount;
+                && citizenData.getEntity().isPresent()
+                && citizenData.getColony().isActive()
+                && !(citizenData.getJob() instanceof JobHealer)
+                && immunityTicks <= 0
+                && citizenData.getColony().getCitizenManager().getCurrentCitizenCount() > initialCitizenCount;
     }
 
     @Override
-    public void onCollission(final ICitizenData citizen)
-    {
+    public void onCollission(final ICitizenData citizen) {
         if (citizen.getCitizenDiseaseHandler().isSick()
-              && canBecomeSick()
-              && citizen.getRandom().nextInt(ONE_HUNDRED_PERCENT) < 1)
-        {
-            if (citizen.getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS) <= 0 || citizen.getRandom().nextBoolean())
-            {
+                && canBecomeSick()
+                && citizen.getRandom().nextInt(ONE_HUNDRED_PERCENT) < 1) {
+            if (citizen.getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS) <= 0 || citizen.getRandom().nextBoolean()) {
                 this.disease = citizen.getCitizenDiseaseHandler().getDisease();
             }
         }
     }
 
     @Override
-    public boolean isHurt()
-    {
+    public boolean isHurt() {
         return citizenData.getEntity().isPresent() && !(citizenData.getJob() instanceof AbstractJobGuard) && citizenData.getEntity().get().getHealth() < SEEK_DOCTOR_HEALTH
-            && citizenData.getSaturation() > LOW_SATURATION;
+                && citizenData.getSaturation() > LOW_SATURATION;
     }
 
     @Override
-    public boolean isSick()
-    {
+    public boolean isSick() {
         return !disease.isEmpty();
     }
 
     @Override
-    public void write(final CompoundTag compound)
-    {
+    public void write(final CompoundTag compound) {
         CompoundTag diseaseTag = new CompoundTag();
         diseaseTag.putString(TAG_DISEASE, disease);
         diseaseTag.putInt(TAG_IMMUNITY, immunityTicks);
@@ -163,14 +149,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     }
 
     @Override
-    public void read(final CompoundTag compound)
-    {
-        if (compound.contains(TAG_DISEASE))
-        {
+    public void read(final CompoundTag compound) {
+        if (compound.contains(TAG_DISEASE)) {
             CompoundTag diseaseTag = compound.getCompound(TAG_DISEASE);
             // cure diseases that have been removed from the configuration file.
-            if (IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseTag.getString(TAG_DISEASE)) != null)
-            {
+            if (IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseTag.getString(TAG_DISEASE)) != null) {
                 this.disease = diseaseTag.getString(TAG_DISEASE);
             }
             this.immunityTicks = diseaseTag.getInt(TAG_IMMUNITY);
@@ -178,38 +161,29 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     }
 
     @Override
-    public String getDisease()
-    {
+    public String getDisease() {
         return this.disease;
     }
 
     @Override
-    public void cure()
-    {
+    public void cure() {
         this.disease = "";
         sleepsAtHospital = false;
-        if (citizenData.isAsleep() && citizenData.getEntity().isPresent())
-        {
+        if (citizenData.isAsleep() && citizenData.getEntity().isPresent()) {
             citizenData.getEntity().get().stopSleeping();
             final BlockPos hospitalPos = citizenData.getColony().getBuildingManager().getBestBuilding(citizenData.getEntity().get(), BuildingCook.class);
             final IColony colony = citizenData.getColony();
             final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
-            if (hospital != null)
-            {
+            if (hospital != null) {
                 hospital.onWakeUp();
             }
 
-            if (citizenData.getColony().getResearchManager().getResearchEffects().getEffectStrength(VACCINES) > 0)
-            {
+            if (citizenData.getColony().getResearchManager().getResearchEffects().getEffectStrength(VACCINES) > 0) {
                 immunityTicks = IMMUNITY_TIME * VACCINE_MODIFIER;
-            }
-            else
-            {
+            } else {
                 immunityTicks = IMMUNITY_TIME;
             }
-        }
-        else
-        {
+        } else {
             // Less immunity time if not cored in bed, but still have immunity time.
             immunityTicks = IMMUNITY_TIME / 2;
         }
@@ -219,14 +193,12 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     }
 
     @Override
-    public boolean sleepsAtHospital()
-    {
+    public boolean sleepsAtHospital() {
         return sleepsAtHospital;
     }
 
     @Override
-    public void setSleepsAtHospital(final boolean isAtHospital)
-    {
+    public void setSleepsAtHospital(final boolean isAtHospital) {
         sleepsAtHospital = isAtHospital;
     }
 }

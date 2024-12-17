@@ -13,8 +13,7 @@ import java.util.Map;
 /**
  * Information about a resource. - How many are needed to finish the build - How many are available to the builder - How many are in the player's inventory (client side only)
  */
-public class BuildingBuilderResource extends ItemStorage
-{
+public class BuildingBuilderResource extends ItemStorage {
     private int amountAvailable;
     private int amountPlayer;
 
@@ -30,8 +29,7 @@ public class BuildingBuilderResource extends ItemStorage
      * @param amount    the amount.
      * @param available the amount available.
      */
-    public BuildingBuilderResource(@NotNull final ItemStack stack, final int amount, final int available)
-    {
+    public BuildingBuilderResource(@NotNull final ItemStack stack, final int amount, final int available) {
         this(stack, amount);
         this.amountAvailable = available;
     }
@@ -42,8 +40,7 @@ public class BuildingBuilderResource extends ItemStorage
      * @param stack  the stack.
      * @param amount amount for this resource.
      */
-    public BuildingBuilderResource(@NotNull final ItemStack stack, final int amount)
-    {
+    public BuildingBuilderResource(@NotNull final ItemStack stack, final int amount) {
         super(stack, amount, false);
         this.amountAvailable = 0;
         this.amountPlayer = 0;
@@ -54,8 +51,7 @@ public class BuildingBuilderResource extends ItemStorage
      *
      * @param amount to add to the current amount available
      */
-    public void addAvailable(final int amount)
-    {
+    public void addAvailable(final int amount) {
         this.amountAvailable += amount;
     }
 
@@ -67,47 +63,39 @@ public class BuildingBuilderResource extends ItemStorage
      *
      * @return the amount needed
      */
-    public int getMissingFromPlayer()
-    {
+    public int getMissingFromPlayer() {
         return amountPlayer + amountAvailable - getAmount();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         final int itemId = Item.getId(getItem());
-        final int hashCode = getItemStack().getComponentsPatch().hashCode();;
+        final int hashCode = getItemStack().getComponentsPatch().hashCode();
+        ;
         return getName() + "(p:"
-                 + amountPlayer + " a:"
-                 + amountAvailable + " n:" + getAmount()
-                 + " id=" + itemId
-                 + " damage=" + getDamageValue() + "-"
-                 + hashCode
-                 + ") => " + getAvailabilityStatus().name();
+                + amountPlayer + " a:"
+                + amountAvailable + " n:" + getAmount()
+                + " id=" + itemId
+                + " damage=" + getDamageValue() + "-"
+                + hashCode
+                + ") => " + getAvailabilityStatus().name();
     }
 
-    public String getName()
-    {
+    public String getName() {
         //It is the bet way ?
         return getItemStack().getHoverName().getString();
     }
 
-    public RessourceAvailability getAvailabilityStatus()
-    {
-        if (getAmount() > amountAvailable)
-        {
-            if (amountPlayer == 0)
-            {
-                if (amountInDelivery > 0)
-                {
+    public RessourceAvailability getAvailabilityStatus() {
+        if (getAmount() > amountAvailable) {
+            if (amountPlayer == 0) {
+                if (amountInDelivery > 0) {
                     return RessourceAvailability.IN_DELIVERY;
                 }
                 return RessourceAvailability.DONT_HAVE;
             }
-            if (amountPlayer < (getAmount() - amountAvailable))
-            {
-                if (amountInDelivery > 0)
-                {
+            if (amountPlayer < (getAmount() - amountAvailable)) {
+                if (amountInDelivery > 0) {
                     return RessourceAvailability.IN_DELIVERY;
                 }
                 return RessourceAvailability.NEED_MORE;
@@ -118,16 +106,13 @@ public class BuildingBuilderResource extends ItemStorage
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return 31 * (31 * super.hashCode() + amountAvailable) + amountPlayer;
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (super.equals(o))
-        {
+    public boolean equals(final Object o) {
+        if (super.equals(o)) {
             final BuildingBuilderResource that = (BuildingBuilderResource) o;
 
             return this.getAvailable() == that.getAvailable() && this.getPlayerAmount() == that.getPlayerAmount();
@@ -143,8 +128,7 @@ public class BuildingBuilderResource extends ItemStorage
      *
      * @return the amount available
      */
-    public int getAvailable()
-    {
+    public int getAvailable() {
         return amountAvailable;
     }
 
@@ -153,8 +137,7 @@ public class BuildingBuilderResource extends ItemStorage
      *
      * @param amount this is the new amount available
      */
-    public void setAvailable(final int amount)
-    {
+    public void setAvailable(final int amount) {
         amountAvailable = amount;
     }
 
@@ -163,8 +146,7 @@ public class BuildingBuilderResource extends ItemStorage
      *
      * @return the amount
      */
-    public int getPlayerAmount()
-    {
+    public int getPlayerAmount() {
         return amountPlayer;
     }
 
@@ -173,26 +155,22 @@ public class BuildingBuilderResource extends ItemStorage
      *
      * @param amount of items
      */
-    public void setPlayerAmount(final int amount)
-    {
+    public void setPlayerAmount(final int amount) {
         amountPlayer = amount;
     }
 
-    public int getAmountInDelivery()
-    {
+    public int getAmountInDelivery() {
         return amountInDelivery;
     }
 
-    public void setAmountInDelivery(final int amountInDelivery)
-    {
+    public void setAmountInDelivery(final int amountInDelivery) {
         this.amountInDelivery = amountInDelivery;
     }
 
     /**
      * Availability status of the resource. according to the builder's chest, inventory and the player's inventory
      */
-    public enum RessourceAvailability
-    {
+    public enum RessourceAvailability {
         NOT_NEEDED,
         IN_DELIVERY,
         DONT_HAVE,
@@ -205,15 +183,12 @@ public class BuildingBuilderResource extends ItemStorage
      * <p>
      * This is use in the gui to order the list of resources needed.
      */
-    public static class ResourceComparator implements Comparator<BuildingBuilderResource>, Serializable
-    {
-        private static final long                                serialVersionUID = 1;
-        private final        Map<RessourceAvailability, Integer> order            = new HashMap<>();
+    public static class ResourceComparator implements Comparator<BuildingBuilderResource>, Serializable {
+        private static final long serialVersionUID = 1;
+        private final Map<RessourceAvailability, Integer> order = new HashMap<>();
 
-        public ResourceComparator(final RessourceAvailability... resourceOrder)
-        {
-            for (int i = 0; i < resourceOrder.length; i++)
-            {
+        public ResourceComparator(final RessourceAvailability... resourceOrder) {
+            for (int i = 0; i < resourceOrder.length; i++) {
                 order.put(resourceOrder[i], i);
             }
         }
@@ -224,15 +199,12 @@ public class BuildingBuilderResource extends ItemStorage
          * We want the item availalable in the player inventory first and the one not needed last In alphabetical order otherwise
          */
         @Override
-        public int compare(final BuildingBuilderResource resource1, final BuildingBuilderResource resource2)
-        {
-            if (resource1.getAvailabilityStatus() == resource2.getAvailabilityStatus())
-            {
+        public int compare(final BuildingBuilderResource resource1, final BuildingBuilderResource resource2) {
+            if (resource1.getAvailabilityStatus() == resource2.getAvailabilityStatus()) {
                 return resource1.getName().compareTo(resource2.getName());
             }
 
-            if (!order.isEmpty())
-            {
+            if (!order.isEmpty()) {
                 return order.get(resource2.getAvailabilityStatus()).compareTo(order.get(resource1.getAvailabilityStatus()));
             }
 

@@ -21,22 +21,19 @@ import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
 /**
  * Special quarrier job. Defines miner model and specialized job behaviour.
  */
-public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarrier> implements IJobWithExternalWorkStations
-{
+public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarrier> implements IJobWithExternalWorkStations {
     /**
      * Creates a new instance of the miner job.
      *
      * @param entity the entity to add the job to.
      */
-    public JobQuarrier(final ICitizenData entity)
-    {
+    public JobQuarrier(final ICitizenData entity) {
         super(entity);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.MINER_ID;
     }
 
@@ -47,14 +44,12 @@ public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarr
      */
     @NotNull
     @Override
-    public EntityAIQuarrier generateAI()
-    {
+    public EntityAIQuarrier generateAI() {
         return new EntityAIQuarrier(this);
     }
 
     @Override
-    public double getDiseaseModifier()
-    {
+    public double getDiseaseModifier() {
         return 2;
     }
 
@@ -63,12 +58,9 @@ public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarr
      *
      * @return quarry building or null
      */
-    public IBuilding findQuarry()
-    {
-        for (final IBuilding building : getColony().getBuildingManager().getBuildings().values())
-        {
-            if (building.getBuildingType().getRegistryName().getPath().contains("quarry") && building.getFirstModuleOccurance(QuarryModule.class).hasAssignedCitizen(getCitizen()))
-            {
+    public IBuilding findQuarry() {
+        for (final IBuilding building : getColony().getBuildingManager().getBuildings().values()) {
+            if (building.getBuildingType().getRegistryName().getPath().contains("quarry") && building.getFirstModuleOccurance(QuarryModule.class).hasAssignedCitizen(getCitizen())) {
                 return building;
             }
         }
@@ -77,15 +69,12 @@ public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarr
     }
 
     @Override
-    public boolean assignTo(final IAssignsJob module)
-    {
-        if (module == null || !module.getJobEntry().equals(getJobRegistryEntry()))
-        {
+    public boolean assignTo(final IAssignsJob module) {
+        if (module == null || !module.getJobEntry().equals(getJobRegistryEntry())) {
             return false;
         }
 
-        if (module instanceof QuarryModule)
-        {
+        if (module instanceof QuarryModule) {
             return true;
         }
 
@@ -93,17 +82,14 @@ public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarr
     }
 
     @Override
-    public List<IBuilding> getWorkStations()
-    {
+    public List<IBuilding> getWorkStations() {
         final IBuilding building = findQuarry();
         return building == null ? Collections.emptyList() : ImmutableList.of(building);
     }
 
     @Override
-    public boolean ignoresDamage(@NotNull final DamageSource damageSource)
-    {
-        if (damageSource.typeHolder().is(FIRE_DAMAGE_PREDICATE))
-        {
+    public boolean ignoresDamage(@NotNull final DamageSource damageSource) {
+        if (damageSource.typeHolder().is(FIRE_DAMAGE_PREDICATE)) {
             return getColony().getResearchManager().getResearchEffects().getEffectStrength(FIRE_RES) > 0;
         }
 

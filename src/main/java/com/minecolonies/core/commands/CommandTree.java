@@ -6,8 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandTree
-{
+public class CommandTree {
     /**
      * Tree root node
      */
@@ -15,15 +14,14 @@ public class CommandTree
     /**
      * List of child trees, commands are directly baked into rootNode
      */
-    private final List<CommandTree>                     childNodes;
+    private final List<CommandTree> childNodes;
 
     /**
      * Creates new command tree.
      *
      * @param commandName root vertex name
      */
-    protected CommandTree(final String commandName)
-    {
+    protected CommandTree(final String commandName) {
         rootNode = LiteralArgumentBuilder.literal(commandName);
         childNodes = new ArrayList<>();
     }
@@ -34,8 +32,7 @@ public class CommandTree
      * @param tree new tree to add
      * @return this
      */
-    protected CommandTree addNode(final CommandTree tree)
-    {
+    protected CommandTree addNode(final CommandTree tree) {
         childNodes.add(tree);
         return this;
     }
@@ -46,8 +43,7 @@ public class CommandTree
      * @param command new commnad to add
      * @return this
      */
-    protected CommandTree addNode(final LiteralArgumentBuilder<CommandSourceStack> command)
-    {
+    protected CommandTree addNode(final LiteralArgumentBuilder<CommandSourceStack> command) {
         rootNode.then(command.build());
         return this;
     }
@@ -57,10 +53,8 @@ public class CommandTree
      *
      * @return tree as command node
      */
-    protected LiteralArgumentBuilder<CommandSourceStack> build()
-    {
-        for (final CommandTree ct : childNodes)
-        {
+    protected LiteralArgumentBuilder<CommandSourceStack> build() {
+        for (final CommandTree ct : childNodes) {
             addNode(ct.build());
         }
         return rootNode;

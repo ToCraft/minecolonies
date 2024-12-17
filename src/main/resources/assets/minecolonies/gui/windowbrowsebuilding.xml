@@ -9,7 +9,7 @@
     <text id="constructionName" size="90 11" pos="50 14" textalign="MIDDLE" color="blue"/>
 
     <text id="loading" size="90 11" pos="50 116" textalign="MIDDLE" color="green"
-           label="$(com.minecolonies.command.gui.browsebuilding.loading)" />
+          label="$(com.minecolonies.command.gui.browsebuilding.loading)"/>
     <image id="progress" size="0 16" pos="50 130" source="minecolonies:progress_block"/>
 
     <list id="buildings" size="162 80%" pos="15 30" visible="false">

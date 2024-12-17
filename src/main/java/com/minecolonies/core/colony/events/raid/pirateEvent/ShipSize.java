@@ -5,19 +5,18 @@ import com.minecolonies.api.util.constant.ColonyConstants;
 /**
  * Enum for ship sizes.
  */
-public enum ShipSize
-{
+public enum ShipSize {
     SMALL(ColonyConstants.SMALL_HORDE_SIZE, ColonyConstants.SMALL_SHIP, ColonyConstants.SMALL_HORDE_MESSAGE_ID, 1, 2, 0, 0),
     MEDIUM(ColonyConstants.MEDIUM_HORDE_SIZE,
-      ColonyConstants.MEDIUM_SHIP,
-      ColonyConstants.MEDIUM_HORDE_MESSAGE_ID,
-      4,
-      1, 1, 1),
+            ColonyConstants.MEDIUM_SHIP,
+            ColonyConstants.MEDIUM_HORDE_MESSAGE_ID,
+            4,
+            1, 1, 1),
     BIG(ColonyConstants.BIG_HORDE_SIZE,
-      ColonyConstants.BIG_SHIP,
-      ColonyConstants.BIG_HORDE_MESSAGE_ID,
-      10,
-      2, 2, 1);
+            ColonyConstants.BIG_SHIP,
+            ColonyConstants.BIG_HORDE_MESSAGE_ID,
+            10,
+            2, 2, 1);
 
     /**
      * The ships raidlevel
@@ -56,8 +55,7 @@ public enum ShipSize
     public final int archer;
     public final int boss;
 
-    ShipSize(final int raidLevel, final String schematicName, final int messageID, final int spawnerCount, final int normal, final int archer, final int boss)
-    {
+    ShipSize(final int raidLevel, final String schematicName, final int messageID, final int spawnerCount, final int normal, final int archer, final int boss) {
         this.raidLevel = raidLevel;
         this.schematicPrefix = schematicName;
         this.messageID = messageID;
@@ -73,19 +71,13 @@ public enum ShipSize
      * @param raidLevel the raid level.
      * @return the ship size.
      */
-    public static ShipSize getShipForRaiderAmount(final int raidLevel)
-    {
+    public static ShipSize getShipForRaiderAmount(final int raidLevel) {
         ShipSize shipSize;
-        if (raidLevel <= SMALL_SHIP_SIZE_AMOUNT)
-        {
+        if (raidLevel <= SMALL_SHIP_SIZE_AMOUNT) {
             shipSize = SMALL;
-        }
-        else if (raidLevel < MEDIUM_SHIP_SIZE_AMOUNT)
-        {
+        } else if (raidLevel < MEDIUM_SHIP_SIZE_AMOUNT) {
             shipSize = MEDIUM;
-        }
-        else
-        {
+        } else {
             shipSize = BIG;
         }
         return shipSize;

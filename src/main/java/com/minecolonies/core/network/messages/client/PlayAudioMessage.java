@@ -22,8 +22,7 @@ import java.util.List;
 /**
  * Asks the client to play a specific music
  */
-public class PlayAudioMessage extends AbstractClientPlayMessage
-{
+public class PlayAudioMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "play_audio", PlayAudioMessage::new);
 
     /**
@@ -37,34 +36,30 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
      *
      * @param event the sound event.
      */
-    public PlayAudioMessage(final SoundEvent event)
-    {
+    public PlayAudioMessage(final SoundEvent event) {
         this(event, SoundSource.MUSIC);
     }
 
     /**
      * Create a play music message with a specific sound event.
      *
-     * @param event the sound event.
+     * @param event    the sound event.
      * @param category the sound category to play on
      */
-    public PlayAudioMessage(final SoundEvent event, final SoundSource category)
-    {
+    public PlayAudioMessage(final SoundEvent event, final SoundSource category) {
         super(TYPE);
         this.soundEvent = event;
         this.category = category;
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         // TODO: switch to proper registry
         buf.writeVarInt(category.ordinal());
         buf.writeResourceLocation(BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent));
     }
 
-    protected PlayAudioMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected PlayAudioMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.category = SoundSource.values()[buf.readVarInt()];
         this.soundEvent = BuiltInRegistries.SOUND_EVENT.get(buf.readResourceLocation());
@@ -72,35 +67,31 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
-          soundEvent, category,
-          1.0F, 1.0F, RandomSource.create(), 0.0, 0.0, 0.0));
+                soundEvent, category,
+                1.0F, 1.0F, RandomSource.create(), 0.0, 0.0, 0.0));
     }
 
     /**
      * Plays a sound event to everyone in the colony
-     * @param col the colony
+     *
+     * @param col       the colony
      * @param important if the audio is sent to important message players only
-     * @param stop if all other sounds should be stopped first
-     * @param messages one or more messages to send to each player.
+     * @param stop      if all other sounds should be stopped first
+     * @param messages  one or more messages to send to each player.
      */
-    public static void sendToAll(final IColony col, final boolean important, final boolean stop, final PlayAudioMessage... messages)
-    {
+    public static void sendToAll(final IColony col, final boolean important, final boolean stop, final PlayAudioMessage... messages) {
         final List<Player> players = important
-          ? col.getImportantMessageEntityPlayers()
-          : col.getMessagePlayerEntities();
+                ? col.getImportantMessageEntityPlayers()
+                : col.getMessagePlayerEntities();
 
-        for (final Player player : players)
-        {
-            if (stop)
-            {
+        for (final Player player : players) {
+            if (stop) {
                 new StopMusicMessage().sendToPlayer((ServerPlayer) player);
             }
 
-            for (final PlayAudioMessage pam : messages)
-            {
+            for (final PlayAudioMessage pam : messages) {
                 pam.sendToPlayer((ServerPlayer) player);
             }
         }

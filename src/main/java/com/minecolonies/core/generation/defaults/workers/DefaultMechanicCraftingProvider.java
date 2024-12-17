@@ -22,25 +22,21 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTI
 /**
  * Datagen for Mechanic
  */
-public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
-{
+public class DefaultMechanicCraftingProvider extends CustomRecipeProvider {
     private static final String MECHANIC = ModJobs.MECHANIC_ID.getPath();
 
-    public DefaultMechanicCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultMechanicCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "DefaultMechanicCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
         recipe(MECHANIC, MODULE_CRAFTING, "gate_wood")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.OAK_LOG, 5))))
                 .result(new ItemStack(ModItems.woodgate))
@@ -86,8 +82,7 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
 
     private void deoxidize(@NotNull final Consumer<CustomRecipeBuilder> consumer,
                            @NotNull final Item input,
-                           @NotNull final Item output)
-    {
+                           @NotNull final Item output) {
         recipe(MECHANIC, MODULE_CRAFTING, "deoxidize_" + BuiltInRegistries.ITEM.getKey(input).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input))))
                 .result(new ItemStack(output))

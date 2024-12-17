@@ -3,8 +3,7 @@ package com.minecolonies.api.entity.ai.statemachine.states;
 /**
  * AI States for citizen's state
  */
-public enum CitizenAIState implements IState
-{
+public enum CitizenAIState implements IState {
     IDLE(),
     FLEE(),
     EATING(),
@@ -15,8 +14,7 @@ public enum CitizenAIState implements IState
     WORKING,
     INACTIVE();
 
-    CitizenAIState()
-    {
+    CitizenAIState() {
 
     }
 }

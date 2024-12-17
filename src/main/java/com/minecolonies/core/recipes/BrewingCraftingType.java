@@ -25,22 +25,18 @@ import java.util.stream.Collectors;
 /**
  * A crafting type for brewing recipes
  */
-public class BrewingCraftingType extends CraftingType
-{
-    public BrewingCraftingType()
-    {
+public class BrewingCraftingType extends CraftingType {
+    public BrewingCraftingType() {
         super(ModCraftingTypes.BREWING_ID);
     }
 
     @Override
     @NotNull
-    public List<IGenericRecipe> findRecipes(@NotNull RecipeManager recipeManager, @Nullable Level world)
-    {
+    public List<IGenericRecipe> findRecipes(@NotNull RecipeManager recipeManager, @Nullable Level world) {
         final List<IGenericRecipe> recipes = new ArrayList<>();
         final ICompatibilityManager compatibilityManager = MinecoloniesAPIProxy.getInstance().getColonyManager().getCompatibilityManager();
 
-        for (final IBrewingRecipe recipe : PotionBrewing.EMPTY.getRecipes())
-        {
+        for (final IBrewingRecipe recipe : PotionBrewing.EMPTY.getRecipes()) {
             final List<ItemStack> inputs = compatibilityManager.getListOfAllItems().stream()
                     .filter(recipe::isInput)
                     .collect(Collectors.toList());
@@ -48,13 +44,10 @@ public class BrewingCraftingType extends CraftingType
                     .filter(recipe::isIngredient)
                     .collect(Collectors.toList());
 
-            for (final ItemStack input : inputs)
-            {
-                for (final ItemStack ingredient : ingredients)
-                {
+            for (final ItemStack input : inputs) {
+                for (final ItemStack ingredient : ingredients) {
                     final ItemStack output = recipe.getOutput(input, ingredient);
-                    if (!output.isEmpty())
-                    {
+                    if (!output.isEmpty()) {
                         final ItemStack actualInput = input.copy();
                         actualInput.setCount(3);
                         final ItemStack actualOutput = output.copy();

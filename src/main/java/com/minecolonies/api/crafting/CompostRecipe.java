@@ -23,12 +23,11 @@ import org.jetbrains.annotations.Nullable;
  * assign different "strength" ratings to different input items; currently the actual outputs of the barrel
  * are fixed.
  */
-public class CompostRecipe implements Recipe<SingleRecipeInput>
-{
+public class CompostRecipe implements Recipe<SingleRecipeInput> {
     public static final MapCodec<CompostRecipe> CODEC = RecordCodecBuilder.mapCodec(builder -> builder
-        .group(Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(CompostRecipe::getInput),
-          ExtraCodecs.POSITIVE_INT.optionalFieldOf("strength", 1).forGetter(CompostRecipe::getStrength))
-        .apply(builder, CompostRecipe::new));
+            .group(Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(CompostRecipe::getInput),
+                    ExtraCodecs.POSITIVE_INT.optionalFieldOf("strength", 1).forGetter(CompostRecipe::getStrength))
+            .apply(builder, CompostRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CompostRecipe> STREAM_CODEC =
             StreamCodec.composite(
@@ -43,8 +42,7 @@ public class CompostRecipe implements Recipe<SingleRecipeInput>
     private final ItemStack output;
     private final int strength;
 
-    public CompostRecipe(@NotNull final Ingredient ingredient, final int strength)
-    {
+    public CompostRecipe(@NotNull final Ingredient ingredient, final int strength) {
         this.input = ingredient;
         this.strength = strength;
         this.output = new ItemStack(ModItems.compost, COMPOST_RESULT);
@@ -52,7 +50,9 @@ public class CompostRecipe implements Recipe<SingleRecipeInput>
 
     @NotNull
     @Override
-    public RecipeType<?> getType() { return ModRecipeSerializer.CompostRecipeType.get(); }
+    public RecipeType<?> getType() {
+        return ModRecipeSerializer.CompostRecipeType.get();
+    }
 
     /**
      * Get the input ingredient for this recipe (this is multiple alternative item types).
@@ -60,7 +60,9 @@ public class CompostRecipe implements Recipe<SingleRecipeInput>
      *
      * @return The input.
      */
-    public Ingredient getInput() { return this.input; }
+    public Ingredient getInput() {
+        return this.input;
+    }
 
     /**
      * Get the strength of this recipe.  A higher strength means fewer input items are required to craft the same
@@ -68,7 +70,9 @@ public class CompostRecipe implements Recipe<SingleRecipeInput>
      *
      * @return The strength; typically 2, 4, or 8, but other values are possible.
      */
-    public int getStrength() { return this.strength; }
+    public int getStrength() {
+        return this.strength;
+    }
 
     /**
      * The number of ticks that this recipe should take to ferment into compost.
@@ -76,38 +80,35 @@ public class CompostRecipe implements Recipe<SingleRecipeInput>
      *
      * @return A number of ticks.
      */
-    public int getFermentTime() { return FERMENT_TIME; }
+    public int getFermentTime() {
+        return FERMENT_TIME;
+    }
 
     @Override
-    public boolean matches(@NotNull final SingleRecipeInput input, @NotNull final Level worldIn)
-    {
+    public boolean matches(@NotNull final SingleRecipeInput input, @NotNull final Level worldIn) {
         return false;
     }
 
     @NotNull
     @Override
-    public ItemStack assemble(@NotNull final SingleRecipeInput input, @NotNull final HolderLookup.Provider provider)
-    {
+    public ItemStack assemble(@NotNull final SingleRecipeInput input, @NotNull final HolderLookup.Provider provider) {
         return this.output.copy();
     }
 
     @Override
-    public boolean canCraftInDimensions(final int width, final int height)
-    {
+    public boolean canCraftInDimensions(final int width, final int height) {
         return true;
     }
 
     @NotNull
     @Override
-    public ItemStack getResultItem(@Nullable final HolderLookup.Provider provider)
-    {
+    public ItemStack getResultItem(@Nullable final HolderLookup.Provider provider) {
         return this.output;
     }
 
     @NotNull
     @Override
-    public RecipeSerializer<?> getSerializer()
-    {
+    public RecipeSerializer<?> getSerializer() {
         return ModRecipeSerializer.CompostRecipeSerializer.get();
     }
 
@@ -119,39 +120,33 @@ public class CompostRecipe implements Recipe<SingleRecipeInput>
      */
     @NotNull
     @Override
-    public NonNullList<Ingredient> getIngredients()
-    {
+    public NonNullList<Ingredient> getIngredients() {
         final NonNullList<Ingredient> ingredients = NonNullList.create();
         ingredients.add(CountedIngredient.of(this.input, calculateIngredientCount()));
         return ingredients;
     }
 
-    private int calculateIngredientCount()
-    {
+    private int calculateIngredientCount() {
         return AbstractTileEntityBarrel.MAX_ITEMS / this.strength;
     }
 
     // JEI looks better if we render these as many individual recipes rather than as
     // a few recipes with a massive number of alternative ingredients.
     @NotNull
-    public static CompostRecipe individualize(@NotNull final Item item, @NotNull final RecipeHolder<CompostRecipe> recipe)
-    {
+    public static CompostRecipe individualize(@NotNull final Item item, @NotNull final RecipeHolder<CompostRecipe> recipe) {
         return new CompostRecipe(Ingredient.of(item), recipe.value().getStrength());
     }
 
-    public static class Serializer implements RecipeSerializer<CompostRecipe>
-    {
+    public static class Serializer implements RecipeSerializer<CompostRecipe> {
         @NotNull
         @Override
-        public MapCodec<CompostRecipe> codec()
-        {
+        public MapCodec<CompostRecipe> codec() {
             return CompostRecipe.CODEC;
         }
 
         @NotNull
         @Override
-        public StreamCodec<RegistryFriendlyByteBuf, CompostRecipe> streamCodec()
-        {
+        public StreamCodec<RegistryFriendlyByteBuf, CompostRecipe> streamCodec() {
             return CompostRecipe.STREAM_CODEC;
         }
     }

@@ -24,72 +24,60 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RAID_PIRAT
 /**
  * The Pirate raid event, spawns the worst pirates you've ever heard of.
  */
-public class PirateGroundRaidEvent extends HordeRaidEvent
-{
+public class PirateGroundRaidEvent extends HordeRaidEvent {
     /**
      * This raids event id, registry entries use res locations as ids.
      */
     public static final ResourceLocation PIRATE_GROUND_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "pirate_ground_raid");
 
-    public PirateGroundRaidEvent(IColony colony)
-    {
+    public PirateGroundRaidEvent(IColony colony) {
         super(colony);
     }
 
     @Override
-    public ResourceLocation getEventTypeID()
-    {
+    public ResourceLocation getEventTypeID() {
         return PIRATE_GROUND_RAID_EVENT_TYPE_ID;
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
     }
 
     @Override
-    protected void updateRaidBar()
-    {
+    protected void updateRaidBar() {
         super.updateRaidBar();
         raidBar.setDarkenScreen(true);
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
     }
 
     @Override
-    public void onFinish()
-    {
+    public void onFinish() {
         super.onFinish();
     }
 
     @Override
-    public void registerEntity(final Entity entity)
-    {
-        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())
-        {
+    public void registerEntity(final Entity entity) {
+        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive()) {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
-        if (entity instanceof EntityCaptainPirate && boss.keySet().size() < horde.numberOfBosses)
-        {
+        if (entity instanceof EntityCaptainPirate && boss.keySet().size() < horde.numberOfBosses) {
             boss.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityArcherPirate && archers.keySet().size() < horde.numberOfArchers)
-        {
+        if (entity instanceof EntityArcherPirate && archers.keySet().size() < horde.numberOfArchers) {
             archers.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityPirate && normal.keySet().size() < horde.numberOfRaiders)
-        {
+        if (entity instanceof EntityPirate && normal.keySet().size() < horde.numberOfRaiders) {
             normal.put(entity, entity.getUUID());
             return;
         }
@@ -98,36 +86,30 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    public void onEntityDeath(final LivingEntity entity)
-    {
+    public void onEntityDeath(final LivingEntity entity) {
         super.onEntityDeath(entity);
-        if (!(entity instanceof AbstractEntityRaiderMob))
-        {
+        if (!(entity instanceof AbstractEntityRaiderMob)) {
             return;
         }
 
-        if (entity instanceof EntityCaptainPirate)
-        {
+        if (entity instanceof EntityCaptainPirate) {
             boss.remove(entity);
             horde.numberOfBosses--;
         }
 
-        if (entity instanceof EntityArcherPirate)
-        {
+        if (entity instanceof EntityArcherPirate) {
             archers.remove(entity);
             horde.numberOfArchers--;
         }
 
-        if (entity instanceof EntityPirate)
-        {
+        if (entity instanceof EntityPirate) {
             normal.remove(entity);
             horde.numberOfRaiders--;
         }
 
         horde.hordeSize--;
 
-        if (horde.hordeSize == 0)
-        {
+        if (horde.hordeSize == 0) {
             status = EventStatus.DONE;
         }
 
@@ -141,34 +123,29 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
      * @param compound NBTcompound with saved values
      * @return the raid event.
      */
-    public static PirateGroundRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public static PirateGroundRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         PirateGroundRaidEvent event = new PirateGroundRaidEvent(colony);
         event.deserializeNBT(provider, compound);
         return event;
     }
 
     @Override
-    public EntityType<?> getNormalRaiderType()
-    {
+    public EntityType<?> getNormalRaiderType() {
         return PIRATE;
     }
 
     @Override
-    public EntityType<?> getArcherRaiderType()
-    {
+    public EntityType<?> getArcherRaiderType() {
         return ARCHERPIRATE;
     }
 
     @Override
-    public EntityType<?> getBossRaiderType()
-    {
+    public EntityType<?> getBossRaiderType() {
         return CHIEFPIRATE;
     }
 
     @Override
-    protected MutableComponent getDisplayName()
-    {
+    protected MutableComponent getDisplayName() {
         return Component.translatableEscape(RAID_PIRATE);
     }
 }

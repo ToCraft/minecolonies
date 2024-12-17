@@ -15,16 +15,14 @@ import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 /**
  * Loads a colony by id from the backup file.
  */
-public class CommandLoadBackup implements IMCOPCommand
-{
+public class CommandLoadBackup implements IMCOPCommand {
     /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         final int colonyId = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         BackUpHelper.loadColonyBackup(colonyId, context.getSource().getLevel().dimension(), true, true);
         context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_LOAD_BACKUP_SUCCESS), true);
@@ -35,15 +33,13 @@ public class CommandLoadBackup implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "loadBackup";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
+                .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
     }
 }

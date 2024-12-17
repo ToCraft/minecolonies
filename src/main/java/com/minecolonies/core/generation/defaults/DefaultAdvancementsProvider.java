@@ -20,11 +20,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.WindowConstants;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.AdvancementType;
-import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.advancements.*;
 import net.minecraft.advancements.AdvancementRequirements.Strategy;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
@@ -50,8 +46,7 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
  * Datagen for advancements
  */
 @SuppressWarnings("unused") // copy-paste issue
-public class DefaultAdvancementsProvider extends AdvancementProvider
-{
+public class DefaultAdvancementsProvider extends AdvancementProvider {
     public static AdvancementGenerator generator = (registries, consumer, fileHelper) -> {
         // todo: the achievement ids are a bit weird, in particular the folder organisation;
         //       at some major MC version update we should probably reorganise them.
@@ -59,28 +54,26 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         // this is mostly redundant with the standard root, but it lets people see a Minecolonies
         // advancement before that tab is visible...
         Advancement.Builder.advancement()
-          .parent(ResourceLocation.parse("story/root"))
-          .display(ModItems.supplyChest,
-            Component.translatableEscape("advancements.minecolonies.root.title"),
-            Component.translatableEscape("advancements.minecolonies.root.description"),
-            null,
-            AdvancementType.TASK, false, false, false)
-          .addCriterion("supply_ship", PlaceSupplyTriggerInstance.placeSupply())
-          .save(consumer, new ResourceLocation(MOD_ID, "minecraft/craft_supply"), fileHelper);
+                .parent(ResourceLocation.parse("story/root"))
+                .display(ModItems.supplyChest,
+                        Component.translatableEscape("advancements.minecolonies.root.title"),
+                        Component.translatableEscape("advancements.minecolonies.root.description"),
+                        null,
+                        AdvancementType.TASK, false, false, false)
+                .addCriterion("supply_ship", PlaceSupplyTriggerInstance.placeSupply())
+                .save(consumer, new ResourceLocation(MOD_ID, "minecraft/craft_supply"), fileHelper);
 
         addStandardAdvancements(consumer, fileHelper);
         addProductionAdvancements(consumer, fileHelper);
         addMilitaryAdvancements(consumer, fileHelper);
     };
 
-    public DefaultAdvancementsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper)
-    {
+    public DefaultAdvancementsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper) {
         super(output, registries, existingFileHelper, List.of(generator));
     }
 
     private static void addStandardAdvancements(@NotNull final Consumer<AdvancementHolder> consumer,
-                                         @NotNull final ExistingFileHelper fileHelper)
-    {
+                                                @NotNull final ExistingFileHelper fileHelper) {
         final String GROUP = "minecolonies/";
 
         final AdvancementHolder root = Advancement.Builder.advancement()
@@ -94,19 +87,19 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
         final AdvancementHolder placeTownHall = Advancement.Builder.advancement()
                 .parent(root)
-                .display(make(AdvancementType.TASK, ModBlocks.blockHutTownHall,"place_townhall"))
+                .display(make(AdvancementType.TASK, ModBlocks.blockHutTownHall, "place_townhall"))
                 .addCriterion("build_tool_place_town_hall", placeStructure(ModBuildings.townHall.get()))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "place_townhall"), fileHelper);
 
         final AdvancementHolder startBuilder = Advancement.Builder.advancement()
                 .parent(placeTownHall)
-                .display(make(AdvancementType.TASK, ModBlocks.blockConstructionTape,"create_build_request_1_builder"))
+                .display(make(AdvancementType.TASK, ModBlocks.blockConstructionTape, "create_build_request_1_builder"))
                 .addCriterion("builder_request", createBuildRequest(ModBuildings.builder.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "start_builder"), fileHelper);
 
         final AdvancementHolder fulfillRequest = Advancement.Builder.advancement()
                 .parent(startBuilder)
-                .display(make(AdvancementType.TASK, ModItems.resourceScroll,"click_gui_button_fulfill"))
+                .display(make(AdvancementType.TASK, ModItems.resourceScroll, "click_gui_button_fulfill"))
                 .addCriterion("click_gui_button_fulfill",
                         ClickGuiButtonTriggerInstance.clickGuiButton(WindowConstants.REQUEST_FULLFIL, MOD_ID + WindowConstants.CITIZEN_REQ_RESOURCE_SUFFIX))
                 .addCriterion("click_request_button_fulfill",
@@ -116,7 +109,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
         final AdvancementHolder buildBuilder = Advancement.Builder.advancement()
                 .parent(fulfillRequest)
-                .display(make(AdvancementType.GOAL, ModBlocks.blockHutBuilder,"build.builder"))
+                .display(make(AdvancementType.GOAL, ModBlocks.blockHutBuilder, "build.builder"))
                 .addCriterion("builders_hut", completeBuildRequest(ModBuildings.builder.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_builder"), fileHelper);
 
@@ -245,8 +238,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
     }
 
     private static void addProductionAdvancements(@NotNull final Consumer<AdvancementHolder> consumer,
-                                           @NotNull final ExistingFileHelper fileHelper)
-    {
+                                                  @NotNull final ExistingFileHelper fileHelper) {
         final String GROUP = "production/";
 
         final AdvancementHolder root = Advancement.Builder.advancement()
@@ -442,8 +434,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
     }
 
     private static void addMilitaryAdvancements(@NotNull final Consumer<AdvancementHolder> consumer,
-                                         @NotNull final ExistingFileHelper fileHelper)
-    {
+                                                @NotNull final ExistingFileHelper fileHelper) {
         final String GROUP = "military/";
 
         final AdvancementHolder root = Advancement.Builder.advancement()
@@ -506,8 +497,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
     private static DisplayInfo make(@NotNull final AdvancementType frame,
                                     @NotNull final ItemLike icon,
-                                    @NotNull final String name)
-    {
+                                    @NotNull final String name) {
         return new DisplayInfo(new ItemStack(icon),
                 Component.translatableEscape("advancements.minecolonies." + name + ".title"),
                 Component.translatableEscape("advancements.minecolonies." + name + ".description"),
@@ -516,34 +506,29 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
     private static DisplayInfo makeHidden(@NotNull final AdvancementType frame,
                                           @NotNull final ItemLike icon,
-                                          @NotNull final String name)
-    {
+                                          @NotNull final String name) {
         return new DisplayInfo(new ItemStack(icon),
                 Component.translatableEscape("advancements.minecolonies." + name + ".title"),
                 Component.translatableEscape("advancements.minecolonies." + name + ".description"),
                 Optional.empty(), frame, true, true, true);
     }
 
-    private static List<ItemPredicate> item(@NotNull final ItemLike item)
-    {
+    private static List<ItemPredicate> item(@NotNull final ItemLike item) {
         return List.of(ItemPredicate.Builder.item().of(item).build());
     }
 
     @NotNull
-    private static Criterion<PlaceStructureTriggerInstance> placeStructure(@NotNull final BuildingEntry building)
-    {
+    private static Criterion<PlaceStructureTriggerInstance> placeStructure(@NotNull final BuildingEntry building) {
         return PlaceStructureTriggerInstance.placeStructure(building.getBuildingBlock().getBlueprintName());
     }
 
     @NotNull
-    private static Criterion<CreateBuildRequestTriggerInstance> createBuildRequest(@NotNull final BuildingEntry building, final int level)
-    {
+    private static Criterion<CreateBuildRequestTriggerInstance> createBuildRequest(@NotNull final BuildingEntry building, final int level) {
         return CreateBuildRequestTriggerInstance.createBuildRequest(building.getBuildingBlock().getBlueprintName(), level);
     }
 
     @NotNull
-    private static Criterion<CompleteBuildRequestTriggerInstance> completeBuildRequest(@NotNull final BuildingEntry building, final int level)
-    {
+    private static Criterion<CompleteBuildRequestTriggerInstance> completeBuildRequest(@NotNull final BuildingEntry building, final int level) {
         return CompleteBuildRequestTriggerInstance.completeBuildRequest(building.getBuildingBlock().getBlueprintName(), level);
     }
 }

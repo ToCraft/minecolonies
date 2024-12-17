@@ -18,8 +18,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.ON;
 /**
  * Stores a boolean setting.
  */
-public class BoolSetting implements ISetting<Boolean>
-{
+public class BoolSetting implements ISetting<Boolean> {
     /**
      * Default value of the setting.
      */
@@ -35,8 +34,7 @@ public class BoolSetting implements ISetting<Boolean>
      *
      * @param init the initial value.
      */
-    public BoolSetting(final boolean init)
-    {
+    public BoolSetting(final boolean init) {
         this.value = init;
         this.defaultValue = init;
     }
@@ -47,8 +45,7 @@ public class BoolSetting implements ISetting<Boolean>
      * @param value the value.
      * @param def   the default value.
      */
-    public BoolSetting(final boolean value, final boolean def)
-    {
+    public BoolSetting(final boolean value, final boolean def) {
         this.value = value;
         this.defaultValue = def;
     }
@@ -58,8 +55,7 @@ public class BoolSetting implements ISetting<Boolean>
      *
      * @return the set value.
      */
-    public Boolean getValue()
-    {
+    public Boolean getValue() {
         return value;
     }
 
@@ -68,36 +64,32 @@ public class BoolSetting implements ISetting<Boolean>
      *
      * @return the default value.
      */
-    public boolean getDefault()
-    {
+    public boolean getDefault() {
         return defaultValue;
     }
 
     @Override
-    public ResourceLocation getLayoutItem()
-    {
+    public ResourceLocation getLayoutItem() {
         return new ResourceLocation("minecolonies", "gui/layouthuts/layoutboolsetting.xml");
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
     public void setupHandler(
-      final ISettingKey<?> key,
-      final Pane pane,
-      final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final BOWindow window)
-    {
+            final ISettingKey<?> key,
+            final Pane pane,
+            final ISettingsModuleView settingsModuleView,
+            final IBuildingView building, final BOWindow window) {
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }
 
     @Override
     public void render(
-      final ISettingKey<?> key,
-      final Pane pane,
-      final ISettingsModuleView settingsModuleView,
-      final IBuildingView building,
-      final BOWindow window)
-    {
+            final ISettingKey<?> key,
+            final Pane pane,
+            final ISettingsModuleView settingsModuleView,
+            final IBuildingView building,
+            final BOWindow window) {
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(Component.translatable(value ? ON : OFF));
@@ -105,16 +97,13 @@ public class BoolSetting implements ISetting<Boolean>
     }
 
     @Override
-    public void trigger()
-    {
+    public void trigger() {
         this.value = !this.value;
     }
 
     @Override
-    public void copyValue(final ISetting<?> setting)
-    {
-        if (setting instanceof final BoolSetting other)
-        {
+    public void copyValue(final ISetting<?> setting) {
+        if (setting instanceof final BoolSetting other) {
             this.value = other.value;
         }
     }

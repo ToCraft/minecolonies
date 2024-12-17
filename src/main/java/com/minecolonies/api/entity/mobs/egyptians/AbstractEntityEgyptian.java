@@ -14,8 +14,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all egyptian entities.
  */
-public abstract class AbstractEntityEgyptian extends AbstractEntityRaiderMob
-{
+public abstract class AbstractEntityEgyptian extends AbstractEntityRaiderMob {
     /**
      * Swim speed for mummies
      */
@@ -28,37 +27,31 @@ public abstract class AbstractEntityEgyptian extends AbstractEntityRaiderMob
      * @param type  the type.
      * @param world the world.
      */
-    public AbstractEntityEgyptian(final EntityType<? extends AbstractEntityEgyptian> type, final Level world)
-    {
+    public AbstractEntityEgyptian(final EntityType<? extends AbstractEntityEgyptian> type, final Level world) {
         super(type, world);
     }
 
     @Override
-    public void playAmbientSound()
-    {
+    public void playAmbientSound() {
         final SoundEvent soundevent = this.getAmbientSound();
 
-        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
-        {
+        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE) {
             this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }
     }
 
     @Override
-    public boolean checkSpawnRules(final LevelAccessor worldIn, final MobSpawnType spawnReasonIn)
-    {
+    public boolean checkSpawnRules(final LevelAccessor worldIn, final MobSpawnType spawnReasonIn) {
         return true;
     }
 
     @Override
-    public RaiderType getRaiderType()
-    {
+    public RaiderType getRaiderType() {
         return RaiderType.EGYPTIAN;
     }
 
     @Override
-    public double getSwimSpeedFactor()
-    {
+    public double getSwimSpeedFactor() {
         return MUMMY_SWIM_SPEED;
     }
 }

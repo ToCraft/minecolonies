@@ -11,13 +11,12 @@ import java.util.Objects;
 /**
  * Abstract crafting request.
  */
-public abstract class AbstractCrafting implements IRequestable
-{
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    protected static final String NBT_STACK     = "Stack";
-    protected static final String NBT_COUNT     = "Count";
+public abstract class AbstractCrafting implements IRequestable {
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
+    protected static final String NBT_STACK = "Stack";
+    protected static final String NBT_COUNT = "Count";
     protected static final String NBT_MIN_COUNT = "MinCount";
-    protected static final String NBT_TOKEN     = "Token";
+    protected static final String NBT_TOKEN = "Token";
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -45,20 +44,18 @@ public abstract class AbstractCrafting implements IRequestable
     /**
      * Create a Stack deliverable.
      *
-     * @param stack    the required stack.
-     * @param count    the crafting count.
-     * @param minCount the min crafting count.
+     * @param stack       the required stack.
+     * @param count       the crafting count.
+     * @param minCount    the min crafting count.
      * @param recipeToken the associated recipe token.
      */
-    public AbstractCrafting(@NotNull final ItemStack stack, final int count, final int minCount, final IToken<?> recipeToken)
-    {
+    public AbstractCrafting(@NotNull final ItemStack stack, final int count, final int minCount, final IToken<?> recipeToken) {
         this.theStack = stack.copy();
         this.count = count;
         this.minCount = minCount;
         this.recipeToken = recipeToken;
 
-        if (ItemStackUtils.isEmpty(stack))
-        {
+        if (ItemStackUtils.isEmpty(stack)) {
             throw new IllegalArgumentException("Cannot deliver Empty Stack.");
         }
 
@@ -66,8 +63,7 @@ public abstract class AbstractCrafting implements IRequestable
     }
 
     @NotNull
-    public ItemStack getStack()
-    {
+    public ItemStack getStack() {
         return theStack;
     }
 
@@ -76,8 +72,7 @@ public abstract class AbstractCrafting implements IRequestable
      *
      * @return the count.
      */
-    public int getCount()
-    {
+    public int getCount() {
         return count;
     }
 
@@ -86,29 +81,25 @@ public abstract class AbstractCrafting implements IRequestable
      *
      * @return the min count.
      */
-    public int getMinCount()
-    {
+    public int getMinCount() {
         return minCount;
     }
 
     /**
      * The recipe storage id.
+     *
      * @return the id.
      */
-    public IToken<?> getRecipeID()
-    {
+    public IToken<?> getRecipeID() {
         return recipeToken;
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof AbstractCrafting))
-        {
+        if (!(o instanceof AbstractCrafting)) {
             return false;
         }
         final AbstractCrafting that = (AbstractCrafting) o;
@@ -116,8 +107,7 @@ public abstract class AbstractCrafting implements IRequestable
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(theStack, getCount(), getMinCount());
     }
 }

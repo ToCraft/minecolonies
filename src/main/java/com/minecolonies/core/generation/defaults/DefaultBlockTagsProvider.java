@@ -18,20 +18,17 @@ import java.util.concurrent.CompletableFuture;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 @SuppressWarnings({"ConstantConditions", "unchecked"})
-public class DefaultBlockTagsProvider extends BlockTagsProvider
-{
+public class DefaultBlockTagsProvider extends BlockTagsProvider {
 
     public DefaultBlockTagsProvider(
-      final PackOutput output,
-      final CompletableFuture<HolderLookup.Provider> lookupProvider,
-      @Nullable final ExistingFileHelper existingFileHelper)
-    {
+            final PackOutput output,
+            final CompletableFuture<HolderLookup.Provider> lookupProvider,
+            @Nullable final ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, MOD_ID, existingFileHelper);
     }
 
     @Override
-    protected void addTags(final HolderLookup.Provider holder)
-    {
+    protected void addTags(final HolderLookup.Provider holder) {
         tag(ModTags.decorationItems)
                 .add(Blocks.DEAD_BRAIN_CORAL_BLOCK)
                 .add(Blocks.DEAD_BUBBLE_CORAL_BLOCK)
@@ -52,47 +49,47 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .addTag(BlockTags.CAMPFIRES);
 
         tag(ModTags.concreteBlocks)
-          .add(Blocks.WHITE_CONCRETE)
-          .add(Blocks.ORANGE_CONCRETE)
-          .add(Blocks.MAGENTA_CONCRETE)
-          .add(Blocks.LIGHT_BLUE_CONCRETE)
-          .add(Blocks.YELLOW_CONCRETE)
-          .add(Blocks.LIME_CONCRETE)
-          .add(Blocks.PINK_CONCRETE)
-          .add(Blocks.GRAY_CONCRETE)
-          .add(Blocks.LIGHT_GRAY_CONCRETE)
-          .add(Blocks.CYAN_CONCRETE)
-          .add(Blocks.PURPLE_CONCRETE)
-          .add(Blocks.BLUE_CONCRETE)
-          .add(Blocks.BROWN_CONCRETE)
-          .add(Blocks.GREEN_CONCRETE)
-          .add(Blocks.RED_CONCRETE)
-          .add(Blocks.BLACK_CONCRETE);
+                .add(Blocks.WHITE_CONCRETE)
+                .add(Blocks.ORANGE_CONCRETE)
+                .add(Blocks.MAGENTA_CONCRETE)
+                .add(Blocks.LIGHT_BLUE_CONCRETE)
+                .add(Blocks.YELLOW_CONCRETE)
+                .add(Blocks.LIME_CONCRETE)
+                .add(Blocks.PINK_CONCRETE)
+                .add(Blocks.GRAY_CONCRETE)
+                .add(Blocks.LIGHT_GRAY_CONCRETE)
+                .add(Blocks.CYAN_CONCRETE)
+                .add(Blocks.PURPLE_CONCRETE)
+                .add(Blocks.BLUE_CONCRETE)
+                .add(Blocks.BROWN_CONCRETE)
+                .add(Blocks.GREEN_CONCRETE)
+                .add(Blocks.RED_CONCRETE)
+                .add(Blocks.BLACK_CONCRETE);
 
         tag(ModTags.concretePowderBlocks)
-          .add(Blocks.WHITE_CONCRETE_POWDER)
-          .add(Blocks.ORANGE_CONCRETE_POWDER)
-          .add(Blocks.MAGENTA_CONCRETE_POWDER)
-          .add(Blocks.LIGHT_BLUE_CONCRETE_POWDER)
-          .add(Blocks.YELLOW_CONCRETE_POWDER)
-          .add(Blocks.LIME_CONCRETE_POWDER)
-          .add(Blocks.PINK_CONCRETE_POWDER)
-          .add(Blocks.GRAY_CONCRETE_POWDER)
-          .add(Blocks.LIGHT_GRAY_CONCRETE_POWDER)
-          .add(Blocks.CYAN_CONCRETE_POWDER)
-          .add(Blocks.PURPLE_CONCRETE_POWDER)
-          .add(Blocks.BLUE_CONCRETE_POWDER)
-          .add(Blocks.BROWN_CONCRETE_POWDER)
-          .add(Blocks.GREEN_CONCRETE_POWDER)
-          .add(Blocks.RED_CONCRETE_POWDER)
-          .add(Blocks.BLACK_CONCRETE_POWDER);
+                .add(Blocks.WHITE_CONCRETE_POWDER)
+                .add(Blocks.ORANGE_CONCRETE_POWDER)
+                .add(Blocks.MAGENTA_CONCRETE_POWDER)
+                .add(Blocks.LIGHT_BLUE_CONCRETE_POWDER)
+                .add(Blocks.YELLOW_CONCRETE_POWDER)
+                .add(Blocks.LIME_CONCRETE_POWDER)
+                .add(Blocks.PINK_CONCRETE_POWDER)
+                .add(Blocks.GRAY_CONCRETE_POWDER)
+                .add(Blocks.LIGHT_GRAY_CONCRETE_POWDER)
+                .add(Blocks.CYAN_CONCRETE_POWDER)
+                .add(Blocks.PURPLE_CONCRETE_POWDER)
+                .add(Blocks.BLUE_CONCRETE_POWDER)
+                .add(Blocks.BROWN_CONCRETE_POWDER)
+                .add(Blocks.GREEN_CONCRETE_POWDER)
+                .add(Blocks.RED_CONCRETE_POWDER)
+                .add(Blocks.BLACK_CONCRETE_POWDER);
 
         tag(ModTags.pathingBlocks)
                 .addTag(ModTags.concreteBlocks)
                 .addTag(BlockTags.STONE_BRICKS)
-            .addTag(BlockTags.PLANKS)
-            .addTag(BlockTags.WOODEN_SLABS)
-            .addTag(BlockTags.WOOL_CARPETS)
+                .addTag(BlockTags.PLANKS)
+                .addTag(BlockTags.WOODEN_SLABS)
+                .addTag(BlockTags.WOOL_CARPETS)
                 .add(Blocks.STONE_BRICK_STAIRS)
                 .add(Blocks.STONE_BRICK_SLAB)
                 .add(Blocks.MOSSY_STONE_BRICK_SLAB)
@@ -220,9 +217,9 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(ModBlocks.blockGrave)
                 .add(ModBlocks.blockNamedGrave);
         tag(ModTags.validSpawn)
-          .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.SHORT_GRASS, Blocks.FERN, Blocks.TORCH)
-          .addTags(BlockTags.BUTTONS)
-          .addTags(BlockTags.RAILS)
-          .addTags(BlockTags.WOOL_CARPETS);
+                .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.SHORT_GRASS, Blocks.FERN, Blocks.TORCH)
+                .addTags(BlockTags.BUTTONS)
+                .addTags(BlockTags.RAILS)
+                .addTags(BlockTags.WOOL_CARPETS);
     }
 }

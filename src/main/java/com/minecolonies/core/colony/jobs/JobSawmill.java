@@ -13,15 +13,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class of the Sawmill job.
  */
-public class JobSawmill extends AbstractJobCrafter<EntityAIWorkSawmill, JobSawmill>
-{
+public class JobSawmill extends AbstractJobCrafter<EntityAIWorkSawmill, JobSawmill> {
     /**
      * Instantiates the job for the Sawmill.
      *
      * @param entity the citizen who becomes a Sawmill
      */
-    public JobSawmill(final ICitizenData entity)
-    {
+    public JobSawmill(final ICitizenData entity) {
         super(entity);
     }
 
@@ -32,26 +30,20 @@ public class JobSawmill extends AbstractJobCrafter<EntityAIWorkSawmill, JobSawmi
      */
     @NotNull
     @Override
-    public EntityAIWorkSawmill generateAI()
-    {
+    public EntityAIWorkSawmill generateAI() {
         return new EntityAIWorkSawmill(this);
     }
 
     @Override
-    public @NotNull ResourceLocation getModel()
-    {
+    public @NotNull ResourceLocation getModel() {
         return ModModelTypes.CARPENTER_ID;
     }
 
     @Override
-    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
-    {
-        if (worker.getRandom().nextBoolean())
-        {
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker) {
+        if (worker.getRandom().nextBoolean()) {
             worker.queueSound(ModSoundEvents.SAW, blockPos, 10, 0);
-        }
-        else
-        {
+        } else {
             worker.queueSound(SoundEvents.BAMBOO_HIT, blockPos, 5, 1);
         }
     }

@@ -17,20 +17,17 @@ import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_NE
 /**
  * A work order that the build can take to build decorations.
  */
-public class WorkOrderDecoration extends AbstractWorkOrder
-{
+public class WorkOrderDecoration extends AbstractWorkOrder {
     public static WorkOrderDecoration create(
-      @NotNull final WorkOrderType type,
-      final String packName,
-      final String path,
-      final String translationKey,
-      final BlockPos location,
-      final RotationMirror rotMir,
-      final int currentLevel)
-    {
+            @NotNull final WorkOrderType type,
+            final String packName,
+            final String path,
+            final String translationKey,
+            final BlockPos location,
+            final RotationMirror rotMir,
+            final int currentLevel) {
         int targetLevel = currentLevel;
-        switch (type)
-        {
+        switch (type) {
             case BUILD:
                 targetLevel = 1;
                 break;
@@ -43,28 +40,26 @@ public class WorkOrderDecoration extends AbstractWorkOrder
         }
 
         return new WorkOrderDecoration(
-          packName,
-          path,
-          translationKey,
-          type,
-          location,
-          rotMir,
-          currentLevel,
-          targetLevel);
+                packName,
+                path,
+                translationKey,
+                type,
+                location,
+                rotMir,
+                currentLevel,
+                targetLevel);
     }
 
     /**
      * Unused constructor for reflection.
      */
-    public WorkOrderDecoration()
-    {
+    public WorkOrderDecoration() {
         super();
     }
 
     private WorkOrderDecoration(
-      String packName, String path, final String translationKey, WorkOrderType workOrderType, BlockPos location, RotationMirror rotMir, int currentLevel,
-      int targetLevel)
-    {
+            String packName, String path, final String translationKey, WorkOrderType workOrderType, BlockPos location, RotationMirror rotMir, int currentLevel,
+            int targetLevel) {
         super(packName, path, translationKey, workOrderType, location, rotMir, currentLevel, targetLevel);
     }
 
@@ -77,37 +72,31 @@ public class WorkOrderDecoration extends AbstractWorkOrder
      * @return true if he is able to.
      */
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    public boolean canBuild(@NotNull final ICitizenData citizen)
-    {
+    public boolean canBuild(@NotNull final ICitizenData citizen) {
         return true;
     }
 
     @Override
-    public boolean canBeMadeBy(final IJob<?> job)
-    {
+    public boolean canBeMadeBy(final IJob<?> job) {
         return job instanceof JobBuilder;
     }
 
     @Override
-    public boolean isValid(final IColony colony)
-    {
+    public boolean isValid(final IColony colony) {
         return super.isValid(colony) && this.getStructurePath() != null && !this.getStructurePath().isEmpty();
     }
 
     @Override
-    public void onAdded(final IColony colony, final boolean readingFromNbt)
-    {
+    public void onAdded(final IColony colony, final boolean readingFromNbt) {
         super.onAdded(colony, readingFromNbt);
-        if (!readingFromNbt && colony != null && colony.getWorld() != null)
-        {
+        if (!readingFromNbt && colony != null && colony.getWorld() != null) {
             ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld(), colony);
             MessageUtils.format(MESSAGE_NEW_DECORATION_REQUEST, colony.getName()).sendTo(colony).forManagers();
         }
     }
 
     @Override
-    public void onRemoved(final IColony colony)
-    {
+    public void onRemoved(final IColony colony) {
         super.onRemoved(colony);
         ConstructionTapeHelper.removeConstructionTape(this, colony.getWorld());
     }

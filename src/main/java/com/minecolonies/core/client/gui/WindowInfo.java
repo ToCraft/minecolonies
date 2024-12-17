@@ -16,8 +16,7 @@ import java.util.function.Supplier;
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_INFO_TEXT;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_EXIT;
 
-public class WindowInfo extends AbstractWindowSkeleton
-{
+public class WindowInfo extends AbstractWindowSkeleton {
     /**
      * Link to the xml file of the window.
      */
@@ -28,8 +27,7 @@ public class WindowInfo extends AbstractWindowSkeleton
      *
      * @param building The building the info window is for.
      */
-    public WindowInfo(final IBuildingView building)
-    {
+    public WindowInfo(final IBuildingView building) {
         super(Constants.MOD_ID + WINDOW_RESOURCE);
 
         registerButton(BUTTON_EXIT, () -> building.openGui(false));
@@ -43,10 +41,8 @@ public class WindowInfo extends AbstractWindowSkeleton
             return ret;
         };
 
-        for (int i = 0;; i++)
-        {
-            if (!I18n.exists(translationPrefix + i))
-            {
+        for (int i = 0; ; i++) {
+            if (!I18n.exists(translationPrefix + i)) {
                 break;
             }
 
@@ -61,8 +57,8 @@ public class WindowInfo extends AbstractWindowSkeleton
 
             final TextBuilder preText = textBuilder.get();
             Arrays.stream((translationPrefix + i).split("\\n"))
-                .map(Component::translatable)
-                .forEach(preText::appendNL);
+                    .map(Component::translatable)
+                    .forEach(preText::appendNL);
             final Text text = preText.build();
             text.setPosition(0, 16);
             text.setSize(150, 194);

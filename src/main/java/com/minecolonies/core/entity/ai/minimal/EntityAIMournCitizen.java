@@ -6,7 +6,6 @@ import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.Tuple;
@@ -14,6 +13,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.buildings.modules.GraveyardManagementModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -30,13 +30,11 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 /**
  * Citizen mourning goal. Has citizens randomly walk around townhall.
  */
-public class EntityAIMournCitizen implements IStateAI
-{
+public class EntityAIMournCitizen implements IStateAI {
     /**
      * Different mourning states.
      */
-    public enum MourningState implements IState
-    {
+    public enum MourningState implements IState {
         DECIDE,
         WALKING_TO_TOWNHALL,
         WANDERING,
@@ -65,8 +63,8 @@ public class EntityAIMournCitizen implements IStateAI
      * Constant values of mourning
      */
     private static final int MIN_DESTINATION_TO_LOCATION = 225;
-    private static final int AVERAGE_MOURN_TIME          = 60 * 5;
-    private static final int AVERAGE_STARE_TIME          = 10 * 20;
+    private static final int AVERAGE_MOURN_TIME = 60 * 5;
+    private static final int AVERAGE_STARE_TIME = 10 * 20;
 
     /**
      * The position of the graveyard.
@@ -84,8 +82,7 @@ public class EntityAIMournCitizen implements IStateAI
      * @param citizen the citizen.
      * @param speed   the speed.
      */
-    public EntityAIMournCitizen(final EntityCitizen citizen, final double speed)
-    {
+    public EntityAIMournCitizen(final EntityCitizen citizen, final double speed) {
         super();
         this.citizen = citizen;
         this.speed = speed;
@@ -108,16 +105,13 @@ public class EntityAIMournCitizen implements IStateAI
      *
      * @return IDLE again.
      */
-    private IState walkToTownHall()
-    {
+    private IState walkToTownHall() {
         final BlockPos pos = getMournLocation();
-        if (pos == null)
-        {
+        if (pos == null) {
             return CitizenAIState.IDLE;
         }
 
-        if (!citizen.isWorkerAtSiteWithMove(pos, 3))
-        {
+        if (!citizen.isWorkerAtSiteWithMove(pos, 3)) {
             return MourningState.WALKING_TO_TOWNHALL;
         }
 
@@ -129,15 +123,12 @@ public class EntityAIMournCitizen implements IStateAI
      *
      * @return the next state to go to.
      */
-    private IState walkToGraveyard()
-    {
-        if (graveyard == null)
-        {
+    private IState walkToGraveyard() {
+        if (graveyard == null) {
             return MourningState.DECIDE;
         }
 
-        if (!citizen.isWorkerAtSiteWithMove(graveyard, 3))
-        {
+        if (!citizen.isWorkerAtSiteWithMove(graveyard, 3)) {
             return MourningState.WALKING_TO_GRAVEYARD;
         }
 
@@ -150,44 +141,35 @@ public class EntityAIMournCitizen implements IStateAI
      *
      * @return the next state to go to.
      */
-    private IState wanderAtGraveyard()
-    {
-        if (graveyard == null)
-        {
+    private IState wanderAtGraveyard() {
+        if (graveyard == null) {
             return MourningState.DECIDE;
         }
 
         final IBuilding graveyardBuilding = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(graveyard);
-        if (!(graveyardBuilding instanceof BuildingGraveyard))
-        {
+        if (!(graveyardBuilding instanceof BuildingGraveyard)) {
             graveyard = null;
             return MourningState.DECIDE;
         }
 
-        if (!citizen.getNavigation().isDone())
-        {
+        if (!citizen.getNavigation().isDone()) {
             return MourningState.WANDER_AT_GRAVEYARD;
         }
 
         // Wander around randomly.
-        if (MathUtils.RANDOM.nextInt(100) < 90)
-        {
+        if (MathUtils.RANDOM.nextInt(100) < 90) {
             citizen.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, graveyardBuilding.getCorners());
             return MourningState.WANDER_AT_GRAVEYARD;
         }
 
         // Try find the grave of one of the diseased.
         final Set<Tuple<BlockPos, Direction>> gravePositions = ((BuildingGraveyard) graveyardBuilding).getGravePositions();
-        for (final Tuple<BlockPos, Direction> gravePos : gravePositions)
-        {
-            if (WorldUtil.isBlockLoaded(citizen.level(), gravePos.getA()))
-            {
+        for (final Tuple<BlockPos, Direction> gravePos : gravePositions) {
+            if (WorldUtil.isBlockLoaded(citizen.level(), gravePos.getA())) {
                 final BlockEntity blockEntity = citizen.level().getBlockEntity(gravePos.getA());
-                if (blockEntity instanceof TileEntityNamedGrave)
-                {
+                if (blockEntity instanceof TileEntityNamedGrave) {
                     final Iterator<String> iterator = citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens().iterator();
-                    if (!iterator.hasNext())
-                    {
+                    if (!iterator.hasNext()) {
                         continue;
                     }
                     final String deathBud = iterator.next();
@@ -195,8 +177,7 @@ public class EntityAIMournCitizen implements IStateAI
                     final String lastName = deathBud.replaceFirst(firstName, "");
 
                     final List<String> graveNameList = ((TileEntityNamedGrave) blockEntity).getTextLines();
-                    if (!graveNameList.isEmpty() && graveNameList.contains(firstName) && graveNameList.contains(lastName))
-                    {
+                    if (!graveNameList.isEmpty() && graveNameList.contains(firstName) && graveNameList.contains(lastName)) {
                         this.gravePos = gravePos.getA();
                         return MourningState.WALK_TO_GRAVE;
                     }
@@ -212,15 +193,12 @@ public class EntityAIMournCitizen implements IStateAI
      *
      * @return next state.
      */
-    private IState walkToGrave()
-    {
-        if (gravePos == null)
-        {
+    private IState walkToGrave() {
+        if (gravePos == null) {
             return MourningState.DECIDE;
         }
 
-        if (!citizen.isWorkerAtSiteWithMove(gravePos, 3))
-        {
+        if (!citizen.isWorkerAtSiteWithMove(gravePos, 3)) {
             return MourningState.WALK_TO_GRAVE;
         }
 
@@ -232,8 +210,7 @@ public class EntityAIMournCitizen implements IStateAI
      *
      * @return also IDLE again.
      */
-    private IState wander()
-    {
+    private IState wander() {
         citizen.getNavigation().moveToRandomPos(10, this.speed);
         return CitizenAIState.IDLE;
     }
@@ -243,36 +220,32 @@ public class EntityAIMournCitizen implements IStateAI
      *
      * @return Staring if there is a player, else IDLE.
      */
-    private IState stare()
-    {
-        if (this.citizen.getRandom().nextInt(AVERAGE_STARE_TIME) < 1)
-        {
+    private IState stare() {
+        if (this.citizen.getRandom().nextInt(AVERAGE_STARE_TIME) < 1) {
             closestEntity = null;
             return CitizenAIState.IDLE;
         }
 
-        if (closestEntity == null)
-        {
+        if (closestEntity == null) {
             closestEntity = this.citizen.level().getNearestEntity(EntityCitizen.class,
-              TargetingConditions.DEFAULT,
-              citizen,
-              citizen.getX(),
-              citizen.getY(),
-              citizen.getZ(),
-              citizen.getBoundingBox().inflate(3.0D, 3.0D, 3.0D));
+                    TargetingConditions.DEFAULT,
+                    citizen,
+                    citizen.getX(),
+                    citizen.getY(),
+                    citizen.getZ(),
+                    citizen.getBoundingBox().inflate(3.0D, 3.0D, 3.0D));
 
-            if (closestEntity == null)
-            {
+            if (closestEntity == null) {
                 return CitizenAIState.IDLE;
             }
         }
 
         citizen.getLookControl()
-          .setLookAt(closestEntity.getX(),
-            closestEntity.getY() + (double) closestEntity.getEyeHeight(),
-            closestEntity.getZ(),
-            (float) citizen.getMaxHeadYRot(),
-            (float) citizen.getMaxHeadXRot());
+                .setLookAt(closestEntity.getX(),
+                        closestEntity.getY() + (double) closestEntity.getEyeHeight(),
+                        closestEntity.getZ(),
+                        (float) citizen.getMaxHeadYRot(),
+                        (float) citizen.getMaxHeadXRot());
         return MourningState.STARING;
     }
 
@@ -281,47 +254,39 @@ public class EntityAIMournCitizen implements IStateAI
      *
      * @return the next state to go to.
      */
-    private IState decide()
-    {
-        if (!citizen.getNavigation().isDone())
-        {
+    private IState decide() {
+        if (!citizen.getNavigation().isDone()) {
             return CitizenAIState.IDLE;
         }
 
-        if (this.citizen.getRandom().nextBoolean())
-        {
+        if (this.citizen.getRandom().nextBoolean()) {
             return MourningState.STARING;
         }
 
-        if (this.graveyard == null)
-        {
+        if (this.graveyard == null) {
             final IBuilding graveyardBuilding =
-              citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingGraveyard && b.getFirstModuleOccurance(
-                GraveyardManagementModule.class).hasRestingCitizen(citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens()));
-            if (graveyardBuilding != null)
-            {
+                    citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingGraveyard && b.getFirstModuleOccurance(
+                            GraveyardManagementModule.class).hasRestingCitizen(citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens()));
+            if (graveyardBuilding != null) {
                 this.graveyard = graveyardBuilding.getPosition();
             }
         }
 
-        if (graveyard != null)
-        {
+        if (graveyard != null) {
             return MourningState.WALKING_TO_GRAVEYARD;
         }
 
         citizen.getLookControl().setLookAt(citizen.getX(), citizen.getY() - 10, citizen.getZ(), (float) citizen.getMaxHeadYRot(),
-          (float) citizen.getMaxHeadXRot());
+                (float) citizen.getMaxHeadXRot());
 
-        if (BlockPosUtil.getDistance2D(this.citizen.blockPosition(), getMournLocation()) > MIN_DESTINATION_TO_LOCATION)
-        {
+        if (BlockPosUtil.getDistance2D(this.citizen.blockPosition(), getMournLocation()) > MIN_DESTINATION_TO_LOCATION) {
             return MourningState.WALKING_TO_TOWNHALL;
         }
 
         return MourningState.WANDERING;
     }
 
-    public void reset()
-    {
+    public void reset() {
         citizen.getCitizenData().setVisibleStatus(null);
         this.graveyard = null;
         this.gravePos = null;
@@ -332,11 +297,9 @@ public class EntityAIMournCitizen implements IStateAI
      *
      * @return blockPos of the location to mourn at
      */
-    protected BlockPos getMournLocation()
-    {
+    protected BlockPos getMournLocation() {
         final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
-        if (colony != null && colony.getBuildingManager().hasTownHall())
-        {
+        if (colony != null && colony.getBuildingManager().hasTownHall()) {
             return colony.getBuildingManager().getTownHall().getStandingPosition();
         }
 

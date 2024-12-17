@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.ai.workers;
 
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.ai.IStateAI;
@@ -42,8 +41,7 @@ import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenDiseas
 /**
  * High level AI for citizens, which switches between all the different AI states like sleeping,working,fleeing etc
  */
-public class CitizenAI implements IStateAI
-{
+public class CitizenAI implements IStateAI {
     /**
      * Citizen this AI belongs to
      */
@@ -59,8 +57,7 @@ public class CitizenAI implements IStateAI
      */
     private List<IStateAI> minimalAI = new ArrayList<>();
 
-    public CitizenAI(final EntityCitizen citizen)
-    {
+    public CitizenAI(final EntityCitizen citizen) {
         this.citizen = citizen;
 
         citizen.getCitizenAI().addTransition(new AIEventTarget<IState>(AIBlockingEventType.EVENT, () -> true, this::decideAiTask, 10));
@@ -77,13 +74,11 @@ public class CitizenAI implements IStateAI
     /**
      * Registers callbacks for the work/job AI
      */
-    private void registerWorkAI()
-    {
+    private void registerWorkAI() {
         citizen.getCitizenAI().addTransition(new AITarget<>(CitizenAIState.WORK, () -> true, () ->
         {
             final ITickingStateAI ai = citizen.getCitizenJobHandler().getColonyJob().getWorkerAI();
-            if (ai != null)
-            {
+            if (ai != null) {
                 ai.resetAI();
             }
             citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
@@ -92,11 +87,9 @@ public class CitizenAI implements IStateAI
 
         citizen.getCitizenAI().addTransition(new AITarget<>(CitizenAIState.WORKING, () -> true, () ->
         {
-            if (citizen.getCitizenJobHandler().getColonyJob() != null)
-            {
+            if (citizen.getCitizenJobHandler().getColonyJob() != null) {
                 final ITickingStateAI ai = citizen.getCitizenJobHandler().getColonyJob().getWorkerAI();
-                if (ai != null)
-                {
+                if (ai != null) {
                     citizen.getCitizenJobHandler().getColonyJob().getWorkerAI().tick();
                 }
             }
@@ -110,11 +103,9 @@ public class CitizenAI implements IStateAI
      *
      * @return
      */
-    private IState decideAiTask()
-    {
+    private IState decideAiTask() {
         IState next = calculateNextState();
-        if (next == null || next == lastState && citizen.getCitizenAI().getState() != CitizenAIState.IDLE)
-        {
+        if (next == null || next == lastState && citizen.getCitizenAI().getState() != CitizenAIState.IDLE) {
             return null;
         }
 
@@ -128,18 +119,14 @@ public class CitizenAI implements IStateAI
      *
      * @return
      */
-    private IState calculateNextState()
-    {
-        if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard guardJob)
-        {
-            if (shouldEat())
-            {
+    private IState calculateNextState() {
+        if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard guardJob) {
+            if (shouldEat()) {
                 return CitizenAIState.EATING;
             }
 
             // Sick
-            if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() && guardJob.canAIBeInterrupted())
-            {
+            if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() && guardJob.canAIBeInterrupted()) {
                 citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
                 return CitizenAIState.SICK;
             }
@@ -148,77 +135,61 @@ public class CitizenAI implements IStateAI
         }
 
         // Sick at hospital
-        if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() && citizen.getCitizenData().getCitizenDiseaseHandler().sleepsAtHospital())
-        {
+        if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() && citizen.getCitizenData().getCitizenDiseaseHandler().sleepsAtHospital()) {
             citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
             return CitizenAIState.SICK;
         }
 
         // Raiding
-        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getRaiderManager().isRaided())
-        {
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getRaiderManager().isRaided()) {
             citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
             citizen.setVisibleStatusIfNone(RAIDED);
             return CitizenAIState.SLEEP;
         }
 
         // Sleeping
-        if (!WorldUtil.isPastTime(CompatibilityUtils.getWorldFromCitizen(citizen), NIGHT - 2000))
-        {
-            if (lastState == CitizenAIState.SLEEP)
-            {
+        if (!WorldUtil.isPastTime(CompatibilityUtils.getWorldFromCitizen(citizen), NIGHT - 2000)) {
+            if (lastState == CitizenAIState.SLEEP) {
                 citizen.setVisibleStatusIfNone(SLEEP);
                 citizen.getCitizenAI().setCurrentDelay(20 * 15);
                 return CitizenAIState.SLEEP;
             }
 
-            if (citizen.getCitizenSleepHandler().shouldGoSleep())
-            {
+            if (citizen.getCitizenSleepHandler().shouldGoSleep()) {
                 citizen.getCitizenData().onGoSleep();
                 return CitizenAIState.SLEEP;
             }
-        }
-        else
-        {
-            if (citizen.getCitizenSleepHandler().isAsleep())
-            {
-                if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick())
-                {
+        } else {
+            if (citizen.getCitizenSleepHandler().isAsleep()) {
+                if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick()) {
                     final BlockPos bedPos = citizen.getCitizenSleepHandler().getBedLocation();
-                    if (bedPos == null || bedPos.distSqr(citizen.blockPosition()) > 5)
-                    {
+                    if (bedPos == null || bedPos.distSqr(citizen.blockPosition()) > 5) {
                         citizen.getCitizenSleepHandler().onWakeUp();
                     }
-                }
-                else
-                {
+                } else {
                     citizen.getCitizenSleepHandler().onWakeUp();
                 }
             }
         }
 
         // Sick
-        if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() || citizen.getCitizenData().getCitizenDiseaseHandler().isHurt())
-        {
+        if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() || citizen.getCitizenData().getCitizenDiseaseHandler().isHurt()) {
             citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
             return CitizenAIState.SICK;
         }
 
         // Eating
-        if (shouldEat())
-        {
+        if (shouldEat()) {
             return CitizenAIState.EATING;
         }
 
         // Mourning
-        if (citizen.getCitizenData().getCitizenMournHandler().isMourning())
-        {
-            if (lastState != CitizenAIState.MOURN)
-            {
+        if (citizen.getCitizenData().getCitizenMournHandler().isMourning()) {
+            if (lastState != CitizenAIState.MOURN) {
                 citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING,
-                  citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens().iterator().next()),
-                  Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
-                  ChatPriority.IMPORTANT));
+                        citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens().iterator().next()),
+                        Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
+                        ChatPriority.IMPORTANT));
 
                 citizen.setVisibleStatusIfNone(MOURNING);
             }
@@ -226,26 +197,22 @@ public class CitizenAI implements IStateAI
         }
 
         // Raining
-        if (CompatibilityUtils.getWorldFromCitizen(citizen).isRaining() && !shouldWorkWhileRaining() && !WorldUtil.isNetherType(citizen.level()))
-        {
+        if (CompatibilityUtils.getWorldFromCitizen(citizen).isRaining() && !shouldWorkWhileRaining() && !WorldUtil.isNetherType(citizen.level())) {
             citizen.setVisibleStatusIfNone(BAD_WEATHER);
             if (!citizen.getCitizenData().getColony().getRaiderManager().isRaided()
-                  && !citizen.getCitizenData().getCitizenMournHandler().isMourning())
-            {
+                    && !citizen.getCitizenData().getCitizenMournHandler().isMourning()) {
                 citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
             }
             return CitizenAIState.IDLE;
         }
 
         // Work
-        if (citizen.isBaby() && citizen.getCitizenJobHandler().getColonyJob() instanceof JobPupil && citizen.level().getDayTime() % 24000 > NOON)
-        {
+        if (citizen.isBaby() && citizen.getCitizenJobHandler().getColonyJob() instanceof JobPupil && citizen.level().getDayTime() % 24000 > NOON) {
             citizen.setVisibleStatusIfNone(HOUSE);
             return CitizenAIState.IDLE;
         }
 
-        if (citizen.getCitizenJobHandler().getColonyJob() != null)
-        {
+        if (citizen.getCitizenJobHandler().getColonyJob() != null) {
             return CitizenAIState.WORK;
         }
 
@@ -258,36 +225,30 @@ public class CitizenAI implements IStateAI
      *
      * @return
      */
-    public boolean shouldEat()
-    {
-        if (citizen.getCitizenData().justAte())
-        {
+    public boolean shouldEat() {
+        if (citizen.getCitizenData().justAte()) {
             return false;
         }
 
-        if (citizen.getCitizenData().getJob() != null && (!citizen.getCitizenData().getJob().canAIBeInterrupted()))
-        {
+        if (citizen.getCitizenData().getJob() != null && (!citizen.getCitizenData().getJob().canAIBeInterrupted())) {
             return false;
         }
 
-        if (lastState == CitizenAIState.EATING)
-        {
+        if (lastState == CitizenAIState.EATING) {
             return true;
         }
 
-        if (citizen.getCitizenData().getJob() != null && (citizen.getCitizenData().getJob().getJobRegistryEntry() == ModJobs.cook.get()) && MathUtils.RANDOM.nextInt(20) > 0)
-        {
+        if (citizen.getCitizenData().getJob() != null && (citizen.getCitizenData().getJob().getJobRegistryEntry() == ModJobs.cook.get()) && MathUtils.RANDOM.nextInt(20) > 0) {
             return false;
         }
 
-        if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() && citizen.getCitizenSleepHandler().isAsleep())
-        {
+        if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() && citizen.getCitizenSleepHandler().isAsleep()) {
             return false;
         }
 
         return citizen.getCitizenData().getSaturation() <= CitizenConstants.AVERAGE_SATURATION &&
-                 (citizen.getCitizenData().getSaturation() <= RESTAURANT_LIMIT ||
-                    (citizen.getCitizenData().getSaturation() < LOW_SATURATION && citizen.getHealth() < SEEK_DOCTOR_HEALTH));
+                (citizen.getCitizenData().getSaturation() <= RESTAURANT_LIMIT ||
+                        (citizen.getCitizenData().getSaturation() < LOW_SATURATION && citizen.getHealth() < SEEK_DOCTOR_HEALTH));
     }
 
     /**
@@ -295,23 +256,18 @@ public class CitizenAI implements IStateAI
      *
      * @return true if his building level is bigger than 5.
      */
-    private boolean shouldWorkWhileRaining()
-    {
-        if (MineColonies.getConfig().getServer().workersAlwaysWorkInRain.get())
-        {
+    private boolean shouldWorkWhileRaining() {
+        if (MineColonies.getConfig().getServer().workersAlwaysWorkInRain.get()) {
             return true;
         }
 
         final ICitizenColonyHandler colonyHandler = citizen.getCitizenColonyHandler();
-        if (colonyHandler.getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(WORKING_IN_RAIN) > 0)
-        {
+        if (colonyHandler.getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(WORKING_IN_RAIN) > 0) {
             return true;
         }
 
-        if (colonyHandler.getWorkBuilding() != null)
-        {
-            if (colonyHandler.getWorkBuilding().hasModule(WorkerBuildingModule.class))
-            {
+        if (colonyHandler.getWorkBuilding() != null) {
+            if (colonyHandler.getWorkBuilding().hasModule(WorkerBuildingModule.class)) {
                 return colonyHandler.getWorkBuilding().getFirstModuleOccurance(WorkerBuildingModule.class).canWorkDuringTheRain();
             }
         }

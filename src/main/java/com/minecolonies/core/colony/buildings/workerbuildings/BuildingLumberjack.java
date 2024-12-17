@@ -27,7 +27,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -43,15 +42,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NETHER_TREE_LIST;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NETHER_TREE_LIST;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIWorkLumberjack.SAPLINGS_LIST;
 
 /**
  * The lumberjacks building.
  */
-public class BuildingLumberjack extends AbstractBuilding
-{
+public class BuildingLumberjack extends AbstractBuilding {
     /**
      * Replant setting.
      */
@@ -83,12 +81,12 @@ public class BuildingLumberjack extends AbstractBuilding
     /**
      * The maximum upgrade of the building.
      */
-    private static final int    MAX_BUILDING_LEVEL = 5;
+    private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
      * The job description.
      */
-    private static final String LUMBERJACK         = "lumberjack";
+    private static final String LUMBERJACK = "lumberjack";
 
     /**
      * A list of all planted nether trees
@@ -106,8 +104,7 @@ public class BuildingLumberjack extends AbstractBuilding
      * @param c the colony.
      * @param l the position.
      */
-    public BuildingLumberjack(final IColony c, final BlockPos l)
-    {
+    public BuildingLumberjack(final IColony c, final BlockPos l) {
         super(c, l);
 
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.axe.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
@@ -115,8 +112,7 @@ public class BuildingLumberjack extends AbstractBuilding
     }
 
     @Override
-    public boolean canBeGathered()
-    {
+    public boolean canBeGathered() {
         // Normal crafters are only gatherable when they have a task, i.e. while producing stuff.
         // BUT, the lumberjack both gathers and crafts things now, so it should always be gatherable.
         // This unfortunately means that the dman will sometimes "steal" ingredients from the LJ.
@@ -126,14 +122,11 @@ public class BuildingLumberjack extends AbstractBuilding
     }
 
     @Override
-    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
-    {
+    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount() {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
         final IItemListModule saplingList = getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST));
-        for (final ItemStorage sapling : IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings())
-        {
-            if (!saplingList.isItemInList(sapling))
-            {
+        for (final ItemStorage sapling : IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings()) {
+            if (!saplingList.isItemInList(sapling)) {
                 toKeep.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(sapling.getItemStack(), stack), new Tuple<>(com.minecolonies.api.util.constant.Constants.STACKSIZE, true));
             }
         }
@@ -142,65 +135,51 @@ public class BuildingLumberjack extends AbstractBuilding
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return LUMBERJACK;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
 
-        if (compound.contains(TAG_RESTRICT_START))
-        {
+        if (compound.contains(TAG_RESTRICT_START)) {
             startRestriction = NBTUtils.readBlockPos(compound, TAG_RESTRICT_START);
-        }
-        else
-        {
+        } else {
             startRestriction = null;
         }
 
-        if (compound.contains(TAG_RESTRICT_END))
-        {
+        if (compound.contains(TAG_RESTRICT_END)) {
             endRestriction = NBTUtils.readBlockPos(compound, TAG_RESTRICT_END);
-        }
-        else
-        {
+        } else {
             endRestriction = null;
         }
 
         final ListTag netherTreeBinTagList = compound.getList(TAG_NETHER_TREE_LIST, Tag.TAG_COMPOUND);
-        for (int i = 0; i < netherTreeBinTagList.size(); i++)
-        {
+        for (int i = 0; i < netherTreeBinTagList.size(); i++) {
             netherTrees.add(BlockPosUtil.readFromListNBT(netherTreeBinTagList, i));
         }
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
 
-        if (startRestriction != null)
-        {
+        if (startRestriction != null) {
             compound.put(TAG_RESTRICT_START, NBTUtils.writeBlockPos(startRestriction));
         }
 
-        if (endRestriction != null)
-        {
+        if (endRestriction != null) {
             compound.put(TAG_RESTRICT_END, NBTUtils.writeBlockPos(endRestriction));
         }
 
         @NotNull final ListTag netherTreeBinCompoundList = new ListTag();
-        for (@NotNull final BlockPos pos : netherTrees)
-        {
+        for (@NotNull final BlockPos pos : netherTrees) {
             BlockPosUtil.writeToListNBT(netherTreeBinCompoundList, pos);
         }
         compound.put(TAG_NETHER_TREE_LIST, netherTreeBinCompoundList);
@@ -212,8 +191,7 @@ public class BuildingLumberjack extends AbstractBuilding
      *
      * @return true if so.
      */
-    public boolean shouldReplant()
-    {
+    public boolean shouldReplant() {
         return getSetting(REPLANT).getValue();
     }
 
@@ -222,8 +200,7 @@ public class BuildingLumberjack extends AbstractBuilding
      *
      * @return true if so.
      */
-    public boolean shouldDefoliate()
-    {
+    public boolean shouldDefoliate() {
         return getSetting(DEFOLIATE).getValue();
     }
 
@@ -232,12 +209,9 @@ public class BuildingLumberjack extends AbstractBuilding
      *
      * @return true if it should restrict.
      */
-    public boolean shouldRestrict()
-    {
-        if (getSetting(RESTRICT).getValue())
-        {
-            if (startRestriction == null || endRestriction == null)
-            {
+    public boolean shouldRestrict() {
+        if (getSetting(RESTRICT).getValue()) {
+            if (startRestriction == null || endRestriction == null) {
                 getSetting(RESTRICT).trigger();
                 markDirty();
             }
@@ -245,26 +219,22 @@ public class BuildingLumberjack extends AbstractBuilding
         return getSetting(RESTRICT).getValue();
     }
 
-    public void setRestrictedArea(final BlockPos startPosition, final BlockPos endPosition)
-    {
+    public void setRestrictedArea(final BlockPos startPosition, final BlockPos endPosition) {
         this.startRestriction = startPosition;
         this.endRestriction = endPosition;
 
         final boolean areaIsDefined = startPosition != null && endPosition != null;
-        if (getSetting(RESTRICT).getValue() != areaIsDefined)
-        {
+        if (getSetting(RESTRICT).getValue() != areaIsDefined) {
             getSetting(RESTRICT).trigger();
         }
         markDirty();
     }
 
-    public BlockPos getStartRestriction()
-    {
+    public BlockPos getStartRestriction() {
         return this.startRestriction;
     }
 
-    public BlockPos getEndRestriction()
-    {
+    public BlockPos getEndRestriction() {
         return this.endRestriction;
     }
 
@@ -272,45 +242,34 @@ public class BuildingLumberjack extends AbstractBuilding
      * Returns early if no worker is assigned Iterates over the nether tree position list If position is a fungus, grows it depending on worker's level If the block has changed,
      * removes the position from the list and returns early If the position is not a fungus, removes the position from the list
      */
-    private void bonemealFungi()
-    {
+    private void bonemealFungi() {
         final WorkerBuildingModule module = getFirstModuleOccurance(WorkerBuildingModule.class);
         final ICitizenData data = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
-        if (data == null)
-        {
+        if (data == null) {
             return;
         }
         final int modifier = Math.max(0, Math.min(FUNGI_MODIFIER, 100));
-        for (Iterator<BlockPos> iterator = netherTrees.iterator(); iterator.hasNext(); )
-        {
+        for (Iterator<BlockPos> iterator = netherTrees.iterator(); iterator.hasNext(); ) {
             final BlockPos pos = iterator.next();
             final Level world = colony.getWorld();
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
+            if (WorldUtil.isBlockLoaded(world, pos)) {
                 final BlockState blockState = world.getBlockState(pos);
                 final Block block = blockState.getBlock();
-                if (blockState.is(ModTags.mushroomBlocks) || blockState.is(ModTags.fungiBlocks))
-                {
+                if (blockState.is(ModTags.mushroomBlocks) || blockState.is(ModTags.fungiBlocks)) {
                     int threshold = modifier + (int) Math.ceil(data.getCitizenSkillHandler().getLevel(module.getPrimarySkill()) * (1 - ((float) modifier / 100)));
                     final int rand = world.getRandom().nextInt(100);
-                    if (rand < threshold)
-                    {
+                    if (rand < threshold) {
                         final BonemealableBlock growable = (BonemealableBlock) block;
-                        if (growable.isValidBonemealTarget(world, pos, blockState))
-                        {
-                            if (!world.isClientSide)
-                            {
-                                if (growable.isBonemealSuccess(world, world.random, pos, blockState))
-                                {
+                        if (growable.isValidBonemealTarget(world, pos, blockState)) {
+                            if (!world.isClientSide) {
+                                if (growable.isBonemealSuccess(world, world.random, pos, blockState)) {
                                     growable.performBonemeal((ServerLevel) world, world.random, pos, blockState);
                                     return;
                                 }
                             }
                         }
                     }
-                }
-                else
-                {
+                } else {
                     iterator.remove();
                 }
             }
@@ -322,8 +281,7 @@ public class BuildingLumberjack extends AbstractBuilding
      *
      * @return a copy of the list
      */
-    public Set<BlockPos> getNetherTrees()
-    {
+    public Set<BlockPos> getNetherTrees() {
         return new HashSet<>(netherTrees);
     }
 
@@ -332,8 +290,7 @@ public class BuildingLumberjack extends AbstractBuilding
      *
      * @param pos the position
      */
-    public void removeNetherTree(BlockPos pos)
-    {
+    public void removeNetherTree(BlockPos pos) {
         netherTrees.remove(pos);
     }
 
@@ -342,31 +299,25 @@ public class BuildingLumberjack extends AbstractBuilding
      *
      * @param pos the position
      */
-    public void addNetherTree(BlockPos pos)
-    {
+    public void addNetherTree(BlockPos pos) {
         netherTrees.add(pos);
     }
 
     @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
+    public void onColonyTick(@NotNull final IColony colony) {
         super.onColonyTick(colony);
         bonemealFungi();
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync) {
         super.serializeToView(buf, fullSync);
 
         buf.writeBoolean(shouldRestrict());
-        if (startRestriction != null && endRestriction != null)
-        {
+        if (startRestriction != null && endRestriction != null) {
             buf.writeBlockPos(startRestriction);
             buf.writeBlockPos(endRestriction);
-        }
-        else
-        {
+        } else {
             buf.writeBlockPos(BlockPos.ZERO);
             buf.writeBlockPos(BlockPos.ZERO);
         }
@@ -375,8 +326,7 @@ public class BuildingLumberjack extends AbstractBuilding
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractBuildingView
-    {
+    public static class View extends AbstractBuildingView {
         private boolean restrict;
         private BlockPos startRestriction;
         private BlockPos endRestriction;
@@ -387,14 +337,12 @@ public class BuildingLumberjack extends AbstractBuilding
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final IColonyView c, final BlockPos l)
-        {
+        public View(final IColonyView c, final BlockPos l) {
             super(c, l);
         }
 
         @Override
-        public void deserialize(@NotNull RegistryFriendlyByteBuf buf)
-        {
+        public void deserialize(@NotNull RegistryFriendlyByteBuf buf) {
             super.deserialize(buf);
 
             this.restrict = buf.readBoolean();
@@ -402,37 +350,31 @@ public class BuildingLumberjack extends AbstractBuilding
             this.endRestriction = buf.readBlockPos();
         }
 
-        public boolean shouldRestrict()
-        {
+        public boolean shouldRestrict() {
             return this.restrict;
         }
 
-        public BlockPos getStartRestriction()
-        {
+        public BlockPos getStartRestriction() {
             return this.startRestriction;
         }
 
-        public BlockPos getEndRestriction()
-        {
+        public BlockPos getEndRestriction() {
             return this.endRestriction;
         }
     }
 
-    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
-    {
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public CraftingModule(final JobEntry jobEntry)
-        {
+        public CraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         @Override
-        public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
-        {
+        public boolean canRecipeBeAdded(@NotNull final IToken<?> token) {
             return false;
         }
     }

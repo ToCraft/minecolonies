@@ -23,25 +23,21 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTI
 /**
  * Datagen for Blacksmith
  */
-public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
-{
+public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider {
     private static final String BLACKSMITH = ModJobs.BLACKSMITH_ID.getPath();
 
-    public DefaultBlacksmithCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultBlacksmithCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "DefaultBlacksmithCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
         plate(consumer, 4, 1, ModItems.plateArmorHelmet);
         plate(consumer, 7, 3, ModItems.plateArmorChest);
         plate(consumer, 6, 4, ModItems.plateArmorLegs);
@@ -60,10 +56,9 @@ public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
 
     private void plate(@NotNull final Consumer<CustomRecipeBuilder> consumer,
                        final int ironCount, final int coalCount,
-                       @NotNull final ItemLike output)
-    {
+                       @NotNull final ItemLike output) {
         recipe(BLACKSMITH, MODULE_CRAFTING,
-                        BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
+                BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.IRON_INGOT, ironCount)),
                         new ItemStorage(new ItemStack(Items.LEATHER)),
                         new ItemStorage(new ItemStack(Items.COAL, coalCount))))
@@ -76,10 +71,9 @@ public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
 
     private void netherite(@NotNull final Consumer<CustomRecipeBuilder> consumer,
                            @NotNull final ItemLike input,
-                           @NotNull final ItemLike output)
-    {
+                           @NotNull final ItemLike output) {
         recipe(BLACKSMITH, MODULE_CRAFTING,
-                        BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
+                BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input)),
                         new ItemStorage(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)),
                         new ItemStorage(new ItemStack(Items.NETHERITE_INGOT)),

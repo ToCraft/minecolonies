@@ -3,8 +3,7 @@ package com.minecolonies.core.util;
 /**
  * Utility class for experience calculation.
  */
-public final class ExperienceUtils
-{
+public final class ExperienceUtils {
     /**
      * The number to calculate the experienceLevel of the citizen.
      */
@@ -18,8 +17,7 @@ public final class ExperienceUtils
     /**
      * Private constructor to hide the public one.
      */
-    private ExperienceUtils()
-    {
+    private ExperienceUtils() {
     }
 
     /**
@@ -29,18 +27,17 @@ public final class ExperienceUtils
      * @param level      the current level.
      * @return the percentage.
      */
-    public static double getPercentOfLevelCompleted(final double experience, final int level)
-    {
+    public static double getPercentOfLevelCompleted(final double experience, final int level) {
         final double thisLvlExp = getXPNeededForOnlyLevel(level);
         final double lastLvlExp = getXPNeededForNextLevel(level) - thisLvlExp;
         final double currentExp = experience - lastLvlExp;
 
         return Math.min(PERCENT_MULTIPLIER,
-          PERCENT_MULTIPLIER
-            - ((thisLvlExp
-                  - currentExp)
-                 / thisLvlExp)
-                * PERCENT_MULTIPLIER);
+                PERCENT_MULTIPLIER
+                        - ((thisLvlExp
+                        - currentExp)
+                        / thisLvlExp)
+                        * PERCENT_MULTIPLIER);
     }
 
     /**
@@ -49,14 +46,12 @@ public final class ExperienceUtils
      * @param currentLevel the currentLevel of the citizen
      * @return the xp in int
      */
-    private static double getXPNeededForOnlyLevel(final int currentLevel)
-    {
-        if (currentLevel == 0)
-        {
+    private static double getXPNeededForOnlyLevel(final int currentLevel) {
+        if (currentLevel == 0) {
             return getXPNeededForNextLevel(currentLevel);
         }
         return getXPNeededForNextLevel(currentLevel)
-                 - getXPNeededForNextLevel(currentLevel - 1);
+                - getXPNeededForNextLevel(currentLevel - 1);
     }
 
     /**
@@ -65,15 +60,13 @@ public final class ExperienceUtils
      * @param currentLevel the currentLevel of the citizen
      * @return the xp in int
      */
-    public static double getXPNeededForNextLevel(final int currentLevel)
-    {
-        if (currentLevel <= 0)
-        {
+    public static double getXPNeededForNextLevel(final int currentLevel) {
+        if (currentLevel <= 0) {
             return 1;
         }
 
         return Math.max(1, 1 + EXPERIENCE_MULTIPLIER *
-                                 5 * currentLevel + 0.005 * (currentLevel * currentLevel * currentLevel));
+                5 * currentLevel + 0.005 * (currentLevel * currentLevel * currentLevel));
     }
 
     /**
@@ -82,11 +75,9 @@ public final class ExperienceUtils
      * @param xp the experience to calculate it for.
      * @return the correct level.
      */
-    public static int calculateLevel(final double xp)
-    {
+    public static int calculateLevel(final double xp) {
         int startLevel = 0;
-        while (getXPNeededForNextLevel(startLevel) < xp)
-        {
+        while (getXPNeededForNextLevel(startLevel) < xp) {
             startLevel++;
         }
         return startLevel;

@@ -5,8 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 /**
  * Citizen related quest effect
  */
-public interface ICitizenQuestSideEffect extends IQuestSideEffect
-{
+public interface ICitizenQuestSideEffect extends IQuestSideEffect {
     /**
      * Gets the citizen data
      *

@@ -19,19 +19,18 @@ import java.util.stream.Collectors;
 /**
  * Class used to represent deliveries inside the request system. This class can be used to request a getDelivery of a given ItemStack from a source to a target.
  */
-public class Delivery extends AbstractDeliverymanRequestable
-{
+public class Delivery extends AbstractDeliverymanRequestable {
     /**
      * Set of type tokens belonging to this class.
      */
     private final static Set<TypeToken<?>>
-      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Delivery.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+            TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Delivery.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_START  = "Start";
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_START = "Start";
     private static final String NBT_TARGET = "Target";
-    private static final String NBT_STACK  = "Stack";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_STACK = "Stack";
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
     private final ILocation start;
@@ -48,8 +47,7 @@ public class Delivery extends AbstractDeliverymanRequestable
      * @param stack    The stack to be delivered
      * @param priority The priority of the request
      */
-    public Delivery(@NotNull final ILocation start, @NotNull final ILocation target, @NotNull final ItemStack stack, final int priority)
-    {
+    public Delivery(@NotNull final ILocation start, @NotNull final ILocation target, @NotNull final ItemStack stack, final int priority) {
         super(priority);
         this.start = start;
         this.target = target;
@@ -57,8 +55,7 @@ public class Delivery extends AbstractDeliverymanRequestable
     }
 
     @NotNull
-    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, final Delivery delivery)
-    {
+    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, final Delivery delivery) {
         final CompoundTag compound = new CompoundTag();
 
         compound.put(NBT_START, controller.serializeTag(provider, delivery.getStart()));
@@ -70,8 +67,7 @@ public class Delivery extends AbstractDeliverymanRequestable
     }
 
     @NotNull
-    public static Delivery deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag compound)
-    {
+    public static Delivery deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag compound) {
         final ILocation start = controller.deserializeTag(provider, compound.getCompound(NBT_START));
         final ILocation target = controller.deserializeTag(provider, compound.getCompound(NBT_TARGET));
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK), provider);
@@ -87,8 +83,7 @@ public class Delivery extends AbstractDeliverymanRequestable
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final Delivery input)
-    {
+    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final Delivery input) {
         controller.serialize(buffer, input.getStart());
         controller.serialize(buffer, input.getTarget());
         Utils.serializeCodecMess(buffer, input.getStack());
@@ -102,8 +97,7 @@ public class Delivery extends AbstractDeliverymanRequestable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Delivery deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
-    {
+    public static Delivery deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer) {
         final ILocation start = controller.deserialize(buffer);
         final ILocation target = controller.deserialize(buffer);
         final ItemStack stack = Utils.deserializeCodecMess(buffer);
@@ -113,55 +107,45 @@ public class Delivery extends AbstractDeliverymanRequestable
     }
 
     @NotNull
-    public ILocation getStart()
-    {
+    public ILocation getStart() {
         return start;
     }
 
     @NotNull
-    public ILocation getTarget()
-    {
+    public ILocation getTarget() {
         return target;
     }
 
     @NotNull
-    public ItemStack getStack()
-    {
+    public ItemStack getStack() {
         return stack;
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (!super.equals(o))
-        {
+    public boolean equals(final Object o) {
+        if (!super.equals(o)) {
             return false;
         }
-        if (this == o)
-        {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof Delivery))
-        {
+        if (!(o instanceof Delivery)) {
             return false;
         }
 
         final Delivery delivery = (Delivery) o;
 
-        if (!getStart().equals(delivery.getStart()))
-        {
+        if (!getStart().equals(delivery.getStart())) {
             return false;
         }
-        if (!getTarget().equals(delivery.getTarget()))
-        {
+        if (!getTarget().equals(delivery.getTarget())) {
             return false;
         }
         return ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), delivery.getStack());
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + getStart().hashCode();
         result = 31 * result + getTarget().hashCode();
@@ -170,19 +154,17 @@ public class Delivery extends AbstractDeliverymanRequestable
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Delivery{" +
-                 "start=" + start +
-                 ", target=" + target +
-                 ", stack=" + stack +
-                 ", priority=" + priority +
-                 '}';
+                "start=" + start +
+                ", target=" + target +
+                ", stack=" + stack +
+                ", priority=" + priority +
+                '}';
     }
 
     @Override
-    public Set<TypeToken<?>> getSuperClasses()
-    {
+    public Set<TypeToken<?>> getSuperClasses() {
         return TYPE_TOKENS;
     }
 }

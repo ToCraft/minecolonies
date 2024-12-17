@@ -26,8 +26,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window to show expedition log
  */
-public class ExpeditionLogModuleWindow extends AbstractModuleWindow
-{
+public class ExpeditionLogModuleWindow extends AbstractModuleWindow {
     /**
      * The resource string.
      */
@@ -40,23 +39,19 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
      */
     private int tick = 1;
 
-    public ExpeditionLogModuleWindow(@NotNull final IBuildingView building, @NotNull final ExpeditionLogModuleView module)
-    {
+    public ExpeditionLogModuleWindow(@NotNull final IBuildingView building, @NotNull final ExpeditionLogModuleView module) {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
         this.module = module;
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         // refresh the log while we have the window open
-        if (tick > 0 && --tick == 0)
-        {
+        if (tick > 0 && --tick == 0) {
             new MarkBuildingDirtyMessage(buildingView).sendToServer();
         }
 
-        if (module.checkAndResetUpdated())
-        {
+        if (module.checkAndResetUpdated()) {
             tick = 20;
             refreshLog();
         }
@@ -64,22 +59,18 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
         super.onUpdate();
     }
 
-    private void refreshLog()
-    {
+    private void refreshLog() {
         final ExpeditionLog expeditionLog = module.getLog();
 
         findPaneOfTypeByID(WINDOW_ID_NAME, Text.class).setText(Component.literal(Objects.requireNonNullElse(expeditionLog.getName(), "")));
         findPaneOfTypeByID("status", Text.class).setText(Component.translatable(TranslationConstants.PARTIAL_EXPEDITION_STATUS + expeditionLog.getStatus().name().toLowerCase(Locale.US)));
 
         final Gradient bg = findPaneOfTypeByID("resourcesbg", Gradient.class);
-        if (expeditionLog.getStatus().equals(ExpeditionLog.Status.KILLED))
-        {
+        if (expeditionLog.getStatus().equals(ExpeditionLog.Status.KILLED)) {
             findPaneOfTypeByID("rip", Image.class).setVisible(true);
             bg.setGradientStart(0xDD, 0x66, 0x66, 0xFF);
             bg.setGradientEnd(0xAA, 0x55, 0x55, 0xFF);
-        }
-        else
-        {
+        } else {
             findPaneOfTypeByID("rip", Image.class).setVisible(false);
             bg.setGradientStart(0xD3, 0xD3, 0xD3, 0xFF);
             bg.setGradientEnd(0xA9, 0xA9, 0xA9, 0xFF);
@@ -101,31 +92,24 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
         createLootList(findPaneOfTypeByID(LIST_RESOURCES, View.class), loot);
     }
 
-    private void clearChildren(@NotNull final View parent, final int size)
-    {
-        while (parent.getChildren().size() > size)
-        {
+    private void clearChildren(@NotNull final View parent, final int size) {
+        while (parent.getChildren().size() > size) {
             parent.removeChild(parent.getChildren().get(size));
         }
     }
 
     private void createEquipmentList(@NotNull final View equipmentView,
-                                     @NotNull final List<ItemStack> equipment)
-    {
+                                     @NotNull final List<ItemStack> equipment) {
         final int ITEM_SIZE = 16;
         final int ITEM_GRID = 18;
 
         final int size = equipment.size();
         final int margin = (equipmentView.getWidth() - (ITEM_GRID * size)) / 2;
-        for (int i = 0; i < size; ++i)
-        {
+        for (int i = 0; i < size; ++i) {
             final ItemIcon child;
-            if (i < equipmentView.getChildren().size())
-            {
+            if (i < equipmentView.getChildren().size()) {
                 child = (ItemIcon) equipmentView.getChildren().get(i);
-            }
-            else
-            {
+            } else {
                 child = new ItemIcon();
                 equipmentView.addChild(child);
             }
@@ -136,23 +120,18 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
         clearChildren(equipmentView, size);
     }
 
-    private void createMobList(View mobsView, List<Tuple<EntityType<?>, Integer>> mobs)
-    {
+    private void createMobList(View mobsView, List<Tuple<EntityType<?>, Integer>> mobs) {
         final int MOB_SIZE = 24;
 
         final int size = mobs.size();
         final int marginLeft = (mobsView.getWidth() - (MOB_SIZE * size)) / 2;
         final int marginTop = (mobsView.getHeight() - MOB_SIZE) / 2;
 
-        for (int i = 0; i < size; ++i)
-        {
+        for (int i = 0; i < size; ++i) {
             final EntityIcon child;
-            if (i < mobsView.getChildren().size())
-            {
+            if (i < mobsView.getChildren().size()) {
                 child = (EntityIcon) mobsView.getChildren().get(i);
-            }
-            else
-            {
+            } else {
                 child = new EntityIcon();
                 mobsView.addChild(child);
             }
@@ -165,8 +144,7 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
     }
 
     private void createLootList(@NotNull final View lootView,
-                                @NotNull final List<ItemStorage> loot)
-    {
+                                @NotNull final List<ItemStorage> loot) {
         final int LOOT_SIZE = 16;
         final int LOOT_GRID = 18;
 
@@ -179,21 +157,16 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
         final int marginTop = (lootView.getInteriorHeight() - (rows * LOOT_GRID)) / 2;
 
         int row = 0, column = 0;
-        for (int i = 0; i < size; ++i, ++column)
-        {
-            if (column >= columns)
-            {
+        for (int i = 0; i < size; ++i, ++column) {
+            if (column >= columns) {
                 ++row;
                 column = 0;
             }
 
             final ItemIcon child;
-            if (i < lootView.getChildren().size())
-            {
+            if (i < lootView.getChildren().size()) {
                 child = (ItemIcon) lootView.getChildren().get(i);
-            }
-            else
-            {
+            } else {
                 child = new ItemIcon();
                 lootView.addChild(child);
             }

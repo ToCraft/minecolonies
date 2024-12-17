@@ -24,54 +24,45 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RAID_NORSE
 /**
  * Norsemen raid event for the colony, triggers a horde of vikings which spawn and attack the colony.
  */
-public class NorsemenRaidEvent extends HordeRaidEvent
-{
+public class NorsemenRaidEvent extends HordeRaidEvent {
     /**
      * This raids event id, registry entries use res locations as ids.
      */
     public static final ResourceLocation NORSEMEN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "norsemen_raid");
 
-    public NorsemenRaidEvent(IColony colony)
-    {
+    public NorsemenRaidEvent(IColony colony) {
         super(colony);
     }
 
     @Override
-    public ResourceLocation getEventTypeID()
-    {
+    public ResourceLocation getEventTypeID() {
         return NORSEMEN_RAID_EVENT_TYPE_ID;
     }
 
     @Override
-    protected void updateRaidBar()
-    {
+    protected void updateRaidBar() {
         super.updateRaidBar();
         raidBar.setCreateWorldFog(true);
     }
 
     @Override
-    public void registerEntity(final Entity entity)
-    {
-        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())
-        {
+    public void registerEntity(final Entity entity) {
+        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive()) {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
-        if (entity instanceof EntityNorsemenChief && boss.keySet().size() < horde.numberOfBosses)
-        {
+        if (entity instanceof EntityNorsemenChief && boss.keySet().size() < horde.numberOfBosses) {
             boss.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityNorsemenArcher && archers.keySet().size() < horde.numberOfArchers)
-        {
+        if (entity instanceof EntityNorsemenArcher && archers.keySet().size() < horde.numberOfArchers) {
             archers.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityShieldmaiden && normal.keySet().size() < horde.numberOfRaiders)
-        {
+        if (entity instanceof EntityShieldmaiden && normal.keySet().size() < horde.numberOfRaiders) {
             normal.put(entity, entity.getUUID());
             return;
         }
@@ -80,36 +71,30 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    public void onEntityDeath(final LivingEntity entity)
-    {
+    public void onEntityDeath(final LivingEntity entity) {
         super.onEntityDeath(entity);
-        if (!(entity instanceof AbstractEntityRaiderMob))
-        {
+        if (!(entity instanceof AbstractEntityRaiderMob)) {
             return;
         }
 
-        if (entity instanceof EntityNorsemenChief)
-        {
+        if (entity instanceof EntityNorsemenChief) {
             boss.remove(entity);
             horde.numberOfBosses--;
         }
 
-        if (entity instanceof EntityNorsemenArcher)
-        {
+        if (entity instanceof EntityNorsemenArcher) {
             archers.remove(entity);
             horde.numberOfArchers--;
         }
 
-        if (entity instanceof EntityShieldmaiden)
-        {
+        if (entity instanceof EntityShieldmaiden) {
             normal.remove(entity);
             horde.numberOfRaiders--;
         }
 
         horde.hordeSize--;
 
-        if (horde.hordeSize == 0)
-        {
+        if (horde.hordeSize == 0) {
             status = EventStatus.DONE;
         }
 
@@ -123,35 +108,30 @@ public class NorsemenRaidEvent extends HordeRaidEvent
      * @param compound NBTcompound with saved values
      * @return the raid event.
      */
-    public static NorsemenRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public static NorsemenRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         NorsemenRaidEvent
-          event = new NorsemenRaidEvent(colony);
+                event = new NorsemenRaidEvent(colony);
         event.deserializeNBT(provider, compound);
         return event;
     }
 
     @Override
-    public EntityType<?> getNormalRaiderType()
-    {
+    public EntityType<?> getNormalRaiderType() {
         return SHIELDMAIDEN;
     }
 
     @Override
-    public EntityType<?> getArcherRaiderType()
-    {
+    public EntityType<?> getArcherRaiderType() {
         return NORSEMEN_ARCHER;
     }
 
     @Override
-    public EntityType<?> getBossRaiderType()
-    {
+    public EntityType<?> getBossRaiderType() {
         return NORSEMEN_CHIEF;
     }
 
     @Override
-    protected MutableComponent getDisplayName()
-    {
+    protected MutableComponent getDisplayName() {
         return Component.translatableEscape(RAID_NORSEMEN);
     }
 }

@@ -11,18 +11,16 @@ import java.util.List;
 
 import static com.minecolonies.apiimp.initializer.ModItemsInitializer.GOGGLES;
 
-public class ItemBuildGoggles extends ArmorItem
-{
+public class ItemBuildGoggles extends ArmorItem {
     /**
      * Constructor
      *
-     * @param name            the name.
-     * @param properties      the item properties.
+     * @param name       the name.
+     * @param properties the item properties.
      */
     public ItemBuildGoggles(
             @NotNull final String name,
-            final Item.Properties properties)
-    {
+            final Item.Properties properties) {
         super(GOGGLES, Type.HELMET, properties.setNoRepair().rarity(Rarity.UNCOMMON));
     }
 
@@ -30,8 +28,7 @@ public class ItemBuildGoggles extends ArmorItem
     public void appendHoverText(@NotNull final ItemStack stack,
                                 @Nullable final TooltipContext ctx,
                                 @NotNull final List<Component> components,
-                                @NotNull final TooltipFlag flags)
-    {
+                                @NotNull final TooltipFlag flags) {
         super.appendHoverText(stack, ctx, components, flags);
 
         components.add(Component.translatableEscape("\"%s\"",
@@ -40,7 +37,7 @@ public class ItemBuildGoggles extends ArmorItem
                 .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 
         components.add(Component.translatableEscape(ColonyBlueprintRenderer.willRenderBlueprints()
-                ? "item.minecolonies.build_goggles.enabled" : "item.minecolonies.build_goggles.disabled")
+                        ? "item.minecolonies.build_goggles.enabled" : "item.minecolonies.build_goggles.disabled")
                 .withStyle(ChatFormatting.GRAY));
     }
 }

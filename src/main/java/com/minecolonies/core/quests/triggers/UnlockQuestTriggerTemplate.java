@@ -9,34 +9,30 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Unlock quest trigger.
  */
-public class UnlockQuestTriggerTemplate implements IQuestTriggerTemplate
-{
+public class UnlockQuestTriggerTemplate implements IQuestTriggerTemplate {
     /**
      * Create a new instance of this trigger.
      */
-    public UnlockQuestTriggerTemplate()
-    {
+    public UnlockQuestTriggerTemplate() {
 
     }
 
     /**
      * Create a new trigger directly from json.
+     *
      * @param ignoreJson the json associated to this trigger.
      */
-    public static UnlockQuestTriggerTemplate createUnlockTrigger(final JsonObject ignoreJson)
-    {
+    public static UnlockQuestTriggerTemplate createUnlockTrigger(final JsonObject ignoreJson) {
         return new UnlockQuestTriggerTemplate();
     }
 
     @Override
-    public ITriggerReturnData canTriggerQuest(final IColony colony)
-    {
+    public ITriggerReturnData canTriggerQuest(final IColony colony) {
         return new BooleanTriggerReturnData(false);
     }
 
     @Override
-    public ITriggerReturnData canTriggerQuest(final ResourceLocation questId, final IColony colony)
-    {
+    public ITriggerReturnData canTriggerQuest(final ResourceLocation questId, final IColony colony) {
         return new BooleanTriggerReturnData(colony.getQuestManager().isUnlocked(questId));
     }
 }

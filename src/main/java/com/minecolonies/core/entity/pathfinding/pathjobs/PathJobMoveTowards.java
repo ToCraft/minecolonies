@@ -12,8 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job that handles moving in a direction
  */
-public class PathJobMoveTowards extends AbstractPathJob implements IDestinationPathJob
-{
+public class PathJobMoveTowards extends AbstractPathJob implements IDestinationPathJob {
     /**
      * Position to run to, in order to
      */
@@ -21,7 +20,7 @@ public class PathJobMoveTowards extends AbstractPathJob implements IDestinationP
     /**
      * Required avoidDistance.
      */
-    protected final int      minDistance;
+    protected final int minDistance;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -34,12 +33,11 @@ public class PathJobMoveTowards extends AbstractPathJob implements IDestinationP
      * @param entity      the entity.
      */
     public PathJobMoveTowards(
-      final Level world,
-      @NotNull final BlockPos start,
-      @NotNull final BlockPos direction,
-      final int minDistance,
-      final Mob entity)
-    {
+            final Level world,
+            @NotNull final BlockPos start,
+            @NotNull final BlockPos direction,
+            final int minDistance,
+            final Mob entity) {
         super(world, start, minDistance * 2, new PathResult<PathJobMoveTowards>(), entity);
 
         this.target = direction;
@@ -52,8 +50,7 @@ public class PathJobMoveTowards extends AbstractPathJob implements IDestinationP
      * @return heuristic as a double - Manhatten Distance with tie-breaker.
      */
     @Override
-    protected double computeHeuristic(final int x, final int y, final int z)
-    {
+    protected double computeHeuristic(final int x, final int y, final int z) {
         return BlockPosUtil.distManhattan(target, x, y, z);
     }
 
@@ -64,16 +61,14 @@ public class PathJobMoveTowards extends AbstractPathJob implements IDestinationP
      * @return true if so.
      */
     @Override
-    protected boolean isAtDestination(@NotNull final MNode n)
-    {
+    protected boolean isAtDestination(@NotNull final MNode n) {
         return BlockPosUtil.distManhattan(start, n.x, n.y, n.z) > minDistance
-                 && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
-                      == SurfaceType.WALKABLE;
+                && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                == SurfaceType.WALKABLE;
     }
 
     @Override
-    public BlockPos getDestination()
-    {
+    public BlockPos getDestination() {
         return target;
     }
 }

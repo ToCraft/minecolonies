@@ -14,8 +14,7 @@ import java.util.Map;
 /**
  * Interface for the event manager, the event manager deals with all colony related events, such as raid events.
  */
-public interface IEventManager
-{
+public interface IEventManager {
     /**
      * Adds an event
      *

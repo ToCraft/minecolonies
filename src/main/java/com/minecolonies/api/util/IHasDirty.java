@@ -3,8 +3,7 @@ package com.minecolonies.api.util;
 /**
  * Interface for all classes that require some kind of dirty handling.
  */
-public interface IHasDirty
-{
+public interface IHasDirty {
     /**
      * Specific dirty marking of modules (separate from building dirty).
      */
@@ -12,6 +11,7 @@ public interface IHasDirty
 
     /**
      * Check if one of the modules is dirty.
+     *
      * @return true if so.
      */
     boolean checkDirty();

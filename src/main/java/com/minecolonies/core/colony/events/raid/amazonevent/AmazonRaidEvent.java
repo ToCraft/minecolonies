@@ -26,8 +26,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RAID_AMAZO
 /**
  * Amazon raid event for the colony, triggers a horde of amazons that spawn and attack the colony.
  */
-public class AmazonRaidEvent extends HordeRaidEvent
-{
+public class AmazonRaidEvent extends HordeRaidEvent {
     /**
      * This raids event id, registry entries use res locations as ids.
      */
@@ -38,40 +37,33 @@ public class AmazonRaidEvent extends HordeRaidEvent
      */
     private int musicCooldown = 0;
 
-    public AmazonRaidEvent(IColony colony)
-    {
+    public AmazonRaidEvent(IColony colony) {
         super(colony);
     }
 
     @Override
-    public ResourceLocation getEventTypeID()
-    {
+    public ResourceLocation getEventTypeID() {
         return AMAZON_RAID_EVENT_TYPE_ID;
     }
 
     @Override
-    public void registerEntity(final Entity entity)
-    {
-        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())
-        {
+    public void registerEntity(final Entity entity) {
+        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive()) {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
-        if (entity instanceof EntityAmazonChief && boss.keySet().size() < horde.numberOfBosses)
-        {
+        if (entity instanceof EntityAmazonChief && boss.keySet().size() < horde.numberOfBosses) {
             boss.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityArcherAmazon && archers.keySet().size() < horde.numberOfArchers)
-        {
+        if (entity instanceof EntityArcherAmazon && archers.keySet().size() < horde.numberOfArchers) {
             archers.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityAmazonSpearman && normal.keySet().size() < horde.numberOfRaiders)
-        {
+        if (entity instanceof EntityAmazonSpearman && normal.keySet().size() < horde.numberOfRaiders) {
             normal.put(entity, entity.getUUID());
             return;
         }
@@ -80,60 +72,50 @@ public class AmazonRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    protected void updateRaidBar()
-    {
+    protected void updateRaidBar() {
         super.updateRaidBar();
         raidBar.setCreateWorldFog(true);
     }
 
     @Override
-    protected MutableComponent getDisplayName()
-    {
+    protected MutableComponent getDisplayName() {
         return Component.translatableEscape(RAID_AMAZON);
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
-        if (--musicCooldown <= 0)
-        {
+        if (--musicCooldown <= 0) {
             PlayAudioMessage.sendToAll(getColony(), true, true, new PlayAudioMessage(RaidSounds.AMAZON_RAID));
             musicCooldown = 20;
         }
     }
 
     @Override
-    public void onEntityDeath(final LivingEntity entity)
-    {
+    public void onEntityDeath(final LivingEntity entity) {
         super.onEntityDeath(entity);
-        if (!(entity instanceof AbstractEntityRaiderMob))
-        {
+        if (!(entity instanceof AbstractEntityRaiderMob)) {
             return;
         }
 
-        if (entity instanceof EntityAmazonChief)
-        {
+        if (entity instanceof EntityAmazonChief) {
             boss.remove(entity);
             horde.numberOfBosses--;
         }
 
-        if (entity instanceof EntityArcherAmazon)
-        {
+        if (entity instanceof EntityArcherAmazon) {
             archers.remove(entity);
             horde.numberOfArchers--;
         }
 
-        if (entity instanceof EntityAmazonSpearman)
-        {
+        if (entity instanceof EntityAmazonSpearman) {
             normal.remove(entity);
             horde.numberOfRaiders--;
         }
 
         horde.hordeSize--;
 
-        if (horde.hordeSize == 0)
-        {
+        if (horde.hordeSize == 0) {
             status = EventStatus.DONE;
         }
 
@@ -147,28 +129,24 @@ public class AmazonRaidEvent extends HordeRaidEvent
      * @param compound NBTcompound with saved values
      * @return the raid event.
      */
-    public static AmazonRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public static AmazonRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         AmazonRaidEvent event = new AmazonRaidEvent(colony);
         event.deserializeNBT(provider, compound);
         return event;
     }
 
     @Override
-    public EntityType<?> getNormalRaiderType()
-    {
+    public EntityType<?> getNormalRaiderType() {
         return AMAZONSPEARMAN;
     }
 
     @Override
-    public EntityType<?> getArcherRaiderType()
-    {
+    public EntityType<?> getArcherRaiderType() {
         return AMAZON;
     }
 
     @Override
-    public EntityType<?> getBossRaiderType()
-    {
+    public EntityType<?> getBossRaiderType() {
         return AMAZONCHIEF;
     }
 }

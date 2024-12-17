@@ -17,34 +17,30 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class SpearItemTileEntityRenderer extends BlockEntityWithoutLevelRenderer
-{
+public class SpearItemTileEntityRenderer extends BlockEntityWithoutLevelRenderer {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/spear.png");
-    private              SpearModel       model;
-    private final        EntityModelSet   set;
+    private SpearModel model;
+    private final EntityModelSet set;
 
-    public SpearItemTileEntityRenderer()
-    {
+    public SpearItemTileEntityRenderer() {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
         this.set = Minecraft.getInstance().getEntityModels();
         this.model = new SpearModel(this.set.bakeLayer(ModelLayers.TRIDENT));
     }
 
     @Override
-    public void onResourceManagerReload(ResourceManager manager)
-    {
+    public void onResourceManagerReload(ResourceManager manager) {
         this.model = new SpearModel(this.set.bakeLayer(ModelLayers.TRIDENT));
     }
 
     @Override
     public void renderByItem(
-      final ItemStack stack,
-      final ItemDisplayContext displayContext,
-      final PoseStack matrixStack,
-      final MultiBufferSource buffer,
-      final int combinedLight,
-      final int combinedOverlay)
-    {
+            final ItemStack stack,
+            final ItemDisplayContext displayContext,
+            final PoseStack matrixStack,
+            final MultiBufferSource buffer,
+            final int combinedLight,
+            final int combinedOverlay) {
         matrixStack.pushPose();
         model.renderToBuffer(matrixStack, ItemRenderer.getFoilBuffer(buffer, model.renderType(TEXTURE), false, stack.hasFoil()), combinedLight, combinedOverlay, -1);
         matrixStack.popPose();

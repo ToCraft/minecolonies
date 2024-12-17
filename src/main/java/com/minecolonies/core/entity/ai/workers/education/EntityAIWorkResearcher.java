@@ -17,8 +17,7 @@ import java.util.List;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
-public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch, BuildingUniversity>
-{
+public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch, BuildingUniversity> {
     /**
      * Delay for each subject study.
      */
@@ -39,20 +38,18 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
      *
      * @param job the job to fulfill
      */
-    public EntityAIWorkResearcher(@NotNull final JobResearch job)
-    {
+    public EntityAIWorkResearcher(@NotNull final JobResearch job) {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
-          new AITarget(STUDY, this::study, STUDY_DELAY)
+                new AITarget(IDLE, START_WORKING, 1),
+                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+                new AITarget(STUDY, this::study, STUDY_DELAY)
         );
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    public Class<BuildingUniversity> getExpectedBuildingClass()
-    {
+    public Class<BuildingUniversity> getExpectedBuildingClass() {
         return BuildingUniversity.class;
     }
 
@@ -61,29 +58,24 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
      *
      * @return the next IAIState.
      */
-    private IAIState study()
-    {
-        if (studyPos == null)
-        {
+    private IAIState study() {
+        if (studyPos == null) {
             studyPos = building.getRandomBookShelf();
         }
 
-        if (PathfindingAIHelper.walkCloseToXNearY(worker, studyPos, building.getPosition(), 7))
-        {
+        if (PathfindingAIHelper.walkCloseToXNearY(worker, studyPos, building.getPosition(), 7)) {
             return getState();
         }
 
         final IColony colony = building.getColony();
         final List<ILocalResearch> inProgress = colony.getResearchManager().getResearchTree().getResearchInProgress();
-        if (!inProgress.isEmpty() && job.getCurrentMana() > 0)
-        {
+        if (!inProgress.isEmpty() && job.getCurrentMana() > 0) {
             final ILocalResearch research = inProgress.get(worker.getRandom().nextInt(inProgress.size()));
 
             if (colony.getResearchManager()
-                  .getResearchTree()
-                  .getResearch(research.getBranch(), research.getId())
-                  .research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree()))
-            {
+                    .getResearchTree()
+                    .getResearch(research.getBranch(), research.getId())
+                    .research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree())) {
                 building.onSuccess(research);
             }
             colony.getResearchManager().markDirty();
@@ -102,15 +94,12 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
      *
      * @return the next state.
      */
-    private IAIState startWorkingAtOwnBuilding()
-    {
-        if (walkToBuilding())
-        {
+    private IAIState startWorkingAtOwnBuilding() {
+        if (walkToBuilding()) {
             return getState();
         }
 
-        if (studyPos == null)
-        {
+        if (studyPos == null) {
             studyPos = building.getRandomBookShelf();
         }
 

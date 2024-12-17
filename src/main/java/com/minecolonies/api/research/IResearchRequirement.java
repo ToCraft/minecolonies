@@ -8,8 +8,7 @@ import net.minecraft.network.chat.MutableComponent;
 /**
  * Interface of research requirements.
  */
-public interface IResearchRequirement
-{
+public interface IResearchRequirement {
     /**
      * Check if this requirement is fulfilled for a certain colony.
      *

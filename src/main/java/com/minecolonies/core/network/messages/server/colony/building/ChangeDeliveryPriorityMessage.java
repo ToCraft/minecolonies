@@ -13,8 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "change_delivery_priority", ChangeDeliveryPriorityMessage::new);
 
     /**
@@ -28,8 +27,7 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
      * @param building view of the building to read data from
      * @param up       up or down?
      */
-    public ChangeDeliveryPriorityMessage(@NotNull final IBuildingView building, final boolean up)
-    {
+    public ChangeDeliveryPriorityMessage(@NotNull final IBuildingView building, final boolean up) {
         super(TYPE, building);
         this.up = up;
     }
@@ -39,8 +37,7 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
      *
      * @param buf the used byteBuffer.
      */
-    protected ChangeDeliveryPriorityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ChangeDeliveryPriorityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.up = buf.readBoolean();
     }
@@ -51,23 +48,17 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeBoolean(this.up);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if ((building != null && building.hasModule(WorkerBuildingModule.class)) || building instanceof Stash)
-        {
-            if (up)
-            {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if ((building != null && building.hasModule(WorkerBuildingModule.class)) || building instanceof Stash) {
+            if (up) {
                 building.alterPickUpPriority(1);
-            }
-            else
-            {
+            } else {
                 building.alterPickUpPriority(-1);
             }
             building.markDirty();

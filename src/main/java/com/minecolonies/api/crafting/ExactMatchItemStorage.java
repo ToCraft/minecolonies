@@ -7,27 +7,22 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Used to exact match stacks when storing them.
  */
-public class ExactMatchItemStorage extends ItemStorage
-{
+public class ExactMatchItemStorage extends ItemStorage {
     /**
      * Creates an instance of the storage.
      *
      * @param stack the stack.
      */
-    public ExactMatchItemStorage(@NotNull final ItemStack stack)
-    {
+    public ExactMatchItemStorage(@NotNull final ItemStack stack) {
         super(stack);
     }
 
     @Override
-    public boolean equals(final Object comparisonObject)
-    {
-        if (this == comparisonObject)
-        {
+    public boolean equals(final Object comparisonObject) {
+        if (this == comparisonObject) {
             return true;
         }
-        if (comparisonObject instanceof final ExactMatchItemStorage that)
-        {
+        if (comparisonObject instanceof final ExactMatchItemStorage that) {
             return ItemStackUtils.compareItemStacksIgnoreStackSize(that.getItemStack(), this.getItemStack(), !(super.shouldIgnoreDamageValue || that.shouldIgnoreDamageValue), !(this.shouldIgnoreNBTValue || that.shouldIgnoreNBTValue), false, true);
 
         }

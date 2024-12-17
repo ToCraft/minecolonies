@@ -8,8 +8,7 @@ import com.minecolonies.core.network.messages.server.colony.building.GiveToolMes
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 
-public class ToolModuleWindow extends AbstractModuleWindow
-{
+public class ToolModuleWindow extends AbstractModuleWindow {
     /**
      * Id of the button to give tool
      */
@@ -23,11 +22,10 @@ public class ToolModuleWindow extends AbstractModuleWindow
     /**
      * Constructor for the minimum stock window view.
      *
-     * @param building class extending
+     * @param building   class extending
      * @param moduleView the module view.
      */
-    public ToolModuleWindow(final String res, final IBuildingView building, final ToolModuleView moduleView)
-    {
+    public ToolModuleWindow(final String res, final IBuildingView building, final ToolModuleView moduleView) {
         super(building, res);
 
         this.moduleView = moduleView;
@@ -39,8 +37,7 @@ public class ToolModuleWindow extends AbstractModuleWindow
     /**
      * Send message to player to add scepter to his inventory.
      */
-    private void givePlayerScepter()
-    {
+    private void givePlayerScepter() {
         new GiveToolMessage(buildingView, moduleView.getTool()).sendToServer();
     }
 }

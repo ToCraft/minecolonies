@@ -26,15 +26,14 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_SELECT;
 import static com.minecolonies.api.util.constant.WindowConstants.NAME_LABEL;
 
-public class WindowSelectRes extends AbstractWindowSkeleton
-{
+public class WindowSelectRes extends AbstractWindowSkeleton {
     /**
      * Static vars.
      */
-    private static final String BUTTON_DONE   = "done";
+    private static final String BUTTON_DONE = "done";
     private static final String BUTTON_CANCEL = "cancel";
-    private static final String INPUT_NAME    = "name";
-    private static final int    WHITE         = Color.getByName("white", 0);
+    private static final String INPUT_NAME = "name";
+    private static final int WHITE = Color.getByName("white", 0);
 
     /**
      * All game items in a list.
@@ -49,7 +48,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     /**
      * Predicate to test for.
      */
-    private final Predicate<ItemStack>           test;
+    private final Predicate<ItemStack> test;
 
     /**
      * The consumer that receives the block quantity.
@@ -72,16 +71,14 @@ public class WindowSelectRes extends AbstractWindowSkeleton
      * @param origin the origin.
      * @param test   the testing predicate for the selector.
      */
-    public WindowSelectRes(final BOWindow origin, final Predicate<ItemStack> test, final BiConsumer<ItemStack, Integer> consumer, final boolean displayQty)
-    {
+    public WindowSelectRes(final BOWindow origin, final Predicate<ItemStack> test, final BiConsumer<ItemStack, Integer> consumer, final boolean displayQty) {
         super("minecolonies:gui/windowselectres.xml", origin);
         this.resourceList = this.findPaneOfTypeByID("resources", ScrollingList.class);
         registerButton(BUTTON_DONE, this::doneClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_SELECT, this::selectClicked);
         this.findPaneOfTypeByID("qty", TextField.class).setText("1");
-        if (!displayQty)
-        {
+        if (!displayQty) {
             this.findPaneOfTypeByID("qty", TextField.class).hide();
             this.findPaneOfTypeByID("qtylabel", Text.class).hide();
         }
@@ -92,8 +89,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
 
         window.findPaneOfTypeByID(NAME_LABEL, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
-            if (!newFilter.equals(filter))
-            {
+            if (!newFilter.equals(filter)) {
                 filter = newFilter;
                 this.tick = 10;
             }
@@ -105,8 +101,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
      *
      * @param button the clicked button.
      */
-    private void selectClicked(final Button button)
-    {
+    private void selectClicked(final Button button) {
         final int row = this.resourceList.getListElementIndexByPane(button);
         final ItemStack to = this.allItems.get(row);
         this.findPaneOfTypeByID("resourceIcon", ItemIcon.class).setItem(to);
@@ -116,24 +111,19 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     /**
      * Cancel clicked to close this window.
      */
-    private void cancelClicked()
-    {
+    private void cancelClicked() {
         this.close();
     }
 
     /**
      * Done clicked to reopen the origin window.
      */
-    private void doneClicked()
-    {
+    private void doneClicked() {
         final ItemStack to = this.findPaneOfTypeByID("resourceIcon", ItemIcon.class).getItem();
         int qty = 1;
-        try
-        {
+        try {
             qty = Integer.parseInt(this.findPaneOfTypeByID("qty", TextField.class).getText());
-        }
-        catch (final NumberFormatException ex)
-        {
+        } catch (final NumberFormatException ex) {
             Log.getLogger().warn("Invalid input in Selection BOWindow for Quantity, defaulting to 1!");
         }
 
@@ -142,24 +132,20 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         this.updateResources();
     }
 
     /**
      * Update the list of resources.
      */
-    private void updateResources()
-    {
+    private void updateResources() {
         this.allItems.clear();
 
-        for (final ItemStack stack : ItemStackUtils.allItemsPlusInventory(Minecraft.getInstance().player))
-        {
+        for (final ItemStack stack : ItemStackUtils.allItemsPlusInventory(Minecraft.getInstance().player)) {
             if (test.test(stack) && (this.filter.isEmpty()
-                                       || stack.getDescriptionId().toLowerCase(Locale.US).contains(this.filter.toLowerCase(Locale.US))
-                                       || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))))
-            {
+                    || stack.getDescriptionId().toLowerCase(Locale.US).contains(this.filter.toLowerCase(Locale.US))
+                    || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)))) {
                 this.allItems.add(stack);
             }
         }
@@ -169,11 +155,9 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
-        if (tick > 0 && --tick == 0)
-        {
+        if (tick > 0 && --tick == 0) {
             updateResources();
         }
     }
@@ -181,20 +165,16 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     /**
      * Fill the resource list.
      */
-    private void updateResourceList()
-    {
+    private void updateResourceList() {
         this.resourceList.enable();
         this.resourceList.show();
         final List<ItemStack> tempRes = new ArrayList<>(this.allItems);
-        this.resourceList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            public int getElementCount()
-            {
+        this.resourceList.setDataProvider(new ScrollingList.DataProvider() {
+            public int getElementCount() {
                 return tempRes.size();
             }
 
-            public void updateElement(int index, @NotNull Pane rowPane)
-            {
+            public void updateElement(int index, @NotNull Pane rowPane) {
                 final ItemStack resource = tempRes.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("resourceName", Text.class);
                 resourceLabel.setText(resource.getHoverName());

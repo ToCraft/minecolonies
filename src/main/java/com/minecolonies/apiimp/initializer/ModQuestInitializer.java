@@ -12,42 +12,39 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.quests.registries.QuestRegistries.*;
 
-public final class ModQuestInitializer
-{
+public final class ModQuestInitializer {
     public final static DeferredRegister<QuestRegistries.ObjectiveEntry>
-      DEFERRED_REGISTER_OBJECTIVE = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_OBJECTIVES, Constants.MOD_ID);
+            DEFERRED_REGISTER_OBJECTIVE = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_OBJECTIVES, Constants.MOD_ID);
 
     public final static DeferredRegister<QuestRegistries.TriggerEntry>
-      DEFERRED_REGISTER_TRIGGER = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_TRIGGERS, Constants.MOD_ID);
+            DEFERRED_REGISTER_TRIGGER = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_TRIGGERS, Constants.MOD_ID);
 
     public final static DeferredRegister<QuestRegistries.RewardEntry>
-      DEFERRED_REGISTER_REWARD = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_REWARDS, Constants.MOD_ID);
+            DEFERRED_REGISTER_REWARD = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_REWARDS, Constants.MOD_ID);
 
     public final static DeferredRegister<QuestRegistries.DialogueAnswerEntry>
-      DEFERRED_REGISTER_ANSWER_RESULT = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_ANSWER_RESULTS, Constants.MOD_ID);
+            DEFERRED_REGISTER_ANSWER_RESULT = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_ANSWER_RESULTS, Constants.MOD_ID);
 
 
-    private ModQuestInitializer()
-    {
+    private ModQuestInitializer() {
         throw new IllegalStateException("Tried to initialize: ModQuestInitializer but this is a Utility class.");
     }
 
-    static
-    {
+    static {
         QuestRegistries.deliveryObjective = DEFERRED_REGISTER_OBJECTIVE.register(DELIVERY_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
-          DeliveryObjectiveTemplateTemplate::createObjective));
+                DeliveryObjectiveTemplateTemplate::createObjective));
         QuestRegistries.dialogueObjective = DEFERRED_REGISTER_OBJECTIVE.register(DIALOGUE_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
-          DialogueObjectiveTemplateTemplate::createObjective));
+                DialogueObjectiveTemplateTemplate::createObjective));
         QuestRegistries.killEntityObjective = DEFERRED_REGISTER_OBJECTIVE.register(KILLENTITY_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
-          KillEntityObjectiveTemplateTemplate::createObjective));
+                KillEntityObjectiveTemplateTemplate::createObjective));
         QuestRegistries.breakBlockObjective = DEFERRED_REGISTER_OBJECTIVE.register(BREAKBLOCK_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
-          BreakBlockObjectiveTemplate::createObjective));
+                BreakBlockObjectiveTemplate::createObjective));
         QuestRegistries.placeBlockObjective = DEFERRED_REGISTER_OBJECTIVE.register(PLACEBLOCK_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
-          PlaceBlockObjectiveTemplate::createObjective));
+                PlaceBlockObjectiveTemplate::createObjective));
         QuestRegistries.buildBuildingObjective = DEFERRED_REGISTER_OBJECTIVE.register(BUILD_BUILDING_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
-          BuildBuildingObjectiveTemplate::createObjective));
+                BuildBuildingObjectiveTemplate::createObjective));
         QuestRegistries.researchObjective = DEFERRED_REGISTER_OBJECTIVE.register(RESEARCH_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
-          ResearchObjectiveTemplate::createObjective));
+                ResearchObjectiveTemplate::createObjective));
 
         QuestRegistries.randomTrigger = DEFERRED_REGISTER_TRIGGER.register(RANDOM_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(RandomQuestTriggerTemplate::createStateTrigger));
         QuestRegistries.stateTrigger = DEFERRED_REGISTER_TRIGGER.register(STATE_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(StateQuestTriggerTemplate::createStateTrigger));

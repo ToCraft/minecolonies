@@ -3,14 +3,13 @@ package com.minecolonies.core.entity.citizen.citizenhandlers;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenInventoryHandler;
 import com.minecolonies.api.util.InventoryUtils;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 /**
  * Handles the inventory of the citizen.
  */
-public class CitizenInventoryHandler implements ICitizenInventoryHandler
-{
+public class CitizenInventoryHandler implements ICitizenInventoryHandler {
     /**
      * The citizen assigned to this manager.
      */
@@ -21,8 +20,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenInventoryHandler(final AbstractEntityCitizen citizen)
-    {
+    public CitizenInventoryHandler(final AbstractEntityCitizen citizen) {
         this.citizen = citizen;
     }
 
@@ -33,8 +31,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @return the slot.
      */
     @Override
-    public int findFirstSlotInInventoryWith(final Item targetItem)
-    {
+    public int findFirstSlotInInventoryWith(final Item targetItem) {
         return InventoryUtils.findFirstSlotInItemHandlerWith(citizen.getInventoryCitizen(), targetItem);
     }
 
@@ -45,8 +42,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @return the slot.
      */
     @Override
-    public int findFirstSlotInInventoryWith(final Block block)
-    {
+    public int findFirstSlotInInventoryWith(final Block block) {
         return InventoryUtils.findFirstSlotInItemHandlerWith(citizen.getInventoryCitizen(), block);
     }
 
@@ -57,8 +53,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @return the quantity.
      */
     @Override
-    public int getItemCountInInventory(final Block block)
-    {
+    public int getItemCountInInventory(final Block block) {
         return InventoryUtils.getItemCountInItemHandler(citizen.getInventoryCitizen(), block);
     }
 
@@ -69,8 +64,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @return the quantity.
      */
     @Override
-    public int getItemCountInInventory(final Item targetItem)
-    {
+    public int getItemCountInInventory(final Item targetItem) {
         return InventoryUtils.getItemCountInItemHandler(citizen.getInventoryCitizen(), targetItem);
     }
 
@@ -81,8 +75,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @return true if so.
      */
     @Override
-    public boolean hasItemInInventory(final Block block)
-    {
+    public boolean hasItemInInventory(final Block block) {
         return InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), block);
     }
 
@@ -93,14 +86,12 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @return true if so.
      */
     @Override
-    public boolean hasItemInInventory(final Item item)
-    {
+    public boolean hasItemInInventory(final Item item) {
         return InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), item);
     }
 
     @Override
-    public boolean isInventoryFull()
-    {
+    public boolean isInventoryFull() {
         return !citizen.getInventoryCitizen().hasSpace();
     }
 }

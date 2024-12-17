@@ -17,8 +17,7 @@ import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_MOD
 /**
  * Handles the citizen job methods.
  */
-public class CitizenJobHandler implements ICitizenJobHandler
-{
+public class CitizenJobHandler implements ICitizenJobHandler {
     /**
      * The citizen assigned to this manager.
      */
@@ -34,8 +33,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
      *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenJobHandler(final AbstractEntityCitizen citizen)
-    {
+    public CitizenJobHandler(final AbstractEntityCitizen citizen) {
         this.citizen = citizen;
     }
 
@@ -45,22 +43,17 @@ public class CitizenJobHandler implements ICitizenJobHandler
      * @param job the new job.
      */
     @Override
-    public void setModelDependingOnJob(@Nullable final IJob<?> job)
-    {
-        if (citizen.isBaby())
-        {
+    public void setModelDependingOnJob(@Nullable final IJob<?> job) {
+        if (citizen.isBaby()) {
             citizen.setModelId(ModModelTypes.CHILD_ID);
             citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().toString());
             citizen.setRenderMetadata("");
             return;
         }
 
-        if (job == null)
-        {
-            if (citizen.getCitizenColonyHandler().getHomeBuilding() != null)
-            {
-                switch (citizen.getCitizenColonyHandler().getHomeBuilding().getBuildingLevel())
-                {
+        if (job == null) {
+            if (citizen.getCitizenColonyHandler().getHomeBuilding() != null) {
+                switch (citizen.getCitizenColonyHandler().getHomeBuilding().getBuildingLevel()) {
                     case 3:
                         citizen.setModelId(ModModelTypes.CITIZEN_ID);
                         break;
@@ -74,14 +67,10 @@ public class CitizenJobHandler implements ICitizenJobHandler
                         citizen.setModelId(ModModelTypes.SETTLER_ID);
                         break;
                 }
-            }
-            else
-            {
+            } else {
                 citizen.setModelId(ModModelTypes.SETTLER_ID);
             }
-        }
-        else
-        {
+        } else {
             citizen.setModelId(job.getModel());
         }
 
@@ -95,25 +84,22 @@ public class CitizenJobHandler implements ICitizenJobHandler
      * @param job the set job.
      */
     @Override
-    public void onJobChanged(@Nullable final IJob<?> job)
-    {
+    public void onJobChanged(@Nullable final IJob<?> job) {
         //  Model
         setModelDependingOnJob(job);
 
-        if (job != null)
-        {
+        if (job != null) {
             job.createAI();
 
             // Calculate the number of guards for some advancements
-            if (job instanceof AbstractJobGuard)
-            {
+            if (job instanceof AbstractJobGuard) {
                 IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
                 int guards = ((int) colony.getCitizenManager().getCitizens()
-                  .stream()
-                  .filter(citizen -> citizen.getJob() instanceof AbstractJobGuard)
-                  .count());
+                        .stream()
+                        .filter(citizen -> citizen.getJob() instanceof AbstractJobGuard)
+                        .count());
                 AdvancementUtils.TriggerAdvancementPlayersForColony(citizen.getCitizenColonyHandler().getColony(),
-                  player -> AdvancementTriggers.ARMY_POPULATION.get().trigger(player, guards));
+                        player -> AdvancementTriggers.ARMY_POPULATION.get().trigger(player, guards));
             }
 
             job.initEntityValues(citizen);
@@ -129,8 +115,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
      */
     @Override
     @Nullable
-    public <J extends IJob<?>> J getColonyJob(@NotNull final Class<J> type)
-    {
+    public <J extends IJob<?>> J getColonyJob(@NotNull final Class<J> type) {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob(type);
     }
 
@@ -141,26 +126,22 @@ public class CitizenJobHandler implements ICitizenJobHandler
      */
     @Override
     @Nullable
-    public IJob<?> getColonyJob()
-    {
+    public IJob<?> getColonyJob() {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob();
     }
 
     @Override
-    public boolean shouldRunAvoidance()
-    {
+    public boolean shouldRunAvoidance() {
         return getColonyJob() == null || getColonyJob().allowsAvoidance();
     }
 
     @Override
-    public void setWorkAI(final ITickingStateAI workAI)
-    {
+    public void setWorkAI(final ITickingStateAI workAI) {
         this.workAI = workAI;
     }
 
     @Override
-    public ITickingStateAI getWorkAI()
-    {
+    public ITickingStateAI getWorkAI() {
         return workAI;
     }
 }

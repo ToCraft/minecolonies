@@ -11,19 +11,17 @@ import static com.minecolonies.core.colony.buildings.modules.settings.GuardTaskS
 /**
  * Stores the patrol mode setting.
  */
-public class GuardPatrolModeSetting extends StringSettingWithDesc
-{
+public class GuardPatrolModeSetting extends StringSettingWithDesc {
     /**
      * Different setting possibilities.
      */
-    public static final String AUTO   = "com.minecolonies.core.guard.setting.patrol.auto";
+    public static final String AUTO = "com.minecolonies.core.guard.setting.patrol.auto";
     public static final String MANUAL = "com.minecolonies.core.guard.setting.patrol.manual";
 
     /**
      * Create a new patrol mode list setting.
      */
-    public GuardPatrolModeSetting()
-    {
+    public GuardPatrolModeSetting() {
         super(AUTO, MANUAL);
     }
 
@@ -33,26 +31,22 @@ public class GuardPatrolModeSetting extends StringSettingWithDesc
      * @param settings     the overall list of settings.
      * @param currentIndex the current selected index.
      */
-    public GuardPatrolModeSetting(final List<String> settings, final int currentIndex)
-    {
+    public GuardPatrolModeSetting(final List<String> settings, final int currentIndex) {
         super(settings, currentIndex);
     }
 
     @Override
-    public boolean isActive(final ISettingsModule module)
-    {
+    public boolean isActive(final ISettingsModule module) {
         return module.getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(PATROL);
     }
 
     @Override
-    public boolean isActive(final ISettingsModuleView module)
-    {
+    public boolean isActive(final ISettingsModuleView module) {
         return module.getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(PATROL);
     }
 
     @Override
-    public boolean shouldHideWhenInactive()
-    {
+    public boolean shouldHideWhenInactive() {
         return true;
     }
 }

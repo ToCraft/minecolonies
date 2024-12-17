@@ -8,11 +8,11 @@ import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenGrownUpEvent;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -29,30 +29,27 @@ import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_IN
 /**
  * AI which controls child behaviour and growing.
  */
-public class EntityAICitizenChild implements IStateAI
-{
+public class EntityAICitizenChild implements IStateAI {
 
     private static final int GROW_UP_NOTIFY_LIMIT = 10;
 
     /**
      * States used for this AI
      */
-    public enum State implements IAIState
-    {
+    public enum State implements IAIState {
         BORED,
         PLAYING,
         VISITING,
         FOLLOWING;
 
         @Override
-        public boolean isOkayToEat()
-        {
+        public boolean isOkayToEat() {
             return true;
         }
     }
 
     protected final EntityCitizen child;
-    private final   Random        rand = new Random();
+    private final Random rand = new Random();
 
     /**
      * Timer for actions/between actions
@@ -104,8 +101,7 @@ public class EntityAICitizenChild implements IStateAI
      *
      * @param citizen the citizen.
      */
-    public EntityAICitizenChild(@NotNull final EntityCitizen citizen)
-    {
+    public EntityAICitizenChild(@NotNull final EntityCitizen citizen) {
         super();
         this.child = citizen;
 
@@ -122,15 +118,12 @@ public class EntityAICitizenChild implements IStateAI
      *
      * @return whether the child moves to a new activity
      */
-    private boolean isReadyForActivity()
-    {
-        if (actionTimer > 0)
-        {
+    private boolean isReadyForActivity() {
+        if (actionTimer > 0) {
             actionTimer -= 100;
         }
 
-        if (canUse() && actionTimer <= 0 && rand.nextInt(10) == 0)
-        {
+        if (canUse() && actionTimer <= 0 && rand.nextInt(10) == 0) {
             setDelayForNextAction();
             return true;
         }
@@ -140,8 +133,7 @@ public class EntityAICitizenChild implements IStateAI
     /**
      * Sets the delay till the next activity can start
      */
-    private void setDelayForNextAction()
-    {
+    private void setDelayForNextAction() {
         // Delay next activity by 3-5min
         actionTimer = rand.nextInt(2 * 60 * 20) + 3 * 60 * 20;
     }
@@ -151,30 +143,27 @@ public class EntityAICitizenChild implements IStateAI
      *
      * @return whether a entity to follow was found
      */
-    private boolean searchEntityToFollow()
-    {
-        if (!isReadyForActivity())
-        {
+    private boolean searchEntityToFollow() {
+        if (!isReadyForActivity()) {
             return false;
         }
 
         CompatibilityUtils.getWorldFromCitizen(child)
-          // Search entities in radius
-          .getEntities(
-            child,
-            child.getBoundingBox().expandTowards(
-              (double) START_FOLLOW_DISTANCE,
-              1.0D,
-              (double) START_FOLLOW_DISTANCE),
-            // Limit entity classes
-            target -> target.isAlive() && (target instanceof AbstractCivilianEntity || target instanceof Player))
-          // Take the first entity
-          .stream()
-          .findFirst()
-          .ifPresent(entity -> followTarget = new WeakReference<>(entity));
+                // Search entities in radius
+                .getEntities(
+                        child,
+                        child.getBoundingBox().expandTowards(
+                                (double) START_FOLLOW_DISTANCE,
+                                1.0D,
+                                (double) START_FOLLOW_DISTANCE),
+                        // Limit entity classes
+                        target -> target.isAlive() && (target instanceof AbstractCivilianEntity || target instanceof Player))
+                // Take the first entity
+                .stream()
+                .findFirst()
+                .ifPresent(entity -> followTarget = new WeakReference<>(entity));
 
-        if (followTarget.get() != null)
-        {
+        if (followTarget.get() != null) {
             // Follow time 30-60seconds, in ticks
             actionTimer = rand.nextInt(30 * 20) + 30 * 20;
             followStart = child.blockPosition();
@@ -189,11 +178,9 @@ public class EntityAICitizenChild implements IStateAI
      *
      * @return the next ai state to go into
      */
-    private IState followingEntity()
-    {
+    private IState followingEntity() {
         actionTimer -= 20;
-        if (actionTimer <= 0 || followTarget.get() == null)
-        {
+        if (actionTimer <= 0 || followTarget.get() == null) {
             // run back to start position
             child.getNavigation().moveToXYZ(followStart.getX(), followStart.getY(), followStart.getZ(), 1.0d);
 
@@ -210,14 +197,11 @@ public class EntityAICitizenChild implements IStateAI
      *
      * @return the next ai state to go into
      */
-    private IState visitHuts()
-    {
+    private IState visitHuts() {
         // Find a hut to visit
-        if (visitingPath == null && child.getCitizenColonyHandler().getColonyOrRegister() != null)
-        {
+        if (visitingPath == null && child.getCitizenColonyHandler().getColonyOrRegister() != null) {
             // Visiting huts for 3min.
-            if (actionTimer <= 0 && visitHutPos == null)
-            {
+            if (actionTimer <= 0 && visitHutPos == null) {
                 actionTimer = 3 * 60 * 20;
             }
 
@@ -233,11 +217,9 @@ public class EntityAICitizenChild implements IStateAI
 
         actionTimer -= 120;
         // Visiting
-        if (actionTimer > 0)
-        {
+        if (actionTimer > 0) {
             // Path got interrupted by sth
-            if (visitingPath != null && !visitingPath.isInProgress())
-            {
+            if (visitingPath != null && !visitingPath.isInProgress()) {
                 visitingPath = child.getNavigation().moveToXYZ(visitHutPos.getX(), visitHutPos.getY(), visitHutPos.getZ(), 1.0d);
             }
 
@@ -257,34 +239,27 @@ public class EntityAICitizenChild implements IStateAI
      *
      * @return true if it grew
      */
-    private boolean tryGrowUp()
-    {
-        if (!child.isBaby())
-        {
+    private boolean tryGrowUp() {
+        if (!child.isBaby()) {
             return false;
         }
 
-        if (child.getCitizenColonyHandler().getColonyOrRegister() != null)
-        {
-            if (child.getCitizenColonyHandler().getColonyOrRegister().useAdditionalChildTime(BONUS_TIME_COLONY))
-            {
+        if (child.getCitizenColonyHandler().getColonyOrRegister() != null) {
+            if (child.getCitizenColonyHandler().getColonyOrRegister().useAdditionalChildTime(BONUS_TIME_COLONY)) {
                 aiActiveTime += BONUS_TIME_COLONY;
             }
         }
 
-        if (aiActiveTime >= MIN_ACTIVE_TIME)
-        {
+        if (aiActiveTime >= MIN_ACTIVE_TIME) {
             final double growthModifier = (1 + child.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(GROWTH));
 
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
-            if (rand.nextInt((int) (70 / growthModifier) + 1) == 0 || aiActiveTime > 70000 / growthModifier)
-            {
+            if (rand.nextInt((int) (70 / growthModifier) + 1) == 0 || aiActiveTime > 70000 / growthModifier) {
                 child.getCitizenColonyHandler()
-                  .getColonyOrRegister()
-                  .getEventDescriptionManager()
-                  .addEventDescription(new CitizenGrownUpEvent(child.blockPosition(), child.getCitizenData().getName()));
-                if (child.getCitizenColonyHandler().getColonyOrRegister().getCitizenManager().getCitizens().size() <= GROW_UP_NOTIFY_LIMIT)
-                {
+                        .getColonyOrRegister()
+                        .getEventDescriptionManager()
+                        .addEventDescription(new CitizenGrownUpEvent(child.blockPosition(), child.getCitizenData().getName()));
+                if (child.getCitizenColonyHandler().getColonyOrRegister().getCitizenManager().getCitizens().size() <= GROW_UP_NOTIFY_LIMIT) {
                     MessageUtils.format(MESSAGE_INFO_COLONY_CHILD_GREW_UP, child.getName().getString()).sendTo(child.getCitizenColonyHandler().getColonyOrRegister()).forAllPlayers();
                 }
                 // Grow up
@@ -301,8 +276,7 @@ public class EntityAICitizenChild implements IStateAI
     /**
      * {@inheritDoc} Returns whether the Goal should begin execution. True when age less than 100, when a random (120) is chosen correctly, and when a citizen is nearby.
      */
-    public boolean canUse()
-    {
+    public boolean canUse() {
         return child.isBaby() && child.getCitizenData() != null;
     }
 }

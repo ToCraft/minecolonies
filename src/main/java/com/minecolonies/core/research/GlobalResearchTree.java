@@ -27,8 +27,7 @@ import java.util.stream.Collectors;
 /**
  * The class which contains all research.
  */
-public class GlobalResearchTree implements IGlobalResearchTree
-{
+public class GlobalResearchTree implements IGlobalResearchTree {
     /**
      * The map containing all researches by ID and branch.
      */
@@ -55,16 +54,15 @@ public class GlobalResearchTree implements IGlobalResearchTree
     private final Map<ResourceLocation, Set<IGlobalResearch>> researchEffectsIds = new HashMap<>();
 
     @Override
-    public IGlobalResearch getResearch(final ResourceLocation branch, final ResourceLocation id) { return researchTree.get(branch).get(id); }
+    public IGlobalResearch getResearch(final ResourceLocation branch, final ResourceLocation id) {
+        return researchTree.get(branch).get(id);
+    }
 
     @Nullable
     @Override
-    public IGlobalResearch getResearch(final ResourceLocation id)
-    {
-        for(final Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch: researchTree.entrySet())
-        {
-            if(branch.getValue().containsKey(id))
-            {
+    public IGlobalResearch getResearch(final ResourceLocation id) {
+        for (final Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch : researchTree.entrySet()) {
+            if (branch.getValue().containsKey(id)) {
                 return branch.getValue().get(id);
             }
         }
@@ -72,18 +70,14 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public boolean hasResearch(final ResourceLocation branch, final ResourceLocation id)
-    {
+    public boolean hasResearch(final ResourceLocation branch, final ResourceLocation id) {
         return (researchTree.containsKey(branch) && researchTree.get(branch).containsKey(id));
     }
 
     @Override
-    public boolean hasResearch(final ResourceLocation id)
-    {
-        for(final Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch: researchTree.entrySet())
-        {
-            if(branch.getValue().containsKey(id))
-            {
+    public boolean hasResearch(final ResourceLocation id) {
+        for (final Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch : researchTree.entrySet()) {
+            if (branch.getValue().containsKey(id)) {
                 return true;
             }
         }
@@ -91,100 +85,78 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public void addResearch(final ResourceLocation branch, final IGlobalResearch research, final boolean isReloadedWithWorld)
-    {
+    public void addResearch(final ResourceLocation branch, final IGlobalResearch research, final boolean isReloadedWithWorld) {
         final Map<ResourceLocation, IGlobalResearch> branchMap;
-        if (researchTree.containsKey(branch))
-        {
+        if (researchTree.containsKey(branch)) {
             branchMap = researchTree.get(branch);
-        }
-        else
-        {
+        } else {
             branchMap = new HashMap<>();
         }
 
-        if (branchMap.containsKey(research.getId()))
-        {
+        if (branchMap.containsKey(research.getId())) {
             Log.getLogger().error("Duplicate research key:" + research.getId());
         }
 
         branchMap.put(research.getId(), research);
         researchTree.put(branch, branchMap);
 
-        if (isReloadedWithWorld)
-        {
+        if (isReloadedWithWorld) {
             reloadableResearch.add(research.getId());
         }
-        for (IResearchEffect<?> effect : research.getEffects())
-        {
+        for (IResearchEffect<?> effect : research.getEffects()) {
             researchEffectsIds.computeIfAbsent(effect.getId(), id -> new HashSet<>()).add(research);
         }
-        if (research.isAutostart())
-        {
-           autostartResearch.add(research);
+        if (research.isAutostart()) {
+            autostartResearch.add(research);
         }
     }
 
     @Override
-    public void addBranchData(final ResourceLocation branchId, final IGlobalResearchBranch branchData)
-    {
+    public void addBranchData(final ResourceLocation branchId, final IGlobalResearchBranch branchData) {
         this.branchDatas.put(branchId, branchData);
     }
 
     @Override
-    public Set<IGlobalResearch> getResearchForEffect(final ResourceLocation id)
-    {
+    public Set<IGlobalResearch> getResearchForEffect(final ResourceLocation id) {
         return researchEffectsIds.get(id);
     }
 
     @Override
-    public boolean hasResearchEffect(final ResourceLocation id)
-    {
+    public boolean hasResearchEffect(final ResourceLocation id) {
         return researchEffectsIds.get(id) != null;
     }
 
     @Override
-    public List<ResourceLocation> getBranches()
-    {
+    public List<ResourceLocation> getBranches() {
         return new ArrayList<>(researchTree.keySet());
     }
 
     @Override
-    public IGlobalResearchBranch getBranchData(final ResourceLocation id)
-    {
-        if(branchDatas.containsKey(id))
-        {
+    public IGlobalResearchBranch getBranchData(final ResourceLocation id) {
+        if (branchDatas.containsKey(id)) {
             return branchDatas.get(id);
-        }
-        else
-        {
+        } else {
             return new GlobalResearchBranch(id);
         }
     }
 
     @Override
-    public List<ResourceLocation> getPrimaryResearch(final ResourceLocation branch)
-    {
-        if (!researchTree.containsKey(branch))
-        {
+    public List<ResourceLocation> getPrimaryResearch(final ResourceLocation branch) {
+        if (!researchTree.containsKey(branch)) {
             return Collections.emptyList();
         }
         return researchTree.get(branch).values().stream().filter(research -> research.getParent().getPath().isEmpty())
-                 .sorted(Comparator.comparing(IGlobalResearch::getId))
-                 .map(IGlobalResearch::getId).collect(Collectors.toList());
+                .sorted(Comparator.comparing(IGlobalResearch::getId))
+                .map(IGlobalResearch::getId).collect(Collectors.toList());
     }
 
     @Override
-    public void reset()
-    {
-        for(ResourceLocation reset : reloadableResearch)
-        {
-            for(Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch : researchTree.entrySet())
-            {
+    public void reset() {
+        for (ResourceLocation reset : reloadableResearch) {
+            for (Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch : researchTree.entrySet()) {
                 branch.getValue().remove(reset);
             }
-            for (final Set<IGlobalResearch> effectResearches : researchEffectsIds.values())
-            {
+            for (final Set<IGlobalResearch> effectResearches : researchEffectsIds.values()) {
                 effectResearches.removeIf(r -> r.getId().equals(reset));
             }
         }
@@ -193,26 +165,20 @@ public class GlobalResearchTree implements IGlobalResearchTree
         autostartResearch.clear();
         branchDatas.clear();
         final Iterator<Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>>> iterator = researchTree.entrySet().iterator();
-        while (researchTree.entrySet().size() > 0 && iterator.hasNext())
-        {
-            if(iterator.next().getValue().size() == 0)
-            {
+        while (researchTree.entrySet().size() > 0 && iterator.hasNext()) {
+            if (iterator.next().getValue().size() == 0) {
                 iterator.remove();
             }
         }
     }
 
     @Override
-    public boolean isResearchRequirementsFulfilled(final List<IResearchRequirement> requirements, final IColony colony)
-    {
-        if (requirements == null || requirements.isEmpty())
-        {
+    public boolean isResearchRequirementsFulfilled(final List<IResearchRequirement> requirements, final IColony colony) {
+        if (requirements == null || requirements.isEmpty()) {
             return true;
         }
-        for(final IResearchRequirement requirement : requirements)
-        {
-            if(!requirement.isFulfilled(colony))
-            {
+        for (final IResearchRequirement requirement : requirements) {
+            if (!requirement.isFulfilled(colony)) {
                 return false;
             }
         }
@@ -220,62 +186,50 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public void sendGlobalResearchTreePackets(final ServerPlayer player)
-    {
+    public void sendGlobalResearchTreePackets(final ServerPlayer player) {
         final RegistryFriendlyByteBuf researchTreeFriendlyByteBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), player.registryAccess());
         serializeNetworkData(researchTreeFriendlyByteBuf);
 
         new GlobalResearchTreeMessage(researchTreeFriendlyByteBuf).sendToPlayer(player);
     }
 
-    public void serializeNetworkData(final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeNetworkData(final RegistryFriendlyByteBuf buf) {
         buf.writeVarInt(researchTree.size());
-        for(final Map<ResourceLocation, IGlobalResearch> branch : researchTree.values())
-        {
+        for (final Map<ResourceLocation, IGlobalResearch> branch : researchTree.values()) {
             buf.writeVarInt(branch.size());
-            for(final IGlobalResearch research : branch.values())
-            {
+            for (final IGlobalResearch research : branch.values()) {
                 StandardFactoryController.getInstance().serialize(buf, research);
             }
         }
         // Lastly, we'll send the branch identifiers.
-        for(Map.Entry<ResourceLocation, IGlobalResearchBranch> branch : branchDatas.entrySet())
-        {
+        for (Map.Entry<ResourceLocation, IGlobalResearchBranch> branch : branchDatas.entrySet()) {
             buf.writeResourceLocation(branch.getKey());
             buf.writeNbt(branch.getValue().writeToNBT());
         }
     }
 
     @Override
-    public void handleGlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf)
-    {
+    public void handleGlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf) {
         researchTree.clear();
         branchDatas.clear();
         researchEffectsIds.clear();
-        for (int branchNum = buf.readVarInt(); branchNum > 0; branchNum--)
-        {
-            for(int researchNum = buf.readVarInt(); researchNum > 0; researchNum--)
-            {
+        for (int branchNum = buf.readVarInt(); branchNum > 0; branchNum--) {
+            for (int researchNum = buf.readVarInt(); researchNum > 0; researchNum--) {
                 final IGlobalResearch newResearch = StandardFactoryController.getInstance().deserialize(buf);
                 addResearch(newResearch.getBranch(), newResearch, true);
             }
         }
-        for (int i = 0; i < researchTree.entrySet().size(); i++)
-        {
+        for (int i = 0; i < researchTree.entrySet().size(); i++) {
             ResourceLocation branchId = buf.readResourceLocation();
             branchDatas.put(branchId, new GlobalResearchBranch(buf.readNbt()));
         }
     }
 
     @Override
-    public List<IResearchEffect<?>> getEffectsForResearch(@NotNull final ResourceLocation id)
-    {
-        for(final ResourceLocation branch: this.getBranches())
-        {
+    public List<IResearchEffect<?>> getEffectsForResearch(@NotNull final ResourceLocation id) {
+        for (final ResourceLocation branch : this.getBranches()) {
             final IGlobalResearch r = this.getResearch(branch, id);
-            if (r != null)
-            {
+            if (r != null) {
                 return r.getEffects();
             }
         }
@@ -283,34 +237,26 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public Set<IGlobalResearch> getAutostartResearches()
-    {
+    public Set<IGlobalResearch> getAutostartResearches() {
         return autostartResearch;
     }
 
     @Override
-    public List<ItemStorage> getResearchResetCosts(final HolderLookup.Provider provider)
-    {
+    public List<ItemStorage> getResearchResetCosts(final HolderLookup.Provider provider) {
         List<ItemStorage> outputList = new ArrayList<>();
-        for (String itemId : MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchResetCost.get())
-        {
+        for (String itemId : MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchResetCost.get()) {
             int amount = 1;
             String[] split = itemId.split(":");
-            if (split.length == 3)
-            {
-                try
-                {
+            if (split.length == 3) {
+                try {
                     amount = Integer.parseInt(split[2]);
-                }
-                catch (Throwable t)
-                {
+                } catch (Throwable t) {
                     Log.getLogger().error("Unable to parse item count: {}", itemId, t);
                 }
                 itemId = split[0] + ":" + split[1];
             }
             final ItemStack stack = ItemStackUtils.idToItemStack(itemId, provider);
-            if (!stack.isEmpty())
-            {
+            if (!stack.isEmpty()) {
                 stack.setCount(amount);
                 outputList.add(new ItemStorage(stack, false, true));
             }

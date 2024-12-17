@@ -18,15 +18,12 @@ import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
  */
 public record ToolUsage(@NotNull EquipmentTypeEntry tool,
                         @NotNull List<List<ItemStack>> toolLevels,
-                        @NotNull List<List<ItemStack>> enchantedToolLevels)
-{
+                        @NotNull List<List<ItemStack>> enchantedToolLevels) {
     @NotNull
-    public static ToolUsage create(@NotNull final EquipmentTypeEntry tool)
-    {
+    public static ToolUsage create(@NotNull final EquipmentTypeEntry tool) {
         final List<List<ItemStack>> basicLevels = new ArrayList<>();
         final List<List<ItemStack>> enchantedLevels = new ArrayList<>();
-        for (int i = 0; i <= MAX_BUILDING_LEVEL; ++i)
-        {
+        for (int i = 0; i <= MAX_BUILDING_LEVEL; ++i) {
             basicLevels.add(new ArrayList<>());
             enchantedLevels.add(new ArrayList<>());
         }

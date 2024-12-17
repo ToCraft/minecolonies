@@ -11,8 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.entity.EntityTypeTest;
 
-public class CommandKillRaider implements IMCOPCommand
-{
+public class CommandKillRaider implements IMCOPCommand {
     private int entitiesKilled = 0;
 
     /**
@@ -21,22 +20,19 @@ public class CommandKillRaider implements IMCOPCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         entitiesKilled = 0;
 
         context.getSource().getLevel().getEntities(EntityTypeTest.forClass(AbstractEntityRaiderMob.class), (e) -> true).forEach(entity ->
         {
-            if (entity != null)
-            {
+            if (entity != null) {
                 final AbstractEntityRaiderMob mob = (AbstractEntityRaiderMob) entity;
                 mob.die(context.getSource().getLevel().damageSources().source(DamageSourceKeys.CONSOLE));
                 mob.remove(Entity.RemovalReason.DISCARDED);
 
                 final IColonyEvent event = mob.getColony().getEventManager().getEventByID(mob.getEventID());
 
-                if (event != null)
-                {
+                if (event != null) {
                     event.setStatus(EventStatus.DONE);
                 }
 
@@ -51,8 +47,7 @@ public class CommandKillRaider implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "raider";
     }
 }

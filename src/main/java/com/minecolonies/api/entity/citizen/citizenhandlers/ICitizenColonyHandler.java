@@ -5,8 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import org.jetbrains.annotations.Nullable;
 
-public interface ICitizenColonyHandler
-{
+public interface ICitizenColonyHandler {
     /**
      * calculate this worker building.
      *
@@ -76,6 +75,7 @@ public interface ICitizenColonyHandler
 
     /**
      * Unsafe colony getter, doesn't run registration.
+     *
      * @return the colony.
      */
     IColony getColony();

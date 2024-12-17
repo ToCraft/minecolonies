@@ -6,7 +6,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VALUE;
@@ -14,8 +13,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VALUE;
 /**
  * Dynamic Happiness supplier.
  */
-public class DynamicHappinessSupplier implements IHappinessSupplierWrapper
-{
+public class DynamicHappinessSupplier implements IHappinessSupplierWrapper {
     /**
      * Entry key.
      */
@@ -28,24 +26,22 @@ public class DynamicHappinessSupplier implements IHappinessSupplierWrapper
 
     /**
      * Create a new dynamic supplier.
+     *
      * @param key the key of the function.
      */
-    public DynamicHappinessSupplier(final ResourceLocation key)
-    {
+    public DynamicHappinessSupplier(final ResourceLocation key) {
         this.key = key;
     }
 
     /**
      * Default constructor for deserialization.
      */
-    public DynamicHappinessSupplier()
-    {
+    public DynamicHappinessSupplier() {
         // Empty on purpose.
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compoundTag = new CompoundTag();
         compoundTag.putString(TAG_ID, key.toString());
         compoundTag.putDouble(TAG_VALUE, lastValue);
@@ -53,18 +49,15 @@ public class DynamicHappinessSupplier implements IHappinessSupplierWrapper
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt) {
         this.key = ResourceLocation.parse(nbt.getString(TAG_ID));
         this.lastValue = nbt.getDouble(TAG_VALUE);
     }
 
     @Override
-    public double getValue(final ICitizenData citizenData)
-    {
+    public double getValue(final ICitizenData citizenData) {
         HappinessRegistry.HappinessFunctionEntry function = IMinecoloniesAPI.getInstance().getHappinessFunctionRegistry().get(key);
-        if (function == null)
-        {
+        if (function == null) {
             return lastValue;
         }
         lastValue = function.getDoubleSupplier().apply(citizenData);
@@ -72,8 +65,7 @@ public class DynamicHappinessSupplier implements IHappinessSupplierWrapper
     }
 
     @Override
-    public double getLastCachedValue()
-    {
+    public double getLastCachedValue() {
         return lastValue;
     }
 }

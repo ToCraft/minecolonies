@@ -28,8 +28,7 @@ import java.util.stream.Stream;
  *     <li>All the positions you expect the plants to appear have to be tagged.</li>
  * </ol>
  */
-public abstract class PercentageHarvestPlantModule extends AbstractPlantationModule
-{
+public abstract class PercentageHarvestPlantModule extends AbstractPlantationModule {
     /**
      * Default constructor.
      *
@@ -39,29 +38,26 @@ public abstract class PercentageHarvestPlantModule extends AbstractPlantationMod
      * @param item     the item which is harvested.
      */
     protected PercentageHarvestPlantModule(
-      final IField field,
-      final String fieldTag,
-      final String workTag,
-      final Item item)
-    {
+            final IField field,
+            final String fieldTag,
+            final String workTag,
+            final Item item) {
         super(field, fieldTag, workTag, item);
     }
 
     @Override
-    public PlantationModuleResult.Builder decideFieldWork(final Level world, final @NotNull BlockPos workingPosition)
-    {
+    public PlantationModuleResult.Builder decideFieldWork(final Level world, final @NotNull BlockPos workingPosition) {
         ActionToPerform action = decideWorkAction(world, workingPosition);
-        return switch (action)
-        {
+        return switch (action) {
             case HARVEST -> new PlantationModuleResult.Builder()
-                              .harvest(workingPosition)
-                              .pickNewPosition();
+                    .harvest(workingPosition)
+                    .pickNewPosition();
             case PLANT -> new PlantationModuleResult.Builder()
-                            .plant(workingPosition)
-                            .pickNewPosition();
+                    .plant(workingPosition)
+                    .pickNewPosition();
             case CLEAR -> new PlantationModuleResult.Builder()
-                            .clear(workingPosition)
-                            .pickNewPosition();
+                    .clear(workingPosition)
+                    .pickNewPosition();
             default -> PlantationModuleResult.NONE;
         };
     }
@@ -74,21 +70,17 @@ public abstract class PercentageHarvestPlantModule extends AbstractPlantationMod
      * @param plantingPosition the specific position to check for.
      * @return the {@link PlantationModuleResult} that the AI is going to perform.
      */
-    private ActionToPerform decideWorkAction(final Level world, final BlockPos plantingPosition)
-    {
+    private ActionToPerform decideWorkAction(final Level world, final BlockPos plantingPosition) {
         BlockState blockState = world.getBlockState(plantingPosition);
-        if (isValidPlantingBlock(blockState))
-        {
+        if (isValidPlantingBlock(blockState)) {
             return ActionToPerform.PLANT;
         }
 
-        if (isValidClearingBlock(blockState))
-        {
+        if (isValidClearingBlock(blockState)) {
             return ActionToPerform.CLEAR;
         }
 
-        if (isValidHarvestBlock(blockState))
-        {
+        if (isValidHarvestBlock(blockState)) {
             return ActionToPerform.HARVEST;
         }
 
@@ -102,8 +94,7 @@ public abstract class PercentageHarvestPlantModule extends AbstractPlantationMod
      * @param blockState the block state.
      * @return whether the block can be planted.
      */
-    protected boolean isValidPlantingBlock(BlockState blockState)
-    {
+    protected boolean isValidPlantingBlock(BlockState blockState) {
         return blockState.isAir();
     }
 
@@ -113,8 +104,7 @@ public abstract class PercentageHarvestPlantModule extends AbstractPlantationMod
      * @param blockState the block state.
      * @return whether the block can be cleared.
      */
-    protected boolean isValidClearingBlock(BlockState blockState)
-    {
+    protected boolean isValidClearingBlock(BlockState blockState) {
         return !isValidHarvestBlock(blockState);
     }
 
@@ -127,60 +117,51 @@ public abstract class PercentageHarvestPlantModule extends AbstractPlantationMod
     protected abstract boolean isValidHarvestBlock(BlockState blockState);
 
     @Override
-    public @Nullable BlockPos getNextWorkingPosition(Level world)
-    {
+    public @Nullable BlockPos getNextWorkingPosition(Level world) {
         final List<BlockPos> workingPositions = getWorkingPositions().stream().collect(CollectorUtils.toShuffledList());
         final List<BlockPos> harvestablePositions = new ArrayList<>();
 
         final double minimumPlantFraction = Mth.clamp(getMinimumPlantPercentage(), 0, 100) / 100d;
         final int minimumPlantCount = (int) Math.ceil(minimumPlantFraction * workingPositions.size());
 
-        for (BlockPos position : workingPositions)
-        {
+        for (BlockPos position : workingPositions) {
             final ActionToPerform action = decideWorkAction(world, position);
-            if (action == ActionToPerform.CLEAR)
-            {
+            if (action == ActionToPerform.CLEAR) {
                 return position;
             }
-            if (action == ActionToPerform.HARVEST)
-            {
+            if (action == ActionToPerform.HARVEST) {
                 harvestablePositions.add(position);
             }
         }
 
-        if (minimumPlantCount > harvestablePositions.size())
-        {
+        if (minimumPlantCount > harvestablePositions.size()) {
             // We want to prevent putting "harvestable" blocks next to one another as much as possible.
             Set<BlockPos> excludedPositions = harvestablePositions.stream()
-                                                .flatMap(f -> Stream.of(f, f.above(), f.below(), f.north(), f.south(), f.west(), f.east()))
-                                                .collect(Collectors.toSet());
+                    .flatMap(f -> Stream.of(f, f.above(), f.below(), f.north(), f.south(), f.west(), f.east()))
+                    .collect(Collectors.toSet());
             return workingPositions.stream()
-                     .filter(f -> !excludedPositions.contains(f))
-                     .findFirst()
-                     .orElse(null);
-        }
-        else if (minimumPlantCount < harvestablePositions.size())
-        {
+                    .filter(f -> !excludedPositions.contains(f))
+                    .findFirst()
+                    .orElse(null);
+        } else if (minimumPlantCount < harvestablePositions.size()) {
             Set<BlockPos> duplicateLocator = new HashSet<>();
             return harvestablePositions.stream()
-                     .flatMap(f -> Stream.of(f, f.above(), f.below(), f.north(), f.south(), f.west(), f.east()))
-                     .filter(f -> !duplicateLocator.add(f))
-                     .findFirst()
-                     .orElse(harvestablePositions.get(0));
+                    .flatMap(f -> Stream.of(f, f.above(), f.below(), f.north(), f.south(), f.west(), f.east()))
+                    .filter(f -> !duplicateLocator.add(f))
+                    .findFirst()
+                    .orElse(harvestablePositions.get(0));
         }
 
         return null;
     }
 
     @Override
-    public int getActionLimit()
-    {
+    public int getActionLimit() {
         return 5;
     }
 
     @Override
-    public List<ItemStack> getRequiredItemsForOperation()
-    {
+    public List<ItemStack> getRequiredItemsForOperation() {
         return List.of(new ItemStack(getItem()));
     }
 
@@ -193,11 +174,10 @@ public abstract class PercentageHarvestPlantModule extends AbstractPlantationMod
     protected abstract int getMinimumPlantPercentage();
 
     @Override
-    public BlockPos getPositionToWalkTo(final Level world, final BlockPos workingPosition)
-    {
+    public BlockPos getPositionToWalkTo(final Level world, final BlockPos workingPosition) {
         return Stream.of(workingPosition.north(), workingPosition.south(), workingPosition.west(), workingPosition.east())
-                 .filter(pos -> world.getBlockState(pos).isAir())
-                 .findFirst()
-                 .orElse(workingPosition);
+                .filter(pos -> world.getBlockState(pos).isAir())
+                .findFirst()
+                .orElse(workingPosition);
     }
 }

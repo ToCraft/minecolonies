@@ -19,8 +19,7 @@ import java.util.Random;
 /**
  * Handles spawning item particle effects on top of a block..
  */
-public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage
-{
+public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "localized_particle_effect", LocalizedParticleEffectMessage::new);
 
     /**
@@ -46,8 +45,7 @@ public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage
      * @param stack the stack.
      * @param pos   the pos.
      */
-    public LocalizedParticleEffectMessage(final ItemStack stack, final BlockPos pos)
-    {
+    public LocalizedParticleEffectMessage(final ItemStack stack, final BlockPos pos) {
         super(TYPE);
         this.stack = stack;
         this.posX = pos.getX() + 0.5;
@@ -55,18 +53,17 @@ public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage
         this.posZ = pos.getZ() + 0.5;
     }
 
-    protected LocalizedParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected LocalizedParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
-        stack = Utils.deserializeCodecMess(buf);;
+        stack = Utils.deserializeCodecMess(buf);
+        ;
         posX = buf.readDouble();
         posY = buf.readDouble();
         posZ = buf.readDouble();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         Utils.serializeCodecMess(buf, stack);
         buf.writeDouble(posX);
         buf.writeDouble(posY);
@@ -74,19 +71,17 @@ public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
-        for (int i = 0; i < 5; ++i)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
+        for (int i = 0; i < 5; ++i) {
             final Vec3 randomPos = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() * 0.1D + 0.1D, 0.0D);
             final Vec3 randomOffset = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() - 0.5D * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
             player.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, stack),
-              posX + randomOffset.x,
-              posY + randomOffset.y,
-              posZ + randomOffset.z,
-              randomPos.x,
-              randomPos.y + 0.05D,
-              randomPos.z);
+                    posX + randomOffset.x,
+                    posY + randomOffset.y,
+                    posZ + randomOffset.z,
+                    randomPos.x,
+                    randomPos.y + 0.05D,
+                    randomPos.z);
         }
     }
 }

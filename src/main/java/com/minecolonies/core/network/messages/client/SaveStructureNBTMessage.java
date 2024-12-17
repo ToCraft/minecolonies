@@ -27,47 +27,39 @@ import static com.ldtteam.structurize.api.constants.Constants.SCANS_FOLDER;
 /**
  * Handles sendScanMessages.
  */
-public class SaveStructureNBTMessage extends AbstractClientPlayMessage
-{
+public class SaveStructureNBTMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "save_structure_nbt", SaveStructureNBTMessage::new);
 
-    private static final String TAG_MILLIS    = "millies";
-    public static final  String TAG_SCHEMATIC = "schematic";
+    private static final String TAG_MILLIS = "millies";
+    public static final String TAG_SCHEMATIC = "schematic";
 
     private final CompoundTag compoundNBT;
-    private final String      fileName;
+    private final String fileName;
 
     /**
      * Send a scan compound to the client.
      *
      * @param CompoundNBT the stream.
-     * @param fileName  String with the name of the file.
+     * @param fileName    String with the name of the file.
      */
-    public SaveStructureNBTMessage(final CompoundTag CompoundNBT, final String fileName)
-    {
+    public SaveStructureNBTMessage(final CompoundTag CompoundNBT, final String fileName) {
         super(TYPE);
         this.fileName = fileName;
         this.compoundNBT = CompoundNBT;
     }
 
-    protected SaveStructureNBTMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected SaveStructureNBTMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         final RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(buf), buf.registryAccess());
         CompoundTag compoundNBT = null;
         String fileName = null;
-        try (ByteBufInputStream stream = new ByteBufInputStream(buffer))
-        {
+        try (ByteBufInputStream stream = new ByteBufInputStream(buffer)) {
             final CompoundTag wrapperCompound = NbtIo.readCompressed(stream, NbtAccounter.unlimitedHeap());
             compoundNBT = wrapperCompound.getCompound(TAG_SCHEMATIC);
             fileName = wrapperCompound.getString(TAG_MILLIS);
-        }
-        catch (final RuntimeException e)
-        {
+        } catch (final RuntimeException e) {
             Log.getLogger().info("Structure too big to be processed", e);
-        }
-        catch (final IOException e)
-        {
+        } catch (final IOException e) {
             Log.getLogger().info("Problem at retrieving structure on server.", e);
         }
         this.compoundNBT = compoundNBT;
@@ -75,34 +67,28 @@ public class SaveStructureNBTMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         final CompoundTag wrapperCompound = new CompoundTag();
         wrapperCompound.putString(TAG_MILLIS, fileName);
         wrapperCompound.put(TAG_SCHEMATIC, compoundNBT);
 
         final RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(buf), buf.registryAccess());
-        try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer))
-        {
+        try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
             NbtIo.writeCompressed(wrapperCompound, stream);
-        }
-        catch (final IOException e)
-        {
+        } catch (final IOException e) {
             Log.getLogger().info("Problem at retrieving structure on server.", e);
         }
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
-        if (compoundNBT != null)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
+        if (compoundNBT != null) {
             final String packName = Minecraft.getInstance().getUser().getName().toLowerCase(Locale.US);
             RenderingCache.getOrCreateBlueprintPreviewData("blueprint").setBlueprintFuture(
-              StructurePacks.storeBlueprint(packName, compoundNBT, Minecraft.getInstance().gameDirectory.toPath()
-                                                                  .resolve(BLUEPRINT_FOLDER)
-                                                                  .resolve(Minecraft.getInstance().getUser().getName().toLowerCase(Locale.US))
-                                                                  .resolve(SCANS_FOLDER).resolve(fileName), player.registryAccess()));
+                    StructurePacks.storeBlueprint(packName, compoundNBT, Minecraft.getInstance().gameDirectory.toPath()
+                            .resolve(BLUEPRINT_FOLDER)
+                            .resolve(Minecraft.getInstance().getUser().getName().toLowerCase(Locale.US))
+                            .resolve(SCANS_FOLDER).resolve(fileName), player.registryAccess()));
             player.displayClientMessage(Component.translatableEscape("Scan successfully saved as %s", fileName), false);
         }
     }

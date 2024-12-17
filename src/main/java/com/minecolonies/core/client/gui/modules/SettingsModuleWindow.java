@@ -23,8 +23,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.LIST_SETTINGS;
 /**
  * BOWindow for all the settings of a hut.
  */
-public class SettingsModuleWindow extends AbstractModuleWindow
-{
+public class SettingsModuleWindow extends AbstractModuleWindow {
     /**
      * The building this belongs to.
      */
@@ -46,10 +45,9 @@ public class SettingsModuleWindow extends AbstractModuleWindow
      * @param moduleView the assigned module view.
      */
     public SettingsModuleWindow(
-      final String res,
-      final IBuildingView building,
-      final SettingsModuleView moduleView)
-    {
+            final String res,
+            final IBuildingView building,
+            final SettingsModuleView moduleView) {
         super(building, res);
 
         window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatableEscape(moduleView.getDesc().toLowerCase(Locale.US)));
@@ -60,27 +58,23 @@ public class SettingsModuleWindow extends AbstractModuleWindow
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         updateSettingsList();
     }
 
     /**
      * Updates the resource list in the GUI with the info we need.
      */
-    private void updateSettingsList()
-    {
+    private void updateSettingsList() {
         settingsList.enable();
         settingsList.show();
-        settingsList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        settingsList.setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return moduleView.getSettingsToShow().size();
             }
 
@@ -90,42 +84,34 @@ public class SettingsModuleWindow extends AbstractModuleWindow
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final ISettingKey<? extends ISetting> key = moduleView.getSettingsToShow().get(index);
                 final ISetting setting = moduleView.getSetting(key);
-                if (setting == null)
-                {
+                if (setting == null) {
                     return;
                 }
 
                 final Box box = rowPane.findPaneOfTypeByID("box", Box.class);
                 final Text idField = box.findPaneOfTypeByID("id", Text.class);
 
-                if (idField != null && !idField.getTextAsString().equals(key.getUniqueId().toString()))
-                {
+                if (idField != null && !idField.getTextAsString().equals(key.getUniqueId().toString())) {
                     box.getChildren().clear();
                 }
 
-                if (box.getChildren().isEmpty())
-                {
+                if (box.getChildren().isEmpty()) {
                     Loader.createFromXMLFile(setting.getLayoutItem(), (View) rowPane);
                     setting.setupHandler(key, rowPane, moduleView, building, SettingsModuleWindow.this);
                     final Text rowIdField = rowPane.findPaneOfTypeByID("id", Text.class);
-                    if (rowIdField != null)
-                    {
+                    if (rowIdField != null) {
                         rowIdField.setText(Component.literal(key.getUniqueId().toString()));
-                    }
-                    else
-                    {
+                    } else {
                         Log.getLogger()
-                          .warn(
-                            "Settings for class \"{}\" it's window does not provide an \"id\" field. Make sure this exists so the view can be properly recycled when the settings list is modified!",
-                            setting.getClass().getName());
+                                .warn(
+                                        "Settings for class \"{}\" it's window does not provide an \"id\" field. Make sure this exists so the view can be properly recycled when the settings list is modified!",
+                                        setting.getClass().getName());
                     }
                     final Text rowDescriptionField = rowPane.findPaneOfTypeByID("desc", Text.class);
-                    if (rowDescriptionField != null)
-                    {
+                    if (rowDescriptionField != null) {
                         rowDescriptionField.setText(Component.translatableEscape("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
                     }
                 }

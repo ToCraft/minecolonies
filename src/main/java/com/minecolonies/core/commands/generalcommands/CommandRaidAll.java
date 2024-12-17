@@ -21,48 +21,39 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_RAID_TONIGHT_WARNING;
 import static com.minecolonies.core.commands.CommandArgumentNames.*;
 
-public class CommandRaidAll implements IMCOPCommand
-{
+public class CommandRaidAll implements IMCOPCommand {
     /**
      * What happens when the command is executed
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         return raidsExecute(context, "");
     }
 
     /**
      * What happens when the command is executed with the optional raidtype argument.
+     *
      * @param context the context of the command execution.
      * @return
      */
-    public int onSpecificExecute(final CommandContext<CommandSourceStack> context)
-    {
-        if(!checkPreCondition(context))
-        {
+    public int onSpecificExecute(final CommandContext<CommandSourceStack> context) {
+        if (!checkPreCondition(context)) {
             return 0;
         }
         return raidsExecute(context, StringArgumentType.getString(context, RAID_TYPE_ARG));
     }
 
-    public int raidsExecute(final CommandContext<CommandSourceStack> context, final String raidType)
-    {
-        if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_NOW))
-        {
-            for (final IColony colony : IColonyManager.getInstance().getAllColonies())
-            {
+    public int raidsExecute(final CommandContext<CommandSourceStack> context, final String raidType) {
+        if (StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_NOW)) {
+            for (final IColony colony : IColonyManager.getInstance().getAllColonies()) {
                 colony.getRaiderManager().raiderEvent(raidType, true);
             }
             context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_RAID_TONIGHT_WARNING), true);
             return 1;
-        }
-        else if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_TONIGHT))
-        {
-            for (final IColony colony : IColonyManager.getInstance().getAllColonies())
-            {
+        } else if (StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_TONIGHT)) {
+            for (final IColony colony : IColonyManager.getInstance().getAllColonies()) {
                 colony.getRaiderManager().setRaidNextNight(true, raidType);
             }
             context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_RAID_TONIGHT_WARNING), true);
@@ -75,20 +66,16 @@ public class CommandRaidAll implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "raid-All";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         final List<String> raidTypes = new ArrayList<>();
-        for(final ColonyEventTypeRegistryEntry type : IMinecoloniesAPI.getInstance().getColonyEventRegistry())
-        {
-            if(!type.getRegistryName().getPath().equals(PirateGroundRaidEvent.PIRATE_GROUND_RAID_EVENT_TYPE_ID.getPath())
-                 && !type.getRegistryName().getPath().equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
-            {
+        for (final ColonyEventTypeRegistryEntry type : IMinecoloniesAPI.getInstance().getColonyEventRegistry()) {
+            if (!type.getRegistryName().getPath().equals(PirateGroundRaidEvent.PIRATE_GROUND_RAID_EVENT_TYPE_ID.getPath())
+                    && !type.getRegistryName().getPath().equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath())) {
                 raidTypes.add(type.getRegistryName().getPath());
             }
         }
@@ -98,11 +85,11 @@ public class CommandRaidAll implements IMCOPCommand
         opt[1] = RAID_TONIGHT;
 
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(RAID_TIME_ARG, StringArgumentType.string())
-                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(opt, builder))
-                 .then(IMCCommand.newArgument(RAID_TYPE_ARG, StringArgumentType.string())
-                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(raidTypes, builder))
-                         .executes(this::onSpecificExecute))
-                 .executes(this::checkPreConditionAndExecute));
+                .then(IMCCommand.newArgument(RAID_TIME_ARG, StringArgumentType.string())
+                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(opt, builder))
+                        .then(IMCCommand.newArgument(RAID_TYPE_ARG, StringArgumentType.string())
+                                .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(raidTypes, builder))
+                                .executes(this::onSpecificExecute))
+                        .executes(this::checkPreConditionAndExecute));
     }
 }

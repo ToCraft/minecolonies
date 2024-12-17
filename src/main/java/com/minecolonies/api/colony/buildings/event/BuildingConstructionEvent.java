@@ -6,8 +6,7 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 /**
  * Event for when a building was built/repaired/removed.
  */
-public final class BuildingConstructionEvent extends AbstractBuildingEvent
-{
+public final class BuildingConstructionEvent extends AbstractBuildingEvent {
     /**
      * What happened to the building.
      */
@@ -19,8 +18,7 @@ public final class BuildingConstructionEvent extends AbstractBuildingEvent
      * @param building  the building the event was for.
      * @param eventType what happened to the building.
      */
-    public BuildingConstructionEvent(final IBuilding building, final EventType eventType)
-    {
+    public BuildingConstructionEvent(final IBuilding building, final EventType eventType) {
         super(building);
         this.eventType = eventType;
     }
@@ -30,16 +28,14 @@ public final class BuildingConstructionEvent extends AbstractBuildingEvent
      *
      * @return the event type.
      */
-    public EventType getEventType()
-    {
+    public EventType getEventType() {
         return eventType;
     }
 
     /**
      * What happened to the building.
      */
-    public enum EventType
-    {
+    public enum EventType {
         BUILT,
         UPGRADED,
         REPAIRED,
@@ -51,10 +47,8 @@ public final class BuildingConstructionEvent extends AbstractBuildingEvent
          * @param workOrderType the work order type.
          * @return the construction event type.
          */
-        public static EventType fromWorkOrderType(final WorkOrderType workOrderType)
-        {
-            return switch (workOrderType)
-            {
+        public static EventType fromWorkOrderType(final WorkOrderType workOrderType) {
+            return switch (workOrderType) {
                 case BUILD -> BUILT;
                 case UPGRADE -> UPGRADED;
                 case REPAIR -> REPAIRED;

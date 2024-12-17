@@ -23,15 +23,14 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.items.ISupplyItem.SUPPLY_OFFSET_DISTANCE;
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Supply Story Window.
  * todo add new art for this later.
  */
-public class WindowSupplyStory extends AbstractWindowSkeleton
-{
+public class WindowSupplyStory extends AbstractWindowSkeleton {
     /**
      * Right click position.
      */
@@ -48,16 +47,12 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
      */
     private ItemStack stack;
 
-    public WindowSupplyStory(final BlockPos pos, final String type, final ItemStack stack, final InteractionHand hand)
-    {
+    public WindowSupplyStory(final BlockPos pos, final String type, final ItemStack stack, final InteractionHand hand) {
         super(MOD_ID + SUPPLIES_STORY_RESOURCE_SUFFIX);
         mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
-        if (pos == null)
-        {
+        if (pos == null) {
             this.pos = mc.player.blockPosition().relative(mc.player.getDirection(), SUPPLY_OFFSET_DISTANCE);
-        }
-        else
-        {
+        } else {
             this.pos = pos;
         }
         this.type = type;
@@ -76,12 +71,9 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
             final Random random = new Random(currentComponent.randomKey());
             final List<Holder.Reference<Biome>> biomes = mc.level.registryAccess().registryOrThrow(Registries.BIOME).holders().toList();
             final Holder<Biome> biome = biomes.get(random.nextInt(biomes.size()));
-            if (stack.getItem() == ModItems.supplyCamp)
-            {
+            if (stack.getItem() == ModItems.supplyCamp) {
                 story.add(Component.literal(ColonyStoryListener.pickRandom(ColonyStoryListener.supplyCampStories, biome, random)));
-            }
-            else
-            {
+            } else {
                 story.add(Component.literal(ColonyStoryListener.pickRandom(ColonyStoryListener.supplyShipStories, biome, random)));
             }
             story.add(Component.empty());
@@ -90,12 +82,9 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
         story.add(Component.translatable("com.minecolonies.core.gui.supplies.guide", Component.translatable(stack.getItem().getDescriptionId())));
         story.add(Component.empty());
 
-        if (stack.getItem() == ModItems.supplyCamp)
-        {
+        if (stack.getItem() == ModItems.supplyCamp) {
             story.add(Component.translatable("com.minecolonies.core.gui.supplycamp.guide"));
-        }
-        else
-        {
+        } else {
             story.add(Component.translatable("com.minecolonies.core.gui.supplyship.guide"));
         }
 
@@ -106,8 +95,7 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
     /**
      * Redirect to placement window.
      */
-    private void place()
-    {
+    private void place() {
         new MarkStoryReadOnItem(hand).sendToServer();
         new WindowSupplies(pos, type).open();
     }
@@ -115,8 +103,7 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
     /**
      * Switch the structure style pack.
      */
-    private void switchPack()
-    {
+    private void switchPack() {
         new WindowSwitchPack(() -> new WindowSupplyStory(pos, type, stack, hand)).open();
     }
 }

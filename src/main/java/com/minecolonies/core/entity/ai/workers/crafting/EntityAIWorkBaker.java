@@ -13,28 +13,25 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Baker AI class.
  */
-public class EntityAIWorkBaker extends AbstractEntityAIRequestSmelter<JobBaker, BuildingBaker>
-{
+public class EntityAIWorkBaker extends AbstractEntityAIRequestSmelter<JobBaker, BuildingBaker> {
     /**
      * Baking icon
      */
     private final static VisibleCitizenStatus BAKING =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/baker.png"), "com.minecolonies.gui.visiblestatus.baker");
+            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/baker.png"), "com.minecolonies.gui.visiblestatus.baker");
 
     /**
      * Constructor for the Baker. Defines the tasks the bakery executes.
      *
      * @param job a bakery job to use.
      */
-    public EntityAIWorkBaker(@NotNull final JobBaker job)
-    {
+    public EntityAIWorkBaker(@NotNull final JobBaker job) {
         super(job);
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    public Class<BuildingBaker> getExpectedBuildingClass()
-    {
+    public Class<BuildingBaker> getExpectedBuildingClass() {
         return BuildingBaker.class;
     }
 
@@ -44,21 +41,18 @@ public class EntityAIWorkBaker extends AbstractEntityAIRequestSmelter<JobBaker, 
      * @return citizen object.
      */
     @Nullable
-    public AbstractEntityCitizen getCitizen()
-    {
+    public AbstractEntityCitizen getCitizen() {
         return worker;
     }
 
     @Override
-    protected IAIState craft()
-    {
+    protected IAIState craft() {
         worker.getCitizenData().setVisibleStatus(BAKING);
         return super.craft();
     }
 
     @Override
-    public boolean isAfterDumpPickupAllowed()
-    {
+    public boolean isAfterDumpPickupAllowed() {
         return true;
     }
 }

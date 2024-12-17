@@ -2,16 +2,12 @@ package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.crafting.RecipeStorage;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.function.Predicate;
 
 /**
  * Interface for the new furnace recipes.
  */
-public interface IFurnaceRecipes
-{
+public interface IFurnaceRecipes {
     /**
      * Get the smelting result for a certain itemStack.
      *

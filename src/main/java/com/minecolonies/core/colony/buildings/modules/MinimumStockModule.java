@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.MinimumStack;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -16,17 +15,18 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
@@ -36,8 +36,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 /**
  * Minimum stock module.
  */
-public class MinimumStockModule extends AbstractBuildingModule implements IMinimumStockModule, IPersistentModule, ITickingModule, IAltersRequiredItems
-{
+public class MinimumStockModule extends AbstractBuildingModule implements IMinimumStockModule, IPersistentModule, ITickingModule, IAltersRequiredItems {
     /**
      * Minimum stock it can hold per level.
      */
@@ -58,18 +57,15 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
      *
      * @return the size.
      */
-    private int minimumStockSize()
-    {
+    private int minimumStockSize() {
         final double increase = 1 + building.getColony().getResearchManager().getResearchEffects().getEffectStrength(MINIMUM_STOCK);
 
         return (int) (building.getBuildingLevel() * STOCK_PER_LEVEL * increase);
     }
 
     @Override
-    public void addMinimumStock(final ItemStack itemStack, final int quantity)
-    {
-        if (minimumStock.containsKey(new ItemStorage(itemStack)) || minimumStock.size() < minimumStockSize())
-        {
+    public void addMinimumStock(final ItemStack itemStack, final int quantity) {
+        if (minimumStock.containsKey(new ItemStorage(itemStack)) || minimumStock.size() < minimumStockSize()) {
             minimumStock.put(new ItemStorage(itemStack), quantity);
             markDirty();
         }
@@ -77,17 +73,15 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
 
     /**
      * Get the request from the list that matches this stack.
+     *
      * @param stack the stack to search for in the requests.
-     * @param list the list of requests.
+     * @param list  the list of requests.
      * @return the token of the matching request or null.
      */
-    private IToken<?> getMatchingRequest(final ItemStack stack, final Collection<IToken<?>> list)
-    {
-        for (final IToken<?> token : list)
-        {
+    private IToken<?> getMatchingRequest(final ItemStack stack, final Collection<IToken<?>> list) {
+        for (final IToken<?> token : list) {
             final IRequest<?> iRequest = building.getColony().getRequestManager().getRequestForToken(token);
-            if (iRequest != null && iRequest.getRequest() instanceof Stack && ItemStackUtils.compareItemStacksIgnoreStackSize(((Stack) iRequest.getRequest()).getStack(), stack))
-            {
+            if (iRequest != null && iRequest.getRequest() instanceof Stack && ItemStackUtils.compareItemStacksIgnoreStackSize(((Stack) iRequest.getRequest()).getStack(), stack)) {
                 return token;
             }
         }
@@ -95,14 +89,12 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     }
 
     @Override
-    public void removeMinimumStock(final ItemStack itemStack)
-    {
+    public void removeMinimumStock(final ItemStack itemStack) {
         minimumStock.remove(new ItemStorage(itemStack));
 
         final Collection<IToken<?>> list = building.getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
         final IToken<?> token = getMatchingRequest(itemStack, list);
-        if (token != null)
-        {
+        if (token != null) {
             building.getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }
 
@@ -110,18 +102,14 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     }
 
     @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
-        if (WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
-        {
+    public void onColonyTick(@NotNull final IColony colony) {
+        if (WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition())) {
             final Collection<IToken<?>> list = building.getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(MinimumStack.class), new ArrayList<>());
 
-            for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-            {
+            for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet()) {
                 final ItemStack itemStack = entry.getKey().getItemStack().copy();
 
-                if (itemStack.isEmpty())
-                {
+                if (itemStack.isEmpty()) {
                     continue;
                 }
 
@@ -129,18 +117,14 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
                 final int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(itemStack, true), target);
                 final int delta = target - count;
                 final IToken<?> request = getMatchingRequest(itemStack, list);
-                if (delta > (building.getColony().getResearchManager().getResearchEffects().getEffectStrength(MIN_ORDER) > 0 ? target / 4 : 0))
-                {
-                    if (request == null)
-                    {
+                if (delta > (building.getColony().getResearchManager().getResearchEffects().getEffectStrength(MIN_ORDER) > 0 ? target / 4 : 0)) {
+                    if (request == null) {
                         itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
                         final MinimumStack stack = new MinimumStack(itemStack, false);
                         stack.setCanBeResolvedByBuilding(false);
                         building.createRequest(stack, true);
                     }
-                }
-                else if (request != null && delta <= 0)
-                {
+                } else if (request != null && delta <= 0) {
                     building.getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
                 }
             }
@@ -148,41 +132,33 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     }
 
     @Override
-    public boolean isStocked(final ItemStack stack)
-    {
+    public boolean isStocked(final ItemStack stack) {
         return minimumStock.containsKey(new ItemStorage(stack));
     }
 
     @Override
-    public void alterItemsToBeKept(final TriConsumer<Predicate<ItemStack>, Integer, Boolean> consumer)
-    {
-        if(!minimumStock.isEmpty())
-        {
-            for(ItemStorage item:minimumStock.keySet())
-            {
+    public void alterItemsToBeKept(final TriConsumer<Predicate<ItemStack>, Integer, Boolean> consumer) {
+        if (!minimumStock.isEmpty()) {
+            for (ItemStorage item : minimumStock.keySet()) {
                 consumer.accept(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item.getItemStack(), false, true), minimumStock.get(item).intValue() * item.getItemStack().getMaxStackSize(), false);
             }
         }
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         minimumStock.clear();
         final ListTag minimumStockTagList = compound.getList(TAG_MINIMUM_STOCK, Tag.TAG_COMPOUND);
-        for (int i = 0; i < minimumStockTagList.size(); i++)
-        {
+        for (int i = 0; i < minimumStockTagList.size(); i++) {
             final CompoundTag compoundNBT = minimumStockTagList.getCompound(i);
             minimumStock.put(new ItemStorage(ItemStack.parseOptional(provider, compoundNBT.getCompound(NbtTagConstants.STACK))), compoundNBT.getInt(TAG_QUANTITY));
         }
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         @NotNull final ListTag minimumStockTagList = new ListTag();
-        for (@NotNull final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-        {
+        for (@NotNull final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet()) {
             final CompoundTag compoundNBT = new CompoundTag();
             compoundNBT.put(NbtTagConstants.STACK, entry.getKey().getItemStack().saveOptional(provider));
             compoundNBT.putInt(TAG_QUANTITY, entry.getValue());
@@ -192,11 +168,9 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(minimumStock.size());
-        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-        {
+        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet()) {
             Utils.serializeCodecMess(buf, entry.getKey().getItemStack());
             buf.writeInt(entry.getValue());
         }

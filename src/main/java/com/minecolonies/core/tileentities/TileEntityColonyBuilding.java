@@ -62,16 +62,15 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  * Class which handles the tileEntity of our colonyBuildings.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding implements ITickable
-{
+public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding implements ITickable {
     /**
      * NBTTag to store the colony id.
      */
     private static final String TAG_COLONY = "colony";
     private static final String TAG_MIRROR = "mirror";
-    private static final String TAG_STYLE  = "style";
-    private static final String TAG_PACK   = "pack";
-    private static final String TAG_PATH   = "path";
+    private static final String TAG_STYLE = "style";
+    private static final String TAG_PACK = "pack";
+    private static final String TAG_PATH = "path";
 
     /**
      * The colony id.
@@ -122,8 +121,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
      */
-    public TileEntityColonyBuilding(final BlockPos pos, final BlockState state)
-    {
+    public TileEntityColonyBuilding(final BlockPos pos, final BlockState state) {
         this(MinecoloniesTileEntities.BUILDING.get(), pos, state);
     }
 
@@ -132,8 +130,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      *
      * @param type the entity type.
      */
-    public TileEntityColonyBuilding(final BlockEntityType<? extends AbstractTileEntityColonyBuilding> type, final BlockPos pos, final BlockState state)
-    {
+    public TileEntityColonyBuilding(final BlockEntityType<? extends AbstractTileEntityColonyBuilding> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
     }
 
@@ -143,8 +140,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @return ID of the colony.
      */
     @Override
-    public int getColonyId()
-    {
+    public int getColonyId() {
         return colonyId;
     }
 
@@ -154,10 +150,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @return Colony of the tile entity.
      */
     @Override
-    public IColony getColony()
-    {
-        if (colony == null)
-        {
+    public IColony getColony() {
+        if (colony == null) {
             updateColonyReferences();
         }
         return colony;
@@ -166,32 +160,24 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * Synchronises colony references from the tile entity.
      */
-    private void updateColonyReferences()
-    {
-        if (colony == null && getLevel() != null)
-        {
-            if (colonyId == 0)
-            {
+    private void updateColonyReferences() {
+        if (colony == null && getLevel() != null) {
+            if (colonyId == 0) {
                 colony = IColonyManager.getInstance().getColonyByPosFromWorld(getLevel(), this.getBlockPos());
-            }
-            else
-            {
+            } else {
                 colony = IColonyManager.getInstance().getColonyByWorld(colonyId, getLevel());
             }
 
             // It's most probably previewed building, please don't spam it here.
-            if (colony == null && !getLevel().isClientSide)
-            {
+            if (colony == null && !getLevel().isClientSide) {
                 //log on the server
                 //Log.getLogger().info(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
             }
         }
 
-        if (building == null && colony != null)
-        {
+        if (building == null && colony != null) {
             building = colony.getBuildingManager().getBuilding(getPosition());
-            if (building != null && (getLevel() == null || !getLevel().isClientSide))
-            {
+            if (building != null && (getLevel() == null || !getLevel().isClientSide)) {
                 registryName = building.getBuildingType().getRegistryName();
                 building.setTileEntity(this);
             }
@@ -204,8 +190,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @return Block Coordinates of the tile entity.
      */
     @Override
-    public BlockPos getPosition()
-    {
+    public BlockPos getPosition() {
         return worldPosition;
     }
 
@@ -217,22 +202,16 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      */
     @Override
     @Nullable
-    public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
+    public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate) {
         final Predicate<ItemStack> notEmptyPredicate = itemStackSelectionPredicate.and(ItemStackUtils.NOT_EMPTY_PREDICATE);
         @Nullable final IBuildingContainer theBuilding = getBuilding();
 
-        if (theBuilding != null)
-        {
-            for (final BlockPos pos : theBuilding.getContainers())
-            {
-                if (WorldUtil.isBlockLoaded(level, pos))
-                {
+        if (theBuilding != null) {
+            for (final BlockPos pos : theBuilding.getContainers()) {
+                if (WorldUtil.isBlockLoaded(level, pos)) {
                     final BlockEntity entity = getLevel().getBlockEntity(pos);
-                    if (entity instanceof final AbstractTileEntityRack rack)
-                    {
-                        if (rack.hasItemStack(notEmptyPredicate))
-                        {
+                    if (entity instanceof final AbstractTileEntityRack rack) {
+                        if (rack.hasItemStack(notEmptyPredicate)) {
                             return pos;
                         }
                     }
@@ -248,55 +227,46 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @param c Colony to set in references.
      */
     @Override
-    public void setColony(final IColony c)
-    {
+    public void setColony(final IColony c) {
         colony = c;
         colonyId = c.getID();
         setChanged();
     }
 
     @Override
-    public void setChanged()
-    {
+    public void setChanged() {
         super.setChanged();
-        if (building != null)
-        {
+        if (building != null) {
             building.markDirty();
         }
     }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket()
-    {
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider) {
         return saveWithId(provider);
     }
 
     @Override
-    public void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider)
-    {
+    public void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider) {
         this.loadAdditional(tag, provider);
     }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
-    {
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = packet.getTag();
         colonyId = compound.getInt(TAG_COLONY);
         super.onDataPacket(net, packet, provider);
     }
 
     @Override
-    public void onLoad()
-    {
-        if (building != null)
-        {
+    public void onLoad() {
+        if (building != null) {
             building.setTileEntity(null);
         }
     }
@@ -307,10 +277,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @return {@link IBuildingContainer} associated with the tile entity.
      */
     @Override
-    public IBuilding getBuilding()
-    {
-        if (building == null)
-        {
+    public IBuilding getBuilding() {
+        if (building == null) {
             updateColonyReferences();
         }
         return building;
@@ -322,15 +290,13 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @param b {@link IBuilding} to associate with the tile entity.
      */
     @Override
-    public void setBuilding(final IBuilding b)
-    {
+    public void setBuilding(final IBuilding b) {
         building = b;
     }
 
     @NotNull
     @Override
-    public Component getDisplayName()
-    {
+    public Component getDisplayName() {
         return getBlockState().getBlock().getName();
     }
 
@@ -340,145 +306,113 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @return {@link IBuildingView} the tile entity is associated with.
      */
     @Override
-    public IBuildingView getBuildingView()
-    {
+    public IBuildingView getBuildingView() {
         final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, level.dimension());
         return c == null ? null : c.getBuilding(getPosition());
     }
 
     @Override
-    public void loadAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void loadAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.loadAdditional(compound, provider);
-        if (compound.contains(TAG_COLONY))
-        {
+        if (compound.contains(TAG_COLONY)) {
             colonyId = compound.getInt(TAG_COLONY);
         }
 
-        if (compound.contains(TAG_ROTATION_MIRROR, Tag.TAG_BYTE))
-        {
+        if (compound.contains(TAG_ROTATION_MIRROR, Tag.TAG_BYTE)) {
             rotationMirror = RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)];
         }
 
         String packName;
         String path;
-        if (compound.contains(TAG_STYLE) && !compound.getString(TAG_STYLE).isEmpty())
-        {
+        if (compound.contains(TAG_STYLE) && !compound.getString(TAG_STYLE).isEmpty()) {
             packName = BlueprintMapping.getStyleMapping(compound.getString(TAG_STYLE));
 
-            if (this.getSchematicName().isEmpty())
-            {
+            if (this.getSchematicName().isEmpty()) {
                 path = null;
-            }
-            else
-            {
+            } else {
                 final String level = this.getSchematicName().substring(this.getSchematicName().length() - 1);
                 path = BlueprintMapping.getPathMapping(compound.getString(TAG_STYLE), this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level
-                         + ".blueprint";
+                        + ".blueprint";
             }
-        }
-        else
-        {
+        } else {
             packName = compound.getString(TAG_PACK);
             path = compound.getString(TAG_PATH);
         }
 
-        if (packName == null || packName.isEmpty())
-        {
+        if (packName == null || packName.isEmpty()) {
             final List<String> tags = new ArrayList<>(getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()));
-            if (!tags.isEmpty())
-            {
+            if (!tags.isEmpty()) {
                 tags.remove(DEACTIVATED);
-                if (!tags.isEmpty())
-                {
+                if (!tags.isEmpty()) {
                     packName = BlueprintMapping.getStyleMapping(tags.get(0));
-                    if (path == null || path.isEmpty())
-                    {
+                    if (path == null || path.isEmpty()) {
                         path = BlueprintMapping.getPathMapping(tags.get(0), ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
                     }
                 }
-            }
-            else if (StructurePacks.selectedPack != null)
-            {
+            } else if (StructurePacks.selectedPack != null) {
                 packName = StructurePacks.selectedPack.getName();
             }
         }
 
-        if (path == null || path.isEmpty() || path.contains("null"))
-        {
+        if (path == null || path.isEmpty() || path.contains("null")) {
             path = BlueprintMapping.getPathMapping("", ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
         }
 
-        if (!path.endsWith(".blueprint"))
-        {
+        if (!path.endsWith(".blueprint")) {
             path += ".blueprint";
         }
 
         this.packMeta = packName;
         this.path = path;
 
-        if (compound.contains(TAG_BUILDING_TYPE))
-        {
+        if (compound.contains(TAG_BUILDING_TYPE)) {
             registryName = ResourceLocation.parse(compound.getString(TAG_BUILDING_TYPE));
         }
         buildingPos = worldPosition;
     }
 
     @Override
-    public void saveAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void saveAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.saveAdditional(compound, provider);
         compound.putInt(TAG_COLONY, colonyId);
-        if (rotationMirror != null)
-        {
+        if (rotationMirror != null) {
             compound.putByte(TAG_ROTATION_MIRROR, (byte) rotationMirror.ordinal());
         }
         compound.putString(TAG_PACK, packMeta == null ? "" : packMeta);
         compound.putString(TAG_PATH, path == null ? "" : path);
-        if (registryName != null)
-        {
+        if (registryName != null) {
             compound.putString(TAG_BUILDING_TYPE, registryName.toString());
         }
     }
 
     @Override
-    public void tick()
-    {
-        if (combinedInv != null)
-        {
+    public void tick() {
+        if (combinedInv != null) {
             invalidateCapabilities();
             combinedInv = null;
         }
-        if (!getLevel().isClientSide && colonyId == 0)
-        {
+        if (!getLevel().isClientSide && colonyId == 0) {
             final IColony tempColony = IColonyManager.getInstance().getColonyByPosFromWorld(getLevel(), this.getPosition());
-            if (tempColony != null)
-            {
+            if (tempColony != null) {
                 colonyId = tempColony.getID();
             }
         }
 
-        if (!getLevel().isClientSide && colonyId != 0 && colony == null)
-        {
+        if (!getLevel().isClientSide && colonyId != 0 && colony == null) {
             updateColonyReferences();
         }
 
-        if (pendingBlueprintFuture != null && pendingBlueprintFuture.isDone())
-        {
-            try
-            {
+        if (pendingBlueprintFuture != null && pendingBlueprintFuture.isDone()) {
+            try {
                 processBlueprint(pendingBlueprintFuture.get());
                 pendingBlueprintFuture = null;
-            }
-            catch (InterruptedException | ExecutionException e)
-            {
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public boolean isUsableByPlayer(@NotNull final Player player)
-    {
+    public boolean isUsableByPlayer(@NotNull final Player player) {
         return this.hasAccessPermission(player);
     }
 
@@ -489,23 +423,19 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @return True when player has access, or building doesn't exist, otherwise false.
      */
     @Override
-    public boolean hasAccessPermission(final Player player)
-    {
+    public boolean hasAccessPermission(final Player player) {
         // TODO This is called every tick the GUI is open. Is that bad?
         return building == null || building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
     }
 
     @Override
-    public void setRotationMirror(final RotationMirror rotationMirror)
-    {
+    public void setRotationMirror(final RotationMirror rotationMirror) {
         this.rotationMirror = rotationMirror;
     }
 
     @Override
-    public RotationMirror getRotationMirror()
-    {
-        if (rotationMirror == null)
-        {
+    public RotationMirror getRotationMirror() {
+        if (rotationMirror == null) {
             calcRotation(StructurePacks.getBlueprint(this.packMeta, this.path.replace("0.blueprint", "1.blueprint"), level.registryAccess()));
         }
         return rotationMirror;
@@ -517,8 +447,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @return the string of it.
      */
     @Override
-    public StructurePackMeta getStructurePack()
-    {
+    public StructurePackMeta getStructurePack() {
         return StructurePacks.getStructurePack(this.packMeta);
     }
 
@@ -527,77 +456,59 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      *
      * @param style the style to set.
      */
-    public void setStructurePack(final StructurePackMeta style)
-    {
+    public void setStructurePack(final StructurePackMeta style) {
         this.packMeta = style.getName();
     }
 
     @Override
-    public void setBlueprintPath(final String path)
-    {
+    public void setBlueprintPath(final String path) {
         this.path = path;
     }
 
     @Override
-    public void setPackName(final String packName)
-    {
+    public void setPackName(final String packName) {
         this.packMeta = packName;
     }
 
     @Override
-    public String getPackName()
-    {
+    public String getPackName() {
         return packMeta;
     }
 
     @Override
-    public String getBlueprintPath()
-    {
+    public String getBlueprintPath() {
         return path;
     }
 
     @Override
-    public ResourceLocation getBuildingName()
-    {
-        if (registryName != null && !registryName.getPath().isEmpty())
-        {
+    public ResourceLocation getBuildingName() {
+        if (registryName != null && !registryName.getPath().isEmpty()) {
             return new ResourceLocation(registryName.getNamespace(), registryName.getPath().replace("home", "residence"));
         }
         return getBlockState().getBlock() instanceof AbstractBlockHut<?> ? ((AbstractBlockHut<?>) getBlockState().getBlock()).getBuildingEntry().getRegistryName() : null;
     }
 
     @Override
-    public void updateBlockState()
-    {
+    public void updateBlockState() {
         // Do nothing
     }
 
     @Override
-    public IItemHandler getItemHandlerCap(final Direction side)
-    {
-        if (!remove && getBuilding() != null)
-        {
-            if (combinedInv == null)
-            {
+    public IItemHandler getItemHandlerCap(final Direction side) {
+        if (!remove && getBuilding() != null) {
+            if (combinedInv == null) {
                 //Add additional containers
                 final Set<IItemHandlerModifiable> handlers = new LinkedHashSet<>();
                 final Level world = colony.getWorld();
-                if (world != null)
-                {
-                    for (final BlockPos pos : building.getContainers())
-                    {
-                        if (WorldUtil.isBlockLoaded(world, pos) && !pos.equals(this.worldPosition))
-                        {
+                if (world != null) {
+                    for (final BlockPos pos : building.getContainers()) {
+                        if (WorldUtil.isBlockLoaded(world, pos) && !pos.equals(this.worldPosition)) {
                             final BlockEntity te = world.getBlockEntity(pos);
-                            if (te != null)
-                            {
-                                if (te instanceof final AbstractTileEntityRack rack)
-                                {
+                            if (te != null) {
+                                if (te instanceof final AbstractTileEntityRack rack) {
                                     handlers.add(rack.getInventory());
                                     rack.setBuildingPos(this.getBlockPos());
-                                }
-                                else
-                                {
+                                } else {
                                     building.removeContainerPosition(pos);
                                 }
                             }
@@ -615,8 +526,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
-    {
+    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player) {
         return new ContainerBuildingInventory(id, inv, colonyId, getBlockPos());
     }
 
@@ -624,12 +534,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * Reactivate the hut of this tileEntity.
      * Load the schematic data and set the style correctly.
      */
-    public void reactivate()
-    {
+    public void reactivate() {
         final List<String> tags = new ArrayList<>(this.getPositionedTags().get(BlockPos.ZERO));
         tags.remove(DEACTIVATED);
-        if (tags.isEmpty())
-        {
+        if (tags.isEmpty()) {
             this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(this.packMeta, this.path, level.registryAccess());
             return;
         }
@@ -638,21 +546,17 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         String tagName = tags.get(0);
         final String blueprintPath;
         final String packName;
-        if (tagName.contains("/"))
-        {
+        if (tagName.contains("/")) {
             final String[] split = tagName.split("/");
             packName = split[0];
             blueprintPath = tagName.replace(packName, "");
-        }
-        else
-        {
+        } else {
             final String level = this.getSchematicName().substring(this.getSchematicName().length() - 1);
             packName = BlueprintMapping.getStyleMapping(tagName);
             blueprintPath = BlueprintMapping.getPathMapping(tagName, this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level + ".blueprint";
         }
 
-        if (!StructurePacks.hasPack(packName))
-        {
+        if (!StructurePacks.hasPack(packName)) {
             this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(this.packMeta, this.path, level.registryAccess());
             return;
         }
@@ -666,10 +570,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      *
      * @param blueprint the queried blueprint.
      */
-    private void processBlueprint(final Blueprint blueprint)
-    {
-        if (blueprint == null)
-        {
+    private void processBlueprint(final Blueprint blueprint) {
+        if (blueprint == null) {
             return;
         }
 
@@ -677,8 +579,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
 
-        if (info.getTileEntityData() != null)
-        {
+        if (info.getTileEntityData() != null) {
             final CompoundTag teCompound = info.getTileEntityData().copy();
             final CompoundTag tagData = teCompound.getCompound(TAG_BLUEPRINTDATA);
 
@@ -694,17 +595,14 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      *
      * @param blueprint
      */
-    private void calcRotation(final Blueprint blueprint)
-    {
-        if (blueprint == null)
-        {
+    private void calcRotation(final Blueprint blueprint) {
+        if (blueprint == null) {
             rotationMirror = RotationMirror.NONE;
             return;
         }
 
         final BlockState structureState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-        if (structureState == null || !(structureState.getBlock() instanceof AbstractBlockHut) || !(level.getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut))
-        {
+        if (structureState == null || !(structureState.getBlock() instanceof AbstractBlockHut) || !(level.getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)) {
             rotationMirror = RotationMirror.NONE;
             return;
         }
@@ -713,12 +611,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         final int worldRotation = level.getBlockState(this.getPosition()).getValue(AbstractBlockHut.FACING).get2DDataValue();
 
         final int rotation;
-        if (structureRotation <= worldRotation)
-        {
+        if (structureRotation <= worldRotation) {
             rotation = worldRotation - structureRotation;
-        }
-        else
-        {
+        } else {
             rotation = 4 + worldRotation - structureRotation;
         }
 
@@ -728,10 +623,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     /**
      * Write the colony id to the itemstack.
+     *
      * @param stack the stack to write it to.
      */
-    public void writeColonyToItemStack(final ItemStack stack)
-    {
+    public void writeColonyToItemStack(final ItemStack stack) {
         new ColonyId(getColonyId(), getLevel().dimension()).writeToItemStack(stack);
     }
 }

@@ -11,7 +11,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
@@ -23,8 +22,7 @@ import java.util.Set;
 import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_COMPLAINS_DAYS;
 import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_DEMANDS_DAYS;
 
-public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<CompoundTag>
-{
+public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<CompoundTag> {
     /**
      * The {@link JobEntry} for this job.
      *
@@ -114,16 +112,15 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
     /**
      * Levelup actions on citizen levelup, allows custom actions based on Jobs
      */
-    default void onLevelUp()
-    {}
+    default void onLevelUp() {
+    }
 
     /**
      * Initizalizes values for an entity when the entity is spawned/assigned to the job
      *
      * @param citizen
      */
-    default void initEntityValues(AbstractEntityCitizen citizen)
-    {
+    default void initEntityValues(AbstractEntityCitizen citizen) {
         citizen.getCitizenData().setIdleAtJob(false);
     }
 
@@ -223,6 +220,7 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
 
     /**
      * If the worker can pick up the stack.
+     *
      * @param pickedUpStack the stack to check.
      * @return true if so.
      */
@@ -230,48 +228,47 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
 
     /**
      * Process time the colony was offline.
+     *
      * @param time the time in seconds.
      */
     void processOfflineTime(long time);
 
     /**
      * Serialize the job to a buffer.
+     *
      * @param buffer the buffer to serialize it to.
      */
     void serializeToView(final RegistryFriendlyByteBuf buffer);
 
     /**
      * Get the time limit in seconds after which the job considers itself inactive.
+     *
      * @return the limit, or -1 if not applicable.
      */
-    default int getInactivityLimit()
-    {
+    default int getInactivityLimit() {
         return -1;
     }
 
     /**
      * Get the days before complaining or demanding solution for being idle
+     *
      * @param isDemand true if looking for the demand time
      * @return number of days
      */
-    default int getIdleSeverity(boolean isDemand)
-    {
-        if(isDemand)
-        {
+    default int getIdleSeverity(boolean isDemand) {
+        if (isDemand) {
             return IDLE_AT_JOB_DEMANDS_DAYS;
-        }
-        else
-        {
+        } else {
             return IDLE_AT_JOB_COMPLAINS_DAYS;
         }
     }
 
     /**
      * Trigger a job based action on activity change (active to inactive, or inactive to active).
+     *
      * @param newState the new state (true for active, false for inactive).
      */
-    default void triggerActivityChangeAction(boolean newState)
-    {
+    default void triggerActivityChangeAction(boolean newState) {
         //noop.
     }
 
@@ -287,19 +284,20 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
      *
      * @return
      */
-    default boolean isGuard()
-    {
+    default boolean isGuard() {
         return false;
     }
 
     /**
      * Gets the position of the building the job is assigned to
+     *
      * @return
      */
     public BlockPos getBuildingPos();
 
     /**
      * Gets the work building
+     *
      * @return
      */
     public IBuilding getWorkBuilding();
@@ -311,6 +309,7 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
 
     /**
      * Assigns the job to its specific work module
+     *
      * @param module
      * @return
      */

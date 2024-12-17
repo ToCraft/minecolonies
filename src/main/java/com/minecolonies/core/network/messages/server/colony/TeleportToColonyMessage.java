@@ -16,32 +16,26 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message for trying to teleport to a friends colony.
  */
-public class TeleportToColonyMessage extends AbstractColonyServerMessage
-{
+public class TeleportToColonyMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "teleport_to_colony", TeleportToColonyMessage::new);
 
-    public TeleportToColonyMessage(final ResourceKey<Level> dimensionId, final int colonyId)
-    {
+    public TeleportToColonyMessage(final ResourceKey<Level> dimensionId, final int colonyId) {
         super(TYPE, dimensionId, colonyId);
     }
 
-    protected TeleportToColonyMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected TeleportToColonyMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
     }
 
     @Nullable
     @Override
-    protected Action permissionNeeded()
-    {
+    protected Action permissionNeeded() {
         return null;
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
-        if (colony.getPermissions().getRank(player.getUUID()) != colony.getPermissions().getRankNeutral())
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
+        if (colony.getPermissions().getRank(player.getUUID()) != colony.getPermissions().getRankNeutral()) {
             TeleportHelper.colonyTeleport(player, colony);
         }
     }

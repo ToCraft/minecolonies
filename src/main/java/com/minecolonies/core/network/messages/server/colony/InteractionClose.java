@@ -18,8 +18,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to trigger a response handler close on the server side.
  */
-public class InteractionClose extends AbstractColonyServerMessage
-{
+public class InteractionClose extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "interaction_close", InteractionClose::new);
 
     /**
@@ -41,11 +40,10 @@ public class InteractionClose extends AbstractColonyServerMessage
      * @param key       the key of the handler.
      */
     public InteractionClose(
-      final int colonyId,
-      final int citizenId,
-      final ResourceKey<Level> dimension,
-      @NotNull final Component key)
-    {
+            final int colonyId,
+            final int citizenId,
+            final ResourceKey<Level> dimension,
+            @NotNull final Component key) {
         super(TYPE, dimension, colonyId);
         this.citizenId = citizenId;
         this.key = key;
@@ -56,8 +54,7 @@ public class InteractionClose extends AbstractColonyServerMessage
      *
      * @param buf the used byteBuffer.
      */
-    protected InteractionClose(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected InteractionClose(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.citizenId = buf.readInt();
         this.key = Utils.deserializeCodecMess(ComponentSerialization.STREAM_CODEC, buf);
@@ -69,24 +66,20 @@ public class InteractionClose extends AbstractColonyServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(this.citizenId);
         Utils.serializeCodecMess(ComponentSerialization.STREAM_CODEC, buf, key);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
-        if (citizenData == null)
-        {
+        if (citizenData == null) {
             citizenData = colony.getVisitorManager().getVisitor(citizenId);
         }
 
-        if (citizenData != null && player != null)
-        {
+        if (citizenData != null && player != null) {
             citizenData.onInteractionClosed(key, player);
         }
     }

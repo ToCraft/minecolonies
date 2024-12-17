@@ -6,8 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-public interface IWorkOrderView
-{
+public interface IWorkOrderView {
     /**
      * Id getter.
      *
@@ -52,12 +51,14 @@ public interface IWorkOrderView
 
     /**
      * Get the path for querying the structure.
+     *
      * @return the path.
      */
     String getStructurePath();
 
     /**
      * Get the display string of the structure.
+     *
      * @return the file name.
      */
     String getTranslationKey();

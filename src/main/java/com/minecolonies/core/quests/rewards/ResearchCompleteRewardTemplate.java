@@ -13,8 +13,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.ID_KEY;
 /**
  * Research complete based reward.
  */
-public class ResearchCompleteRewardTemplate implements IQuestRewardTemplate
-{
+public class ResearchCompleteRewardTemplate implements IQuestRewardTemplate {
     /**
      * The research to complete
      */
@@ -22,27 +21,27 @@ public class ResearchCompleteRewardTemplate implements IQuestRewardTemplate
 
     /**
      * Setup the research reward.
+     *
      * @param research the research.
      */
-    public ResearchCompleteRewardTemplate(final ResourceLocation research)
-    {
+    public ResearchCompleteRewardTemplate(final ResourceLocation research) {
         this.research = research;
     }
 
     /**
      * Create the reward.
+     *
      * @param jsonObject the json to read from.
      * @return the reward object.
      */
-    public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
-    {
+    public static IQuestRewardTemplate createReward(final JsonObject jsonObject) {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final ResourceLocation research = ResourceLocation.parse(details.get(ID_KEY).getAsString());
         return new ResearchCompleteRewardTemplate(research);
     }
+
     @Override
-    public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)
-    {
+    public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest) {
         colony.getResearchManager().getResearchTree().finishResearch(research);
         colony.getResearchManager().markDirty();
     }

@@ -5,21 +5,20 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Location described by an immutable blockpos and a dimension.
  */
-public class StaticLocation implements ILocation
-{
+public class StaticLocation implements ILocation {
 
     private static final int NUMBER_OR_CONTEXTS = 1;
 
@@ -28,8 +27,7 @@ public class StaticLocation implements ILocation
 
     private final ResourceKey<Level> dimension;
 
-    public StaticLocation(@NotNull final BlockPos pos, final ResourceKey<Level> dimension)
-    {
+    public StaticLocation(@NotNull final BlockPos pos, final ResourceKey<Level> dimension) {
         this.pos = pos;
         this.dimension = dimension;
     }
@@ -41,8 +39,7 @@ public class StaticLocation implements ILocation
      */
     @NotNull
     @Override
-    public BlockPos getInDimensionLocation()
-    {
+    public BlockPos getInDimensionLocation() {
         return pos;
     }
 
@@ -53,8 +50,7 @@ public class StaticLocation implements ILocation
      */
     @NotNull
     @Override
-    public ResourceKey<Level> getDimension()
-    {
+    public ResourceKey<Level> getDimension() {
         return dimension;
     }
 
@@ -65,43 +61,36 @@ public class StaticLocation implements ILocation
      * @return True when reachable, false when not.
      */
     @Override
-    public boolean isReachableFromLocation(@NotNull final ILocation location)
-    {
+    public boolean isReachableFromLocation(@NotNull final ILocation location) {
         return location.getDimension() == getDimension();
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof StaticLocation))
-        {
+        if (!(o instanceof StaticLocation)) {
             return false;
         }
 
         final StaticLocation that = (StaticLocation) o;
 
-        if (getDimension() != that.getDimension())
-        {
+        if (getDimension() != that.getDimension()) {
             return false;
         }
         return pos.equals(that.pos);
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = pos.hashCode();
         result = 31 * result + getDimension().location().toString().hashCode();
         return result;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Dim: " + dimension.location() + " " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " ";
     }
 
@@ -112,13 +101,13 @@ public class StaticLocation implements ILocation
     /**
      * We have this class the way it is for a reason.
      */
-    public static class Factory implements ILocationFactory<BlockPos, StaticLocation>
-    {
+    public static class Factory implements ILocationFactory<BlockPos, StaticLocation> {
 
-        ////// --------------------------- NBTConstants --------------------------- \\\\\\
+        /// /// --------------------------- NBTConstants --------------------------- \\\\\\
         private static final String NBT_POS = "Pos";
         private static final String NBT_DIM = "Dim";
-        ////// --------------------------- NBTConstants --------------------------- \\\\\\
+
+        /// /// --------------------------- NBTConstants --------------------------- \\\\\\
 
         @NotNull
         @Override
@@ -126,8 +115,7 @@ public class StaticLocation implements ILocation
         /**
          * Moving the curly braces really makes the code hard to read.
          */
-        public TypeToken<StaticLocation> getFactoryOutputType()
-        {
+        public TypeToken<StaticLocation> getFactoryOutputType() {
             return TypeToken.of(StaticLocation.class);
         }
 
@@ -137,8 +125,7 @@ public class StaticLocation implements ILocation
         /**
          * Moving the curly braces really makes the code hard to read.
          */
-        public TypeToken<BlockPos> getFactoryInputType()
-        {
+        public TypeToken<BlockPos> getFactoryInputType() {
             return TypeToken.of(BlockPos.class);
         }
 
@@ -151,8 +138,7 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StaticLocation request)
-        {
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StaticLocation request) {
             final CompoundTag compound = new CompoundTag();
             compound.putLong(NBT_POS, request.getInDimensionLocation().asLong());
             compound.putString(NBT_DIM, request.getDimension().location().toString());
@@ -168,8 +154,7 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public StaticLocation deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
-        {
+        public StaticLocation deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) {
             final BlockPos pos = BlockPos.of(nbt.getLong(NBT_POS));
             final String dim = nbt.getString(NBT_DIM);
             return new StaticLocation(pos, ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(dim)));
@@ -177,15 +162,12 @@ public class StaticLocation implements ILocation
 
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos blockPos, @NotNull final Object... context)
-        {
-            if (context.length != NUMBER_OR_CONTEXTS)
-            {
+        public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos blockPos, @NotNull final Object... context) {
+            if (context.length != NUMBER_OR_CONTEXTS) {
                 throw new IllegalArgumentException("Unsupported context - Not the correct amount available. Needed is 1!");
             }
 
-            if (!(context[0] instanceof ResourceKey))
-            {
+            if (!(context[0] instanceof ResourceKey)) {
                 throw new IllegalArgumentException("Unsupported context - First context object is not a ResourceLocation. Provide an ResourceLocation as Dimension.");
             }
 
@@ -200,27 +182,23 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos input)
-        {
+        public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos input) {
             return new StaticLocation(input, Level.OVERWORLD);
         }
 
         @Override
-        public void serialize(@NotNull IFactoryController controller, @NotNull StaticLocation input, RegistryFriendlyByteBuf packetBuffer)
-        {
+        public void serialize(@NotNull IFactoryController controller, @NotNull StaticLocation input, RegistryFriendlyByteBuf packetBuffer) {
             StaticLocation.serialize(packetBuffer, input);
         }
 
         @NotNull
         @Override
-        public StaticLocation deserialize(@NotNull IFactoryController controller, @NotNull RegistryFriendlyByteBuf buffer) throws Throwable
-        {
+        public StaticLocation deserialize(@NotNull IFactoryController controller, @NotNull RegistryFriendlyByteBuf buffer) throws Throwable {
             return StaticLocation.deserialize(buffer);
         }
 
         @Override
-        public short getSerializationId()
-        {
+        public short getSerializationId() {
             return SerializationIdentifierConstants.STATIC_LOCATION_ID;
         }
     }
@@ -230,8 +208,7 @@ public class StaticLocation implements ILocation
      *
      * @param buffer the buffer to serialize this location to.
      */
-    public static void serialize(RegistryFriendlyByteBuf buffer, StaticLocation location)
-    {
+    public static void serialize(RegistryFriendlyByteBuf buffer, StaticLocation location) {
         buffer.writeBlockPos(location.pos);
         buffer.writeUtf(location.dimension.location().toString());
     }
@@ -242,8 +219,7 @@ public class StaticLocation implements ILocation
      * @param buffer the buffer to read.
      * @return the deserialized location.
      */
-    public static StaticLocation deserialize(RegistryFriendlyByteBuf buffer)
-    {
+    public static StaticLocation deserialize(RegistryFriendlyByteBuf buffer) {
         final BlockPos pos = buffer.readBlockPos();
         final ResourceLocation dimension = ResourceLocation.parse(buffer.readUtf(32767));
 

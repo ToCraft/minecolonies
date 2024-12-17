@@ -31,8 +31,7 @@ import static com.minecolonies.core.event.TextureReloadListener.TEXTURE_PACKS;
 /**
  * BOWindow for the town hall.
  */
-public class WindowMainPage extends AbstractWindowTownHall
-{
+public class WindowMainPage extends AbstractWindowTownHall {
     /**
      * Drop down list for style.
      */
@@ -59,7 +58,6 @@ public class WindowMainPage extends AbstractWindowTownHall
     private final int initialNamePackIndex;
 
 
-
     /**
      * Label for the colony name.
      */
@@ -71,8 +69,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      *
      * @param building {@link BuildingTownHall.View}.
      */
-    public WindowMainPage(final BuildingTownHall.View building)
-    {
+    public WindowMainPage(final BuildingTownHall.View building) {
         super(building, "layoutactions.xml");
         initDropDowns();
 
@@ -100,8 +97,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     /**
      * Switch the structure style pack.
      */
-    private void switchPack()
-    {
+    private void switchPack() {
         new WindowSwitchPack(() -> {
             building.getColony().setStructurePack(StructurePacks.selectedPack.getName());
             new ColonyStructureStyleMessage(building.getColony(), StructurePacks.selectedPack.getName()).sendToServer();
@@ -112,8 +108,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     /**
      * Initialise the previous/next and drop down list for style.
      */
-    private void initDropDowns()
-    {
+    private void initDropDowns() {
         findPaneOfTypeByID(DROPDOWN_COLOR_ID, DropDownList.class).setEnabled(enabled);
 
         colorDropDownList = findPaneOfTypeByID(DROPDOWN_COLOR_ID, DropDownList.class);
@@ -121,19 +116,15 @@ public class WindowMainPage extends AbstractWindowTownHall
 
         final List<ChatFormatting> textColors = Arrays.stream(ChatFormatting.values()).filter(ChatFormatting::isColor).toList();
 
-        colorDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
+        colorDropDownList.setDataProvider(new DropDownList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return textColors.size();
             }
 
             @Override
-            public MutableComponent getLabel(final int index)
-            {
-                if (index >= 0 && index < textColors.size())
-                {
+            public MutableComponent getLabel(final int index) {
+                if (index >= 0 && index < textColors.size()) {
                     final String colorName = textColors.get(index).getName().replace("_", " ");
                     return Component.literal(colorName.substring(0, 1).toUpperCase(Locale.US) + colorName.substring(1));
                 }
@@ -143,17 +134,14 @@ public class WindowMainPage extends AbstractWindowTownHall
 
         textureDropDownList = findPaneOfTypeByID(DROPDOWN_TEXT_ID, DropDownList.class);
         textureDropDownList.setHandler(this::toggleTexture);
-        textureDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
+        textureDropDownList.setDataProvider(new DropDownList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return TEXTURE_PACKS.size();
             }
 
             @Override
-            public MutableComponent getLabel(final int index)
-            {
+            public MutableComponent getLabel(final int index) {
                 return Component.literal(TEXTURE_PACKS.get(index));
             }
         });
@@ -162,17 +150,14 @@ public class WindowMainPage extends AbstractWindowTownHall
 
         nameStyleDropDownList = findPaneOfTypeByID(DROPDOWN_NAME_ID, DropDownList.class);
         nameStyleDropDownList.setHandler(this::toggleNameFile);
-        nameStyleDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
+        nameStyleDropDownList.setDataProvider(new DropDownList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return building.getColony().getNameFileIds().size();
             }
 
             @Override
-            public MutableComponent getLabel(final int index)
-            {
+            public MutableComponent getLabel(final int index) {
                 return Component.literal(building.getColony().getNameFileIds().get(index));
             }
         });
@@ -184,10 +169,8 @@ public class WindowMainPage extends AbstractWindowTownHall
      *
      * @param dropDownList the toggle dropdown list.
      */
-    private void toggleTexture(final DropDownList dropDownList)
-    {
-        if (dropDownList.getSelectedIndex() != initialTextureIndex)
-        {
+    private void toggleTexture(final DropDownList dropDownList) {
+        if (dropDownList.getSelectedIndex() != initialTextureIndex) {
             new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())).sendToServer();
         }
     }
@@ -197,10 +180,8 @@ public class WindowMainPage extends AbstractWindowTownHall
      *
      * @param dropDownList the toggle dropdown list.
      */
-    private void toggleNameFile(final DropDownList dropDownList)
-    {
-        if (dropDownList.getSelectedIndex() != initialNamePackIndex)
-        {
+    private void toggleNameFile(final DropDownList dropDownList) {
+        if (dropDownList.getSelectedIndex() != initialNamePackIndex) {
             new ColonyNameStyleMessage(building.getColony(), building.getColony().getNameFileIds().get(dropDownList.getSelectedIndex())).sendToServer();
         }
     }
@@ -210,8 +191,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      *
      * @param dropDownList the list.
      */
-    private void onDropDownListChanged(final DropDownList dropDownList)
-    {
+    private void onDropDownListChanged(final DropDownList dropDownList) {
         new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), building).sendToServer();
     }
 
@@ -220,22 +200,19 @@ public class WindowMainPage extends AbstractWindowTownHall
      *
      * @param button the trigger button
      */
-    private void openBannerPicker(@NotNull final Button button)
-    {
+    private void openBannerPicker(@NotNull final Button button) {
         Screen window = new WindowBannerPicker(building.getColony(), this);
         Minecraft.getInstance().setScreen(window);
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
 
         title.setText(Component.literal(building.getColony().getName()));
 
         if (building.getColony().getMercenaryUseTime() != 0
-              && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
-        {
+                && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN) {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
     }
@@ -243,30 +220,26 @@ public class WindowMainPage extends AbstractWindowTownHall
     /**
      * Action performed when rename button is clicked.
      */
-    private void renameClicked()
-    {
+    private void renameClicked() {
         new WindowTownHallNameEntry(building.getColony()).open();
     }
 
     /**
      * Action performed when mercenary button is clicked.
      */
-    private void mercenaryClicked()
-    {
+    private void mercenaryClicked() {
         new WindowTownHallMercenary(building.getColony()).open();
     }
 
     /**
      * Opens the map on button clicked
      */
-    private void mapButtonClicked()
-    {
+    private void mapButtonClicked() {
         new WindowColonyMap(building).open();
     }
 
     @Override
-    protected String getWindowId()
-    {
+    protected String getWindowId() {
         return BUTTON_ACTIONS;
     }
 }

@@ -7,8 +7,7 @@ import java.util.Objects;
 /**
  * Data entry in the threat table
  */
-public class ThreatTableEntry
-{
+public class ThreatTableEntry {
     /**
      * Threat value
      */
@@ -24,8 +23,7 @@ public class ThreatTableEntry
      */
     private long lastSeen;
 
-    public ThreatTableEntry(final LivingEntity entity)
-    {
+    public ThreatTableEntry(final LivingEntity entity) {
         this.entity = Objects.requireNonNull(entity);
         this.lastSeen = entity.level().getGameTime();
     }
@@ -33,10 +31,8 @@ public class ThreatTableEntry
     /**
      * Adds threat
      */
-    protected void addThreat(final int threat)
-    {
-        if (threat == 0)
-        {
+    protected void addThreat(final int threat) {
+        if (threat == 0) {
             return;
         }
 
@@ -49,8 +45,7 @@ public class ThreatTableEntry
      *
      * @param threat
      */
-    protected void setThreat(final int threat)
-    {
+    protected void setThreat(final int threat) {
         this.threat = threat;
     }
 
@@ -59,8 +54,7 @@ public class ThreatTableEntry
      *
      * @return
      */
-    public int getThreat()
-    {
+    public int getThreat() {
         return threat;
     }
 
@@ -69,8 +63,7 @@ public class ThreatTableEntry
      *
      * @return target
      */
-    public LivingEntity getEntity()
-    {
+    public LivingEntity getEntity() {
         return entity;
     }
 
@@ -79,8 +72,7 @@ public class ThreatTableEntry
      *
      * @return
      */
-    public long getLastSeen()
-    {
+    public long getLastSeen() {
         return lastSeen;
     }
 
@@ -89,8 +81,7 @@ public class ThreatTableEntry
      *
      * @param gameTime
      */
-    public void setLastSeen(final long gameTime)
-    {
+    public void setLastSeen(final long gameTime) {
         this.lastSeen = gameTime;
     }
 }

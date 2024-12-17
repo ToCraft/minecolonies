@@ -3,8 +3,7 @@ package com.minecolonies.api.colony;
 /**
  * Contains all possible progress events.
  */
-public enum ColonyProgressType
-{
+public enum ColonyProgressType {
     COLONY_FOUNDED,
     FIRST_CITIZEN_SPAWNED,
     BUILDER_PLACED,

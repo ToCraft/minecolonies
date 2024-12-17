@@ -23,8 +23,7 @@ import static com.minecolonies.api.util.constant.Constants.XP_PARTICLE_EXPLOSION
 /**
  * Handles all experience related things of the citizen.
  */
-public class CitizenExperienceHandler implements ICitizenExperienceHandler
-{
+public class CitizenExperienceHandler implements ICitizenExperienceHandler {
     /**
      * The percentage share primary skills get.
      */
@@ -55,30 +54,25 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
      *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenExperienceHandler(final AbstractEntityCitizen citizen)
-    {
+    public CitizenExperienceHandler(final AbstractEntityCitizen citizen) {
         this.citizen = citizen;
     }
 
     @Override
-    public void updateLevel()
-    {
-        if (citizen.getCitizenData().getJob() != null)
-        {
+    public void updateLevel() {
+        if (citizen.getCitizenData().getJob() != null) {
             citizen.getCitizenData().getJob().onLevelUp();
         }
     }
 
     @Override
-    public void addExperience(final double xp)
-    {
+    public void addExperience(final double xp) {
         final IBuilding home = citizen.getCitizenColonyHandler().getHomeBuilding();
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
 
         final ICitizenData data = citizen.getCitizenData();
         final IBuilding workBuilding = data.getWorkBuilding();
-        if (workBuilding == null || !workBuilding.hasModule(WorkerBuildingModule.class))
-        {
+        if (workBuilding == null || !workBuilding.hasModule(WorkerBuildingModule.class)) {
             return;
         }
 
@@ -89,8 +83,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         final int intelligenceLevel = data.getCitizenSkillHandler().getLevel(Skill.Intelligence);
         localXp += localXp * (intelligenceLevel / 100.0);
 
-        if (saturation <= 0)
-        {
+        if (saturation <= 0) {
             return;
         }
 
@@ -101,103 +94,87 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         final Skill secondary = module.getSecondarySkill();
 
         data.getCitizenSkillHandler().addXpToSkill(primary, localXp, data);
-        if (primary.getComplimentary() != null)
-        {
+        if (primary.getComplimentary() != null) {
             data.getCitizenSkillHandler().addXpToSkill(primary.getComplimentary(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
         }
 
-        if (primary.getAdverse() != null)
-        {
+        if (primary.getAdverse() != null) {
             data.getCitizenSkillHandler().removeXpFromSkill(primary.getAdverse(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
         }
 
         data.getCitizenSkillHandler().addXpToSkill(secondary, localXp / 2.0, data);
 
-        if (secondary.getComplimentary() != null)
-        {
+        if (secondary.getComplimentary() != null) {
             data.getCitizenSkillHandler().addXpToSkill(secondary.getComplimentary(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
         }
 
-        if (secondary.getAdverse() != null)
-        {
+        if (secondary.getAdverse() != null) {
             data.getCitizenSkillHandler().removeXpFromSkill(secondary.getAdverse(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
         }
     }
 
     @Override
-    public void dropExperience()
-    {
+    public void dropExperience() {
         int experience;
 
         if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorldFromCitizen(
-          citizen).getGameRules().getBoolean(
-          GameRules.RULE_DOMOBLOOT))
-        {
+                citizen).getGameRules().getBoolean(
+                GameRules.RULE_DOMOBLOOT)) {
             experience = (int) (citizen.getCitizenData().getCitizenSkillHandler().getTotalXP());
 
-            while (experience > 0)
-            {
+            while (experience > 0) {
                 final int j = ExperienceOrb.getExperienceValue(experience);
                 experience -= j;
                 CompatibilityUtils.getWorldFromCitizen(citizen)
-                  .addFreshEntity(new ExperienceOrb(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getX(), citizen.getY(), citizen.getZ(), j));
+                        .addFreshEntity(new ExperienceOrb(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getX(), citizen.getY(), citizen.getZ(), j));
             }
         }
 
         //Spawn particle explosion of xp orbs on death
-        for (int i = 0; i < XP_PARTICLE_EXPLOSION_SIZE; ++i)
-        {
+        for (int i = 0; i < XP_PARTICLE_EXPLOSION_SIZE; ++i) {
             final double d2 = citizen.getRandom().nextGaussian() * 0.02D;
             final double d0 = citizen.getRandom().nextGaussian() * 0.02D;
             final double d1 = citizen.getRandom().nextGaussian() * 0.02D;
             CompatibilityUtils.getWorldFromCitizen(citizen).addParticle(ParticleTypes.EXPLOSION,
-              citizen.getX() + (citizen.getRandom().nextDouble() * citizen.getBbWidth() * 2.0F) - (double) citizen.getBbWidth(),
-              citizen.getY() + (citizen.getRandom().nextDouble() * citizen.getBbHeight()),
-              citizen.getZ() + (citizen.getRandom().nextDouble() * citizen.getBbWidth() * 2.0F) - (double) citizen.getBbWidth(),
-              d2,
-              d0,
-              d1);
+                    citizen.getX() + (citizen.getRandom().nextDouble() * citizen.getBbWidth() * 2.0F) - (double) citizen.getBbWidth(),
+                    citizen.getY() + (citizen.getRandom().nextDouble() * citizen.getBbHeight()),
+                    citizen.getZ() + (citizen.getRandom().nextDouble() * citizen.getBbWidth() * 2.0F) - (double) citizen.getBbWidth(),
+                    d2,
+                    d0,
+                    d1);
         }
     }
 
     @Override
-    public void gatherXp()
-    {
-        if (citizen.level().isClientSide)
-        {
+    public void gatherXp() {
+        if (citizen.level().isClientSide) {
             return;
         }
 
         final int growSize = counterMovedXp > 0 || citizen.getRandom().nextInt(100) < 20 ? 4 : 2;
 
         final AABB box = citizen.getBoundingBox().inflate(growSize);
-        if (!WorldUtil.isAABBLoaded(citizen.level(), box))
-        {
+        if (!WorldUtil.isAABBLoaded(citizen.level(), box)) {
             return;
         }
 
         boolean movedXp = false;
 
-        for (@NotNull final ExperienceOrb orb : citizen.level().getEntitiesOfClass(ExperienceOrb.class, box))
-        {
-            if (orb.tickCount < 5)
-            {
+        for (@NotNull final ExperienceOrb orb : citizen.level().getEntitiesOfClass(ExperienceOrb.class, box)) {
+            if (orb.tickCount < 5) {
                 continue;
             }
 
             Vec3 vec3d = new Vec3(citizen.getX() - orb.getX(), citizen.getY() + (double) this.citizen.getEyeHeight() / 2.0D - orb.getY(), citizen.getZ() - orb.getZ());
             double d1 = vec3d.lengthSqr();
 
-            if (d1 < 1.0D)
-            {
+            if (d1 < 1.0D) {
                 double localXp = orb.getValue();
                 localXp = CitizenItemUtils.applyMending(citizen, localXp);
                 addExperience(localXp);
                 orb.remove(Entity.RemovalReason.DISCARDED);
                 counterMovedXp = 0;
-            }
-            else if (counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
-            {
+            } else if (counterMovedXp > MAX_XP_PICKUP_ATTEMPTS) {
                 double localXp = orb.getValue();
                 localXp = CitizenItemUtils.applyMending(citizen, localXp);
                 addExperience(localXp);
@@ -211,8 +188,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             movedXp = true;
             counterMovedXp++;
         }
-        if(!movedXp)
-        {
+        if (!movedXp) {
             counterMovedXp = 0;
         }
     }

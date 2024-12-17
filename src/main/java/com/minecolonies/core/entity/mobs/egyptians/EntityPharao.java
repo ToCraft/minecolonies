@@ -13,8 +13,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.CHIEF_BONUS_ARM
 /**
  * Class for the Pharao entity.
  */
-public class EntityPharao extends AbstractEntityEgyptian implements IPharaoEntity
-{
+public class EntityPharao extends AbstractEntityEgyptian implements IPharaoEntity {
 
     /**
      * Constructor of the entity.
@@ -22,14 +21,12 @@ public class EntityPharao extends AbstractEntityEgyptian implements IPharaoEntit
      * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityPharao(final EntityType<? extends EntityPharao> type, final Level worldIn)
-    {
+    public EntityPharao(final EntityType<? extends EntityPharao> type, final Level worldIn) {
         super(type, worldIn);
     }
 
     @Override
-    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
-    {
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage) {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
         final double chiefArmor = difficulty * CHIEF_BONUS_ARMOR;
         this.getAttribute(Attributes.ARMOR).setBaseValue(chiefArmor);

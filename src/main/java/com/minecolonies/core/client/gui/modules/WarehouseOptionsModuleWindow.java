@@ -16,13 +16,13 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.LABEL_X_OF_Z;
@@ -33,8 +33,7 @@ import static com.minecolonies.core.client.gui.modules.WindowBuilderResModule.*;
 /**
  * BOWindow for the warehouse options.
  */
-public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
-{
+public class WarehouseOptionsModuleWindow extends AbstractModuleWindow {
     /**
      * Required building level for sorting.
      */
@@ -52,11 +51,11 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
 
     /**
      * Constructor for window warehouse hut.
-     * @param module the module belonging to it.
+     *
+     * @param module   the module belonging to it.
      * @param building {@link BuildingWareHouse.View}.
      */
-    public WarehouseOptionsModuleWindow(final IBuildingView building, final WarehouseOptionsModuleView module)
-    {
+    public WarehouseOptionsModuleWindow(final IBuildingView building, final WarehouseOptionsModuleView module) {
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
         registerButton(RESOURCE_ADD, this::transferItems);
         registerButton(SORT_WAREHOUSE_BUTTON, this::sortWarehouse);
@@ -64,16 +63,14 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
     }
 
     @Override
-    public void onOpened()
-    {
-        if (buildingView.getBuildingLevel() < BUILDING_LEVEL_FOR_SORTING)
-        {
+    public void onOpened() {
+        if (buildingView.getBuildingLevel() < BUILDING_LEVEL_FOR_SORTING) {
             final ButtonImage sortButton = findPaneOfTypeByID(SORT_WAREHOUSE_BUTTON, ButtonImage.class);
             PaneBuilders.tooltipBuilder()
-                .append(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.sort.disabled.1", BUILDING_LEVEL_FOR_SORTING))
-                .appendNL(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.sort.disabled.2", BUILDING_LEVEL_FOR_SORTING))
-                .hoverPane(sortButton)
-                .build();
+                    .append(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.sort.disabled.1", BUILDING_LEVEL_FOR_SORTING))
+                    .appendNL(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.sort.disabled.2", BUILDING_LEVEL_FOR_SORTING))
+                    .hoverPane(sortButton)
+                    .build();
             sortButton.disable();
         }
 
@@ -87,19 +84,15 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
     /**
      * Update one row pad with its resource informations.
      */
-    private void updateResourcePane()
-    {
+    private void updateResourcePane() {
         final BuildingBuilderResource resource = new BuildingBuilderResource(new ItemStack(Blocks.EMERALD_BLOCK, 1), 1);
 
         final int amountToSet;
         final Inventory inventory = this.mc.player.getInventory();
         final boolean isCreative = this.mc.player.isCreative();
-        if (isCreative)
-        {
+        if (isCreative) {
             amountToSet = resource.getAmount();
-        }
-        else
-        {
+        } else {
             amountToSet = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getItem());
         }
         resource.setPlayerAmount(amountToSet);
@@ -111,17 +104,15 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
 
         BuildingBuilderResource.RessourceAvailability availability = resource.getAvailabilityStatus();
 
-        if (module.getStorageUpgradeLevel() >= BuildingWareHouse.MAX_STORAGE_UPGRADE || buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel() || lockUpgrade)
-        {
+        if (module.getStorageUpgradeLevel() >= BuildingWareHouse.MAX_STORAGE_UPGRADE || buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel() || lockUpgrade) {
             availability = BuildingBuilderResource.RessourceAvailability.NOT_NEEDED;
         }
 
         findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(Component.translatableEscape(LABEL_X_OF_Z,
-          module.getStorageUpgradeLevel(),
-          BuildingWareHouse.MAX_STORAGE_UPGRADE));
+                module.getStorageUpgradeLevel(),
+                BuildingWareHouse.MAX_STORAGE_UPGRADE));
 
-        switch (availability)
-        {
+        switch (availability) {
             case DONT_HAVE:
                 addButton.disable();
                 resourceLabel.setColors(RED);
@@ -146,37 +137,32 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
                 resourceLabel.setColors(BLACK);
                 resourceMissingLabel.setColors(BLACK);
                 neededLabel.setColors(BLACK);
-                if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel())
-                {
+                if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel()) {
                     resourceLabel.hide();
                     resourceMissingLabel.hide();
                     neededLabel.hide();
                     addButton.setText(Component.literal("X").setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_RED)));
                     PaneBuilders.tooltipBuilder()
-                        .append(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1", buildingView.getBuildingMaxLevel()))
-                        .appendNL(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2", buildingView.getBuildingMaxLevel()))
-                        .hoverPane(addButton)
-                        .build();
+                            .append(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1", buildingView.getBuildingMaxLevel()))
+                            .appendNL(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2", buildingView.getBuildingMaxLevel()))
+                            .hoverPane(addButton)
+                            .build();
                 }
                 break;
         }
 
         resourceLabel.setText(Component.literal(resource.getName()));
         final int missing = resource.getMissingFromPlayer();
-        if (missing < 0)
-        {
+        if (missing < 0) {
             resourceMissingLabel.setText(Component.literal(Integer.toString(missing)));
-        }
-        else
-        {
+        } else {
             resourceMissingLabel.clearText();
         }
 
         neededLabel.setText(Component.literal(resource.getAvailable() + " / " + resource.getAmount()));
         findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Component.literal(Integer.toString(resource.getAmount() - resource.getAvailable())));
 
-        if(buildingView.getBuildingLevel() >= buildingView.getBuildingMaxLevel())
-        {
+        if (buildingView.getBuildingLevel() >= buildingView.getBuildingMaxLevel()) {
             final ItemStack resourceStackOfOne = resource.getItemStack().copy();
             resourceStackOfOne.setCount(1);
             findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resourceStackOfOne);
@@ -186,8 +172,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
     /**
      * On Button click transfer Items.
      */
-    private void transferItems()
-    {
+    private void transferItems() {
         new UpgradeWarehouseMessage(this.buildingView).sendToServer();
         module.incrementStorageUpgrade();
         lockUpgrade = true;
@@ -197,10 +182,8 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
     /**
      * On button click for warehouse sorting.
      */
-    private void sortWarehouse()
-    {
-        if (buildingView.getBuildingLevel() >= BUILDING_LEVEL_FOR_SORTING)
-        {
+    private void sortWarehouse() {
+        if (buildingView.getBuildingLevel() >= BUILDING_LEVEL_FOR_SORTING) {
             new SortWarehouseMessage(this.buildingView).sendToServer();
             MessageUtils.format(WAREHOUSE_SORTED).sendTo(Minecraft.getInstance().player);
         }

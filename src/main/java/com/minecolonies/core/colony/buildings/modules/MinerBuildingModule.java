@@ -13,21 +13,18 @@ import java.util.function.Function;
 /**
  * Assignment module for miners.
  */
-public class MinerBuildingModule extends WorkerBuildingModule implements ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
-{
+public class MinerBuildingModule extends WorkerBuildingModule implements ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule {
     public MinerBuildingModule(
-      final JobEntry entry,
-      final Skill primary,
-      final Skill secondary,
-      final boolean canWorkingDuringRain,
-      final Function<IBuilding, Integer> sizeLimit)
-    {
+            final JobEntry entry,
+            final Skill primary,
+            final Skill secondary,
+            final boolean canWorkingDuringRain,
+            final Function<IBuilding, Integer> sizeLimit) {
         super(entry, primary, secondary, canWorkingDuringRain, sizeLimit);
     }
 
     @Override
-    public boolean isFull()
-    {
+    public boolean isFull() {
         return building.getAllAssignedCitizen().size() >= getModuleMax();
     }
 }

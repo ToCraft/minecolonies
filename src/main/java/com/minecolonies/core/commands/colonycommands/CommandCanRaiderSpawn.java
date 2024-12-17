@@ -15,8 +15,7 @@ import static com.minecolonies.api.util.constant.translation.CommandTranslationC
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
-public class CommandCanRaiderSpawn implements IMCOPCommand
-{
+public class CommandCanRaiderSpawn implements IMCOPCommand {
     private static final String CANSPAWN_ARG = "canSpawn";
 
     /**
@@ -25,13 +24,11 @@ public class CommandCanRaiderSpawn implements IMCOPCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
+        if (colony == null) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
@@ -48,16 +45,14 @@ public class CommandCanRaiderSpawn implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "canSpawnRaiders";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
-                         .then(IMCCommand.newArgument(CANSPAWN_ARG, BoolArgumentType.bool()).executes(this::checkPreConditionAndExecute)));
+                .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                        .then(IMCCommand.newArgument(CANSPAWN_ARG, BoolArgumentType.bool()).executes(this::checkPreConditionAndExecute)));
     }
 }

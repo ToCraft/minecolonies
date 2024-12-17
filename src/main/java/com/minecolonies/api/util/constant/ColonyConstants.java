@@ -10,12 +10,11 @@ import java.util.Random;
 /**
  * Colony wide constants.
  */
-public final class ColonyConstants
-{
+public final class ColonyConstants {
     /**
      * The colony data version
      */
-    public static final int    DATA_VERSION     = 1;
+    public static final int DATA_VERSION = 1;
     public static final String DATA_VERSION_TAG = "data_version";
 
     /**
@@ -53,11 +52,11 @@ public final class ColonyConstants
     /**
      * How often the colony state gets updated in ticks.
      */
-    public static final int UPDATE_STATE_INTERVAL   = 100;
+    public static final int UPDATE_STATE_INTERVAL = 100;
     /**
      * How often the colony request system gets updated in ticks.
      */
-    public static final int UPDATE_RS_INTERVAL      = 11;
+    public static final int UPDATE_RS_INTERVAL = 11;
     /**
      * How often the colony updates day/nighttime in ticks.
      */
@@ -71,26 +70,26 @@ public final class ColonyConstants
     /**
      * Barbarian Constants.
      */
-    public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;
-    public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
+    public static final double ARCHER_BARBARIANS_MULTIPLIER = 0.30;
+    public static final double CHIEF_BARBARIANS_MULTIPLIER = 0.1;
 
     /**
      * Different horde ids and their sizes.
      */
-    public static final int SMALL_HORDE_MESSAGE_ID  = 1;
+    public static final int SMALL_HORDE_MESSAGE_ID = 1;
     public static final int MEDIUM_HORDE_MESSAGE_ID = 2;
-    public static final int BIG_HORDE_MESSAGE_ID    = 3;
-    public static final int HUGE_HORDE_MESSAGE_ID   = 4;
-    public static final int SMALL_HORDE_SIZE        = 5;
-    public static final int MEDIUM_HORDE_SIZE       = 10;
-    public static final int BIG_HORDE_SIZE          = 20;
+    public static final int BIG_HORDE_MESSAGE_ID = 3;
+    public static final int HUGE_HORDE_MESSAGE_ID = 4;
+    public static final int SMALL_HORDE_SIZE = 5;
+    public static final int MEDIUM_HORDE_SIZE = 10;
+    public static final int BIG_HORDE_SIZE = 20;
 
     /**
      * Pirate Constants.
      */
-    public static final String SMALL_SHIP  = "small_";
+    public static final String SMALL_SHIP = "small_";
     public static final String MEDIUM_SHIP = "medium_";
-    public static final String BIG_SHIP    = "big_";
+    public static final String BIG_SHIP = "big_";
 
     public static final long ONE_HOUR_IN_MILLIS = 3600000;
     public static final int CHUNK_UNLOAD_DELAY = 20 * 60 * 10;
@@ -98,8 +97,7 @@ public final class ColonyConstants
     /**
      * Private constructor to hide the implicit one.
      */
-    private ColonyConstants()
-    {
+    private ColonyConstants() {
         /*
          * Intentionally left empty.
          */

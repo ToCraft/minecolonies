@@ -14,29 +14,24 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
-public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding, BuildingBasedRequester>
-{
+public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding, BuildingBasedRequester> {
     @NotNull
     @Override
-    public TypeToken<? extends BuildingBasedRequester> getFactoryOutputType()
-    {
+    public TypeToken<? extends BuildingBasedRequester> getFactoryOutputType() {
         return TypeToken.of(BuildingBasedRequester.class);
     }
 
     @NotNull
     @Override
-    public TypeToken<? extends AbstractBuilding> getFactoryInputType()
-    {
+    public TypeToken<? extends AbstractBuilding> getFactoryInputType() {
         return TypeToken.of(AbstractBuilding.class);
     }
 
     @NotNull
     @Override
     public BuildingBasedRequester getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final AbstractBuilding building, @NotNull final Object... context)
-      throws IllegalArgumentException
-    {
-        if (context.length != 0)
-        {
+            throws IllegalArgumentException {
+        if (context.length != 0) {
             throw new IllegalArgumentException("To many context elements. Only 0 supported.");
         }
 
@@ -48,33 +43,28 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final BuildingBasedRequester output)
-    {
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final BuildingBasedRequester output) {
         return output.serialize(provider, controller);
     }
 
     @NotNull
     @Override
-    public BuildingBasedRequester deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
-    {
+    public BuildingBasedRequester deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) {
         return BuildingBasedRequester.deserialize(provider, controller, nbt);
     }
 
     @Override
-    public void serialize(IFactoryController controller, BuildingBasedRequester output, RegistryFriendlyByteBuf packetBuffer)
-    {
+    public void serialize(IFactoryController controller, BuildingBasedRequester output, RegistryFriendlyByteBuf packetBuffer) {
         output.serialize(controller, packetBuffer);
     }
 
     @Override
-    public BuildingBasedRequester deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
-    {
+    public BuildingBasedRequester deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable {
         return BuildingBasedRequester.deserialize(controller, buffer);
     }
 
     @Override
-    public short getSerializationId()
-    {
+    public short getSerializationId() {
         return SerializationIdentifierConstants.BUILDER_BASED_REQUESTER_ID;
     }
 }

@@ -20,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message handling setting triggering.
  */
-public class TriggerSettingMessage extends AbstractBuildingServerMessage<AbstractBuilding>
-{
+public class TriggerSettingMessage extends AbstractBuildingServerMessage<AbstractBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "trigger_setting", TriggerSettingMessage::new);
 
     /**
@@ -41,20 +40,19 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
 
     /**
      * Settings constructor.
+     *
      * @param building the building involving the setting.
-     * @param key the unique key of it.
-     * @param value the value of the setting.
+     * @param key      the unique key of it.
+     * @param value    the value of the setting.
      */
-    public TriggerSettingMessage(final IBuildingView building, final ISettingKey<?> key, final ISetting<?> value, final int moduleID)
-    {
+    public TriggerSettingMessage(final IBuildingView building, final ISettingKey<?> key, final ISetting<?> value, final int moduleID) {
         super(TYPE, building);
         this.key = key.getUniqueId();
         this.value = value;
         this.moduleID = moduleID;
     }
 
-    protected TriggerSettingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected TriggerSettingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.moduleID = buf.readInt();
         this.key = buf.readResourceLocation();
@@ -62,8 +60,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(moduleID);
         buf.writeResourceLocation(this.key);
@@ -71,10 +68,8 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
-    {
-        if (building.getModule(moduleID) instanceof final SettingsModule module)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building) {
+        if (building.getModule(moduleID) instanceof final SettingsModule module) {
             module.updateSetting(new SettingKey<>(this.value.getClass(), this.key), this.value, player);
         }
     }

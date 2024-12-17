@@ -23,8 +23,7 @@ import static com.minecolonies.core.client.gui.questlog.Constants.LIST_QUESTS;
 /**
  * Quest log window in progress tab.
  */
-public class WindowQuestLog extends AbstractWindowSkeleton
-{
+public class WindowQuestLog extends AbstractWindowSkeleton {
     /**
      * Link to the xml file of the window.
      */
@@ -40,8 +39,7 @@ public class WindowQuestLog extends AbstractWindowSkeleton
      *
      * @param colonyView the colony which this quest log is attached to.
      */
-    public WindowQuestLog(final @NotNull IColonyView colonyView)
-    {
+    public WindowQuestLog(final @NotNull IColonyView colonyView) {
         super(Constants.MOD_ID + WINDOW_RESOURCE);
         registerButton(BUTTON_QUEST_LOCATOR, this::locateCitizenClickedInternal);
 
@@ -55,30 +53,24 @@ public class WindowQuestLog extends AbstractWindowSkeleton
      *
      * @param button clicked button.
      */
-    private void locateCitizenClickedInternal(@NotNull final Button button)
-    {
-        if (switchView.getCurrentView() != null)
-        {
+    private void locateCitizenClickedInternal(@NotNull final Button button) {
+        if (switchView.getCurrentView() != null) {
             String pageId = switchView.getCurrentView().getID();
             final QuestModuleContainer<?> module = moduleMap.get(pageId);
-            if (module != null)
-            {
+            if (module != null) {
                 module.trackQuest(button);
             }
         }
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
 
-        if (switchView.getCurrentView() != null)
-        {
+        if (switchView.getCurrentView() != null) {
             String pageId = switchView.getCurrentView().getID();
             final QuestModuleContainer<?> module = moduleMap.get(pageId);
-            if (module != null)
-            {
+            if (module != null) {
                 module.onUpdate();
             }
         }
@@ -87,8 +79,7 @@ public class WindowQuestLog extends AbstractWindowSkeleton
     /**
      * Internal class for keeping track of the different pages.
      */
-    private static class QuestModuleContainer<T>
-    {
+    private static class QuestModuleContainer<T> {
         /**
          * The module class used to render the quest items.
          */
@@ -112,8 +103,7 @@ public class WindowQuestLog extends AbstractWindowSkeleton
         /**
          * Default constructor.
          */
-        public QuestModuleContainer(final WindowQuestLogQuestModule<T> module, final IColonyView colonyView, final SwitchView switchView, final String pageId)
-        {
+        public QuestModuleContainer(final WindowQuestLogQuestModule<T> module, final IColonyView colonyView, final SwitchView switchView, final String pageId) {
             this.module = module;
             this.colonyView = colonyView;
             Pane parent = switchView.getChildren().stream().filter(f -> f.getID().equals(pageId)).findFirst().orElseThrow();
@@ -121,26 +111,22 @@ public class WindowQuestLog extends AbstractWindowSkeleton
 
             this.questItems = module.getQuestItems(colonyView);
 
-            this.questsList.setDataProvider(new ScrollingList.DataProvider()
-            {
+            this.questsList.setDataProvider(new ScrollingList.DataProvider() {
                 @Override
-                public int getElementCount()
-                {
+                public int getElementCount() {
                     return questItems.size();
                 }
 
                 @Override
-                public void updateElement(final int index, final Pane rowPane)
-                {
+                public void updateElement(final int index, final Pane rowPane) {
                     module.renderQuestItem(questItems.get(index), colonyView, rowPane);
 
                     final ButtonImage questLocator = rowPane.findPaneOfTypeByID(BUTTON_QUEST_LOCATOR, ButtonImage.class);
-                    if (questLocator != null)
-                    {
+                    if (questLocator != null) {
                         PaneBuilders.tooltipBuilder()
-                          .append(Component.translatableEscape(QUEST_LOG_TRACK_CITIZEN_TEXT))
-                          .hoverPane(questLocator)
-                          .build();
+                                .append(Component.translatableEscape(QUEST_LOG_TRACK_CITIZEN_TEXT))
+                                .hoverPane(questLocator)
+                                .build();
                     }
                 }
             });
@@ -149,8 +135,7 @@ public class WindowQuestLog extends AbstractWindowSkeleton
         /**
          * Updates the underlying quest list.
          */
-        void onUpdate()
-        {
+        void onUpdate() {
             this.questItems = module.getQuestItems(colonyView);
         }
 
@@ -159,8 +144,7 @@ public class WindowQuestLog extends AbstractWindowSkeleton
          *
          * @param button the button which was clicked, helping to find which quest item should be tracked.
          */
-        void trackQuest(final Button button)
-        {
+        void trackQuest(final Button button) {
             final int row = questsList.getListElementIndexByPane(button);
             module.trackQuest(questItems.get(row));
         }

@@ -8,7 +8,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.api.tileentities.*;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
+import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.blocks.BlockMinecoloniesRack;
 import com.minecolonies.core.client.gui.WindowHutMinPlaceholder;
@@ -32,8 +34,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class of the warehouse building.
  */
-public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
-{
+public class BuildingWareHouse extends AbstractBuilding implements IWareHouse {
     /**
      * String describing the Warehouse.
      */
@@ -55,22 +56,17 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @param c the colony.
      * @param l the location
      */
-    public BuildingWareHouse(final IColony c, final BlockPos l)
-    {
+    public BuildingWareHouse(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @Override
-    public void requestRepair(final BlockPos builder)
-    {
+    public void requestRepair(final BlockPos builder) {
         //To ensure that the racks are all set to in the warehouse when repaired.
-        for (final BlockPos pos : containerList)
-        {
-            if (getColony().getWorld() != null)
-            {
+        for (final BlockPos pos : containerList) {
+            if (getColony().getWorld() != null) {
                 final BlockEntity entity = getColony().getWorld().getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
+                if (entity instanceof TileEntityRack) {
                     ((AbstractTileEntityRack) entity).setInWarehouse(true);
                 }
             }
@@ -80,15 +76,13 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     }
 
     @Override
-    public boolean canAccessWareHouse(final ICitizenData citizenData)
-    {
+    public boolean canAccessWareHouse(final ICitizenData citizenData) {
         return getFirstModuleOccurance(CourierAssignmentModule.class).hasAssignedCitizen(citizenData);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return WAREHOUSE;
     }
 
@@ -98,35 +92,28 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @return {@link TileEntityColonyBuilding} object of the building.
      */
     @Override
-    public AbstractTileEntityWareHouse getTileEntity()
-    {
+    public AbstractTileEntityWareHouse getTileEntity() {
         final AbstractTileEntityColonyBuilding entity = super.getTileEntity();
         return !(entity instanceof TileEntityWareHouse) ? null : (AbstractTileEntityWareHouse) entity;
     }
 
     @Override
-    public boolean hasContainerPosition(final BlockPos inDimensionLocation)
-    {
+    public boolean hasContainerPosition(final BlockPos inDimensionLocation) {
         return containerList.contains(inDimensionLocation) || getLocation().getInDimensionLocation().equals(inDimensionLocation);
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_LEVEL;
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
-    {
-        if (block instanceof BlockMinecoloniesRack)
-        {
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world) {
+        if (block instanceof BlockMinecoloniesRack) {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof TileEntityRack)
-            {
+            if (entity instanceof TileEntityRack) {
                 ((AbstractTileEntityRack) entity).setInWarehouse(true);
-                while (((TileEntityRack) entity).getUpgradeSize() < getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade())
-                {
+                while (((TileEntityRack) entity).getUpgradeSize() < getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade()) {
                     ((TileEntityRack) entity).upgradeRackSize();
                 }
             }
@@ -135,22 +122,21 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     }
 
     @Override
-    public ImmutableCollection<IRequestResolver<?>> createResolvers()
-    {
+    public ImmutableCollection<IRequestResolver<?>> createResolvers() {
         final ImmutableCollection<IRequestResolver<?>> supers = super.createResolvers();
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
         builder.add(new WarehouseRequestResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
-          new WarehouseConcreteRequestResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN))
-          );
+                        getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+                new WarehouseConcreteRequestResolver(getRequester().getLocation(),
+                        getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN))
+        );
 
         builder.add(new DeliveryRequestResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+                getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
         builder.add(new PickupRequestResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+                getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }
@@ -161,15 +147,11 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @param world the world object.
      */
     @Override
-    public void upgradeContainers(final Level world)
-    {
-        if (getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade() < MAX_STORAGE_UPGRADE)
-        {
-            for (final BlockPos pos : getContainers())
-            {
+    public void upgradeContainers(final Level world) {
+        if (getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade() < MAX_STORAGE_UPGRADE) {
+            for (final BlockPos pos : getContainers()) {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack && !(entity instanceof TileEntityColonyBuilding))
-                {
+                if (entity instanceof TileEntityRack && !(entity instanceof TileEntityColonyBuilding)) {
                     ((AbstractTileEntityRack) entity).upgradeRackSize();
                 }
             }
@@ -179,31 +161,27 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     }
 
     @Override
-    public boolean canBeGathered()
-    {
+    public boolean canBeGathered() {
         return false;
     }
 
     /**
      * BuildWarehouse View.
      */
-    public static class View extends AbstractBuildingView
-    {
+    public static class View extends AbstractBuildingView {
         /**
          * Instantiate the warehouse view.
          *
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final IColonyView c, final BlockPos l)
-        {
+        public View(final IColonyView c, final BlockPos l) {
             super(c, l);
         }
 
         @NotNull
         @Override
-        public BOWindow getWindow()
-        {
+        public BOWindow getWindow() {
             return new WindowHutMinPlaceholder<>(this);
         }
     }

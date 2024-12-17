@@ -13,23 +13,20 @@ import org.jetbrains.annotations.NotNull;
  * Renderer for a normal tile entity (Nothing special with rendering).
  */
 @OnlyIn(Dist.CLIENT)
-public class EmptyTileEntitySpecialRenderer implements BlockEntityRenderer<AbstractTileEntityColonyBuilding>
-{
+public class EmptyTileEntitySpecialRenderer implements BlockEntityRenderer<AbstractTileEntityColonyBuilding> {
 
-    public EmptyTileEntitySpecialRenderer(BlockEntityRendererProvider.Context context)
-    {
+    public EmptyTileEntitySpecialRenderer(BlockEntityRendererProvider.Context context) {
         super();
     }
 
     @Override
     public void render(
-      @NotNull final AbstractTileEntityColonyBuilding tileEntity,
-      final float v,
-      @NotNull final PoseStack matrixStack,
-      @NotNull final MultiBufferSource iRenderTypeBuffer,
-      final int i,
-      final int i1)
-    {
+            @NotNull final AbstractTileEntityColonyBuilding tileEntity,
+            final float v,
+            @NotNull final PoseStack matrixStack,
+            @NotNull final MultiBufferSource iRenderTypeBuffer,
+            final int i,
+            final int i1) {
 
     }
 }

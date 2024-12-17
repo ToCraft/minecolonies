@@ -3,12 +3,7 @@ package com.minecolonies.api.configuration;
 import com.ldtteam.common.config.AbstractConfiguration;
 import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.util.constant.CitizenConstants;
-import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
-import net.neoforged.neoforge.common.ModConfigSpec.Builder;
-import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
-import net.neoforged.neoforge.common.ModConfigSpec.DoubleValue;
-import net.neoforged.neoforge.common.ModConfigSpec.EnumValue;
-import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
+import net.neoforged.neoforge.common.ModConfigSpec.*;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -18,37 +13,36 @@ import static com.minecolonies.api.util.constant.Constants.*;
 /**
  * Mod server configuration. Loaded serverside, synced on connection.
  */
-public class ServerConfiguration extends AbstractConfiguration
-{
+public class ServerConfiguration extends AbstractConfiguration {
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Gameplay settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final IntValue     initialCitizenAmount;
+    public final IntValue initialCitizenAmount;
     public final BooleanValue allowInfiniteSupplyChests;
     public final BooleanValue allowInfiniteColonies;
     public final BooleanValue allowOtherDimColonies;
-    public final IntValue     maxCitizenPerColony;
+    public final IntValue maxCitizenPerColony;
     public final BooleanValue enableInDevelopmentFeatures;
     public final BooleanValue alwaysRenderNameTag;
     public final BooleanValue workersAlwaysWorkInRain;
     public final BooleanValue holidayFeatures;
-    public final IntValue     luckyBlockChance;
-    public final IntValue     minThLevelToTeleport;
-    public final DoubleValue  foodModifier;
-    public final IntValue     diseaseModifier;
+    public final IntValue luckyBlockChance;
+    public final IntValue minThLevelToTeleport;
+    public final DoubleValue foodModifier;
+    public final IntValue diseaseModifier;
     public final BooleanValue forceLoadColony;
-    public final IntValue     loadtime;
-    public final IntValue     colonyLoadStrictness;
-    public final IntValue     maxTreeSize;
+    public final IntValue loadtime;
+    public final IntValue colonyLoadStrictness;
+    public final IntValue maxTreeSize;
     public final BooleanValue noSupplyPlacementRestrictions;
     public final BooleanValue skyRaiders;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Research settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
-    public final BooleanValue                        researchCreativeCompletion;
-    public final BooleanValue                        researchDebugLog;
+    public final BooleanValue researchCreativeCompletion;
+    public final BooleanValue researchDebugLog;
     public final ConfigValue<List<? extends String>> researchResetCost;
 
     /*  --------------------------------------------------------------------------- *
@@ -69,34 +63,34 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Claim settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final IntValue     maxColonySize;
-    public final IntValue     minColonyDistance;
-    public final IntValue     initialColonySize;
-    public final IntValue     maxDistanceFromWorldSpawn;
-    public final IntValue     minDistanceFromWorldSpawn;
+    public final IntValue maxColonySize;
+    public final IntValue minColonyDistance;
+    public final IntValue initialColonySize;
+    public final IntValue maxDistanceFromWorldSpawn;
+    public final IntValue minDistanceFromWorldSpawn;
 
     /*  ------------------------------------------------------------------------- *
      *  ------------------- ######## Combat Settings ######## ------------------- *
      *  ------------------------------------------------------------------------- */
 
     public final BooleanValue enableColonyRaids;
-    public final IntValue     raidDifficulty;
-    public final IntValue     maxRaiders;
+    public final IntValue raidDifficulty;
+    public final IntValue maxRaiders;
     public final BooleanValue raidersbreakblocks;
-    public final IntValue     averageNumberOfNightsBetweenRaids;
-    public final IntValue     minimumNumberOfNightsBetweenRaids;
+    public final IntValue averageNumberOfNightsBetweenRaids;
+    public final IntValue minimumNumberOfNightsBetweenRaids;
     public final BooleanValue raidersbreakdoors;
     public final BooleanValue mobAttackCitizens;
-    public final DoubleValue  guardDamageMultiplier;
-    public final DoubleValue  guardHealthMult;
+    public final DoubleValue guardDamageMultiplier;
+    public final DoubleValue guardHealthMult;
     public final BooleanValue pvp_mode;
 
     /*  ----------------------------------------------------------------------------- *
      *  ------------------- ######## Permission Settings ######## ------------------- *
      *  ----------------------------------------------------------------------------- */
 
-    public final BooleanValue                        enableColonyProtection;
-    public final EnumValue<Explosions>               turnOffExplosionsInColonies;
+    public final BooleanValue enableColonyProtection;
+    public final EnumValue<Explosions> turnOffExplosionsInColonies;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
@@ -105,9 +99,9 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ConfigValue<List<? extends String>> configListStudyItems;
     public final ConfigValue<List<? extends String>> configListRecruitmentItems;
     public final ConfigValue<List<? extends String>> diseases;
-    public final BooleanValue                        auditCraftingTags;
-    public final BooleanValue                        debugInventories;
-    public final BooleanValue                        blueprintBuildMode;
+    public final BooleanValue auditCraftingTags;
+    public final BooleanValue debugInventories;
+    public final BooleanValue blueprintBuildMode;
 
     /*  ------------------------------------------------------------------------------ *
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
@@ -129,8 +123,7 @@ public class ServerConfiguration extends AbstractConfiguration
      *
      * @param builder config builder
      */
-    public ServerConfiguration(final Builder builder)
-    {
+    public ServerConfiguration(final Builder builder) {
         super(builder, MOD_ID);
         final Predicate<Object> stringValidator = s -> s instanceof String;
 
@@ -203,34 +196,34 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory("compatibility");
 
         configListStudyItems = defineList("configliststudyitems",
-            () -> "item ID;skillChance;breakChance",
-            stringValidator,
-            "minecraft:paper;400;100",
-            "minecraft:book;600;10");
+                () -> "item ID;skillChance;breakChance",
+                stringValidator,
+                "minecraft:paper;400;100",
+                "minecraft:book;600;10");
 
         configListRecruitmentItems = defineList("configlistrecruitmentitems",
-            () -> "item ID;rarity",
-            stringValidator,
-            "minecraft:hay_block;3",
-            "minecraft:book;2",
-            "minecraft:enchanted_book;9",
-            "minecraft:diamond;9",
-            "minecraft:emerald;8",
-            "minecraft:baked_potato;1",
-            "minecraft:gold_ingot;2",
-            "minecraft:redstone;2",
-            "minecraft:lapis_lazuli;2",
-            "minecraft:cake;11",
-            "minecraft:sunflower;5",
-            "minecraft:honeycomb;6",
-            "minecraft:quartz;3");
+                () -> "item ID;rarity",
+                stringValidator,
+                "minecraft:hay_block;3",
+                "minecraft:book;2",
+                "minecraft:enchanted_book;9",
+                "minecraft:diamond;9",
+                "minecraft:emerald;8",
+                "minecraft:baked_potato;1",
+                "minecraft:gold_ingot;2",
+                "minecraft:redstone;2",
+                "minecraft:lapis_lazuli;2",
+                "minecraft:cake;11",
+                "minecraft:sunflower;5",
+                "minecraft:honeycomb;6",
+                "minecraft:quartz;3");
 
         diseases = defineList("diseases",
-            () -> "name,rarity,item IDs",
-            stringValidator,
-            "Influenza,100,minecraft:carrot,minecraft:potato",
-            "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
-            "Smallpox,1,minecraft:honey_bottle,minecraft:golden_apple");
+                () -> "name,rarity,item IDs",
+                stringValidator,
+                "Influenza,100,minecraft:carrot,minecraft:potato",
+                "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
+                "Smallpox,1,minecraft:honey_bottle,minecraft:golden_apple");
 
         auditCraftingTags = defineBoolean("auditcraftingtags", false);
         debugInventories = defineBoolean("debuginventories", false);

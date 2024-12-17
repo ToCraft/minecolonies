@@ -34,8 +34,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * A simple quest dialogue interaction that deals with different dialogue trees.
  */
-public class QuestDialogueInteraction extends StandardInteraction
-{
+public class QuestDialogueInteraction extends StandardInteraction {
     /**
      * Three icon options.
      */
@@ -78,8 +77,7 @@ public class QuestDialogueInteraction extends StandardInteraction
      */
     protected boolean finished = false;
 
-    public QuestDialogueInteraction(final Component inquiry, final IChatPriority priority, final ResourceLocation location, final int index, final ICitizenData citizenData)
-    {
+    public QuestDialogueInteraction(final Component inquiry, final IChatPriority priority, final ResourceLocation location, final int index, final ICitizenData citizenData) {
         super(inquiry, Component.empty(), priority);
         this.questId = location;
         this.index = index;
@@ -89,40 +87,31 @@ public class QuestDialogueInteraction extends StandardInteraction
         this.citizen = citizenData;
     }
 
-    public QuestDialogueInteraction(final ICitizen data)
-    {
+    public QuestDialogueInteraction(final ICitizen data) {
         super(data);
         this.colonyQuest = data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
         this.citizen = data;
     }
 
     @Override
-    public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
-    {
-        if (colonyQuest == null)
-        {
+    public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data) {
+        if (colonyQuest == null) {
             colonyQuest = data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
         }
-        if (currentElement != null && colonyQuest != null)
-        {
+        if (currentElement != null && colonyQuest != null) {
             final IQuestDialogueAnswer result = this.currentElement.getOptionResult(responseId);
-            if (result instanceof IFinalQuestDialogueAnswer)
-            {
+            if (result instanceof IFinalQuestDialogueAnswer) {
                 ((IFinalQuestDialogueAnswer) result).applyToQuest(player, data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId));
-                if (!(result instanceof IQuestDialogueAnswer.CloseUIDialogueAnswer))
-                {
+                if (!(result instanceof IQuestDialogueAnswer.CloseUIDialogueAnswer)) {
                     finished = true;
                     currentElement = null;
                     data.getColony().markDirty();
                     return;
                 }
                 currentElement = startElement;
-            }
-            else if (result instanceof DialogueObjectiveTemplateTemplate.DialogueElement)
-            {
+            } else if (result instanceof DialogueObjectiveTemplateTemplate.DialogueElement) {
                 this.currentElement = (DialogueObjectiveTemplateTemplate.DialogueElement) result;
-                if (data != null && data.getJob() != null)
-                {
+                if (data != null && data.getJob() != null) {
                     ((AbstractEntityAIBasic) data.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
                 }
             }
@@ -131,24 +120,18 @@ public class QuestDialogueInteraction extends StandardInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window)
-    {
-        if (colonyQuest == null)
-        {
+    public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window) {
+        if (colonyQuest == null) {
             colonyQuest = data.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
         }
-        if (currentElement != null && colonyQuest != null)
-        {
+        if (currentElement != null && colonyQuest != null) {
             final IQuestDialogueAnswer result = this.currentElement.getOptionResult(responseId);
-            if (result instanceof IFinalQuestDialogueAnswer)
-            {
+            if (result instanceof IFinalQuestDialogueAnswer) {
                 new InteractionResponse(data.getColonyId(), data.getId(), player.level().dimension(), Component.literal(questId.toString()), responseId).sendToServer();
                 this.currentElement = this.startElement;
                 finished = true;
                 return true;
-            }
-            else if (result instanceof DialogueObjectiveTemplateTemplate.DialogueElement)
-            {
+            } else if (result instanceof DialogueObjectiveTemplateTemplate.DialogueElement) {
                 new InteractionResponse(data.getColonyId(), data.getId(), player.level().dimension(), Component.literal(questId.toString()), responseId).sendToServer();
                 this.currentElement = (DialogueObjectiveTemplateTemplate.DialogueElement) result;
                 return false;
@@ -159,72 +142,61 @@ public class QuestDialogueInteraction extends StandardInteraction
     }
 
     @Override
-    public void onOpened(final Player player)
-    {
+    public void onOpened(final Player player) {
         super.onOpened(player);
-        if (colonyQuest == null && citizen != null)
-        {
+        if (colonyQuest == null && citizen != null) {
             colonyQuest = citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
         }
     }
 
     @Override
-    public Component getId()
-    {
+    public Component getId() {
         return Component.literal(this.questId.toString());
     }
 
     @Override
-    public void onClosed()
-    {
+    public void onClosed() {
         this.currentElement = this.startElement;
     }
 
     @Override
-    public Component getInquiry()
-    {
+    public Component getInquiry() {
         return processText(currentElement.getText());
     }
 
     /**
      * Process the text to include the participant names.
+     *
      * @return the processed text.
      */
-    private Component processText(final Component text)
-    {
+    private Component processText(final Component text) {
         // TODO: this is not ideal, we should do something more clever and preserve the item subcomponents for tooltips etc
         String localText = text.getString();
-        if (localText.contains("$") && colonyQuest != null)
-        {
+        if (localText.contains("$") && colonyQuest != null) {
             localText = localText.replace("$0", citizen.getColony().getCitizen(this.colonyQuest.getQuestGiverId()).getName());
             int index = 1;
-            for (final int participant : this.colonyQuest.getParticipants())
-            {
+            for (final int participant : this.colonyQuest.getParticipants()) {
                 localText = localText.replace("$" + index, citizen.getColony().getCitizen(participant).getName());
             }
         }
-        if (localText.contains("$d") && colonyQuest != null && colonyQuest.getCurrentObjectiveInstance() != null)
-        {
+        if (localText.contains("$d") && colonyQuest != null && colonyQuest.getCurrentObjectiveInstance() != null) {
             localText = localText.replace("$d", String.valueOf(colonyQuest.getCurrentObjectiveInstance().getMissingQuantity()));
         }
         return Component.literal(localText);
     }
 
     @Override
-    public boolean isVisible(final Level world)
-    {
+    public boolean isVisible(final Level world) {
         return !finished;
     }
 
     @Override
-    public List<Component> getPossibleResponses()
-    {
+    public List<Component> getPossibleResponses() {
         return currentElement == null ? Collections.emptyList() : currentElement.getOptions().stream().map(this::processText).collect(Collectors.toList());
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag tag = super.serializeNBT(provider);
         tag.putString(TAG_QUEST_ID, questId.toString());
         tag.putInt(TAG_QUEST_INDEX, index);
@@ -233,8 +205,7 @@ public class QuestDialogueInteraction extends StandardInteraction
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final @NotNull CompoundTag compoundNBT)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final @NotNull CompoundTag compoundNBT) {
         super.deserializeNBT(provider, compoundNBT);
         this.questId = ResourceLocation.parse(compoundNBT.getString(TAG_QUEST_ID));
         this.index = compoundNBT.getInt(TAG_QUEST_INDEX);
@@ -244,29 +215,24 @@ public class QuestDialogueInteraction extends StandardInteraction
     }
 
     @Override
-    public String getType()
-    {
+    public String getType() {
         return QUEST.getPath();
     }
 
     @Override
-    public ResourceLocation getInteractionIcon()
-    {
-        if (colonyQuest == null)
-        {
+    public ResourceLocation getInteractionIcon() {
+        if (colonyQuest == null) {
             colonyQuest = citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId);
         }
 
-        if (colonyQuest != null && colonyQuest.getCurrentObjectiveInstance() != null && !colonyQuest.getCurrentObjectiveInstance().isFulfilled())
-        {
+        if (colonyQuest != null && colonyQuest.getCurrentObjectiveInstance() != null && !colonyQuest.getCurrentObjectiveInstance().isFulfilled()) {
             return QUEST_WAITING_TASK_ICON;
         }
         return index == 0 ? QUEST_START_ICON : QUEST_NEXT_TASK_ICON;
     }
 
     @Override
-    public boolean isValid(final ICitizenData citizen)
-    {
+    public boolean isValid(final ICitizenData citizen) {
         return currentElement != null && citizen.isParticipantOfQuest(questId) && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId) != null && citizen.getColony().getQuestManager().getAvailableOrInProgressQuest(questId).getObjectiveIndex() == index;
     }
 }

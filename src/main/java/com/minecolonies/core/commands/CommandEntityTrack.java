@@ -23,47 +23,37 @@ import java.util.UUID;
 /**
  * Displays information about a chosen citizen in a chosen colony.
  */
-public class CommandEntityTrack implements IMCColonyOfficerCommand
-{
+public class CommandEntityTrack implements IMCColonyOfficerCommand {
     /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof Player))
-        {
+        if (!(sender instanceof Player)) {
             return 1;
         }
 
-        try
-        {
+        try {
             final Collection<? extends Entity> entities = EntityArgument.getEntities(context, "entity");
-            if (entities.isEmpty())
-            {
+            if (entities.isEmpty()) {
                 context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_ENTITY_NOT_FOUND), true);
                 return 0;
             }
 
             final Entity entity = entities.iterator().next();
-            if (PathfindingUtils.trackingMap.getOrDefault(sender.getUUID(), UUID.randomUUID()).equals(entity.getUUID()))
-            {
+            if (PathfindingUtils.trackingMap.getOrDefault(sender.getUUID(), UUID.randomUUID()).equals(entity.getUUID())) {
                 context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_DISABLED), true);
                 PathfindingUtils.trackingMap.remove(sender.getUUID());
                 new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>()).sendToPlayer((ServerPlayer) sender);
-            }
-            else
-            {
+            } else {
                 context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_ENTITY_TRACK_ENABLED), true);
                 PathfindingUtils.trackingMap.put(sender.getUUID(), entity.getUUID());
             }
             return 1;
-        }
-        catch (CommandSyntaxException e)
-        {
+        } catch (CommandSyntaxException e) {
             Log.getLogger().error("Error attemting to track entity", e);
         }
         return 0;
@@ -73,14 +63,12 @@ public class CommandEntityTrack implements IMCColonyOfficerCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "trackPath";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName()).then(IMCCommand.newArgument("entity", EntityArgument.entities()).executes(this::checkPreConditionAndExecute));
     }
 }

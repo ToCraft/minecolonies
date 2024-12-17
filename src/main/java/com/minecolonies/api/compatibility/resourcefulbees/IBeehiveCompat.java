@@ -8,8 +8,7 @@ import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface IBeehiveCompat
-{
+public interface IBeehiveCompat {
     /**
      * Get comps from a hive at the given position
      *
@@ -18,8 +17,7 @@ public interface IBeehiveCompat
      * @param amount comb amount
      * @return list of drops
      */
-    default List<ItemStack> getCombsFromHive(BlockPos pos, Level world, int amount)
-    {
+    default List<ItemStack> getCombsFromHive(BlockPos pos, Level world, int amount) {
         List<ItemStack> list = new ArrayList<>();
         list.add(new ItemStack(Items.HONEYCOMB, amount));
         return list;

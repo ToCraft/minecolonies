@@ -11,14 +11,11 @@ import java.util.List;
 /**
  * Interface for the enum settings factory which is responsible for creating and maintaining enum setting objects.
  */
-public interface IStringSettingFactory<T extends ISetting> extends IFactory<FactoryVoidInput, T>
-{
+public interface IStringSettingFactory<T extends ISetting> extends IFactory<FactoryVoidInput, T> {
     @NotNull
     @Override
-    default T getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput token, @NotNull final Object... context)
-    {
-        if (context.length < 2)
-        {
+    default T getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput token, @NotNull final Object... context) {
+        if (context.length < 2) {
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only 2 is allowed!");
         }
 

@@ -6,8 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IStateEventType;
 /**
  * Event transition type for Statemachines
  */
-public interface IStateMachineEvent<S extends IState> extends IStateMachineTransition<S>
-{
+public interface IStateMachineEvent<S extends IState> extends IStateMachineTransition<S> {
     /**
      * Get the event type of the transition
      *

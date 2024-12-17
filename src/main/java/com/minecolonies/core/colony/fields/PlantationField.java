@@ -18,8 +18,7 @@ import java.util.List;
 /**
  * Field class implementation for the plantation
  */
-public class PlantationField extends AbstractField
-{
+public class PlantationField extends AbstractField {
     private static final String TAG_WORKING_POS = "workingPositions";
 
     /**
@@ -33,8 +32,7 @@ public class PlantationField extends AbstractField
      * @param fieldType the type of field.
      * @param position  the position of the field.
      */
-    public PlantationField(final @NotNull FieldRegistries.FieldEntry fieldType, final @NotNull BlockPos position)
-    {
+    public PlantationField(final @NotNull FieldRegistries.FieldEntry fieldType, final @NotNull BlockPos position) {
         super(fieldType, position);
     }
 
@@ -44,14 +42,12 @@ public class PlantationField extends AbstractField
      * @param fieldEntry the type of field we want to produce.
      * @param position   the position it is placed in.
      */
-    public static PlantationField create(final FieldRegistries.FieldEntry fieldEntry, final BlockPos position)
-    {
+    public static PlantationField create(final FieldRegistries.FieldEntry fieldEntry, final BlockPos position) {
         return (PlantationField) fieldEntry.produceField(position);
     }
 
     @Override
-    public boolean isValidPlacement(final IColony colony)
-    {
+    public boolean isValidPlacement(final IColony colony) {
         BlockState blockState = colony.getWorld().getBlockState(getPosition());
         // TODO: future, remove `blockHutPlantation` from valid blocks
         return blockState.is(ModBlocks.blockHutPlantation) || blockState.is(ModBlocks.blockPlantationField);
@@ -62,8 +58,7 @@ public class PlantationField extends AbstractField
      *
      * @return an unmodifiable collection of working positions.
      */
-    public List<BlockPos> getWorkingPositions()
-    {
+    public List<BlockPos> getWorkingPositions() {
         return workingPositions.stream().toList();
     }
 
@@ -72,8 +67,7 @@ public class PlantationField extends AbstractField
      *
      * @param workingPositions the new list of working positions.
      */
-    public void setWorkingPositions(final List<BlockPos> workingPositions)
-    {
+    public void setWorkingPositions(final List<BlockPos> workingPositions) {
         this.workingPositions = workingPositions;
     }
 
@@ -82,45 +76,38 @@ public class PlantationField extends AbstractField
      *
      * @return the plantation module instance.
      */
-    public IPlantationModule getModule()
-    {
+    public IPlantationModule getModule() {
         return getFirstModuleOccurance(IPlantationModule.class);
     }
 
     @Override
-    public @NotNull CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public @NotNull CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag compound = super.serializeNBT(provider);
         BlockPosUtil.writePosListToNBT(compound, TAG_WORKING_POS, workingPositions);
         return compound;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         workingPositions = BlockPosUtil.readPosListFromNBT(compound, TAG_WORKING_POS);
     }
 
     @Override
-    public void serialize(final @NotNull RegistryFriendlyByteBuf buf)
-    {
+    public void serialize(final @NotNull RegistryFriendlyByteBuf buf) {
         super.serialize(buf);
         buf.writeInt(workingPositions.size());
-        for (BlockPos workingPosition : workingPositions)
-        {
+        for (BlockPos workingPosition : workingPositions) {
             buf.writeBlockPos(workingPosition);
         }
     }
 
     @Override
-    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf) {
         super.deserialize(buf);
         workingPositions = new ArrayList<>();
         final int workingPositionCount = buf.readInt();
-        for (int index = 0; index < workingPositionCount; index++)
-        {
+        for (int index = 0; index < workingPositionCount; index++) {
             workingPositions.add(buf.readBlockPos());
         }
     }

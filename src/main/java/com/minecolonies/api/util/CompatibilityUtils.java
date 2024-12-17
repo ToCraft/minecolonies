@@ -9,10 +9,8 @@ import net.minecraft.world.level.Level;
  * <p>
  * This is the 1.15 version
  */
-public final class CompatibilityUtils
-{
-    private CompatibilityUtils()
-    {
+public final class CompatibilityUtils {
+    private CompatibilityUtils() {
         //hide the constructor
     }
 
@@ -24,13 +22,11 @@ public final class CompatibilityUtils
      * @param entity to which we get the world from
      * @return the world
      */
-    public static Level getWorldFromEntity(final Entity entity)
-    {
+    public static Level getWorldFromEntity(final Entity entity) {
         return entity.level();
     }
 
-    public static Level getWorldFromCitizen(final AbstractEntityCitizen baseEntityCitizen)
-    {
+    public static Level getWorldFromCitizen(final AbstractEntityCitizen baseEntityCitizen) {
         return getWorldFromEntity(baseEntityCitizen);
     }
 
@@ -42,8 +38,7 @@ public final class CompatibilityUtils
      * @param world         The world which we are spawning the entity in.
      * @param entityToSpawn The entity which we are spawning.
      */
-    public static void addEntity(final Level world, final Entity entityToSpawn)
-    {
+    public static void addEntity(final Level world, final Entity entityToSpawn) {
         world.addFreshEntity(entityToSpawn);
     }
 }

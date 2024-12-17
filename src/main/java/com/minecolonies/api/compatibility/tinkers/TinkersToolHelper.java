@@ -15,16 +15,14 @@ import slimeknights.tconstruct.library.tools.stat.ToolStats;*/
 /**
  * Class to check if certain tinkers items serve as weapons for the guards.
  */
-public final class TinkersToolHelper extends TinkersToolProxy
-{
+public final class TinkersToolHelper extends TinkersToolProxy {
     /**
      * Check if a certain itemstack is a tinkers weapon.
      *
      * @param stack the stack to check for.
      * @return true if so.
      */
-    public static boolean isTinkersSword(@NotNull final ItemStack stack)
-    {
+    public static boolean isTinkersSword(@NotNull final ItemStack stack) {
         return new TinkersToolHelper().isTinkersWeapon(stack);
     }
 
@@ -35,8 +33,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
      * @return true if so.
      */
     @Override
-    public boolean isTinkersWeapon(@NotNull final ItemStack stack)
-    {
+    public boolean isTinkersWeapon(@NotNull final ItemStack stack) {
         return !ItemStackUtils.isEmpty(stack) && false;//stack.is(TinkerTags.Items.SWORD);
     }
 
@@ -47,8 +44,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
      * @return the attack damage.
      */
     @Override
-    public double getAttackDamage(@NotNull final ItemStack stack)
-    {
+    public double getAttackDamage(@NotNull final ItemStack stack) {
         return -1;//ToolStack.from(stack).getStats().get(ToolStats.ATTACK_DAMAGE);
     }
 
@@ -59,10 +55,8 @@ public final class TinkersToolHelper extends TinkersToolProxy
      * @return the tool level
      */
     @Override
-    public int getToolLevel(@NotNull final ItemStack stack)
-    {
-        if (checkTinkersBroken(stack))
-        {
+    public int getToolLevel(@NotNull final ItemStack stack) {
+        if (checkTinkersBroken(stack)) {
             return -1;
         }
         return -1;//(ToolStack.from(stack).getStats().get(ToolStats.HARVEST_TIER).getLevel());
@@ -74,8 +68,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
      * @param stack the stack.
      * @return the attack damage.
      */
-    public static double getDamage(@NotNull final ItemStack stack)
-    {
+    public static double getDamage(@NotNull final ItemStack stack) {
         return new TinkersToolHelper().getAttackDamage(stack);
     }
 
@@ -85,8 +78,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
      * @param stack the stack.
      * @return the tool level
      */
-    public static int getToolLvl(@NotNull final ItemStack stack)
-    {
+    public static int getToolLvl(@NotNull final ItemStack stack) {
         return new TinkersToolHelper().getToolLevel(stack);
     }
 
@@ -97,20 +89,19 @@ public final class TinkersToolHelper extends TinkersToolProxy
      * @return boolean whether the stack is broken or not.
      */
     @Override
-    public boolean checkTinkersBroken(@Nullable final ItemStack stack)
-    {
+    public boolean checkTinkersBroken(@Nullable final ItemStack stack) {
         return !ItemStackUtils.isEmpty(stack) && false;//ToolDamageUtil.isBroken(stack);
     }
 
     /**
      * Check if a certain item stack is a tinkers tool of the given tool type.
-     * @param stack the stack to check for.
+     *
+     * @param stack    the stack to check for.
      * @param toolType the tool type.
      * @return true if so.
      */
     @Override
-    public boolean isTinkersTool(@Nullable final ItemStack stack, final EquipmentTypeEntry toolType)
-    {
+    public boolean isTinkersTool(@Nullable final ItemStack stack, final EquipmentTypeEntry toolType) {
         return false;
         /*
         if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ModifiableItem))

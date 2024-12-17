@@ -8,8 +8,7 @@ import net.minecraft.world.level.Level;
 /**
  * Class for the Norsemen Shieldmaiden entity.
  */
-public class EntityShieldmaiden extends AbstractEntityNorsemen implements IMeleeNorsemenEntity
-{
+public class EntityShieldmaiden extends AbstractEntityNorsemen implements IMeleeNorsemenEntity {
 
     /**
      * Constructor of the entity.
@@ -17,8 +16,7 @@ public class EntityShieldmaiden extends AbstractEntityNorsemen implements IMelee
      * @param worldIn world to construct it in.
      * @param type    the entity type.
      */
-    public EntityShieldmaiden(final EntityType<? extends EntityShieldmaiden> type, final Level worldIn)
-    {
+    public EntityShieldmaiden(final EntityType<? extends EntityShieldmaiden> type, final Level worldIn) {
         super(type, worldIn);
     }
 }

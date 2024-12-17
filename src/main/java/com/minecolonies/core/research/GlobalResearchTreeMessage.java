@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The message used to synchronize global research trees from a server to a remote client.
  */
-public class GlobalResearchTreeMessage extends AbstractClientPlayMessage
-{
+public class GlobalResearchTreeMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "global_research_tree", GlobalResearchTreeMessage::new, true, false);
 
     /**
@@ -26,29 +25,25 @@ public class GlobalResearchTreeMessage extends AbstractClientPlayMessage
     /**
      * Add or Update a GlobalResearchTree on the client.
      *
-     * @param buf               the bytebuffer.
+     * @param buf the bytebuffer.
      */
-    public GlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf)
-    {
+    public GlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf) {
         super(TYPE);
         this.treeBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(buf.copy()), buf.registryAccess());
     }
 
-    protected GlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected GlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         treeBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeByteArray(treeBuffer.array());
     }
 
     @Override
-    public void onExecute(final IPayloadContext context, final Player player)
-    {
+    public void onExecute(final IPayloadContext context, final Player player) {
         IGlobalResearchTree.getInstance().handleGlobalResearchTreeMessage(treeBuffer);
     }
 }

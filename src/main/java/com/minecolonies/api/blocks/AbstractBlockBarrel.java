@@ -9,8 +9,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B> implements ITickableBlockMinecolonies
-{
+public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B> implements ITickableBlockMinecolonies {
     public static final EnumProperty<BarrelType> VARIANT = EnumProperty.create("variant", BarrelType.class);
 
     /**
@@ -18,13 +17,11 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
      */
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
-    public AbstractBlockBarrel(final Properties properties)
-    {
+    public AbstractBlockBarrel(final Properties properties) {
         super(properties);
     }
 
-    public static BlockState changeStateOverFullness(@NotNull final AbstractTileEntityBarrel te, @NotNull final BlockState blockState)
-    {
+    public static BlockState changeStateOverFullness(@NotNull final AbstractTileEntityBarrel te, @NotNull final BlockState blockState) {
         /*
          * 12.8 -> the number of items needed to go up on a state (having 6 filling states)
          * So item/12.8 -> meta of the state we should get
@@ -37,16 +34,12 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
          * knows it have some items inside
          */
 
-        if (type.equals(BarrelType.ZERO) && te.getItems() > 0)
-        {
+        if (type.equals(BarrelType.ZERO) && te.getItems() > 0) {
             type = BarrelType.TWENTY;
-        }
-        else if (te.getItems() == AbstractTileEntityBarrel.MAX_ITEMS)
-        {
+        } else if (te.getItems() == AbstractTileEntityBarrel.MAX_ITEMS) {
             type = BarrelType.WORKING;
         }
-        if (te.isDone())
-        {
+        if (te.isDone()) {
             type = BarrelType.DONE;
         }
 

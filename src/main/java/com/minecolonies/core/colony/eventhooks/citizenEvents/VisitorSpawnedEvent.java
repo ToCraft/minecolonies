@@ -1,18 +1,17 @@
 package com.minecolonies.core.colony.eventhooks.citizenEvents;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The event handling a newly spawned visitor.
  */
-public class VisitorSpawnedEvent extends AbstractCitizenEvent
-{
+public class VisitorSpawnedEvent extends AbstractCitizenEvent {
 
     /**
      * This events id, registry entries use res locations as ids.
@@ -22,31 +21,27 @@ public class VisitorSpawnedEvent extends AbstractCitizenEvent
     /**
      * Creates a new visitor spawned event.
      */
-    public VisitorSpawnedEvent()
-    {
+    public VisitorSpawnedEvent() {
         super();
     }
 
     /**
      * Creates a new visitor spawned event.
-     * 
+     *
      * @param eventPos    the position of the hut block of the building.
      * @param citizenName the name of the building.
      */
-    public VisitorSpawnedEvent(BlockPos eventPos, String citizenName)
-    {
+    public VisitorSpawnedEvent(BlockPos eventPos, String citizenName) {
         super(eventPos, citizenName);
     }
 
     @Override
-    public ResourceLocation getEventTypeId()
-    {
+    public ResourceLocation getEventTypeId() {
         return VISITOR_SPAWNED_EVENT_ID;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "Visitor Spawned";
     }
 
@@ -56,8 +51,7 @@ public class VisitorSpawnedEvent extends AbstractCitizenEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static VisitorSpawnedEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public static VisitorSpawnedEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         final VisitorSpawnedEvent spawnEvent = new VisitorSpawnedEvent();
         spawnEvent.deserializeNBT(provider, compound);
         return spawnEvent;
@@ -69,8 +63,7 @@ public class VisitorSpawnedEvent extends AbstractCitizenEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static VisitorSpawnedEvent loadFromFriendlyByteBuf(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public static VisitorSpawnedEvent loadFromFriendlyByteBuf(@NotNull final RegistryFriendlyByteBuf buf) {
         final VisitorSpawnedEvent spawnEvent = new VisitorSpawnedEvent();
         spawnEvent.deserialize(buf);
         return spawnEvent;

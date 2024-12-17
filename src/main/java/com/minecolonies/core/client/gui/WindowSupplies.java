@@ -37,10 +37,9 @@ import static com.minecolonies.api.util.constant.WindowConstants.SUPPLIES_RESOUR
 /**
  * Adjust the supply tool window.
  */
-public class WindowSupplies extends AbstractBlueprintManipulationWindow
-{
+public class WindowSupplies extends AbstractBlueprintManipulationWindow {
     /**
-     *  The displayed boxes category
+     * The displayed boxes category
      */
     private static final String RENDER_BOX_CATEGORY = "placement";
 
@@ -60,25 +59,21 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
      * @param pos        the pos its initiated at.
      * @param itemInHand
      */
-    public WindowSupplies(@Nullable final BlockPos pos, final String type)
-    {
+    public WindowSupplies(@Nullable final BlockPos pos, final String type) {
         super(Constants.MOD_ID + SUPPLIES_RESOURCE_SUFFIX, pos, (type.equals("supplycamp") ? GROUNDSTYLE_LEGACY_CAMP : GROUNDSTYLE_LEGACY_SHIP), "supplies");
         registerButton(BUTTON_SWITCH_STYLE, this::switchPackClicked);
 
-        if (!type.equals(WindowSupplies.type))
-        {
+        if (!type.equals(WindowSupplies.type)) {
             HighlightManager.clearHighlightsForKey(RENDER_BOX_CATEGORY);
             RenderingCache.removeBlueprint("supplies");
         }
         WindowSupplies.type = type;
 
-        if (pos != null)
-        {
+        if (pos != null) {
             RenderingCache.getOrCreateBlueprintPreviewData("supplies").setPos(pos);
         }
 
-        if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
-        {
+        if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null) {
             loadBlueprint();
         }
     }
@@ -86,8 +81,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
     /**
      * Opens the switch style window.
      */
-    private void switchPackClicked()
-    {
+    private void switchPackClicked() {
         new WindowSwitchPack(() ->
         {
             final BlueprintPreviewData previewData = RenderingCache.getOrCreateBlueprintPreviewData("supplies");
@@ -99,8 +93,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
     /**
      * Try to load the appropriate supply blueprint for the selected pack, if there is one
      */
-    private void loadBlueprint()
-    {
+    private void loadBlueprint() {
         RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(null);
 
         structurePack = StructurePacks.selectedPack;
@@ -108,8 +101,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(
                 StructurePacks.getBlueprintFuture(structurePack.getName(), "decorations/supplies/" + type + ".blueprint", mc.level.registryAccess()),
                 blueprint -> {
-                    if (blueprint == null)
-                    {
+                    if (blueprint == null) {
                         return;
                     }
                     RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(blueprint);
@@ -119,73 +111,62 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
     }
 
     @Override
-    protected void cancelClicked()
-    {
+    protected void cancelClicked() {
         HighlightManager.clearHighlightsForKey(RENDER_BOX_CATEGORY);
         RenderingCache.removeBlueprint("supplies");
         close();
     }
 
     @Override
-    protected void confirmClicked()
-    {
+    protected void confirmClicked() {
         handlePlacement(BuildToolPlacementMessage.HandlerType.Survival, SuppliesHandler.ID);
     }
 
     @Override
-    protected void handlePlacement(final BuildToolPlacementMessage.HandlerType handlerType, final String handlerId)
-    {
+    protected void handlePlacement(final BuildToolPlacementMessage.HandlerType handlerType, final String handlerId) {
         final BlueprintPreviewData previewData = RenderingCache.getOrCreateBlueprintPreviewData("supplies");
-        if (structurePack == null || previewData.getBlueprint() == null)
-        {
+        if (structurePack == null || previewData.getBlueprint() == null) {
             return;
         }
 
         final List<PlacementError> placementErrorList = new ArrayList<>();
-        if (type.equals("supplycamp"))
-        {
+        if (type.equals("supplycamp")) {
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().level, RenderingCache.getOrCreateBlueprintPreviewData("supplies").getPos(),
-              placementErrorList,
-              Minecraft.getInstance().player))
-            {
+                    placementErrorList,
+                    Minecraft.getInstance().player)) {
                 new BuildToolPlacementMessage(handlerType, handlerId,
-                          structurePack.getName(),
-                          structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
-                    previewData.getPos(),
-                    previewData.getRotationMirror()).sendToServer();
+                        structurePack.getName(),
+                        structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
+                        previewData.getPos(),
+                        previewData.getRotationMirror()).sendToServer();
                 cancelClicked();
                 return;
             }
-        }
-        else
-        {
+        } else {
             if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().level, RenderingCache.getOrCreateBlueprintPreviewData("supplies").getPos(),
-              previewData.getBlueprint(),
-              placementErrorList,
-              Minecraft.getInstance().player))
-            {
+                    previewData.getBlueprint(),
+                    placementErrorList,
+                    Minecraft.getInstance().player)) {
                 new BuildToolPlacementMessage(handlerType, handlerId,
-                          structurePack.getName(),
-                          structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
-                    previewData.getPos(),
-                    previewData.getRotationMirror()).sendToServer();
+                        structurePack.getName(),
+                        structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
+                        previewData.getPos(),
+                        previewData.getRotationMirror()).sendToServer();
                 cancelClicked();
                 return;
             }
         }
 
         HighlightManager.clearHighlightsForKey(RENDER_BOX_CATEGORY);
-        if (!placementErrorList.isEmpty())
-        {
+        if (!placementErrorList.isEmpty()) {
             MessageUtils.format(WARNING_SUPPLY_BUILDING_BAD_BLOCKS).sendTo(Minecraft.getInstance().player);
 
             int i = 0;
-            for (final PlacementError error : placementErrorList)
-            {
+            for (final PlacementError error : placementErrorList) {
                 HighlightManager.addHighlight(RENDER_BOX_CATEGORY + i++, new TimedBoxRenderData(error.getPos())
-                  .addText(Component.translatableEscape(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
-                  .setColor(0x80FF0000)
-                  .setDuration(Duration.ofSeconds(60)));
+                        .addText(Component.translatableEscape(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
+                        .setColor(0x80FF0000)
+                        .setDuration(Duration.ofSeconds(60)));
             }
         }
     }

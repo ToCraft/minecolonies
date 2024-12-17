@@ -8,18 +8,15 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the sifter. No different from {@link AbstractBlockHut}
  */
-public class BlockHutSifter extends AbstractBlockHut<BlockHutSifter>
-{
+public class BlockHutSifter extends AbstractBlockHut<BlockHutSifter> {
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhutsifter";
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.sifter.get();
     }
 }

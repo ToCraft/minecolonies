@@ -17,8 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *     <li>All requirements from {@link UpwardsGrowingPlantModule}</li>
  * </ol>
  */
-public class SugarCanePlantModule extends UpwardsGrowingPlantModule
-{
+public class SugarCanePlantModule extends UpwardsGrowingPlantModule {
     /**
      * Default constructor.
      *
@@ -27,20 +26,17 @@ public class SugarCanePlantModule extends UpwardsGrowingPlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public SugarCanePlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
-    {
+    public SugarCanePlantModule(final IField field, final String fieldTag, final String workTag, final Item item) {
         super(field, fieldTag, workTag, item);
     }
 
     @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
+    protected boolean isValidHarvestBlock(final BlockState blockState) {
         return blockState.getBlock() == Blocks.SUGAR_CANE;
     }
 
     @Override
-    public EquipmentTypeEntry getRequiredTool()
-    {
+    public EquipmentTypeEntry getRequiredTool() {
         return ModEquipmentTypes.none.get();
     }
 }

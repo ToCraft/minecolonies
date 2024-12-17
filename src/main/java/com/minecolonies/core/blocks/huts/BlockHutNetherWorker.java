@@ -4,8 +4,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 
-public class BlockHutNetherWorker extends AbstractBlockHut<BlockHutNetherWorker>
-{
+public class BlockHutNetherWorker extends AbstractBlockHut<BlockHutNetherWorker> {
 
     /**
      * Method to return the name of the block.
@@ -13,8 +12,7 @@ public class BlockHutNetherWorker extends AbstractBlockHut<BlockHutNetherWorker>
      * @return Name of the block.
      */
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhutnetherworker";
     }
 
@@ -24,9 +22,8 @@ public class BlockHutNetherWorker extends AbstractBlockHut<BlockHutNetherWorker>
      * @return The building entry.
      */
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.netherWorker.get();
     }
-    
+
 }

@@ -15,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to change priorities of recipes.
  */
-public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "change_recipe_priority", ChangeRecipePriorityMessage::new);
 
     /**
@@ -41,14 +40,14 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
 
     /**
      * Creates message for player to change the priority of the recipes.
-     *  @param building view of the building to read data from
+     *
+     * @param building view of the building to read data from
      * @param location the recipeLocation.
      * @param up       up or down?
-     * @param id the unique id of the crafting module.
+     * @param id       the unique id of the crafting module.
      * @param fullMove if it should be moved to the beginning/end.
      */
-    public ChangeRecipePriorityMessage(@NotNull final IBuildingView building, final int location, final boolean up, final int id, final boolean fullMove)
-    {
+    public ChangeRecipePriorityMessage(@NotNull final IBuildingView building, final int location, final boolean up, final int id, final boolean fullMove) {
         super(TYPE, building);
         this.recipeLocation = location;
         this.up = up;
@@ -61,8 +60,7 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
      *
      * @param buf the used byteBuffer.
      */
-    protected ChangeRecipePriorityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ChangeRecipePriorityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.recipeLocation = buf.readInt();
         this.up = buf.readBoolean();
@@ -76,8 +74,7 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(this.recipeLocation);
         buf.writeBoolean(this.up);
@@ -86,16 +83,11 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (building.getModule(id) instanceof final AbstractCraftingBuildingModule module)
-        {
-            if (up)
-            {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (building.getModule(id) instanceof final AbstractCraftingBuildingModule module) {
+            if (up) {
                 module.switchOrder(recipeLocation, recipeLocation - 1, fullMove);
-            }
-            else
-            {
+            } else {
                 module.switchOrder(recipeLocation, recipeLocation + 1, fullMove);
             }
         }

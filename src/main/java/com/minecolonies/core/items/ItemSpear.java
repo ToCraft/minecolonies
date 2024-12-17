@@ -17,33 +17,24 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 
-public class ItemSpear extends TridentItem
-{
-    public ItemSpear(final Properties properties)
-    {
+public class ItemSpear extends TridentItem {
+    public ItemSpear(final Properties properties) {
         super(properties.durability(250));
     }
 
     @Override
-    public void releaseUsing(@NotNull ItemStack stack, @NotNull Level worldIn, @NotNull LivingEntity entityLiving, int timeLeft)
-    {
-        if (entityLiving instanceof Player)
-        {
+    public void releaseUsing(@NotNull ItemStack stack, @NotNull Level worldIn, @NotNull LivingEntity entityLiving, int timeLeft) {
+        if (entityLiving instanceof Player) {
             Player playerEntity = (Player) entityLiving;
             int usedForDuration = this.getUseDuration(stack, entityLiving) - timeLeft;
-            if (usedForDuration >= 10)
-            {
-                if (!worldIn.isClientSide)
-                {
+            if (usedForDuration >= 10) {
+                if (!worldIn.isClientSide) {
                     stack.hurtAndBreak(1, playerEntity, EquipmentSlot.MAINHAND);
                     SpearEntity spearEntity = new SpearEntity(worldIn, playerEntity, stack);
 
-                    if (playerEntity.getAbilities().instabuild)
-                    {
+                    if (playerEntity.getAbilities().instabuild) {
                         spearEntity.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
-                    }
-                    else
-                    {
+                    } else {
                         playerEntity.getInventory().removeItem(stack);
                     }
 
@@ -59,15 +50,11 @@ public class ItemSpear extends TridentItem
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull final Level world, final Player playerEntity, @NotNull final InteractionHand hand)
-    {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull final Level world, final Player playerEntity, @NotNull final InteractionHand hand) {
         ItemStack itemstack = playerEntity.getItemInHand(hand);
-        if (itemstack.getDamageValue() >= itemstack.getMaxDamage() - 1)
-        {
+        if (itemstack.getDamageValue() >= itemstack.getMaxDamage() - 1) {
             return InteractionResultHolder.fail(itemstack);
-        }
-        else
-        {
+        } else {
             playerEntity.startUsingItem(hand);
             return InteractionResultHolder.consume(itemstack);
         }

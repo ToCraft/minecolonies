@@ -10,8 +10,7 @@ import java.util.function.Supplier;
 /**
  * Guard type class.
  */
-public class GuardType
-{
+public class GuardType {
     /**
      * The job entry.
      */
@@ -61,18 +60,17 @@ public class GuardType
      * @param primarySkill         primary skill.
      * @param secondarySkill       secondary skill.
      * @param workerSoundName      worker sound name.
-     * @param clazz                  the class of the job.
+     * @param clazz                the class of the job.
      */
     public GuardType(
-      final Supplier<JobEntry> jobEntry,
-      final String jobTranslationKey,
-      final String buttonTranslationKey,
-      final Skill primarySkill,
-      final Skill secondarySkill,
-      final String workerSoundName,
-      final Class<IJob<?>> clazz,
-      final ResourceLocation registryName)
-    {
+            final Supplier<JobEntry> jobEntry,
+            final String jobTranslationKey,
+            final String buttonTranslationKey,
+            final Skill primarySkill,
+            final Skill secondarySkill,
+            final String workerSoundName,
+            final Class<IJob<?>> clazz,
+            final ResourceLocation registryName) {
         super();
         this.jobEntry = jobEntry;
         this.jobTranslationKey = jobTranslationKey;
@@ -89,8 +87,7 @@ public class GuardType
      *
      * @return the producer.
      */
-    public Supplier<JobEntry> getJobEntry()
-    {
+    public Supplier<JobEntry> getJobEntry() {
         return jobEntry;
     }
 
@@ -99,8 +96,7 @@ public class GuardType
      *
      * @return the key.
      */
-    public String getJobTranslationKey()
-    {
+    public String getJobTranslationKey() {
         return jobTranslationKey;
     }
 
@@ -109,8 +105,7 @@ public class GuardType
      *
      * @return the key.
      */
-    public String getButtonTranslationKey()
-    {
+    public String getButtonTranslationKey() {
         return buttonTranslationKey;
     }
 
@@ -119,8 +114,7 @@ public class GuardType
      *
      * @return the skill.
      */
-    public Skill getPrimarySkill()
-    {
+    public Skill getPrimarySkill() {
         return primarySkill;
     }
 
@@ -129,8 +123,7 @@ public class GuardType
      *
      * @return the skill.
      */
-    public Skill getSecondarySkill()
-    {
+    public Skill getSecondarySkill() {
         return secondarySkill;
     }
 
@@ -139,85 +132,74 @@ public class GuardType
      *
      * @return the sound name.
      */
-    public String getWorkerSoundName()
-    {
+    public String getWorkerSoundName() {
         return workerSoundName;
     }
 
     /**
      * Check if the job is of this type.
+     *
      * @param job the job to check.
      * @return true if so.
      */
-    public boolean isInstance(final IJob<?> job)
-    {
+    public boolean isInstance(final IJob<?> job) {
         return this.clazz.isInstance(job);
     }
 
     /**
      * The builder.
      */
-    public static class Builder
-    {
+    public static class Builder {
         private Supplier<JobEntry> jobEntry;
-        private String             jobTranslationKey;
-        private String                          buttonTranslationKey;
-        private Skill                           primarySkill;
-        private Skill                           secondarySkill;
-        private String                          workerSoundName;
-        private ResourceLocation                registryName;
-        private Class<IJob<?>>                  clazz;
+        private String jobTranslationKey;
+        private String buttonTranslationKey;
+        private Skill primarySkill;
+        private Skill secondarySkill;
+        private String workerSoundName;
+        private ResourceLocation registryName;
+        private Class<IJob<?>> clazz;
 
-        public Builder setJobEntry(final Supplier<JobEntry> jobEntry)
-        {
+        public Builder setJobEntry(final Supplier<JobEntry> jobEntry) {
             this.jobEntry = jobEntry;
             return this;
         }
 
-        public Builder setJobTranslationKey(final String jobTranslationKey)
-        {
+        public Builder setJobTranslationKey(final String jobTranslationKey) {
             this.jobTranslationKey = jobTranslationKey;
             return this;
         }
 
-        public Builder setButtonTranslationKey(final String buttonTranslationKey)
-        {
+        public Builder setButtonTranslationKey(final String buttonTranslationKey) {
             this.buttonTranslationKey = buttonTranslationKey;
             return this;
         }
 
-        public Builder setPrimarySkill(final Skill primarySkill)
-        {
+        public Builder setPrimarySkill(final Skill primarySkill) {
             this.primarySkill = primarySkill;
             return this;
         }
 
-        public Builder setSecondarySkill(final Skill secondarySkill)
-        {
+        public Builder setSecondarySkill(final Skill secondarySkill) {
             this.secondarySkill = secondarySkill;
             return this;
         }
 
-        public Builder setWorkerSoundName(final String workerSoundName)
-        {
+        public Builder setWorkerSoundName(final String workerSoundName) {
             this.workerSoundName = workerSoundName;
             return this;
         }
 
-        public Builder setRegistryName(final ResourceLocation registryName)
-        {
+        public Builder setRegistryName(final ResourceLocation registryName) {
             this.registryName = registryName;
             return this;
         }
 
-        public Builder setClazz(final Class clazz)
-        {
+        public Builder setClazz(final Class clazz) {
             this.clazz = clazz;
             return this;
         }
 
-        public GuardType createGuardType()
-        {
+        public GuardType createGuardType() {
             return new GuardType(jobEntry, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName, clazz, registryName);
         }
     }

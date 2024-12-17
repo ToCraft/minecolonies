@@ -8,16 +8,17 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 /**
  * Default interface for all building modules.
  */
-public interface IBuildingModule extends IHasDirty
-{
+public interface IBuildingModule extends IHasDirty {
     /**
      * Get the building of the module.
+     *
      * @return the building.
      */
     IBuilding getBuilding();
 
     /**
      * Set the building of the module.
+     *
      * @param building the building to set.
      * @return the module itself.
      */
@@ -25,6 +26,7 @@ public interface IBuildingModule extends IHasDirty
 
     /**
      * Set the producer of this module
+     *
      * @param moduleSet
      * @return
      */
@@ -43,8 +45,7 @@ public interface IBuildingModule extends IHasDirty
      * @param buf      the buffer to write it to.
      * @param fullSync whether we need to sync the full data
      */
-    default void serializeToView(RegistryFriendlyByteBuf buf, final boolean fullSync)
-    {
+    default void serializeToView(RegistryFriendlyByteBuf buf, final boolean fullSync) {
         serializeToView(buf);
     }
 
@@ -53,5 +54,6 @@ public interface IBuildingModule extends IHasDirty
      *
      * @param buf the buffer to write it to.
      */
-    default void serializeToView(RegistryFriendlyByteBuf buf) {}
+    default void serializeToView(RegistryFriendlyByteBuf buf) {
+    }
 }

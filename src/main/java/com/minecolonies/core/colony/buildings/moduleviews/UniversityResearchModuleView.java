@@ -11,30 +11,25 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Crafter task module to display tasks in the UI.
  */
-public class UniversityResearchModuleView extends AbstractBuildingModuleView
-{
+public class UniversityResearchModuleView extends AbstractBuildingModuleView {
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
 
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new UniversityModuleWindow(buildingView);
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return "info";
     }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return "com.minecolonies.coremod.research.research";
     }
 }

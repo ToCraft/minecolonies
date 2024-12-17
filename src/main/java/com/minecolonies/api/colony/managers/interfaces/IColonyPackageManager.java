@@ -8,8 +8,7 @@ import java.util.Set;
 /**
  * Colony package manager, responsible to update views etc.
  */
-public interface IColonyPackageManager
-{
+public interface IColonyPackageManager {
     /**
      * Get the last contact in hours from the colony.
      *

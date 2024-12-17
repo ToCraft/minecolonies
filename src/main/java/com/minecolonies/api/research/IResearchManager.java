@@ -13,8 +13,7 @@ import java.util.Set;
 /**
  * Research manager of the colony holding the tree and effects.
  */
-public interface IResearchManager
-{
+public interface IResearchManager {
     /**
      * Reads all stats from nbt.
      *
@@ -54,8 +53,9 @@ public interface IResearchManager
     /**
      * Gets the Research Effect Identifier for a given Block
      * Format is namespace:effects/path
-     * @param block       The block to get a research identifier for.
-     * @return            The string format of that research identifier.
+     *
+     * @param block The block to get a research identifier for.
+     * @return The string format of that research identifier.
      */
     ResourceLocation getResearchEffectIdFrom(Block block);
 

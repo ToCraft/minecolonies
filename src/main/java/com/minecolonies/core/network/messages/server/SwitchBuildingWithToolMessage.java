@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Switch the buildtool with the respective item in the inventory.
  */
-public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
-{
+public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "switch_building_with_tool", SwitchBuildingWithToolMessage::new);
 
     /**
@@ -28,8 +27,7 @@ public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
      *
      * @param stack the stack in the hand.
      */
-    public SwitchBuildingWithToolMessage(final ItemStack stack)
-    {
+    public SwitchBuildingWithToolMessage(final ItemStack stack) {
         super(TYPE);
         this.stack = stack;
     }
@@ -39,8 +37,7 @@ public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
      *
      * @param buf The buffer begin read from.
      */
-    protected SwitchBuildingWithToolMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected SwitchBuildingWithToolMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         stack = Utils.deserializeCodecMess(buf);
     }
@@ -51,38 +48,29 @@ public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
      * @param buf The buffer being written to.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         Utils.serializeCodecMess(buf, stack);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player) {
         int stackSlot = -1;
         int buildToolSlot = -1;
-        for (int i = 0; i < 9; i++)
-        {
-            if (ItemStack.isSameItem(player.getInventory().getItem(i), stack))
-            {
+        for (int i = 0; i < 9; i++) {
+            if (ItemStack.isSameItem(player.getInventory().getItem(i), stack)) {
                 stackSlot = i;
-            }
-            else if (player.getInventory().getItem(i).getItem() == ModItems.buildTool.get())
-            {
+            } else if (player.getInventory().getItem(i).getItem() == ModItems.buildTool.get()) {
                 buildToolSlot = i;
             }
         }
 
-        for (int i = 9; i < player.getInventory().getContainerSize(); i++)
-        {
-            if (player.getInventory().getItem(i).getItem() == ModItems.buildTool.get())
-            {
+        for (int i = 9; i < player.getInventory().getContainerSize(); i++) {
+            if (player.getInventory().getItem(i).getItem() == ModItems.buildTool.get()) {
                 buildToolSlot = i;
             }
         }
 
-        if (stackSlot != -1 && buildToolSlot != -1)
-        {
+        if (stackSlot != -1 && buildToolSlot != -1) {
             player.getInventory().setItem(buildToolSlot, player.getInventory().getItem(stackSlot).copy());
             player.getInventory().setItem(stackSlot, new ItemStack(ModItems.buildTool.get(), 1));
         }

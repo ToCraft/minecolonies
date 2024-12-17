@@ -40,8 +40,7 @@ import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_DYER_SMEL
 /**
  * Class of the dyer building.
  */
-public class BuildingDyer extends AbstractBuilding
-{
+public class BuildingDyer extends AbstractBuilding {
     /**
      * Description string of the building.
      */
@@ -53,26 +52,22 @@ public class BuildingDyer extends AbstractBuilding
      * @param c the colony.
      * @param l the location
      */
-    public BuildingDyer(final IColony c, final BlockPos l)
-    {
+    public BuildingDyer(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return DYER;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
-    {
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting {
         private List<ItemStorage> woolItems;
 
         /**
@@ -80,36 +75,31 @@ public class BuildingDyer extends AbstractBuilding
          *
          * @param jobEntry the entry of the job.
          */
-        public CraftingModule(final JobEntry jobEntry)
-        {
+        public CraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         @NotNull
         @Override
-        public OptionalPredicate<ItemStack> getIngredientValidator()
-        {
+        public OptionalPredicate<ItemStack> getIngredientValidator() {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_DYER)
                     .combine(super.getIngredientValidator());
         }
 
         @Override
-        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-        {
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) {
             if (!super.isRecipeCompatible(recipe)) return false;
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_DYER).orElse(false);
         }
 
         @Override
-        public void improveRecipe(final IRecipeStorage recipe, final int count, final ICitizenData citizen)
-        {
+        public void improveRecipe(final IRecipeStorage recipe, final int count, final ICitizenData citizen) {
             // don't improve any dyeing recipes
         }
 
         @NotNull
         @Override
-        public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull Level world)
-        {
+        public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull Level world) {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
             // show dyeable leather items (at least for the single-dye recipes)
@@ -118,25 +108,22 @@ public class BuildingDyer extends AbstractBuilding
                     Tags.Items.DYES_YELLOW, Tags.Items.DYES_LIME, Tags.Items.DYES_PINK, Tags.Items.DYES_GRAY,
                     Tags.Items.DYES_LIGHT_GRAY, Tags.Items.DYES_CYAN, Tags.Items.DYES_PURPLE, Tags.Items.DYES_BLUE,
                     Tags.Items.DYES_BROWN, Tags.Items.DYES_GREEN, Tags.Items.DYES_RED, Tags.Items.DYES_BLACK);
-            for (final ItemStack item : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
-            {
-                if (!(item.getItem() instanceof ArmorItem armorItem) || !item.has(DataComponents.DYED_COLOR))
-                {
+            for (final ItemStack item : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems()) {
+                if (!(item.getItem() instanceof ArmorItem armorItem) || !item.has(DataComponents.DYED_COLOR)) {
                     continue;
                 }
 
-                for (final TagKey<Item> dyeTag : dyes)
-                {
+                for (final TagKey<Item> dyeTag : dyes) {
                     final List<ItemStack> dyeItems = BuiltInRegistries.ITEM.getTag(dyeTag).get()
                             .stream().map(ItemStack::new).toList();
-                    if (dyeItems.isEmpty()) { continue; }
+                    if (dyeItems.isEmpty()) {
+                        continue;
+                    }
 
-                    if (dyeItems.get(0).getItem() instanceof final DyeItem dye)
-                    {
+                    if (dyeItems.get(0).getItem() instanceof final DyeItem dye) {
 
                         final ItemStack result = DyedItemColor.applyDyes(item, List.of(dye));
-                        if (!result.isEmpty())
-                        {
+                        if (!result.isEmpty()) {
                             recipes.add(new GenericRecipe(null, result, List.of(),
                                     List.of(List.of(item), dyeItems), 2, Blocks.AIR,
                                     null, ModEquipmentTypes.none.get(), List.of(), 0));
@@ -149,23 +136,18 @@ public class BuildingDyer extends AbstractBuilding
         }
 
         @Override
-        public IRecipeStorage getFirstRecipe(Predicate<ItemStack> stackPredicate)
-        {
+        public IRecipeStorage getFirstRecipe(Predicate<ItemStack> stackPredicate) {
             IRecipeStorage recipe = super.getFirstRecipe(stackPredicate);
 
-            if(recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
-            {
+            if (recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL))) {
                 final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
 
-                if (!building.getColony().getBuildingManager().hasWarehouse())
-                {
+                if (!building.getColony().getBuildingManager().hasWarehouse()) {
                     return null;
                 }
 
-                for(ItemStorage color : getWoolItems())
-                {
-                    for(IBuilding wareHouse: building.getColony().getBuildingManager().getWareHouses())
-                    {
+                for (ItemStorage color : getWoolItems()) {
+                    for (IBuilding wareHouse : building.getColony().getBuildingManager().getWareHouses()) {
                         final int colorCount = InventoryUtils.getCountFromBuilding(wareHouse, color);
                         inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
                     }
@@ -180,16 +162,13 @@ public class BuildingDyer extends AbstractBuilding
         }
 
         @Override
-        public boolean holdsRecipe(final IToken<?> token)
-        {
-            if (super.holdsRecipe(token))
-            {
+        public boolean holdsRecipe(final IToken<?> token) {
+            if (super.holdsRecipe(token)) {
                 return true;
             }
 
             final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipe(token);
-            if (recipe == null)
-            {
+            if (recipe == null) {
                 return false;
             }
 
@@ -197,26 +176,21 @@ public class BuildingDyer extends AbstractBuilding
         }
 
         @Override
-        public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
-        {
+        public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation) {
             IRecipeStorage recipe = super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
-            if (recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
-            {
+            if (recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL))) {
                 final Set<IItemHandler> handlers = new HashSet<>();
-                for (final ICitizenData workerEntity : building.getAllAssignedCitizen())
-                {
+                for (final ICitizenData workerEntity : building.getAllAssignedCitizen()) {
                     handlers.add(workerEntity.getInventory());
                 }
 
-                for (ItemStorage color : getWoolItems())
-                {
+                for (ItemStorage color : getWoolItems()) {
                     IToken<?> token = getTokenForWool(color);
 
                     final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
 
                     IRecipeStorage toTest = storage.getRecipeType() instanceof MultiOutputRecipe ? storage.getClassicForMultiOutput(stackPredicate) : storage;
-                    if (toTest.canFullFillRecipe(count, considerReservation ? reservedStacks() : Collections.emptyMap(), new ArrayList<>(handlers), building))
-                    {
+                    if (toTest.canFullFillRecipe(count, considerReservation ? reservedStacks() : Collections.emptyMap(), new ArrayList<>(handlers), building)) {
                         return toTest;
                     }
                 }
@@ -226,71 +200,64 @@ public class BuildingDyer extends AbstractBuilding
 
         /**
          * Builds and returns a list of all colored wool types
+         *
          * @return the list
          */
-        private List<ItemStorage> getWoolItems()
-        {
-            if (woolItems == null)
-            {
+        private List<ItemStorage> getWoolItems() {
+            if (woolItems == null) {
                 woolItems = BuiltInRegistries.ITEM.getOrCreateTag(ItemTags.WOOL).stream()
-                  .filter(item -> !item.value().equals(Items.WHITE_WOOL))
-                  .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
+                        .filter(item -> !item.value().equals(Items.WHITE_WOOL))
+                        .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
             }
             return woolItems;
         }
 
         /**
          * Creates the recipe to undye the given wool and returns its token
+         *
          * @param wool the wool to undye
          * @return the recipe token
          */
-        private IToken<?> getTokenForWool(ItemStorage wool)
-        {
+        private IToken<?> getTokenForWool(ItemStorage wool) {
             final IRecipeStorage tempRecipe = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              ImmutableList.of(wool, new ItemStorage(new ItemStack(Items.WHITE_DYE, 1))),
-              1,
-              new ItemStack(Items.WHITE_WOOL, 1),
-              Blocks.AIR);
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    ImmutableList.of(wool, new ItemStorage(new ItemStack(Items.WHITE_DYE, 1))),
+                    1,
+                    new ItemStack(Items.WHITE_WOOL, 1),
+                    Blocks.AIR);
 
             return IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
         }
     }
 
-    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
-    {
+    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public SmeltingModule(final JobEntry jobEntry)
-        {
+        public SmeltingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         @NotNull
         @Override
-        public OptionalPredicate<ItemStack> getIngredientValidator()
-        {
+        public OptionalPredicate<ItemStack> getIngredientValidator() {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_DYER_SMELTING)
                     .combine(super.getIngredientValidator());
         }
 
         @Override
-        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-        {
-            if (!super.isRecipeCompatible(recipe))
-            {
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) {
+            if (!super.isRecipeCompatible(recipe)) {
                 return false;
             }
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_DYER_SMELTING).orElse(false);
         }
 
         @Override
-        public void improveRecipe(final IRecipeStorage recipe, final int count, final ICitizenData citizen)
-        {
+        public void improveRecipe(final IRecipeStorage recipe, final int count, final ICitizenData citizen) {
             // don't improve any dyeing recipes
         }
     }

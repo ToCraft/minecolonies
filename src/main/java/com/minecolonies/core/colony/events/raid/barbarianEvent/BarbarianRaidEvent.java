@@ -24,47 +24,39 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RAID_BARBA
 /**
  * Barbarian raid event for the colony, triggers a horde of barbarians which spawn and attack the colony.
  */
-public class BarbarianRaidEvent extends HordeRaidEvent
-{
+public class BarbarianRaidEvent extends HordeRaidEvent {
     /**
      * This raids event id, registry entries use res locations as ids.
      */
     public static final ResourceLocation BARBARIAN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "barbarian_raid");
 
-    public BarbarianRaidEvent(IColony colony)
-    {
+    public BarbarianRaidEvent(IColony colony) {
         super(colony);
     }
 
     @Override
-    public ResourceLocation getEventTypeID()
-    {
+    public ResourceLocation getEventTypeID() {
         return BARBARIAN_RAID_EVENT_TYPE_ID;
     }
 
     @Override
-    public void registerEntity(final Entity entity)
-    {
-        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())
-        {
+    public void registerEntity(final Entity entity) {
+        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive()) {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
-        if (entity instanceof EntityChiefBarbarian && boss.keySet().size() < horde.numberOfBosses)
-        {
+        if (entity instanceof EntityChiefBarbarian && boss.keySet().size() < horde.numberOfBosses) {
             boss.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityArcherBarbarian && archers.keySet().size() < horde.numberOfArchers)
-        {
+        if (entity instanceof EntityArcherBarbarian && archers.keySet().size() < horde.numberOfArchers) {
             archers.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityBarbarian && normal.keySet().size() < horde.numberOfRaiders)
-        {
+        if (entity instanceof EntityBarbarian && normal.keySet().size() < horde.numberOfRaiders) {
             normal.put(entity, entity.getUUID());
             return;
         }
@@ -73,36 +65,30 @@ public class BarbarianRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    public void onEntityDeath(final LivingEntity entity)
-    {
+    public void onEntityDeath(final LivingEntity entity) {
         super.onEntityDeath(entity);
-        if (!(entity instanceof AbstractEntityRaiderMob))
-        {
+        if (!(entity instanceof AbstractEntityRaiderMob)) {
             return;
         }
 
-        if (entity instanceof EntityChiefBarbarian)
-        {
+        if (entity instanceof EntityChiefBarbarian) {
             boss.remove(entity);
             horde.numberOfBosses--;
         }
 
-        if (entity instanceof EntityArcherBarbarian)
-        {
+        if (entity instanceof EntityArcherBarbarian) {
             archers.remove(entity);
             horde.numberOfArchers--;
         }
 
-        if (entity instanceof EntityBarbarian)
-        {
+        if (entity instanceof EntityBarbarian) {
             normal.remove(entity);
             horde.numberOfRaiders--;
         }
 
         horde.hordeSize--;
 
-        if (horde.hordeSize == 0)
-        {
+        if (horde.hordeSize == 0) {
             status = EventStatus.DONE;
         }
 
@@ -116,34 +102,29 @@ public class BarbarianRaidEvent extends HordeRaidEvent
      * @param compound NBTcompound with saved values
      * @return the raid event.
      */
-    public static BarbarianRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public static BarbarianRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         BarbarianRaidEvent event = new BarbarianRaidEvent(colony);
         event.deserializeNBT(provider, compound);
         return event;
     }
 
     @Override
-    public EntityType<?> getNormalRaiderType()
-    {
+    public EntityType<?> getNormalRaiderType() {
         return BARBARIAN;
     }
 
     @Override
-    public EntityType<?> getArcherRaiderType()
-    {
+    public EntityType<?> getArcherRaiderType() {
         return ARCHERBARBARIAN;
     }
 
     @Override
-    public EntityType<?> getBossRaiderType()
-    {
+    public EntityType<?> getBossRaiderType() {
         return CHIEFBARBARIAN;
     }
 
     @Override
-    protected MutableComponent getDisplayName()
-    {
+    protected MutableComponent getDisplayName() {
         return Component.translatableEscape(RAID_BARBARIAN);
     }
 }

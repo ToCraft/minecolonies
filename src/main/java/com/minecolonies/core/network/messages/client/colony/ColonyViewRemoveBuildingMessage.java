@@ -14,11 +14,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewRemoveBuildingMessage extends AbstractClientPlayMessage
-{
+public class ColonyViewRemoveBuildingMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_remove_building", ColonyViewRemoveBuildingMessage::new);
 
-    private final int      colonyId;
+    private final int colonyId;
     private final BlockPos buildingId;
 
     /**
@@ -27,30 +26,26 @@ public class ColonyViewRemoveBuildingMessage extends AbstractClientPlayMessage
      * @param colony   Colony the building is in.
      * @param building AbstractBuilding that is removed.
      */
-    public ColonyViewRemoveBuildingMessage(@NotNull final Colony colony, final BlockPos building)
-    {
+    public ColonyViewRemoveBuildingMessage(@NotNull final Colony colony, final BlockPos building) {
         super(TYPE);
         this.colonyId = colony.getID();
         this.buildingId = building;
     }
 
-    protected ColonyViewRemoveBuildingMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ColonyViewRemoveBuildingMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(colonyId);
         buf.writeBlockPos(buildingId);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         IColonyManager.getInstance().handleColonyViewRemoveBuildingMessage(colonyId, buildingId, player.level().dimension());
     }
 }

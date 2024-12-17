@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public interface IProviderHandler
-{
+public interface IProviderHandler {
     IRequestManager getManager();
 
     /**

@@ -21,8 +21,7 @@ import static com.minecolonies.api.sounds.EventType.GREETING;
 import static com.minecolonies.api.util.SoundUtils.playSoundAtCitizenWith;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
-public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEntity implements Npc
-{
+public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEntity implements Npc {
     /**
      * Time after which the next player collision is possible
      */
@@ -30,11 +29,11 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
 
     /**
      * Create a new instance.
-     * @param type from type.
+     *
+     * @param type    from type.
      * @param worldIn the world.
      */
-    protected AbstractCivilianEntity(final EntityType<? extends PathfinderMob> type, final Level worldIn)
-    {
+    protected AbstractCivilianEntity(final EntityType<? extends PathfinderMob> type, final Level worldIn) {
         super(type, worldIn);
     }
 
@@ -72,28 +71,23 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
     public abstract void setCitizenId(int id);
 
     @Override
-    public boolean checkBedExists()
-    {
-        if (tickCount % 5 == randomVariance % 5)
-        {
+    public boolean checkBedExists() {
+        if (tickCount % 5 == randomVariance % 5) {
             return true;
         }
 
-        if (getSleepingPos().isPresent())
-        {
+        if (getSleepingPos().isPresent()) {
             final BlockPos pos = getSleepingPos().get();
             final BlockState state = level().getBlockState(getSleepingPos().get());
-            return state.getBlock().isBed(state,level(),pos,this);
+            return state.getBlock().isBed(state, level(), pos, this);
         }
 
         return false;
     }
 
     @Override
-    public void push(@NotNull final Entity entityIn)
-    {
-        if (entityIn instanceof ServerPlayer)
-        {
+    public void push(@NotNull final Entity entityIn) {
+        if (entityIn instanceof ServerPlayer) {
             onPlayerCollide((Player) entityIn);
         }
         super.push(entityIn);
@@ -104,10 +98,8 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
      *
      * @param player
      */
-    public void onPlayerCollide(final Player player)
-    {
-        if (player.level().getGameTime() > nextPlayerCollisionTime)
-        {
+    public void onPlayerCollide(final Player player) {
+        if (player.level().getGameTime() > nextPlayerCollisionTime) {
             nextPlayerCollisionTime = player.level().getGameTime() + TICKS_SECOND * 15;
             getNavigation().stop();
             getLookControl().setLookAt(player);
@@ -135,8 +127,7 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
     public abstract void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch);
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         final ICivilianData data = getCivilianData();
         final String id = data == null ? "none" : "" + data.getId();
         final String colony = data == null ? "none" : "" + data.getColony().getName();
@@ -151,10 +142,8 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
      * @return true if successful.
      */
     @Override
-    public boolean startRiding(final @NotNull Entity entity, final boolean force)
-    {
-        if (entity instanceof SittingEntity || entity instanceof MinecoloniesMinecart)
-        {
+    public boolean startRiding(final @NotNull Entity entity, final boolean force) {
+        if (entity instanceof SittingEntity || entity instanceof MinecoloniesMinecart) {
             return super.startRiding(entity, force);
         }
         return false;

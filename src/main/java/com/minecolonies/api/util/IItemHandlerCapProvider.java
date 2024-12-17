@@ -12,14 +12,12 @@ import org.jetbrains.annotations.Nullable;
  * Our class for to join {@link IItemHandler} providers, so we can have type independent code.
  */
 @FunctionalInterface
-public interface IItemHandlerCapProvider
-{
+public interface IItemHandlerCapProvider {
     /**
      * For EntityCap register only
      */
     @Nullable
-    default IItemHandler getItemHandlerCap(final Void nothing)
-    {
+    default IItemHandler getItemHandlerCap(final Void nothing) {
         return getItemHandlerCap();
     }
 
@@ -27,8 +25,7 @@ public interface IItemHandlerCapProvider
      * @return direction-unaware itemHandler
      */
     @Nullable
-    default IItemHandler getItemHandlerCap()
-    {
+    default IItemHandler getItemHandlerCap() {
         return getItemHandlerCap((Direction) null);
     }
 
@@ -38,22 +35,19 @@ public interface IItemHandlerCapProvider
     @Nullable
     IItemHandler getItemHandlerCap(final Direction direction);
 
-    public static IItemHandlerCapProvider wrap(final BlockEntity blockEntity)
-    {
+    public static IItemHandlerCapProvider wrap(final BlockEntity blockEntity) {
         return direction -> ItemHandler.BLOCK.getCapability(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity, direction);
     }
 
     /**
      * @param sided if true then will use Direction aware capability, roughly should be true for machine-entities and false for mobs
      */
-    public static IItemHandlerCapProvider wrap(final Entity entity, final boolean sided)
-    {
+    public static IItemHandlerCapProvider wrap(final Entity entity, final boolean sided) {
         return sided ? direction -> ItemHandler.ENTITY_AUTOMATION.getCapability(entity, direction) :
-            direction -> ItemHandler.ENTITY.getCapability(entity, null);
+                direction -> ItemHandler.ENTITY.getCapability(entity, null);
     }
 
-    public static IItemHandlerCapProvider wrap(final ItemStack itemStack)
-    {
+    public static IItemHandlerCapProvider wrap(final ItemStack itemStack) {
         return direction -> ItemHandler.ITEM.getCapability(itemStack, null);
     }
 }

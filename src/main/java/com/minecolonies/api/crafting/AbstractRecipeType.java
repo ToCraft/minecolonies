@@ -9,24 +9,21 @@ import java.util.List;
 /**
  * Base class for RecipeStorage types
  */
-public abstract class AbstractRecipeType<R extends IRecipeStorage>
-{
+public abstract class AbstractRecipeType<R extends IRecipeStorage> {
     final IRecipeStorage recipe;
-    ResourceLocation id; 
+    ResourceLocation id;
 
     /**
      * Constructor basis for recipe types
      */
-    public AbstractRecipeType(final R recipe)
-    {
+    public AbstractRecipeType(final R recipe) {
         this.recipe = recipe;
     }
 
     /**
      * Get the recipe this type instance is associated with
      */
-    public IRecipeStorage getRecipe()
-    {
+    public IRecipeStorage getRecipe() {
         return this.recipe;
     }
 
@@ -38,8 +35,7 @@ public abstract class AbstractRecipeType<R extends IRecipeStorage>
     /**
      * The output display stacks, for rotation through in the views
      */
-    public List<ItemStack> getOutputDisplayStacks()
-    {
+    public List<ItemStack> getOutputDisplayStacks() {
         return ImmutableList.of(recipe.getPrimaryOutput());
     }
 }

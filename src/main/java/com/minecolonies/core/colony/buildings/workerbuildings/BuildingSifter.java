@@ -5,9 +5,9 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURRENT_DAILY;
@@ -15,8 +15,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURRENT_DAI
 /**
  * Class of the sifter building.
  */
-public class BuildingSifter extends AbstractBuilding
-{
+public class BuildingSifter extends AbstractBuilding {
     /**
      * The multiplier to define the max craft per day.
      */
@@ -43,8 +42,7 @@ public class BuildingSifter extends AbstractBuilding
      * @param c the colony.
      * @param l the location
      */
-    public BuildingSifter(final IColony c, final BlockPos l)
-    {
+    public BuildingSifter(final IColony c, final BlockPos l) {
         super(c, l);
 
         keepX.put(stack -> stack.is(ModTags.meshes), new net.minecraft.util.Tuple<>(4, false));
@@ -52,14 +50,12 @@ public class BuildingSifter extends AbstractBuilding
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return SIFTER_DESC;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
@@ -68,8 +64,7 @@ public class BuildingSifter extends AbstractBuilding
      *
      * @param currentDailyQuantity the current quantity.
      */
-    public void setCurrentDailyQuantity(final int currentDailyQuantity)
-    {
+    public void setCurrentDailyQuantity(final int currentDailyQuantity) {
         this.currentDailyQuantity = currentDailyQuantity;
     }
 
@@ -78,10 +73,8 @@ public class BuildingSifter extends AbstractBuilding
      *
      * @return the max.
      */
-    public int getMaxDailyQuantity()
-    {
-        if (getBuildingLevel() >= MAX_BUILDING_LEVEL)
-        {
+    public int getMaxDailyQuantity() {
+        if (getBuildingLevel() >= MAX_BUILDING_LEVEL) {
             return Integer.MAX_VALUE;
         }
 
@@ -89,8 +82,7 @@ public class BuildingSifter extends AbstractBuilding
     }
 
     @Override
-    public void onWakeUp()
-    {
+    public void onWakeUp() {
         super.onWakeUp();
         this.currentDailyQuantity = 0;
     }
@@ -100,22 +92,19 @@ public class BuildingSifter extends AbstractBuilding
      *
      * @return the quantity.
      */
-    public int getCurrentDailyQuantity()
-    {
+    public int getCurrentDailyQuantity() {
         return currentDailyQuantity;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
 
         this.currentDailyQuantity = compound.getInt(TAG_CURRENT_DAILY);
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
 
         compound.putInt(TAG_CURRENT_DAILY, currentDailyQuantity);
@@ -123,15 +112,13 @@ public class BuildingSifter extends AbstractBuilding
         return compound;
     }
 
-    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
-    {
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public CraftingModule(final JobEntry jobEntry)
-        {
+        public CraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
     }

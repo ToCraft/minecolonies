@@ -7,8 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Interface defining how a local research at a colony is. This represents how a colony stores researches they finished or started.
  */
-public interface ILocalResearch
-{
+public interface ILocalResearch {
     /**
      * Getter for the progress of the research.
      *

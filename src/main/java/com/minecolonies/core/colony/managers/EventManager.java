@@ -9,14 +9,13 @@ import com.minecolonies.api.colony.managers.interfaces.IEventManager;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.resources.ResourceLocation;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -30,14 +29,13 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 /**
  * Manager for all colony related events.
  */
-public class EventManager implements IEventManager
-{
+public class EventManager implements IEventManager {
     /**
      * NBT tags
      */
-    private static final String TAG_EVENT_ID        = "event_currentID";
-    private static final String TAG_EVENT_MANAGER   = "event_manager";
-    private static final String TAG_EVENT_LIST      = "events_list";
+    private static final String TAG_EVENT_ID = "event_currentID";
+    private static final String TAG_EVENT_MANAGER = "event_manager";
+    private static final String TAG_EVENT_LIST = "events_list";
 
     /**
      * The current event ID this colony is at, unique for each event
@@ -59,17 +57,14 @@ public class EventManager implements IEventManager
      */
     private final EventStructureManager structureManager;
 
-    public EventManager(final IColony colony)
-    {
+    public EventManager(final IColony colony) {
         this.colony = colony;
         structureManager = new EventStructureManager(this, colony);
     }
 
     @Override
-    public void addEvent(final IColonyEvent colonyEvent)
-    {
-        if (colonyEvent.getID() == 0)
-        {
+    public void addEvent(final IColonyEvent colonyEvent) {
+        if (colonyEvent.getID() == 0) {
             Log.getLogger().warn("missing ID for event:" + colonyEvent.getEventTypeID().getPath());
             return;
         }
@@ -83,10 +78,8 @@ public class EventManager implements IEventManager
      * @return the next event Id.
      */
     @Override
-    public int getAndTakeNextEventID()
-    {
-        if (currentEventID > Integer.MAX_VALUE - 100)
-        {
+    public int getAndTakeNextEventID() {
+        if (currentEventID > Integer.MAX_VALUE - 100) {
             currentEventID = 1;
         }
 
@@ -102,11 +95,9 @@ public class EventManager implements IEventManager
      * @param eventID the event id to register it to.
      */
     @Override
-    public void registerEntity(@NotNull final Entity entity, final int eventID)
-    {
+    public void registerEntity(@NotNull final Entity entity, final int eventID) {
         final IColonyEvent event = events.get(eventID);
-        if (!(event instanceof IColonyEntitySpawnEvent))
-        {
+        if (!(event instanceof IColonyEntitySpawnEvent)) {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
@@ -120,11 +111,9 @@ public class EventManager implements IEventManager
      * @param eventID the id of th eevent.
      */
     @Override
-    public void unregisterEntity(@NotNull final Entity entity, final int eventID)
-    {
+    public void unregisterEntity(@NotNull final Entity entity, final int eventID) {
         final IColonyEvent event = events.get(eventID);
-        if (event instanceof IColonyEntitySpawnEvent)
-        {
+        if (event instanceof IColonyEntitySpawnEvent) {
             ((IColonyEntitySpawnEvent) event).unregisterEntity(entity);
         }
     }
@@ -136,30 +125,24 @@ public class EventManager implements IEventManager
      * @param eventID the id of the event.
      */
     @Override
-    public void onEntityDeath(final LivingEntity entity, final int eventID)
-    {
+    public void onEntityDeath(final LivingEntity entity, final int eventID) {
         final IColonyEvent event = events.get(eventID);
-        if (event instanceof IColonyEntitySpawnEvent)
-        {
+        if (event instanceof IColonyEntitySpawnEvent) {
             ((IColonyEntitySpawnEvent) event).onEntityDeath(entity);
         }
     }
 
     @Override
-    public void onTileEntityBreak(final int eventID, final BlockEntity te)
-    {
+    public void onTileEntityBreak(final int eventID, final BlockEntity te) {
         final IColonyEvent event = events.get(eventID);
-        if (event != null)
-        {
+        if (event != null) {
             event.onTileEntityBreak(te);
         }
     }
 
     @Override
-    public void onNightFall()
-    {
-        for (final IColonyEvent event : events.values())
-        {
+    public void onNightFall() {
+        for (final IColonyEvent event : events.values()) {
             event.onNightFall();
         }
     }
@@ -171,8 +154,7 @@ public class EventManager implements IEventManager
      * @return the event or null.
      */
     @Override
-    public IColonyEvent getEventByID(final int ID)
-    {
+    public IColonyEvent getEventByID(final int ID) {
         return events.get(ID);
     }
 
@@ -182,57 +164,43 @@ public class EventManager implements IEventManager
      * @param colony the colony being ticked.
      */
     @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
+    public void onColonyTick(@NotNull final IColony colony) {
         final Iterator<IColonyEvent> iterator = events.values().iterator();
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             final IColonyEvent event = iterator.next();
 
-            if (event.getStatus() == DONE)
-            {
+            if (event.getStatus() == DONE) {
                 event.onFinish();
                 structureManager.loadBackupForEvent(event.getID());
                 colony.markDirty();
                 iterator.remove();
-            }
-            else if (event.getStatus() == STARTING)
-            {
+            } else if (event.getStatus() == STARTING) {
                 event.onStart();
-            }
-            else if (event.getStatus() == CANCELED)
-            {
+            } else if (event.getStatus() == CANCELED) {
                 colony.markDirty();
                 iterator.remove();
-            }
-            else
-            {
+            } else {
                 event.onUpdate();
             }
         }
     }
 
     @Override
-    public Map<Integer, IColonyEvent> getEvents()
-    {
+    public Map<Integer, IColonyEvent> getEvents() {
         return events;
     }
 
     @Override
-    public void readFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
-        if (compound.contains(TAG_EVENT_MANAGER))
-        {
+    public void readFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
+        if (compound.contains(TAG_EVENT_MANAGER)) {
             final CompoundTag eventManagerNBT = compound.getCompound(TAG_EVENT_MANAGER);
             final ListTag eventListNBT = eventManagerNBT.getList(TAG_EVENT_LIST, Tag.TAG_COMPOUND);
-            for (final Tag base : eventListNBT)
-            {
+            for (final Tag base : eventListNBT) {
                 final CompoundTag tagCompound = (CompoundTag) base;
                 final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, tagCompound.getString(TAG_NAME));
 
                 final ColonyEventTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventRegistry().get(eventTypeID);
-                if (registryEntry == null)
-                {
+                if (registryEntry == null) {
                     Log.getLogger().warn("Event is missing registryEntry!:" + eventTypeID.getPath());
                     continue;
                 }
@@ -247,12 +215,10 @@ public class EventManager implements IEventManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public void writeToNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         final CompoundTag eventManagerNBT = new CompoundTag();
         final ListTag eventListNBT = new ListTag();
-        for (final IColonyEvent event : events.values())
-        {
+        for (final IColonyEvent event : events.values()) {
             final CompoundTag eventNBT = event.serializeNBT(provider);
             eventNBT.putString(TAG_NAME, event.getEventTypeID().getPath());
             eventListNBT.add(eventNBT);
@@ -265,8 +231,7 @@ public class EventManager implements IEventManager
     }
 
     @Override
-    public IEventStructureManager getStructureManager()
-    {
+    public IEventStructureManager getStructureManager() {
         return structureManager;
     }
 }

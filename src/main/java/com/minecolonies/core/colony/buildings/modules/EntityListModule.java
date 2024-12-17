@@ -20,8 +20,7 @@ import java.util.Set;
 /**
  * Class for all buildings that need a list of mobs to toggle for various reasons.
  */
-public class EntityListModule extends AbstractBuildingModule implements IEntityListModule, IPersistentModule
-{
+public class EntityListModule extends AbstractBuildingModule implements IEntityListModule, IPersistentModule {
     /**
      * Tag to store the mob list.
      */
@@ -39,89 +38,75 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
 
     /**
      * Construct a new grouped itemlist module with the unique list identifier.
+     *
      * @param id the list id.
      */
-    public EntityListModule(final String id)
-    {
+    public EntityListModule(final String id) {
         super();
         this.id = id;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
-        if (compound.contains(id))
-        {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
+        if (compound.contains(id)) {
             compound = compound.getCompound(id);
         }
 
         final ListTag filterableList = compound.getList(TAG_MOBLIST, Tag.TAG_STRING);
-        for (int i = 0; i < filterableList.size(); ++i)
-        {
+        for (int i = 0; i < filterableList.size(); ++i) {
             final ResourceLocation res = ResourceLocation.parse(filterableList.getString(i));
-            if (BuiltInRegistries.ENTITY_TYPE.containsKey(res))
-            {
+            if (BuiltInRegistries.ENTITY_TYPE.containsKey(res)) {
                 mobsAllowed.add(res);
             }
         }
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         @NotNull final ListTag filteredMobs = new ListTag();
-        for (@NotNull final ResourceLocation mob : mobsAllowed)
-        {
+        for (@NotNull final ResourceLocation mob : mobsAllowed) {
             filteredMobs.add(StringTag.valueOf(mob.toString()));
         }
         compound.put(TAG_MOBLIST, filteredMobs);
     }
 
     @Override
-    public void addEntity(final ResourceLocation item)
-    {
+    public void addEntity(final ResourceLocation item) {
         mobsAllowed.add(item);
         markDirty();
     }
 
     @Override
-    public boolean isEntityInList(final ResourceLocation entity)
-    {
+    public boolean isEntityInList(final ResourceLocation entity) {
         return mobsAllowed.contains(entity);
     }
 
     @Override
-    public void removeEntity(final ResourceLocation item)
-    {
+    public void removeEntity(final ResourceLocation item) {
         mobsAllowed.remove(item);
         markDirty();
     }
 
     @Override
-    public ImmutableList<ResourceLocation> getList()
-    {
+    public ImmutableList<ResourceLocation> getList() {
         return ImmutableList.copyOf(mobsAllowed);
     }
 
     @Override
-    public String getListIdentifier()
-    {
+    public String getListIdentifier() {
         return this.id;
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(mobsAllowed.size());
-        for (final ResourceLocation entity : mobsAllowed)
-        {
+        for (final ResourceLocation entity : mobsAllowed) {
             buf.writeResourceLocation(entity);
         }
     }
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         return this.id;
     }
 }

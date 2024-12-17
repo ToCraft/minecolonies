@@ -30,8 +30,7 @@ import static com.minecolonies.api.util.constant.translation.BaseGameTranslation
 /**
  * AbstractCrafting gui.
  */
-public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
-{
+public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting> {
     private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(MOD_ID, "textures/gui/crafting2x2.png");
 
     private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES3X3 = new ResourceLocation(MOD_ID, "textures/gui/crafting3x3.png");
@@ -132,8 +131,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
      * @param playerInventory the player inv.
      * @param iTextComponent  the display text component.
      */
-    public WindowCrafting(final ContainerCrafting container, final Inventory playerInventory, final Component iTextComponent)
-    {
+    public WindowCrafting(final ContainerCrafting container, final Inventory playerInventory, final Component iTextComponent) {
         super(container, playerInventory, iTextComponent);
         this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level().dimension(), container.getPos());
         this.module = (CraftingModuleView) building.getModuleView(container.getModuleId());
@@ -141,19 +139,16 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     }
 
     @NotNull
-    public AbstractBuildingView getBuildingView()
-    {
+    public AbstractBuildingView getBuildingView() {
         return building;
     }
 
-    public boolean isCompleteCrafting()
-    {
+    public boolean isCompleteCrafting() {
         return completeCrafting;
     }
 
     @Override
-    protected void init()
-    {
+    protected void init() {
         super.init();
         final Component buttonDisplay = Component.translatableEscape(module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get()) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
         /*
@@ -164,8 +159,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
                 .build();
         this.addRenderableWidget(doneButton);
-        if (!module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get()))
-        {
+        if (!module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get())) {
             doneButton.active = false;
         }
 
@@ -179,21 +173,17 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     }
 
     @Override
-    protected void containerTick()
-    {
+    protected void containerTick() {
         super.containerTick();
 
         this.switchButton.visible = this.menu.canSwitchRecipes();
     }
 
-    private void onDoneClicked(final Button button)
-    {
-        if (module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get()))
-        {
+    private void onDoneClicked(final Button button) {
+        if (module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get())) {
             final List<ItemStorage> input = new LinkedList<>();
 
-            for (int i = 0; i < (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
-            {
+            for (int i = 0; i < (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++) {
                 final ItemStack stack = menu.craftMatrix.getItem(i);
                 final ItemStack copy = stack.copy();
                 ItemStackUtils.setSize(copy, 1);
@@ -204,8 +194,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
             final ItemStack primaryOutput = menu.craftResult.getItem(0).copy();
             final List<ItemStack> secondaryOutputs = menu.getRemainingItems();
 
-            if (!ItemStackUtils.isEmpty(primaryOutput))
-            {
+            if (!ItemStackUtils.isEmpty(primaryOutput)) {
                 new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutputs, false, module.getProducer().getRuntimeID()).sendToServer();
             }
         }
@@ -215,8 +204,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void renderLabels(@NotNull final GuiGraphics stack, final int mouseX, final int mouseY)
-    {
+    protected void renderLabels(@NotNull final GuiGraphics stack, final int mouseX, final int mouseY) {
         stack.drawString(this.font, Component.translatableEscape("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR, false);
     }
 
@@ -224,23 +212,18 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
-    {
+    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY) {
         final ResourceLocation texture;
-        if (completeCrafting)
-        {
+        if (completeCrafting) {
             texture = CRAFTING_TABLE_GUI_TEXTURES3X3;
-        }
-        else
-        {
+        } else {
             texture = CRAFTING_TABLE_GUI_TEXTURES;
         }
         stack.blit(texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override
-    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
-    {
+    public void render(@NotNull final GuiGraphics stack, int x, int y, float z) {
         super.render(stack, x, y, z);
         this.renderTooltip(stack, x, y);
     }

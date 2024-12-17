@@ -12,10 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Predicate;
 
-public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuilding
-{
-    public AbstractTileEntityWareHouse(final BlockEntityType<? extends AbstractTileEntityWareHouse> warehouse, final BlockPos pos, final BlockState state)
-    {
+public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuilding {
+    public AbstractTileEntityWareHouse(final BlockEntityType<? extends AbstractTileEntityWareHouse> warehouse, final BlockPos pos, final BlockState state) {
         super(warehouse, pos, state);
     }
 
@@ -31,7 +29,7 @@ public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuildi
      * Method used to check if this warehouse holds any of the requested itemstacks.
      *
      * @param itemStack The stack to check with to check with.
-     * @param count the min count.
+     * @param count     the min count.
      * @param ignoreNBT if the nbt value should be ignored.
      * @return True when the warehouse holds a stack, false when not.
      */
@@ -41,9 +39,9 @@ public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuildi
      * Method used to check if this warehouse holds any of the requested itemstacks.
      *
      * @param itemStack The stack to check with to check with.
-     * @param count the min count.
+     * @param count     the min count.
      * @param ignoreNBT if the nbt value should be ignored.
-     * @param leftOver the leftover to keep at the warehouse at all times.
+     * @param leftOver  the leftover to keep at the warehouse at all times.
      * @return True when the warehouse holds a stack, false when not.
      */
     public abstract boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count, final boolean ignoreNBT, final int leftOver);
@@ -51,11 +49,11 @@ public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuildi
     /**
      * Method used to check if this warehouse holds any of the requested itemstacks.
      *
-     * @param itemStack The stack to check with to check with.
-     * @param count the min count.
-     * @param ignoreNBT if the nbt value should be ignored.
+     * @param itemStack    The stack to check with to check with.
+     * @param count        the min count.
+     * @param ignoreNBT    if the nbt value should be ignored.
      * @param ignoreDamage the ignore damage.
-     * @param leftOver the leftover to keep at the warehouse at all times.
+     * @param leftOver     the leftover to keep at the warehouse at all times.
      * @return True when the warehouse holds a stack, false when not.
      */
     public abstract boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count, final boolean ignoreNBT, final boolean ignoreDamage, final int leftOver);

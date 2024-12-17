@@ -9,12 +9,10 @@ import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
-public interface INorsemenEntity extends Enemy, CommandSource, IItemHandlerCapProvider
-{
+public interface INorsemenEntity extends Enemy, CommandSource, IItemHandlerCapProvider {
     @Override
     @Nullable
-    default IItemHandler getItemHandlerCap(final Direction direction)
-    {
+    default IItemHandler getItemHandlerCap(final Direction direction) {
         // LivingEntities have cap registered by forge
         return ItemHandler.ENTITY.getCapability((LivingEntity) this, null);
     }

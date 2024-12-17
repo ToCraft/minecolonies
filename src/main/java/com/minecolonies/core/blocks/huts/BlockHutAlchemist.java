@@ -8,18 +8,15 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Alchemist hut block.
  */
-public class BlockHutAlchemist extends AbstractBlockHut<BlockHutAlchemist>
-{
+public class BlockHutAlchemist extends AbstractBlockHut<BlockHutAlchemist> {
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhutalchemist";
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.alchemist.get();
     }
 }

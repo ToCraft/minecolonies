@@ -13,8 +13,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 /**
  * Message to open the deco build window on the client.
  */
-public class OpenDecoBuildWindowMessage extends OpenBuildWindowMessage
-{
+public class OpenDecoBuildWindowMessage extends OpenBuildWindowMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_deco_build_window", OpenDecoBuildWindowMessage::new);
 
     /**
@@ -25,22 +24,19 @@ public class OpenDecoBuildWindowMessage extends OpenBuildWindowMessage
      * @param path     the path in the pack.
      */
     public OpenDecoBuildWindowMessage(
-      final BlockPos pos,
-      final String packName,
-      final String path,
-      final RotationMirror rotationMirror)
-    {
+            final BlockPos pos,
+            final String packName,
+            final String path,
+            final RotationMirror rotationMirror) {
         super(TYPE, pos, packName, path, rotationMirror);
     }
 
-    protected OpenDecoBuildWindowMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected OpenDecoBuildWindowMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
     }
 
     @Override
-    public AbstractServerPlayMessage createWorkOrderMessage(final BlockPos builder)
-    {
+    public AbstractServerPlayMessage createWorkOrderMessage(final BlockPos builder) {
         return new DecorationBuildRequestMessage(WorkOrderType.BUILD, pos, packName, path, Minecraft.getInstance().level.dimension(), rotationMirror, builder);
     }
 }

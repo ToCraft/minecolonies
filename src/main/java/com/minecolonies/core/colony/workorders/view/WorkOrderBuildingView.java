@@ -11,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The client side representation for a work order that the builder can take to build buildings.
  */
-public class WorkOrderBuildingView extends AbstractWorkOrderView
-{
+public class WorkOrderBuildingView extends AbstractWorkOrderView {
     /**
      * The custom name of a building.
      */
@@ -29,28 +28,22 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
     private String parentTranslationKey;
 
     @Override
-    public Component getDisplayName()
-    {
+    public Component getDisplayName() {
         Component buildingComponent = customBuildingName.isEmpty() ? Component.translatableEscape(getTranslationKey()) : Component.literal(customBuildingName);
 
         Component nameComponent;
-        if (parentTranslationKey.isEmpty())
-        {
+        if (parentTranslationKey.isEmpty()) {
             nameComponent = buildingComponent;
-        }
-        else
-        {
+        } else {
             Component parentComponent =
-              customParentBuildingName.isEmpty() ? Component.translatableEscape(parentTranslationKey) : Component.literal(customParentBuildingName);
+                    customParentBuildingName.isEmpty() ? Component.translatableEscape(parentTranslationKey) : Component.literal(customParentBuildingName);
             nameComponent = Component.translatableEscape("%s / %s", parentComponent, buildingComponent);
         }
         return getOrderTypePrefix(nameComponent);
     }
 
-    private Component getOrderTypePrefix(Component nameComponent)
-    {
-        switch (this.getWorkOrderType())
-        {
+    private Component getOrderTypePrefix(Component nameComponent) {
+        switch (this.getWorkOrderType()) {
             case BUILD:
                 return Component.translatableEscape(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
             case UPGRADE:
@@ -65,8 +58,7 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
     }
 
     @Override
-    public void deserialize(@NotNull RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull RegistryFriendlyByteBuf buf) {
         super.deserialize(buf);
         customBuildingName = buf.readUtf(32767);
         customParentBuildingName = buf.readUtf(32767);
@@ -74,8 +66,7 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
     }
 
     @Override
-    public boolean shouldShowIn(IBuildingView view)
-    {
+    public boolean shouldShowIn(IBuildingView view) {
         return view instanceof ITownHallView || view instanceof BuildingBuilder.View;
     }
 }

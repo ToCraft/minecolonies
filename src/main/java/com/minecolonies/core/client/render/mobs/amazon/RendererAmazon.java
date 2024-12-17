@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for archer amazons.
  */
-public class RendererAmazon extends AbstractRendererAmazon<AbstractEntityAmazon, ModelAmazon>
-{
+public class RendererAmazon extends AbstractRendererAmazon<AbstractEntityAmazon, ModelAmazon> {
     /**
      * Texture of the entity.
      */
@@ -22,15 +21,13 @@ public class RendererAmazon extends AbstractRendererAmazon<AbstractEntityAmazon,
      *
      * @param context the renderManager
      */
-    public RendererAmazon(final EntityRendererProvider.Context context)
-    {
+    public RendererAmazon(final EntityRendererProvider.Context context) {
         super(context, new ModelAmazon(context.bakeLayer(ClientRegistryHandler.AMAZON)), 0.5F);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(@NotNull final AbstractEntityAmazon entity)
-    {
+    public ResourceLocation getTextureLocation(@NotNull final AbstractEntityAmazon entity) {
         return TEXTURE;
     }
 }

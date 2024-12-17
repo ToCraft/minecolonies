@@ -12,29 +12,38 @@ import java.util.Map;
 import static com.minecolonies.api.colony.jobs.ModJobs.FISHERMAN_ID;
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 
-/** List of custom loot tables used by the mod (other than those used in recipes) */
-public final class ModLootTables
-{
-    /** Fisherman primary loot table */
+/**
+ * List of custom loot tables used by the mod (other than those used in recipes)
+ */
+public final class ModLootTables {
+    /**
+     * Fisherman primary loot table
+     */
     public static final ResourceKey<LootTable> FISHING = ResourceKey.create(Registries.LOOT_TABLE, FISHERMAN_ID);
 
-    /** Fisherman secondary fish table */
+    /**
+     * Fisherman secondary fish table
+     */
     public static final ResourceKey<LootTable> FISHING_FISH = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHERMAN_ID + "/fish"));
 
-    /** Fisherman secondary junk table */
+    /**
+     * Fisherman secondary junk table
+     */
     public static final ResourceKey<LootTable> FISHING_JUNK = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHERMAN_ID + "/junk"));
 
-    /** Fisherman secondary treasure table */
+    /**
+     * Fisherman secondary treasure table
+     */
     public static final ResourceKey<LootTable> FISHING_TREASURE = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHERMAN_ID + "/treasure"));
 
-    /** Ids for the fisherman bonus loot tables */
+    /**
+     * Ids for the fisherman bonus loot tables
+     */
     public static final Map<Integer, ResourceKey<LootTable>> FISHERMAN_BONUS = createFishermanBonusMap();
 
-    private static Map<Integer, ResourceKey<LootTable>> createFishermanBonusMap()
-    {
+    private static Map<Integer, ResourceKey<LootTable>> createFishermanBonusMap() {
         final Map<Integer, ResourceKey<LootTable>> map = new HashMap<>();
-        for (int level = 1; level <= MAX_BUILDING_LEVEL; ++level)
-        {
+        for (int level = 1; level <= MAX_BUILDING_LEVEL; ++level) {
             map.put(level, ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHERMAN_ID + "/bonus" + level)));
         }
         return Collections.unmodifiableMap(map);

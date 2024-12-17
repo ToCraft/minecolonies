@@ -32,32 +32,28 @@ import static com.minecolonies.api.util.constant.Constants.CHIEFSWORD_NAME;
 import static com.minecolonies.api.util.constant.Constants.SCIMITAR_NAME;
 
 @EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
-public final class ModItemsInitializer
-{
+public final class ModItemsInitializer {
     public final static DeferredRegister<ArmorMaterial> DEFERRED_REGISTER = DeferredRegister.create(Registries.ARMOR_MATERIAL, Constants.MOD_ID);
 
     /**
      * Spawn egg colors.
      */
-    private static final int PRIMARY_COLOR_BARBARIAN   = 5;
+    private static final int PRIMARY_COLOR_BARBARIAN = 5;
     private static final int SECONDARY_COLOR_BARBARIAN = 700;
-    private static final int PRIMARY_COLOR_PIRATE      = 7;
-    private static final int SECONDARY_COLOR_PIRATE    = 600;
-    private static final int PRIMARY_COLOR_MERC        = 8;
-    private static final int SECONDARY_COLOR_MERC      = 300;
-    private static final int PRIMARY_COLOR_EG          = 10;
-    private static final int SECONDARY_COLOR_EG        = 400;
+    private static final int PRIMARY_COLOR_PIRATE = 7;
+    private static final int SECONDARY_COLOR_PIRATE = 600;
+    private static final int PRIMARY_COLOR_MERC = 8;
+    private static final int SECONDARY_COLOR_MERC = 300;
+    private static final int PRIMARY_COLOR_EG = 10;
+    private static final int SECONDARY_COLOR_EG = 400;
 
-    private ModItemsInitializer()
-    {
+    private ModItemsInitializer() {
         throw new IllegalStateException("Tried to initialize: ModItemsInitializer but this is a Utility class.");
     }
 
     @SubscribeEvent
-    public static void registerItems(RegisterEvent event)
-    {
-        if (event.getRegistryKey().equals(Registries.ITEM))
-        {
+    public static void registerItems(RegisterEvent event) {
+        if (event.getRegistryKey().equals(Registries.ITEM)) {
             ModItemsInitializer.init(event.getRegistry(Registries.ITEM));
         }
     }
@@ -68,8 +64,7 @@ public final class ModItemsInitializer
      * @param registry the registry.
      */
     @SuppressWarnings("PMD.ExcessiveMethodLength")
-    public static void init(final Registry<Item> registry)
-    {
+    public static void init(final Registry<Item> registry) {
         ModItems.scepterLumberjack = new ItemScepterLumberjack(new Item.Properties());
         ModItems.supplyChest = new ItemSupplyChestDeployer(new Item.Properties());
         ModItems.permTool = new ItemScepterPermission(new Item.Properties());
@@ -144,7 +139,6 @@ public final class ModItemsInitializer
         ModItems.magicpotion = new ItemMagicPotion("magicpotion", new Item.Properties());
         ModItems.buildGoggles = new ItemBuildGoggles("build_goggles", new Item.Properties());
         ModItems.scanAnalyzer = new ItemScanAnalyzer("scan_analyzer", new Item.Properties());
-
 
 
         // Tier 2 Food Items
@@ -391,154 +385,154 @@ public final class ModItemsInitializer
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "large_soy_milk_bottle"), ModItems.large_soy_milk_bottle);
 
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "barbarianegg"), new DeferredSpawnEggItem(() -> ModEntities.BARBARIAN,
-          PRIMARY_COLOR_BARBARIAN,
-          SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties())));
+                PRIMARY_COLOR_BARBARIAN,
+                SECONDARY_COLOR_BARBARIAN,
+                (new Item.Properties())));
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "barbarcheregg"), new DeferredSpawnEggItem(() -> ModEntities.ARCHERBARBARIAN,
-          PRIMARY_COLOR_BARBARIAN,
-          SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties())));
+                PRIMARY_COLOR_BARBARIAN,
+                SECONDARY_COLOR_BARBARIAN,
+                (new Item.Properties())));
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "barbchiefegg"), new DeferredSpawnEggItem(() -> ModEntities.CHIEFBARBARIAN,
-          PRIMARY_COLOR_BARBARIAN,
-          SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties())));
+                PRIMARY_COLOR_BARBARIAN,
+                SECONDARY_COLOR_BARBARIAN,
+                (new Item.Properties())));
 
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "pirateegg"), new DeferredSpawnEggItem(() -> ModEntities.PIRATE,
-          PRIMARY_COLOR_PIRATE,
-          SECONDARY_COLOR_PIRATE,
-          (new Item.Properties())));
+                PRIMARY_COLOR_PIRATE,
+                SECONDARY_COLOR_PIRATE,
+                (new Item.Properties())));
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "piratearcheregg"), new DeferredSpawnEggItem(() -> ModEntities.ARCHERPIRATE,
-          PRIMARY_COLOR_PIRATE,
-          SECONDARY_COLOR_PIRATE,
-          (new Item.Properties())));
+                PRIMARY_COLOR_PIRATE,
+                SECONDARY_COLOR_PIRATE,
+                (new Item.Properties())));
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "piratecaptainegg"), new DeferredSpawnEggItem(() -> ModEntities.CHIEFPIRATE,
-          PRIMARY_COLOR_PIRATE,
-          SECONDARY_COLOR_PIRATE,
-          (new Item.Properties())));
+                PRIMARY_COLOR_PIRATE,
+                SECONDARY_COLOR_PIRATE,
+                (new Item.Properties())));
 
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "mummyegg"), new DeferredSpawnEggItem(() -> ModEntities.MUMMY, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "mummyarcheregg"), new DeferredSpawnEggItem(() -> ModEntities.ARCHERMUMMY,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
+                PRIMARY_COLOR_EG,
+                SECONDARY_COLOR_EG,
+                (new Item.Properties())));
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "pharaoegg"), new DeferredSpawnEggItem(() -> ModEntities.PHARAO, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
 
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "shieldmaidenegg"), new DeferredSpawnEggItem(() -> ModEntities.SHIELDMAIDEN,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
+                PRIMARY_COLOR_EG,
+                SECONDARY_COLOR_EG,
+                (new Item.Properties())));
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "norsemenarcheregg"), new DeferredSpawnEggItem(() -> ModEntities.NORSEMEN_ARCHER,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
+                PRIMARY_COLOR_EG,
+                SECONDARY_COLOR_EG,
+                (new Item.Properties())));
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "norsemenchiefegg"), new DeferredSpawnEggItem(() -> ModEntities.NORSEMEN_CHIEF,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
+                PRIMARY_COLOR_EG,
+                SECONDARY_COLOR_EG,
+                (new Item.Properties())));
 
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "amazonegg"), new DeferredSpawnEggItem(() -> ModEntities.AMAZON, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "amazonspearmanegg"), new DeferredSpawnEggItem(() -> ModEntities.AMAZONSPEARMAN,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          new Item.Properties()));
+                PRIMARY_COLOR_EG,
+                SECONDARY_COLOR_EG,
+                new Item.Properties()));
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "amazonchiefegg"), new DeferredSpawnEggItem(() -> ModEntities.AMAZONCHIEF,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
+                PRIMARY_COLOR_EG,
+                SECONDARY_COLOR_EG,
+                (new Item.Properties())));
 
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "mercegg"), new DeferredSpawnEggItem(() -> ModEntities.MERCENARY,
-          PRIMARY_COLOR_MERC,
-          SECONDARY_COLOR_MERC,
-          (new Item.Properties())));
+                PRIMARY_COLOR_MERC,
+                SECONDARY_COLOR_MERC,
+                (new Item.Properties())));
     }
 
     public static final Holder<ArmorMaterial> SANTA_HAT = DEFERRED_REGISTER.register("santa_hat", () -> new ArmorMaterial(
-      // Determines the defense value of this armor material, depending on what armor piece it is.
-      Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-          map.put(ArmorItem.Type.BOOTS, 0);
-          map.put(ArmorItem.Type.LEGGINGS, 0);
-          map.put(ArmorItem.Type.CHESTPLATE, 0);
-          map.put(ArmorItem.Type.HELMET, 0);
-      }),
-      500,
-      SoundEvents.ARMOR_EQUIP_LEATHER,
-      () -> Ingredient.EMPTY,
-      List.of(
-        new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"santa_hat"), "", true)
-      ),
-      0,
-      0
+            // Determines the defense value of this armor material, depending on what armor piece it is.
+            Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                map.put(ArmorItem.Type.BOOTS, 0);
+                map.put(ArmorItem.Type.LEGGINGS, 0);
+                map.put(ArmorItem.Type.CHESTPLATE, 0);
+                map.put(ArmorItem.Type.HELMET, 0);
+            }),
+            500,
+            SoundEvents.ARMOR_EQUIP_LEATHER,
+            () -> Ingredient.EMPTY,
+            List.of(
+                    new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "santa_hat"), "", true)
+            ),
+            0,
+            0
     ));
 
     public static final Holder<ArmorMaterial> PLATE_ARMOR = DEFERRED_REGISTER.register("plate_armor", () -> new ArmorMaterial(
-      // Determines the defense value of this armor material, depending on what armor piece it is.
-      Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-          map.put(ArmorItem.Type.BOOTS, 3);
-          map.put(ArmorItem.Type.LEGGINGS, 6);
-          map.put(ArmorItem.Type.CHESTPLATE, 8);
-          map.put(ArmorItem.Type.HELMET, 3);
-      }),
-      37,
-      SoundEvents.ARMOR_EQUIP_IRON,
-      () -> Ingredient.of(Items.IRON_INGOT),
-      List.of(
-        new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"plate_armor"), "", true)
-      ),
-      0,
-      0
+            // Determines the defense value of this armor material, depending on what armor piece it is.
+            Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                map.put(ArmorItem.Type.BOOTS, 3);
+                map.put(ArmorItem.Type.LEGGINGS, 6);
+                map.put(ArmorItem.Type.CHESTPLATE, 8);
+                map.put(ArmorItem.Type.HELMET, 3);
+            }),
+            37,
+            SoundEvents.ARMOR_EQUIP_IRON,
+            () -> Ingredient.of(Items.IRON_INGOT),
+            List.of(
+                    new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "plate_armor"), "", true)
+            ),
+            0,
+            0
     ));
 
     public static final Holder<ArmorMaterial> GOGGLES = DEFERRED_REGISTER.register("build_goggles", () -> new ArmorMaterial(
-      // Determines the defense value of this armor material, depending on what armor piece it is.
-      Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-          map.put(ArmorItem.Type.BOOTS, 0);
-          map.put(ArmorItem.Type.LEGGINGS, 0);
-          map.put(ArmorItem.Type.CHESTPLATE, 0);
-          map.put(ArmorItem.Type.HELMET, 0);
-      }),
-      20,
-      SoundEvents.ARMOR_EQUIP_LEATHER,
-      () -> Ingredient.EMPTY,
-      List.of(
-        new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"build_goggles"), "", true)
-      ),
-      0,
-      0
+            // Determines the defense value of this armor material, depending on what armor piece it is.
+            Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                map.put(ArmorItem.Type.BOOTS, 0);
+                map.put(ArmorItem.Type.LEGGINGS, 0);
+                map.put(ArmorItem.Type.CHESTPLATE, 0);
+                map.put(ArmorItem.Type.HELMET, 0);
+            }),
+            20,
+            SoundEvents.ARMOR_EQUIP_LEATHER,
+            () -> Ingredient.EMPTY,
+            List.of(
+                    new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "build_goggles"), "", true)
+            ),
+            0,
+            0
     ));
 
     public static final Holder<ArmorMaterial> PIRATE_ARMOR_1 = DEFERRED_REGISTER.register("pirate_armor_1", () -> new ArmorMaterial(
-      // Determines the defense value of this armor material, depending on what armor piece it is.
-      Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-          map.put(ArmorItem.Type.BOOTS, 2);
-          map.put(ArmorItem.Type.LEGGINGS, 5);
-          map.put(ArmorItem.Type.CHESTPLATE, 6);
-          map.put(ArmorItem.Type.HELMET, 2);
-      }),
-      5,
-      SoundEvents.ARMOR_EQUIP_LEATHER,
-      () -> Ingredient.of(Items.DIAMOND),
-      List.of(
-        new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"pirate"), "", true)
-      ),
-      0,
-      0
+            // Determines the defense value of this armor material, depending on what armor piece it is.
+            Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                map.put(ArmorItem.Type.BOOTS, 2);
+                map.put(ArmorItem.Type.LEGGINGS, 5);
+                map.put(ArmorItem.Type.CHESTPLATE, 6);
+                map.put(ArmorItem.Type.HELMET, 2);
+            }),
+            5,
+            SoundEvents.ARMOR_EQUIP_LEATHER,
+            () -> Ingredient.of(Items.DIAMOND),
+            List.of(
+                    new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "pirate"), "", true)
+            ),
+            0,
+            0
     ));
 
     public static final Holder<ArmorMaterial> PIRATE_ARMOR_2 = DEFERRED_REGISTER.register("pirate_armor_2", () -> new ArmorMaterial(
-      // Determines the defense value of this armor material, depending on what armor piece it is.
-      Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-          map.put(ArmorItem.Type.BOOTS, 3);
-          map.put(ArmorItem.Type.LEGGINGS, 6);
-          map.put(ArmorItem.Type.CHESTPLATE, 8);
-          map.put(ArmorItem.Type.HELMET, 3);
-      }),
-      5,
-      SoundEvents.ARMOR_EQUIP_LEATHER,
-      () -> Ingredient.of(Items.DIAMOND),
-      List.of(
-        new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "pirate2"), "", true)
-      ),
-      2,
-      0
+            // Determines the defense value of this armor material, depending on what armor piece it is.
+            Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+                map.put(ArmorItem.Type.BOOTS, 3);
+                map.put(ArmorItem.Type.LEGGINGS, 6);
+                map.put(ArmorItem.Type.CHESTPLATE, 8);
+                map.put(ArmorItem.Type.HELMET, 3);
+            }),
+            5,
+            SoundEvents.ARMOR_EQUIP_LEATHER,
+            () -> Ingredient.of(Items.DIAMOND),
+            List.of(
+                    new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "pirate2"), "", true)
+            ),
+            2,
+            0
     ));
 }

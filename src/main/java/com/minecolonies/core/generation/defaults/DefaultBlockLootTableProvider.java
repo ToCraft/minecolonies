@@ -33,16 +33,13 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class DefaultBlockLootTableProvider extends BlockLootSubProvider
-{
-    public DefaultBlockLootTableProvider(@NotNull final HolderLookup.Provider provider)
-    {
+public class DefaultBlockLootTableProvider extends BlockLootSubProvider {
+    public DefaultBlockLootTableProvider(@NotNull final HolderLookup.Provider provider) {
         super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
     }
 
     @Override
-    public void generate()
-    {
+    public void generate() {
         HolderLookup.RegistryLookup<Enchantment> enchantments = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
         saveBlocks(Arrays.asList(ModBlocks.getHuts()));
 
@@ -59,17 +56,16 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
         saveBlock(ModBlocks.blockIronGate);
         saveBlock(ModBlocks.blockWoodenGate);
         saveBlock(ModBlocks.blockCompostedDirt,
-          lootPool -> lootPool.add(AlternativesEntry.alternatives()
-                                     .otherwise(LootItem.lootTableItem(ModBlocks.blockCompostedDirt)
-                                                  .when(ModLootConditions.hasSilkTouch(enchantments)))
-                                     .otherwise(LootItem.lootTableItem(Blocks.DIRT)
-                                                  .when(ExplosionCondition.survivesExplosion()))));
+                lootPool -> lootPool.add(AlternativesEntry.alternatives()
+                        .otherwise(LootItem.lootTableItem(ModBlocks.blockCompostedDirt)
+                                .when(ModLootConditions.hasSilkTouch(enchantments)))
+                        .otherwise(LootItem.lootTableItem(Blocks.DIRT)
+                                .when(ExplosionCondition.survivesExplosion()))));
 
         saveBlock(ModBlocks.farmland, lootPool -> lootPool.add(AlternativesEntry.alternatives().otherwise(LootItem.lootTableItem(Blocks.DIRT))));
         saveBlock(ModBlocks.floodedFarmland, lootPool -> lootPool.add(AlternativesEntry.alternatives().otherwise(LootItem.lootTableItem(Blocks.DIRT))));
 
-        for (Block block : ModBlocks.getCrops())
-        {
+        for (Block block : ModBlocks.getCrops()) {
             final LootItemBlockStatePropertyCondition.Builder cropCondition = LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 6));
             saveBlock(block, lootPool -> lootPool.add(LootItem.lootTableItem(block.asItem()).when(cropCondition).apply(ApplyBonusCount.addBonusBinomialDistributionCount(enchantments.getOrThrow(Enchantments.FORTUNE), 0.5714286F, 3)).otherwise(LootItem.lootTableItem(block.asItem()))));
         }
@@ -78,63 +74,56 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
         //saveBlock(ModBlocks.blockDecorationPlaceholder);
     }
 
-    private <T extends Block> void saveBlocks(@NotNull final List<T> blocks)
-    {
-        for (final Block block : blocks)
-        {
+    private <T extends Block> void saveBlocks(@NotNull final List<T> blocks) {
+        for (final Block block : blocks) {
             saveBlock(block);
         }
     }
 
-    private void saveBlock(@NotNull final Block block)
-    {
+    private void saveBlock(@NotNull final Block block) {
         final LootPoolSingletonContainer.Builder<?> item = LootItem.lootTableItem(block);
-        if (block instanceof AbstractBlockHut || block instanceof BlockMinecoloniesRack)
-        {
+        if (block instanceof AbstractBlockHut || block instanceof BlockMinecoloniesRack) {
             item.apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY));
         }
 
         this.saveBlock(block, lootPool -> lootPool.add(item).when(ExplosionCondition.survivesExplosion()));
     }
 
-    private void saveBlock(@NotNull final Block block, final Consumer<Builder> lootPoolConfigurer)
-    {
-            final Builder lootPoolbuilder = LootPool.lootPool();
-            lootPoolConfigurer.accept(lootPoolbuilder);
-            add(block, LootTable.lootTable().withPool(lootPoolbuilder));
+    private void saveBlock(@NotNull final Block block, final Consumer<Builder> lootPoolConfigurer) {
+        final Builder lootPoolbuilder = LootPool.lootPool();
+        lootPoolConfigurer.accept(lootPoolbuilder);
+        add(block, LootTable.lootTable().withPool(lootPoolbuilder));
     }
 
-    private void saveBannerBlock(@NotNull final Block block)
-    {
-            add(block,
-              LootTable.lootTable().withPool(LootPool.lootPool()
-                                               .add(LootItem.lootTableItem(block))
-                                               .apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY))
-                                               .apply(SetBannerPatternFunction.setBannerPattern(false))
-                                               .when(ExplosionCondition.survivesExplosion())
-              ));
+    private void saveBannerBlock(@NotNull final Block block) {
+        add(block,
+                LootTable.lootTable().withPool(LootPool.lootPool()
+                        .add(LootItem.lootTableItem(block))
+                        .apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY))
+                        .apply(SetBannerPatternFunction.setBannerPattern(false))
+                        .when(ExplosionCondition.survivesExplosion())
+                ));
     }
 
     @Override
-    protected Iterable<Block> getKnownBlocks()
-    {
+    protected Iterable<Block> getKnownBlocks() {
         return Stream.concat(Arrays.stream(ModBlocks.getCrops()), Stream.concat(Arrays.stream(ModBlocks.getHuts()), Stream.of(
-            ModBlocks.blockHutWareHouse,
-            ModBlocks.blockStash,
-            //ModBlocks.blockConstructionTape, // no loot table
-            ModBlocks.blockRack,
-            ModBlocks.blockWayPoint,
-            ModBlocks.blockBarrel,
-            ModBlocks.blockScarecrow,
-            ModBlocks.blockPlantationField,
-            ModBlocks.blockColonyBanner,
-            ModBlocks.blockColonyWallBanner,
-            ModBlocks.blockIronGate,
-            ModBlocks.blockWoodenGate,
-            ModBlocks.blockCompostedDirt,
-            //ModBlocks.blockDecorationPlaceholder, // creative only
-            ModBlocks.floodedFarmland,
-            ModBlocks.farmland
+                ModBlocks.blockHutWareHouse,
+                ModBlocks.blockStash,
+                //ModBlocks.blockConstructionTape, // no loot table
+                ModBlocks.blockRack,
+                ModBlocks.blockWayPoint,
+                ModBlocks.blockBarrel,
+                ModBlocks.blockScarecrow,
+                ModBlocks.blockPlantationField,
+                ModBlocks.blockColonyBanner,
+                ModBlocks.blockColonyWallBanner,
+                ModBlocks.blockIronGate,
+                ModBlocks.blockWoodenGate,
+                ModBlocks.blockCompostedDirt,
+                //ModBlocks.blockDecorationPlaceholder, // creative only
+                ModBlocks.floodedFarmland,
+                ModBlocks.farmland
         )).map(Block.class::cast)).toList();
     }
 }

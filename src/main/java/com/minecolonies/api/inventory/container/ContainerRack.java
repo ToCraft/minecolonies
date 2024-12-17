@@ -24,8 +24,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * The container class for the rack.
  */
-public class ContainerRack extends AbstractContainerMenu
-{
+public class ContainerRack extends AbstractContainerMenu {
     /**
      * The inventory.
      */
@@ -54,8 +53,7 @@ public class ContainerRack extends AbstractContainerMenu
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerRack fromFriendlyByteBuf(final int windowId, final Inventory inv, final RegistryFriendlyByteBuf packetBuffer)
-    {
+    public static ContainerRack fromFriendlyByteBuf(final int windowId, final Inventory inv, final RegistryFriendlyByteBuf packetBuffer) {
         final BlockPos tePos = packetBuffer.readBlockPos();
         final BlockPos neighborPos = packetBuffer.readBlockPos();
         return new ContainerRack(windowId, inv, tePos, neighborPos);
@@ -69,27 +67,20 @@ public class ContainerRack extends AbstractContainerMenu
      * @param rack     te world pos.
      * @param neighbor neighbor te world pos
      */
-    public ContainerRack(final int windowId, final Inventory inv, final BlockPos rack, final BlockPos neighbor)
-    {
+    public ContainerRack(final int windowId, final Inventory inv, final BlockPos rack, final BlockPos neighbor) {
         super(ModContainers.rackInv.get(), windowId);
 
         final AbstractTileEntityRack abstractTileEntityRack = (AbstractTileEntityRack) inv.player.level().getBlockEntity(rack);
         // TODO: bug, what if neighbor is actually bp.ZERO? (unlikely to happen)
         final AbstractTileEntityRack neighborRack = neighbor.equals(BlockPos.ZERO) ? null : (AbstractTileEntityRack) inv.player.level().getBlockEntity(neighbor);
 
-        if (neighborRack != null)
-        {
-            if (abstractTileEntityRack.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT) != RackType.NO_RENDER)
-            {
+        if (neighborRack != null) {
+            if (abstractTileEntityRack.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT) != RackType.NO_RENDER) {
                 this.inventory = new CombinedInvWrapper(abstractTileEntityRack.getInventory(), neighborRack.getInventory());
-            }
-            else
-            {
+            } else {
                 this.inventory = new CombinedInvWrapper(neighborRack.getInventory(), abstractTileEntityRack.getInventory());
             }
-        }
-        else
-        {
+        } else {
             this.inventory = abstractTileEntityRack.getInventory();
         }
 
@@ -102,16 +93,13 @@ public class ContainerRack extends AbstractContainerMenu
         final int extraOffset = inventorySize <= INVENTORY_BAR_SIZE ? 0 : 2;
         int index = 0;
 
-        for (int j = 0; j < Math.min(this.inventorySize, INVENTORY_BAR_SIZE); ++j)
-        {
-            for (int k = 0; k < columns; ++k)
-            {
-                if (index < size)
-                {
+        for (int j = 0; j < Math.min(this.inventorySize, INVENTORY_BAR_SIZE); ++j) {
+            for (int k = 0; k < columns; ++k) {
+                if (index < size) {
                     this.addSlot(
-                      new SlotItemHandler(inventory, index,
-                        INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
-                        PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH));
+                            new SlotItemHandler(inventory, index,
+                                    INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
+                                    PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH));
                     index++;
                 }
             }
@@ -120,36 +108,31 @@ public class ContainerRack extends AbstractContainerMenu
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
         int i;
-        for (i = 0; i < INVENTORY_ROWS; i++)
-        {
-            for (int j = 0; j < INVENTORY_COLUMNS; j++)
-            {
+        for (i = 0; i < INVENTORY_ROWS; i++) {
+            for (int j = 0; j < INVENTORY_COLUMNS; j++) {
                 addSlot(new Slot(
-                  inv,
-                  j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                  PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                  PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
-                    + i * PLAYER_INVENTORY_OFFSET_EACH
+                        inv,
+                        j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
+                                + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
 
-        for (i = 0; i < INVENTORY_COLUMNS; i++)
-        {
+        for (i = 0; i < INVENTORY_COLUMNS; i++) {
             addSlot(new Slot(
-              inv, i,
-              PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-              PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
-                INVENTORY_BAR_SIZE)
+                    inv, i,
+                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                    PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
+                            INVENTORY_BAR_SIZE)
             ));
         }
     }
 
     @Override
-    public void clicked(int slotId, int dragType, @NotNull ClickType clickTypeIn, Player player)
-    {
-        if (player.level().isClientSide || slotId >= inventory.getSlots() || slotId < 0)
-        {
+    public void clicked(int slotId, int dragType, @NotNull ClickType clickTypeIn, Player player) {
+        if (player.level().isClientSide || slotId >= inventory.getSlots() || slotId < 0) {
             super.clicked(slotId, dragType, clickTypeIn, player);
             return;
         }
@@ -157,20 +140,17 @@ public class ContainerRack extends AbstractContainerMenu
         super.clicked(slotId, dragType, clickTypeIn, player);
         final ItemStack afterStack = inventory.getStackInSlot(slotId).copy();
 
-        if (!ItemStack.matches(currentStack, afterStack))
-        {
+        if (!ItemStack.matches(currentStack, afterStack)) {
             this.updateRacks(afterStack);
         }
     }
 
     @NotNull
     @Override
-    public ItemStack quickMoveStack(final Player playerIn, final int index)
-    {
+    public ItemStack quickMoveStack(final Player playerIn, final int index) {
         final Slot slot = this.slots.get(index);
 
-        if (slot == null || !slot.hasItem())
-        {
+        if (slot == null || !slot.hasItem()) {
             return ItemStackUtils.EMPTY;
         }
 
@@ -178,30 +158,22 @@ public class ContainerRack extends AbstractContainerMenu
 
         final int maxIndex = this.inventorySize * INVENTORY_COLUMNS;
 
-        if (index < maxIndex)
-        {
-            if (!this.moveItemStackTo(stackCopy, maxIndex, this.slots.size(), true))
-            {
+        if (index < maxIndex) {
+            if (!this.moveItemStackTo(stackCopy, maxIndex, this.slots.size(), true)) {
                 return ItemStackUtils.EMPTY;
             }
-        }
-        else if (!this.moveItemStackTo(stackCopy, 0, maxIndex, false))
-        {
+        } else if (!this.moveItemStackTo(stackCopy, 0, maxIndex, false)) {
             return ItemStackUtils.EMPTY;
         }
 
-        if (ItemStackUtils.getSize(stackCopy) == 0)
-        {
+        if (ItemStackUtils.getSize(stackCopy) == 0) {
             slot.set(ItemStackUtils.EMPTY);
-        }
-        else
-        {
+        } else {
             slot.set(stackCopy);
             slot.setChanged();
         }
 
-        if (playerIn instanceof ServerPlayer)
-        {
+        if (playerIn instanceof ServerPlayer) {
             this.updateRacks(stackCopy);
         }
 
@@ -209,12 +181,10 @@ public class ContainerRack extends AbstractContainerMenu
     }
 
     @Override
-    protected boolean moveItemStackTo(final ItemStack stack, final int startIndex, final int endIndex, final boolean reverseDirection)
-    {
+    protected boolean moveItemStackTo(final ItemStack stack, final int startIndex, final int endIndex, final boolean reverseDirection) {
         final ItemStack before = stack.copy();
-        final boolean merge =  super.moveItemStackTo(stack, startIndex, endIndex, reverseDirection);
-        if (merge)
-        {
+        final boolean merge = super.moveItemStackTo(stack, startIndex, endIndex, reverseDirection);
+        if (merge) {
             this.updateRacks(before);
         }
         return merge;
@@ -222,22 +192,20 @@ public class ContainerRack extends AbstractContainerMenu
 
     /**
      * Update the racks (combined inv and warehouse).
+     *
      * @param stack the stack to set.
      */
-    private void updateRacks(final ItemStack stack)
-    {
+    private void updateRacks(final ItemStack stack) {
         rack.updateItemStorage();
         rack.updateWarehouseIfAvailable(stack);
-        if (neighborRack != null)
-        {
+        if (neighborRack != null) {
             neighborRack.updateItemStorage();
             neighborRack.updateWarehouseIfAvailable(stack);
         }
     }
 
     @Override
-    public boolean stillValid(final Player playerIn)
-    {
+    public boolean stillValid(final Player playerIn) {
         return true;
     }
 }

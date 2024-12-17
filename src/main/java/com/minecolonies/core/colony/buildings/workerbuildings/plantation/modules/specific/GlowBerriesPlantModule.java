@@ -20,8 +20,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_EX
  *     <li>All requirements from {@link DownwardsGrowingPlantModule}</li>
  * </ol>
  */
-public class GlowBerriesPlantModule extends DownwardsGrowingPlantModule
-{
+public class GlowBerriesPlantModule extends DownwardsGrowingPlantModule {
     /**
      * Default constructor.
      *
@@ -30,26 +29,22 @@ public class GlowBerriesPlantModule extends DownwardsGrowingPlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public GlowBerriesPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
-    {
+    public GlowBerriesPlantModule(final IField field, final String fieldTag, final String workTag, final Item item) {
         super(field, fieldTag, workTag, item);
     }
 
     @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
+    protected boolean isValidHarvestBlock(final BlockState blockState) {
         return blockState.getBlock() == Blocks.CAVE_VINES || blockState.getBlock() == Blocks.CAVE_VINES_PLANT;
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
-    {
+    public ResourceLocation getRequiredResearchEffect() {
         return PLANTATION_EXOTIC;
     }
 
     @Override
-    public EquipmentTypeEntry getRequiredTool()
-    {
+    public EquipmentTypeEntry getRequiredTool() {
         return ModEquipmentTypes.none.get();
     }
 }

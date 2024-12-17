@@ -10,15 +10,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class of the Stonemason job.
  */
-public class JobStonemason extends AbstractJobCrafter<EntityAIWorkStonemason, JobStonemason>
-{
+public class JobStonemason extends AbstractJobCrafter<EntityAIWorkStonemason, JobStonemason> {
     /**
      * Instantiates the job for the Stonemason.
      *
      * @param entity the citizen who becomes a Sawmill
      */
-    public JobStonemason(final ICitizenData entity)
-    {
+    public JobStonemason(final ICitizenData entity) {
         super(entity);
     }
 
@@ -29,14 +27,12 @@ public class JobStonemason extends AbstractJobCrafter<EntityAIWorkStonemason, Jo
      */
     @NotNull
     @Override
-    public EntityAIWorkStonemason generateAI()
-    {
+    public EntityAIWorkStonemason generateAI() {
         return new EntityAIWorkStonemason(this);
     }
 
     @Override
-    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
-    {
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker) {
         worker.queueSound(SoundEvents.DEEPSLATE_TILES_HIT, blockPos, 5, 1, 1.0f, 2.0f);
     }
 }

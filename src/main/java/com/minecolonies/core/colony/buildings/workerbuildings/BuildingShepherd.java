@@ -29,8 +29,7 @@ import java.util.stream.StreamSupport;
 /**
  * Creates a new building for the Shepherd.
  */
-public class BuildingShepherd extends AbstractBuilding
-{
+public class BuildingShepherd extends AbstractBuilding {
     /**
      * Automatic dyeing.
      */
@@ -62,29 +61,24 @@ public class BuildingShepherd extends AbstractBuilding
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingShepherd(final IColony c, final BlockPos l)
-    {
+    public BuildingShepherd(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return SHEPHERD;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public boolean canEat(final ItemStack stack)
-    {
-        if (stack.getItem() == Items.WHEAT)
-        {
+    public boolean canEat(final ItemStack stack) {
+        if (stack.getItem() == Items.WHEAT) {
             return false;
         }
         return super.canEat(stack);
@@ -93,17 +87,14 @@ public class BuildingShepherd extends AbstractBuilding
     /**
      * Sheep herding module
      */
-    public static class HerdingModule extends AnimalHerdingModule
-    {
-        public HerdingModule()
-        {
+    public static class HerdingModule extends AnimalHerdingModule {
+        public HerdingModule() {
             super(ModJobs.shepherd.get(), a -> a instanceof Sheep, new ItemStack(Items.WHEAT, 2));
         }
 
         @NotNull
         @Override
-        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal)
-        {
+        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal) {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
 
             recipes.add(new GenericRecipe(null, ItemStack.EMPTY,

@@ -27,8 +27,7 @@ import static com.minecolonies.core.entity.ai.minimal.EntityAICitizenWander.Wand
 /**
  * Entity action to wander randomly around.
  */
-public class EntityAICitizenWander implements IStateAI
-{
+public class EntityAICitizenWander implements IStateAI {
     /**
      * Chance to enter the leisure state.
      */
@@ -37,8 +36,7 @@ public class EntityAICitizenWander implements IStateAI
     /**
      * The different types of AIStates related to eating.
      */
-    public enum WanderState implements IState
-    {
+    public enum WanderState implements IState {
         GO_TO_LEISURE_SITE,
         WANDER_AT_LEISURE_SITE,
         READ_A_BOOK
@@ -70,8 +68,7 @@ public class EntityAICitizenWander implements IStateAI
      * @param citizen the citizen.
      * @param speed   the speed.
      */
-    public EntityAICitizenWander(final EntityCitizen citizen, final double speed)
-    {
+    public EntityAICitizenWander(final EntityCitizen citizen, final double speed) {
         super();
         this.citizen = citizen;
         this.speed = speed;
@@ -82,29 +79,24 @@ public class EntityAICitizenWander implements IStateAI
         citizen.getCitizenAI().addTransition(new TickingTransition<>(READ_A_BOOK, () -> true, this::readABook, 20));
     }
 
-    private IState readABook()
-    {
-        if (leisureSite == null)
-        {
+    private IState readABook() {
+        if (leisureSite == null) {
             walkTo = null;
             return CitizenAIState.IDLE;
         }
 
-        if (walkTo != null)
-        {
-            if (!citizen.isWorkerAtSiteWithMove(walkTo, 3))
-            {
+        if (walkTo != null) {
+            if (!citizen.isWorkerAtSiteWithMove(walkTo, 3)) {
                 return READ_A_BOOK;
             }
 
-            if (citizen.getRandom().nextInt(100) < 5)
-            {
+            if (citizen.getRandom().nextInt(100) < 5) {
                 citizen.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
                 walkTo = null;
                 leisureSite = null;
                 citizen.getCitizenData()
-                  .getCitizenSkillHandler()
-                  .tryLevelUpIntelligence(citizen.getCitizenData().getRandom(), EntityAIStudy.ONE_IN_X_CHANCE, citizen.getCitizenData());
+                        .getCitizenSkillHandler()
+                        .tryLevelUpIntelligence(citizen.getCitizenData().getRandom(), EntityAIStudy.ONE_IN_X_CHANCE, citizen.getCitizenData());
                 return CitizenAIState.IDLE;
             }
 
@@ -113,76 +105,59 @@ public class EntityAICitizenWander implements IStateAI
         }
 
         final BlockEntity blockEntity = citizen.level().getBlockEntity(leisureSite);
-        if (blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary)
-        {
+        if (blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary) {
             walkTo = ((BuildingLibrary) ((TileEntityColonyBuilding) blockEntity).getBuilding()).getRandomBookShelf();
         }
 
         return READ_A_BOOK;
     }
 
-    private IState goToLeisureSite()
-    {
-        if (leisureSite == null)
-        {
+    private IState goToLeisureSite() {
+        if (leisureSite == null) {
             walkTo = null;
             return CitizenAIState.IDLE;
         }
 
-        if (!citizen.isWorkerAtSiteWithMove(leisureSite, 3))
-        {
+        if (!citizen.isWorkerAtSiteWithMove(leisureSite, 3)) {
             return GO_TO_LEISURE_SITE;
         }
 
         return WANDER_AT_LEISURE_SITE;
     }
 
-    private IState wanderAtLeisureSite()
-    {
-        if (leisureSite == null || citizen.getRandom().nextInt(60 * 5) < 1)
-        {
+    private IState wanderAtLeisureSite() {
+        if (leisureSite == null || citizen.getRandom().nextInt(60 * 5) < 1) {
             leisureSite = null;
             walkTo = null;
             return CitizenAIState.IDLE;
         }
 
-        if (walkTo != null && !citizen.isWorkerAtSiteWithMove(walkTo, 3))
-        {
+        if (walkTo != null && !citizen.isWorkerAtSiteWithMove(walkTo, 3)) {
             return WANDER_AT_LEISURE_SITE;
         }
 
-        if (citizen.isPassenger())
-        {
+        if (citizen.isPassenger()) {
             return WANDER_AT_LEISURE_SITE;
         }
 
         final BlockEntity blockEntity = citizen.level().getBlockEntity(leisureSite);
-        if (blockEntity instanceof IBlueprintDataProviderBE)
-        {
-            if (walkTo == null && citizen.getRandom().nextBoolean())
-            {
+        if (blockEntity instanceof IBlueprintDataProviderBE) {
+            if (walkTo == null && citizen.getRandom().nextBoolean()) {
                 citizen.getNavigation()
-                  .moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners());
+                        .moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners());
             }
             if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary
-                  && citizen.getRandom().nextInt(100) < 5)
-            {
+                    && citizen.getRandom().nextInt(100) < 5) {
                 return READ_A_BOOK;
-            }
-            else
-            {
-                if (walkTo == null)
-                {
+            } else {
+                if (walkTo == null) {
                     final Map<String, Set<BlockPos>> map = ((IBlueprintDataProviderBE) blockEntity).getWorldTagNamePosMap();
                     final List<BlockPos> sittingPos = new ArrayList<>(map.getOrDefault(TAG_SITTING, Collections.emptySet()));
-                    if (!sittingPos.isEmpty())
-                    {
+                    if (!sittingPos.isEmpty()) {
                         walkTo = sittingPos.get(citizen.getRandom().nextInt(sittingPos.size()));
                         return WANDER_AT_LEISURE_SITE;
                     }
-                }
-                else
-                {
+                } else {
                     SittingEntity.sitDown(walkTo, citizen, TICKS_SECOND * 60);
                     walkTo = null;
                 }
@@ -193,31 +168,23 @@ public class EntityAICitizenWander implements IStateAI
         return CitizenAIState.IDLE;
     }
 
-    private IState decide()
-    {
-        if (!canUse())
-        {
+    private IState decide() {
+        if (!canUse()) {
             return CitizenAIState.IDLE;
         }
 
         final int randomBit = citizen.getRandom().nextInt(100);
-        if (randomBit < LEISURE_CHANCE)
-        {
+        if (randomBit < LEISURE_CHANCE) {
             leisureSite = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getRandomLeisureSite();
-            if (leisureSite == null)
-            {
-                if (citizen.getCitizenData().getHomeBuilding() != null)
-                {
+            if (leisureSite == null) {
+                if (citizen.getCitizenData().getHomeBuilding() != null) {
                     leisureSite = citizen.getCitizenData().getHomeBuilding().getPosition();
-                }
-                else
-                {
+                } else {
                     leisureSite = citizen.getCitizenColonyHandler().getColonyOrRegister().getCenter();
                 }
             }
 
-            if (leisureSite != null)
-            {
+            if (leisureSite != null) {
                 citizen.getCitizenAI().setCurrentDelay(60 * 20);
                 return GO_TO_LEISURE_SITE;
             }
@@ -227,9 +194,8 @@ public class EntityAICitizenWander implements IStateAI
         return CitizenAIState.IDLE;
     }
 
-    public boolean canUse()
-    {
+    public boolean canUse() {
         return citizen.getNavigation().isDone() && !citizen.isBaby()
-                 && !(citizen.getCitizenData().getJob() instanceof AbstractJobGuard);
+                && !(citizen.getCitizenData().getJob() instanceof AbstractJobGuard);
     }
 }

@@ -29,8 +29,7 @@ import java.util.function.Predicate;
  * Interface for the managers for registered structures.
  * Buildings, Fields, Decorations, etc.
  */
-public interface IRegisteredStructureManager
-{
+public interface IRegisteredStructureManager {
     /**
      * Read the buildings from NBT.
      *

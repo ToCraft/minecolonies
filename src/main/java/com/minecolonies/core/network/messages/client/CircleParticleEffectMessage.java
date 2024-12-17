@@ -16,8 +16,7 @@ import java.util.Random;
 /**
  * Handles spawning item particle effects in a circle around a target.
  */
-public class CircleParticleEffectMessage extends AbstractClientPlayMessage
-{
+public class CircleParticleEffectMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "circle_particle_effect", CircleParticleEffectMessage::new);
 
     /**
@@ -49,8 +48,7 @@ public class CircleParticleEffectMessage extends AbstractClientPlayMessage
      * @param type  the particle type.
      * @param stage the stage.
      */
-    public CircleParticleEffectMessage(final Vec3 pos, final SimpleParticleType type, final int stage)
-    {
+    public CircleParticleEffectMessage(final Vec3 pos, final SimpleParticleType type, final int stage) {
         super(TYPE);
         this.posX = pos.x;
         this.posY = pos.y - 0.5;
@@ -59,8 +57,7 @@ public class CircleParticleEffectMessage extends AbstractClientPlayMessage
         this.type = type;
     }
 
-    public CircleParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public CircleParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.posX = buf.readDouble();
         this.posY = buf.readDouble();
@@ -70,8 +67,7 @@ public class CircleParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeDouble(this.posX);
         buf.writeDouble(this.posY);
         buf.writeDouble(this.posZ);
@@ -80,22 +76,20 @@ public class CircleParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         final double x = 1.0 * Math.cos(stage * 45.0) + posX;
         final double z = 1.0 * Math.sin(stage * 45.0) + posZ;
 
-        for (int i = 0; i < 5; ++i)
-        {
+        for (int i = 0; i < 5; ++i) {
             final Vec3 randomPos = new Vec3(RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D);
             final Vec3 randomOffset = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
             player.level().addParticle(type,
-              x + randomOffset.x,
-              posY + randomOffset.y,
-              z + randomOffset.z,
-              randomPos.x,
-              randomPos.y + 0.05D,
-              randomPos.z);
+                    x + randomOffset.x,
+                    posY + randomOffset.y,
+                    z + randomOffset.z,
+                    randomPos.x,
+                    randomPos.y + 0.05D,
+                    randomPos.z);
         }
     }
 }

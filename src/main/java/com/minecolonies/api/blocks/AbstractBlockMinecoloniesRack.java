@@ -8,17 +8,15 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
-public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinecoloniesRack<B>> extends AbstractBlockMinecolonies<B> implements EntityBlock
-{
+public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinecoloniesRack<B>> extends AbstractBlockMinecolonies<B> implements EntityBlock {
     public static final EnumProperty<RackType> VARIANT = EnumProperty.create("variant", RackType.class);
 
     /**
      * The position it faces.
      */
-    public static final DirectionProperty      FACING       = HorizontalDirectionalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
-    public AbstractBlockMinecoloniesRack(final Properties properties)
-    {
+    public AbstractBlockMinecoloniesRack(final Properties properties) {
         super(properties.noOcclusion());
     }
 
@@ -28,8 +26,7 @@ public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinec
      * @param block the block to check.
      * @return true if so.
      */
-    public static boolean shouldBlockBeReplacedWithRack(final Block block)
-    {
+    public static boolean shouldBlockBeReplacedWithRack(final Block block) {
         return block == Blocks.CHEST || block instanceof AbstractBlockMinecoloniesRack;
     }
 }

@@ -7,11 +7,9 @@ import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResourcefulBeesCompat implements IBeehiveCompat
-{
+public class ResourcefulBeesCompat implements IBeehiveCompat {
     @Override
-    public List<ItemStack> getCombsFromHive(BlockPos pos, Level world, int amount)
-    {
+    public List<ItemStack> getCombsFromHive(BlockPos pos, Level world, int amount) {
         List<ItemStack> list = new ArrayList<>();
         /*if (world.getBlockEntity(pos) instanceof TieredBeehiveTileEntity)
         {

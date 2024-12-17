@@ -13,7 +13,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.sounds.SoundEvents;
-import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -23,14 +22,13 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  *
  * @param <B> Class extending {@link AbstractBuildingView}.
  */
-public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> extends AbstractModuleWindow
-{
+public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> extends AbstractModuleWindow {
     /**
      * Type B is a class that extends {@link com.minecolonies.core.colony.buildings.views.AbstractBuildingView}.
      */
-    protected final B      building;
-    private final   Text   title;
-    private final   Button buttonBuild;
+    protected final B building;
+    private final Text title;
+    private final Button buttonBuild;
 
     /**
      * Constructor for the windows that are associated with buildings.
@@ -38,8 +36,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      * @param building Class extending {@link AbstractBuildingView}.
      * @param resource Resource location string.
      */
-    public AbstractWindowModuleBuilding(final B building, final String resource)
-    {
+    public AbstractWindowModuleBuilding(final B building, final String resource) {
         super(building, resource);
 
         this.building = building;
@@ -52,15 +49,13 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Text.class);
         buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         Button buttonInfo = findPaneOfTypeByID(BUTTON_INFO, Button.class);
-        if (buttonInfo != null)
-        {
+        if (buttonInfo != null) {
             buttonInfo.setVisible(I18n.exists(PARTIAL_INFO_TEXT + building.getBuildingType().getTranslationKey().replace("com.minecolonies.building.", "") + ".0"));
         }
     }
 
     @Override
-    public void setPage(final boolean relative, final int page)
-    {
+    public void setPage(final boolean relative, final int page) {
         super.setPage(relative, page);
         mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
     }
@@ -68,49 +63,38 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
     /**
      * Edit custom name action.
      */
-    private void editName()
-    {
+    private void editName() {
         new WindowHutNameEntry(building).open();
     }
 
     /**
      * Action when info button is clicked.
      */
-    private void infoClicked()
-    {
+    private void infoClicked() {
         new WindowInfo(building).open();
     }
 
     /**
      * Action when allInventory button is clicked.
      */
-    private void allInventoryClicked()
-    {
+    private void allInventoryClicked() {
         new WindowHutAllInventory(building, this).open();
     }
 
     /**
      * Action when build button is clicked.
      */
-    private void buildClicked()
-    {
+    private void buildClicked() {
         String buttonLabel =
-          buttonBuild.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) buttonBuild.getText().getContents()).getKey() : buttonBuild.getTextAsString();
+                buttonBuild.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) buttonBuild.getText().getContents()).getKey() : buttonBuild.getTextAsString();
 
-        if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_BUILD) || buttonLabel.equalsIgnoreCase(ACTION_CANCEL_UPGRADE))
-        {
+        if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_BUILD) || buttonLabel.equalsIgnoreCase(ACTION_CANCEL_UPGRADE)) {
             new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, BlockPos.ZERO).sendToServer();
-        }
-        else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_REPAIR))
-        {
+        } else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_REPAIR)) {
             new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, BlockPos.ZERO).sendToServer();
-        }
-        else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_DECONSTRUCTION))
-        {
+        } else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_DECONSTRUCTION)) {
             new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, BlockPos.ZERO).sendToServer();
-        }
-        else
-        {
+        } else {
             new WindowBuildBuilding(building.getColony(), building).open();
         }
     }
@@ -118,14 +102,12 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
     /**
      * Action when a button opening an inventory is clicked.
      */
-    private void inventoryClicked()
-    {
+    private void inventoryClicked() {
         new OpenInventoryMessage(building).sendToServer();
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
         updateButtonBuild(building);
     }
@@ -135,8 +117,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      *
      * @return Name of a building.
      */
-    public String getBuildingName()
-    {
+    public String getBuildingName() {
         return buildingView.getBuildingDisplayName();
     }
 
@@ -145,46 +126,32 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      *
      * @param buildingView the view to update from.
      */
-    private void updateButtonBuild(final IBuildingView buildingView)
-    {
-        if (buttonBuild == null)
-        {
+    private void updateButtonBuild(final IBuildingView buildingView) {
+        if (buttonBuild == null) {
             return;
         }
 
-        if (buildingView.isBuilding())
-        {
-            if (buildingView.getBuildingLevel() == 0)
-            {
+        if (buildingView.isBuilding()) {
+            if (buildingView.getBuildingLevel() == 0) {
                 buttonBuild.setText(Component.translatableEscape(ACTION_CANCEL_BUILD));
-            }
-            else
-            {
+            } else {
                 buttonBuild.setText(Component.translatableEscape(ACTION_CANCEL_UPGRADE));
             }
-        }
-        else if (buildingView.isRepairing())
-        {
+        } else if (buildingView.isRepairing()) {
             buttonBuild.setText(Component.translatableEscape(ACTION_CANCEL_REPAIR));
-        }
-        else if (buildingView.isDeconstructing())
-        {
+        } else if (buildingView.isDeconstructing()) {
             buttonBuild.setText(Component.translatableEscape(ACTION_CANCEL_DECONSTRUCTION));
-        }
-        else
-        {
+        } else {
             buttonBuild.setText(Component.translatableEscape(ACTION_BUILD_REPAIR));
         }
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         setPage(false, 0);
 
-        if (title != null)
-        {
+        if (title != null) {
             final MutableComponent component = Component.translatableEscape(building.getBuildingDisplayName());
             final MutableComponent componentWithLevel = component.append(" ").append(String.valueOf(buildingView.getBuildingLevel()));
             title.setText(componentWithLevel);

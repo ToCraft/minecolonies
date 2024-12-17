@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Set a new block to the minimum stock list.
  */
-public class RemoveMinimumStockFromBuildingModuleMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class RemoveMinimumStockFromBuildingModuleMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "remove_minimum_stock_from_building_module", RemoveMinimumStockFromBuildingModuleMessage::new);
 
     /**
@@ -37,33 +36,28 @@ public class RemoveMinimumStockFromBuildingModuleMessage extends AbstractBuildin
      * @param building  the building we're executing on.
      * @param itemStack to be take from the player for the building
      */
-    public RemoveMinimumStockFromBuildingModuleMessage(final IBuildingView building, final ItemStack itemStack, final int moduleId)
-    {
+    public RemoveMinimumStockFromBuildingModuleMessage(final IBuildingView building, final ItemStack itemStack, final int moduleId) {
         super(TYPE, building);
         this.itemStack = itemStack;
         this.moduleId = moduleId;
     }
 
-    protected RemoveMinimumStockFromBuildingModuleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected RemoveMinimumStockFromBuildingModuleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         itemStack = Utils.deserializeCodecMess(buf);
         moduleId = buf.readInt();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         Utils.serializeCodecMess(buf, itemStack);
         buf.writeInt(moduleId);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (building.getModule(moduleId) instanceof IMinimumStockModule module)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (building.getModule(moduleId) instanceof IMinimumStockModule module) {
             module.removeMinimumStock(itemStack);
         }
     }

@@ -5,8 +5,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 /**
  * Transition type for Statemachines
  */
-public interface IStateMachineTransition<S extends IState>
-{
+public interface IStateMachineTransition<S extends IState> {
     /**
      * Get the state of the transition
      *

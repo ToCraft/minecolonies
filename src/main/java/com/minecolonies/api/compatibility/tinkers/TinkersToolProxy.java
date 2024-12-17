@@ -8,27 +8,25 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Class to check if certain tinkers items serve as weapons for the guards.
  */
-public class TinkersToolProxy
-{
+public class TinkersToolProxy {
     /**
      * Check if a certain itemstack is a tinkers weapon.
      *
      * @param stack the stack to check for.
      * @return true if so.
      */
-    public boolean isTinkersWeapon(@NotNull final ItemStack stack)
-    {
+    public boolean isTinkersWeapon(@NotNull final ItemStack stack) {
         return false;
     }
 
     /**
      * Check if a certain item stack is a tinkers tool of the given tool type.
-     * @param stack the stack to check for.
+     *
+     * @param stack    the stack to check for.
      * @param toolType the tool type.
      * @return true if so.
      */
-    public boolean isTinkersTool(@Nullable final ItemStack stack, final EquipmentTypeEntry toolType)
-    {
+    public boolean isTinkersTool(@Nullable final ItemStack stack, final EquipmentTypeEntry toolType) {
         return false;
     }
 
@@ -38,8 +36,7 @@ public class TinkersToolProxy
      * @param stack the stack.
      * @return the attack damage.
      */
-    public double getAttackDamage(@NotNull final ItemStack stack)
-    {
+    public double getAttackDamage(@NotNull final ItemStack stack) {
         return 0;
     }
 
@@ -49,8 +46,7 @@ public class TinkersToolProxy
      * @param stack the stack.
      * @return the tool level
      */
-    public int getToolLevel(@NotNull final ItemStack stack)
-    {
+    public int getToolLevel(@NotNull final ItemStack stack) {
         return -1;
     }
 
@@ -60,5 +56,7 @@ public class TinkersToolProxy
      * @param stack the item in question.
      * @return boolean whether the stack is broken or not.
      */
-    public boolean checkTinkersBroken(@Nullable final ItemStack stack) { return false; }
+    public boolean checkTinkersBroken(@Nullable final ItemStack stack) {
+        return false;
+    }
 }

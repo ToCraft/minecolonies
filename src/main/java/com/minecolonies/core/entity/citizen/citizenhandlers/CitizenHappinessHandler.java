@@ -32,8 +32,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NO;
 /**
  * The new happiness handler for the citizen.
  */
-public class CitizenHappinessHandler implements ICitizenHappinessHandler
-{
+public class CitizenHappinessHandler implements ICitizenHappinessHandler {
     /**
      * The different happiness factor.
      */
@@ -49,8 +48,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      *
      * @param data the data to handle.
      */
-    public CitizenHappinessHandler(final ICitizenData data)
-    {
+    public CitizenHappinessHandler(final ICitizenData data) {
         // Add static modifiers. These modifiers are on/off.
         addModifier(new StaticHappinessModifier(SCHOOL, 1.0, new DynamicHappinessSupplier(SCHOOL_FUNCTION)));
         addModifier(new StaticHappinessModifier(SECURITY, 4.0, new DynamicHappinessSupplier(SECURITY_FUNCTION)));
@@ -60,24 +58,24 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
 
         // Add time based modifiers. These modifiers change their value over time.
         addModifier(new TimeBasedHappinessModifier(HOMELESSNESS,
-          3.0,
-          new DynamicHappinessSupplier(HOUSING_FUNCTION),
-         new Tuple<>(COMPLAIN_DAYS_WITHOUT_HOUSE, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_HOUSE, 0.5)));
+                3.0,
+                new DynamicHappinessSupplier(HOUSING_FUNCTION),
+                new Tuple<>(COMPLAIN_DAYS_WITHOUT_HOUSE, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_HOUSE, 0.5)));
 
         addModifier(new TimeBasedHappinessModifier(UNEMPLOYMENT,
-          2.0,
-          new DynamicHappinessSupplier(UNEMPLOYMENT_FUNCTION),
-          new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)));
+                2.0,
+                new DynamicHappinessSupplier(UNEMPLOYMENT_FUNCTION),
+                new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)));
 
         addModifier(new TimeBasedHappinessModifier(HEALTH,
-          2.0,
-          new DynamicHappinessSupplier(HEALTH_FUNCTION),
-          new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)));
+                2.0,
+                new DynamicHappinessSupplier(HEALTH_FUNCTION),
+                new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)));
 
         addModifier(new TimeBasedHappinessModifier(IDLEATJOB,
-          1.0,
-          new DynamicHappinessSupplier(IDLEATJOB_FUNCTION),
-          new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)));
+                1.0,
+                new DynamicHappinessSupplier(IDLEATJOB_FUNCTION),
+                new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)));
 
         addModifier(new TimeBasedHappinessModifier(SLEPTTONIGHT, 1.5, new DynamicHappinessSupplier(SLEPTTONIGHT_FUNCTION), (modifier, d) -> true, new Tuple<>(0, 2d), new Tuple<>(2, 1.6d), new Tuple<>(3, 1d)));
     }
@@ -85,50 +83,40 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     /**
      * Create an empty happiness handler for the client side.
      */
-    public CitizenHappinessHandler()
-    {
+    public CitizenHappinessHandler() {
         super();
     }
 
     @Override
-    public void addModifier(final IHappinessModifier modifier)
-    {
+    public void addModifier(final IHappinessModifier modifier) {
         this.happinessFactors.put(modifier.getId(), modifier);
         cachedHappiness = -1;
     }
 
     @Override
-    public void resetModifier(final String name)
-    {
+    public void resetModifier(final String name) {
         final IHappinessModifier modifier = happinessFactors.get(name);
-        if (modifier instanceof ITimeBasedHappinessModifier timeBasedHappinessModifier)
-        {
+        if (modifier instanceof ITimeBasedHappinessModifier timeBasedHappinessModifier) {
             timeBasedHappinessModifier.reset();
             cachedHappiness = -1;
         }
     }
 
     @Override
-    public IHappinessModifier getModifier(final String name)
-    {
+    public IHappinessModifier getModifier(final String name) {
         return happinessFactors.get(name);
     }
 
     @Override
-    public void processDailyHappiness(final ICitizenData citizenData)
-    {
-        for (final IHappinessModifier happinessModifier : happinessFactors.values())
-        {
-            if (happinessModifier instanceof ITimeBasedHappinessModifier timeBasedHappinessModifier)
-            {
+    public void processDailyHappiness(final ICitizenData citizenData) {
+        for (final IHappinessModifier happinessModifier : happinessFactors.values()) {
+            if (happinessModifier instanceof ITimeBasedHappinessModifier timeBasedHappinessModifier) {
                 timeBasedHappinessModifier.dayEnd(citizenData);
             }
-            if (InteractionValidatorRegistry.hasValidator(Component.translatableEscape(NO + happinessModifier.getId())))
-            {
+            if (InteractionValidatorRegistry.hasValidator(Component.translatableEscape(NO + happinessModifier.getId()))) {
                 citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
-            if (InteractionValidatorRegistry.hasValidator(Component.translatableEscape(DEMANDS + happinessModifier.getId())))
-            {
+            if (InteractionValidatorRegistry.hasValidator(Component.translatableEscape(DEMANDS + happinessModifier.getId()))) {
                 citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
         }
@@ -136,14 +124,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public double getHappiness(final IColony colony, final ICitizenData citizenData)
-    {
-        if (cachedHappiness == -1)
-        {
+    public double getHappiness(final IColony colony, final ICitizenData citizenData) {
+        if (cachedHappiness == -1) {
             double total = 0.0;
             double totalWeight = 0.0;
-            for (final IHappinessModifier happinessModifier : happinessFactors.values())
-            {
+            for (final IHappinessModifier happinessModifier : happinessFactors.values()) {
                 final double factor = happinessModifier.getFactor(citizenData);
                 if (factor == 1.0)
                     continue;
@@ -159,25 +144,18 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compound, final boolean persist)
-    {
+    public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compound, final boolean persist) {
         // Only deserialize for new version. Old can keep the above defaults just fine.
-        if (compound.contains(TAG_NEW_HAPPINESS))
-        {
+        if (compound.contains(TAG_NEW_HAPPINESS)) {
             final ListTag tag = compound.getList(TAG_NEW_HAPPINESS, Tag.TAG_COMPOUND);
-            for (int i = 0; i < tag.size(); i++)
-            {
+            for (int i = 0; i < tag.size(); i++) {
                 final CompoundTag compoundTag = tag.getCompound(i);
                 final String id = compoundTag.getString(TAG_ID);
-                if (happinessFactors.containsKey(id))
-                {
+                if (happinessFactors.containsKey(id)) {
                     happinessFactors.get(id).read(provider, compoundTag, persist);
-                }
-                else if (VALID_HAPPINESS_MODIFIERS.contains(id))
-                {
+                } else if (VALID_HAPPINESS_MODIFIERS.contains(id)) {
                     final IHappinessModifier modifier = HappinessRegistry.loadFrom(provider, compoundTag, persist);
-                    if (modifier != null)
-                    {
+                    if (modifier != null) {
                         happinessFactors.put(modifier.getId(), modifier);
                     }
                 }
@@ -186,11 +164,9 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compound, final boolean persist)
-    {
+    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compound, final boolean persist) {
         final ListTag listTag = new ListTag();
-        for (final IHappinessModifier happinessModifier : happinessFactors.values())
-        {
+        for (final IHappinessModifier happinessModifier : happinessFactors.values()) {
             final CompoundTag compoundNbt = new CompoundTag();
             happinessModifier.write(provider, compoundNbt, persist);
             listTag.add(compoundNbt);
@@ -200,8 +176,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public List<String> getModifiers()
-    {
+    public List<String> getModifiers() {
         return new ArrayList<>(happinessFactors.keySet());
     }
 
@@ -213,33 +188,27 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * @param colony the colony.
      * @return the factor.
      */
-    public static double getSocialModifier(final IColony colony)
-    {
+    public static double getSocialModifier(final IColony colony) {
         final double total = colony.getCitizenManager().getCitizens().size();
         double unemployment = 0;
         double homelessness = 0;
         double sickPeople = 0;
         double hungryPeople = 0;
 
-        for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
-        {
-            if (!citizen.isChild() && citizen.getJob() == null)
-            {
+        for (final ICitizenData citizen : colony.getCitizenManager().getCitizens()) {
+            if (!citizen.isChild() && citizen.getJob() == null) {
                 unemployment++;
             }
 
-            if (citizen.getHomeBuilding() == null)
-            {
+            if (citizen.getHomeBuilding() == null) {
                 homelessness++;
             }
 
-            if (citizen.getEntity().isPresent() && citizen.getCitizenDiseaseHandler().isSick())
-            {
+            if (citizen.getEntity().isPresent() && citizen.getCitizenDiseaseHandler().isSick()) {
                 sickPeople++;
             }
 
-            if (citizen.getSaturation() <= 1)
-            {
+            if (citizen.getSaturation() <= 1) {
                 hungryPeople++;
             }
         }
@@ -253,18 +222,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * @param colony the colony.
      * @return the factor.
      */
-    public static double getGuardFactor(final IColony colony)
-    {
+    public static double getGuardFactor(final IColony colony) {
         double guards = 1;
         double workers = 1;
-        for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
-        {
-            if (citizen.getJob() instanceof AbstractJobGuard)
-            {
+        for (final ICitizenData citizen : colony.getCitizenManager().getCitizens()) {
+            if (citizen.getJob() instanceof AbstractJobGuard) {
                 guards++;
-            }
-            else
-            {
+            } else {
                 workers++;
             }
         }
@@ -279,15 +243,14 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * 3: 3 Types food baked potato + mushroom soup + 1 Minecolonies food
      * 4: 4 Types food baked potato + mushroom soup + 2 Minecolonies food
      * 5: 5 Types food baked potato + mushroom soup + 3 Minecolonies food
+     *
      * @param citizenData the citizen.
      * @return the factor.
      */
-    public static double getFoodFactor(final ICitizenData citizenData)
-    {
+    public static double getFoodFactor(final ICitizenData citizenData) {
         final int homeBuildingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel();
         final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
-        if (homeBuildingLevel == 0 || !foodHandler.hasFullFoodHistory())
-        {
+        if (homeBuildingLevel == 0 || !foodHandler.hasFullFoodHistory()) {
             return 1.0;
         }
 
@@ -300,15 +263,14 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     /**
-     *  Get the mystical site happiness modifier from the colony.
-     *      Mystical site happiness is never negative :
-     *      Supply vary from 1 to 3.5 max (1 + (Mystical site lvl 5 / 2))
+     * Get the mystical site happiness modifier from the colony.
+     * Mystical site happiness is never negative :
+     * Supply vary from 1 to 3.5 max (1 + (Mystical site lvl 5 / 2))
      *
      * @param colony the colony.
      * @return the factor.
      */
-    public static double getMysticalSiteFactor(final IColony colony)
-    {
-        return Math.max(1, ((double)colony.getBuildingManager().getMysticalSiteMaxBuildingLevel() / 2.0));
+    public static double getMysticalSiteFactor(final IColony colony) {
+        return Math.max(1, ((double) colony.getBuildingManager().getMysticalSiteMaxBuildingLevel() / 2.0));
     }
 }

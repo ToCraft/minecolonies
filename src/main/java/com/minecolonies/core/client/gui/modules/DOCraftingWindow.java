@@ -45,8 +45,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Cook window class. Specifies the extras the composter has for its list.
  */
-public class DOCraftingWindow extends AbstractModuleWindow
-{
+public class DOCraftingWindow extends AbstractModuleWindow {
     /**
      * The resource string.
      */
@@ -66,7 +65,8 @@ public class DOCraftingWindow extends AbstractModuleWindow
     /**
      * Input inv.
      */
-    public final Container inputInventory = new SimpleContainer(MateriallyTexturedBlockManager.getInstance().getMaxTexturableComponentCount()) {};
+    public final Container inputInventory = new SimpleContainer(MateriallyTexturedBlockManager.getInstance().getMaxTexturableComponentCount()) {
+    };
 
     /**
      * The module view.
@@ -83,8 +83,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
      *
      * @param building class extending
      */
-    public DOCraftingWindow(final IBuildingView building, final DOCraftingModuleView view)
-    {
+    public DOCraftingWindow(final IBuildingView building, final DOCraftingModuleView view) {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
         this.craftingModuleView = view;
 
@@ -99,8 +98,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         registerButton(BUTTON_REQUEST, this::showRequests);
     }
 
-    private void updateInputs(final int index, final Pane rowPane)
-    {
+    private void updateInputs(final int index, final Pane rowPane) {
         rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class)
                 .setText(Component.translatableEscape(DOCRAFTING_BLOCK, index + 1));
 
@@ -117,23 +115,19 @@ public class DOCraftingWindow extends AbstractModuleWindow
         });
     }
 
-    private void showRequests()
-    {
+    private void showRequests() {
         new WindowSelectRequest(this.buildingView, this::matchingRequest, this::reopenWithRequest).open();
     }
 
-    private boolean matchingRequest(@NotNull final IRequest<?> request)
-    {
+    private boolean matchingRequest(@NotNull final IRequest<?> request) {
         final ItemStack stack = DomumOrnamentumUtils.getRequestedStack(request);
         if (stack.isEmpty()) return false;
 
         final MaterialTextureData textureData = MaterialTextureData.readFromItemStack(stack);
         if (textureData.isEmpty()) return false;
 
-        for (final Block block : textureData.getTexturedComponents().values())
-        {
-            if (validator.test(new ItemStack(block)).orElse(false))
-            {
+        for (final Block block : textureData.getTexturedComponents().values()) {
+            if (validator.test(new ItemStack(block)).orElse(false)) {
                 return true;
             }
         }
@@ -141,25 +135,21 @@ public class DOCraftingWindow extends AbstractModuleWindow
         return false;
     }
 
-    private void reopenWithRequest(@Nullable final IRequest<?> request)
-    {
-        if (request != null)
-        {
+    private void reopenWithRequest(@Nullable final IRequest<?> request) {
+        if (request != null) {
             final ItemStack stack = DomumOrnamentumUtils.getRequestedStack(request);
             final IMateriallyTexturedBlock block = DomumOrnamentumUtils.getBlock(stack);
             final MaterialTextureData textureData = MaterialTextureData.readFromItemStack(stack);
             if (block != null && !textureData.isEmpty())     // should always be true due to predicate, but hey you never know...
             {
                 int slot = 0;
-                for (final IMateriallyTexturedBlockComponent component : block.getComponents())
-                {
+                for (final IMateriallyTexturedBlockComponent component : block.getComponents()) {
                     final ItemStack componentBlock = new ItemStack(textureData.getTexturedComponents().getOrDefault(component.getId(), Blocks.AIR));
                     inputInventory.setItem(slot, componentBlock);
                     inputIcons.get(slot).setItem(componentBlock);
                     ++slot;
                 }
-                for (; slot < inputInventory.getContainerSize(); ++slot)
-                {
+                for (; slot < inputInventory.getContainerSize(); ++slot) {
                     inputInventory.setItem(slot, ItemStack.EMPTY);
                     inputIcons.get(slot).setItem(ItemStack.EMPTY);
                 }
@@ -170,22 +160,18 @@ public class DOCraftingWindow extends AbstractModuleWindow
         open();
     }
 
-    private void addRecipe()
-    {
+    private void addRecipe() {
         final List<RecipeHolder<ArchitectsCutterRecipe>> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level);
         final Map<Integer, List<Integer>> map = new HashMap<>();
 
-        if (inputInventory.isEmpty() || list.isEmpty())
-        {
+        if (inputInventory.isEmpty() || list.isEmpty()) {
             return;
         }
 
-        for (final RecipeHolder<ArchitectsCutterRecipe> recipe : list)
-        {
+        for (final RecipeHolder<ArchitectsCutterRecipe> recipe : list) {
             final ItemStack result = recipe.value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy();
             final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
-            if (doBlock != null)
-            {
+            if (doBlock != null) {
                 final int components = doBlock.getComponents().size();
                 final List<Integer> inputList = map.getOrDefault(components, new ArrayList<>());
                 inputList.add(list.indexOf(recipe));
@@ -194,46 +180,41 @@ public class DOCraftingWindow extends AbstractModuleWindow
         }
 
         final List<ItemStorage> input = new ArrayList<>();
-        for (int i = 0; i < inputInventory.getContainerSize(); ++i)
-        {
+        for (int i = 0; i < inputInventory.getContainerSize(); ++i) {
             final ItemStack atPos = inputInventory.getItem(i).copy();
-            if (!ItemStackUtils.isEmpty(atPos))
-            {
+            if (!ItemStackUtils.isEmpty(atPos)) {
                 atPos.setCount(1);
                 input.add(new ItemStorage(atPos));
             }
         }
 
         final List<Integer> inputIndizes = map.get(input.size());
-        if (inputIndizes == null)
-        {
+        if (inputIndizes == null) {
             return;
         }
 
         final List<ItemStack> additionalOutput = new ArrayList<>();
-        for (int i = 1; i < inputIndizes.size(); i++)
-        {
+        for (int i = 1; i < inputIndizes.size(); i++) {
             additionalOutput.add(list.get(inputIndizes.get(i)).value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy());
         }
 
         final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          input,
-          3,
-          list.get(inputIndizes.get(0)).value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy(),
-          Blocks.AIR,
-          null,
-          com.minecolonies.api.crafting.ModRecipeTypes.MULTI_OUTPUT_ID,
-          additionalOutput,
-          new ArrayList<>());
+                TypeConstants.RECIPE,
+                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                input,
+                3,
+                list.get(inputIndizes.get(0)).value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy(),
+                Blocks.AIR,
+                null,
+                com.minecolonies.api.crafting.ModRecipeTypes.MULTI_OUTPUT_ID,
+                additionalOutput,
+                new ArrayList<>());
 
         new AddRemoveRecipeMessage(buildingView, false, storage, craftingModuleView.getProducer().getRuntimeID()).sendToServer();
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         updateStockList();
     }
@@ -241,42 +222,35 @@ public class DOCraftingWindow extends AbstractModuleWindow
     /**
      * Updates the resource list in the GUI with the info we need.
      */
-    private void updateStockList()
-    {
+    private void updateStockList() {
         resourceList.enable();
         resourceList.show();
 
         final List<RecipeHolder<ArchitectsCutterRecipe>> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level);
         int inputCount = 0;
-        for (int i = 0; i < inputInventory.getContainerSize(); i++)
-        {
-            if (!inputInventory.getItem(i).isEmpty())
-            {
+        for (int i = 0; i < inputInventory.getContainerSize(); i++) {
+            if (!inputInventory.getItem(i).isEmpty()) {
                 inputCount++;
             }
         }
 
         final List<ArchitectsCutterRecipe> filteredList = new ArrayList<>();
-        for (final RecipeHolder<ArchitectsCutterRecipe> recipe : list)
-        {
+        for (final RecipeHolder<ArchitectsCutterRecipe> recipe : list) {
             final ItemStack result = recipe.value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy();
             final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
-            if (doBlock != null && doBlock.getComponents().size() == inputCount)
-            {
+            if (doBlock != null && doBlock.getComponents().size() == inputCount) {
                 filteredList.add(recipe.value());
             }
         }
 
         //Creates a dataProvider for the unemployed resourceList.
-        resourceList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        resourceList.setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return filteredList.size();
             }
 
@@ -286,8 +260,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final ItemStack resource = filteredList.get(index).assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy();
 
                 rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getHoverName());

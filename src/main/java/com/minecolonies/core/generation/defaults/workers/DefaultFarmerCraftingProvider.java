@@ -20,25 +20,21 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTI
 /**
  * Datagen for Farmer
  */
-public class DefaultFarmerCraftingProvider extends CustomRecipeProvider
-{
+public class DefaultFarmerCraftingProvider extends CustomRecipeProvider {
     private static final String FARMER = ModJobs.FARMER_ID.getPath();
 
-    public DefaultFarmerCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultFarmerCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "DefaultFarmerCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
         recipe(FARMER, MODULE_CRAFTING, "carved_pumpkin")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.PUMPKIN))))
                 .result(new ItemStack(Items.CARVED_PUMPKIN))

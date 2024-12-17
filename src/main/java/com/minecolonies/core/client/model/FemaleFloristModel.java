@@ -14,21 +14,18 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFlorist.RENDER_META_FLOWERS;
 
-public class FemaleFloristModel extends CitizenModel<AbstractEntityCitizen>
-{
-    public FemaleFloristModel(final ModelPart part)
-    {
+public class FemaleFloristModel extends CitizenModel<AbstractEntityCitizen> {
+    public FemaleFloristModel(final ModelPart part) {
         super(part);
         hat.visible = false;
     }
 
-    public static LayerDefinition createMesh()
-    {
-		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
-		PartDefinition partdefinition = meshdefinition.getRoot();
+    public static LayerDefinition createMesh() {
+        MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+        PartDefinition partdefinition = meshdefinition.getRoot();
 
         PartDefinition Head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F))
-          .texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+                .texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition HairExtension = Head.addOrReplaceChild("HairExtension", CubeListBuilder.create().texOffs(56, 0).addBox(-4.0F, 0.0F, 3.0F, 8.0F, 7.0F, 1.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, 1.0F, 0.0F));
 
@@ -61,33 +58,32 @@ public class FemaleFloristModel extends CitizenModel<AbstractEntityCitizen>
         PartDefinition flower1_r1 = flowers.addOrReplaceChild("flower1_r1", CubeListBuilder.create().texOffs(74, 0).addBox(0.2F, -1.1F, -1.9F, 0.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.1691F, -0.5813F, -2.5883F, -0.0752F, -0.5187F, 0.1509F));
 
         PartDefinition Body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
-          .texOffs(16, 32).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+                .texOffs(16, 32).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition breast = Body.addOrReplaceChild("breast", CubeListBuilder.create().texOffs(64, 49).addBox(-3.0F, 1.8938F, -5.716F, 8.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
-          .texOffs(64, 55).addBox(-3.0F, 1.8938F, -5.716F, 8.0F, 3.0F, 3.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(-1.0F, 3.0F, 4.0F, -0.5236F, 0.0F, 0.0F));
+                .texOffs(64, 55).addBox(-3.0F, 1.8938F, -5.716F, 8.0F, 3.0F, 3.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(-1.0F, 3.0F, 4.0F, -0.5236F, 0.0F, 0.0F));
 
         PartDefinition dress = Body.addOrReplaceChild("dress", CubeListBuilder.create().texOffs(64, 30).addBox(-5.0F, -11.0F, -4.0F, 10.0F, 9.0F, 9.0F, new CubeDeformation(0.0F))
-          .texOffs(66, 22).addBox(-5.0F, -12.0F, -3.0F, 10.0F, 1.0F, 7.0F, new CubeDeformation(0.0F))
-          .texOffs(70, 16).addBox(-4.0F, -13.0F, -2.0F, 8.0F, 1.0F, 5.0F, new CubeDeformation(0.251F)), PartPose.offset(0.0F, 24.0F, -0.5F));
+                .texOffs(66, 22).addBox(-5.0F, -12.0F, -3.0F, 10.0F, 1.0F, 7.0F, new CubeDeformation(0.0F))
+                .texOffs(70, 16).addBox(-4.0F, -13.0F, -2.0F, 8.0F, 1.0F, 5.0F, new CubeDeformation(0.251F)), PartPose.offset(0.0F, 24.0F, -0.5F));
 
         PartDefinition Right_Arm = partdefinition.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
-          .texOffs(40, 32).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(-5.0F, 2.0F, 0.0F));
+                .texOffs(40, 32).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(-5.0F, 2.0F, 0.0F));
 
         PartDefinition Left_Arm = partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(32, 48).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
-          .texOffs(48, 48).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(5.0F, 2.0F, 0.0F));
+                .texOffs(48, 48).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(5.0F, 2.0F, 0.0F));
 
         PartDefinition Right_Leg = partdefinition.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
-          .texOffs(0, 32).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(-1.9F, 12.0F, 0.0F));
+                .texOffs(0, 32).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(-1.9F, 12.0F, 0.0F));
 
         PartDefinition Left_Leg = partdefinition.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(16, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
-          .texOffs(0, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(1.9F, 12.0F, 0.0F));
+                .texOffs(0, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(1.9F, 12.0F, 0.0F));
 
-		return LayerDefinition.create(meshdefinition, 128, 64);
-	}
+        return LayerDefinition.create(meshdefinition, 128, 64);
+    }
 
     @Override
-    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
-    {
+    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         body.getChild("dress").visible = entity.getPose() != Pose.SLEEPING;
         head.getChild("WoodsmanHat").visible = displayHat(entity);

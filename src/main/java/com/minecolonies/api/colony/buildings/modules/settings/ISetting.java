@@ -14,8 +14,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Generic ISetting that represents all possible setting objects (string, numbers, boolean, etc).
  */
-public interface ISetting<S>
-{
+public interface ISetting<S> {
     /**
      * Get the resource location of the view you want to use for this setting.
      *
@@ -33,11 +32,11 @@ public interface ISetting<S>
      * @param window             the calling window.
      */
     void setupHandler(
-      final ISettingKey<?> key,
-      final Pane rowPane,
-      final ISettingsModuleView settingsModuleView,
-      final IBuildingView building,
-      final BOWindow window);
+            final ISettingKey<?> key,
+            final Pane rowPane,
+            final ISettingsModuleView settingsModuleView,
+            final IBuildingView building,
+            final BOWindow window);
 
     /**
      * Update the handling (e.g update settings text).
@@ -49,24 +48,24 @@ public interface ISetting<S>
      * @param window             the calling window.
      */
     void render(
-      final ISettingKey<?> key,
-      final Pane rowPane,
-      final ISettingsModuleView settingsModuleView,
-      final IBuildingView building,
-      final BOWindow window);
+            final ISettingKey<?> key,
+            final Pane rowPane,
+            final ISettingsModuleView settingsModuleView,
+            final IBuildingView building,
+            final BOWindow window);
 
     /**
      * Trigger a setting.
      */
-    default void trigger() {}
+    default void trigger() {
+    }
 
     /**
      * Check if this setting is active (provided {@link ISettingsModule#getOptionalSetting(ISettingKey)} is used).
      *
      * @return true if the setting is active;
      */
-    default boolean isActive(final ISettingsModule module)
-    {
+    default boolean isActive(final ISettingsModule module) {
         return true;
     }
 
@@ -77,8 +76,7 @@ public interface ISetting<S>
      *
      * @return true if the inactive setting should be hidden.
      */
-    default boolean shouldHideWhenInactive()
-    {
+    default boolean shouldHideWhenInactive() {
         return false;
     }
 
@@ -88,14 +86,16 @@ public interface ISetting<S>
      * @param building the building its updated for.
      * @param sender   the player triggering the update.
      */
-    default void onUpdate(final IBuilding building, final ServerPlayer sender) {}
+    default void onUpdate(final IBuilding building, final ServerPlayer sender) {
+    }
 
     /**
      * Allow updating a setting with new data.
      *
      * @param setting the setting with new data
      */
-    default void updateSetting(final ISetting<?> setting) {}
+    default void updateSetting(final ISetting<?> setting) {
+    }
 
     /**
      * Copy value from another instance.
@@ -111,8 +111,7 @@ public interface ISetting<S>
      * @param component          the component to put the hover pane on.
      * @param settingsModuleView the module view that holds the setting.
      */
-    default void setHoverPane(final ISettingKey<?> key, final Pane component, final ISettingsModuleView settingsModuleView)
-    {
+    default void setHoverPane(final ISettingKey<?> key, final Pane component, final ISettingsModuleView settingsModuleView) {
         final String generalSettingToolTipKey = "com.minecolonies.coremod.setting.tooltip." + key.getUniqueId().toString();
         final Component tooltip = Component.translatable(generalSettingToolTipKey);
         final Component inActiveReason = getInactiveReason();
@@ -120,26 +119,19 @@ public interface ISetting<S>
         final boolean hasTooltip = !tooltip.getString().equals(generalSettingToolTipKey);
         final boolean isActive = isActive(settingsModuleView);
 
-        if (isActive && hasTooltip)
-        {
+        if (isActive && hasTooltip) {
             PaneBuilders.tooltipBuilder()
-              .append(tooltip)
-              .hoverPane(component)
-              .build();
-        }
-        else if (isActive && getToolTipText() != null)
-        {
+                    .append(tooltip)
+                    .hoverPane(component)
+                    .build();
+        } else if (isActive && getToolTipText() != null) {
             PaneBuilders.tooltipBuilder().hoverPane(component).build().setText(getToolTipText());
-        }
-        else if (!isActive && (hasTooltip || inActiveReason != null))
-        {
+        } else if (!isActive && (hasTooltip || inActiveReason != null)) {
             PaneBuilders.tooltipBuilder()
-              .append(inActiveReason != null ? inActiveReason : tooltip)
-              .hoverPane(component)
-              .build();
-        }
-        else
-        {
+                    .append(inActiveReason != null ? inActiveReason : tooltip)
+                    .hoverPane(component)
+                    .build();
+        } else {
             component.setHoverPane(null);
         }
     }
@@ -150,8 +142,7 @@ public interface ISetting<S>
      * @return a component stating why this is inactive, or null if no reason.
      */
     @Nullable
-    default Component getInactiveReason()
-    {
+    default Component getInactiveReason() {
         return null;
     }
 
@@ -160,8 +151,7 @@ public interface ISetting<S>
      *
      * @return a component containing a message why this setting is not active, return null if the setting is supposed to be active.
      */
-    default boolean isActive(final ISettingsModuleView module)
-    {
+    default boolean isActive(final ISettingsModuleView module) {
         return true;
     }
 
@@ -171,15 +161,14 @@ public interface ISetting<S>
      * @return the value.
      */
     S getValue();
-    
+
     /**
      * Get the tooltip text to render on the button, defaults to null.
      *
      * @return the tooltip component to render on the button.
      */
     @Nullable
-    default Component getToolTipText()
-    {
+    default Component getToolTipText() {
         return null;
     }
 }

@@ -10,8 +10,7 @@ import java.util.List;
 /**
  * Enum used to describe the state of a Request.
  */
-public enum RequestState
-{
+public enum RequestState {
     /**
      * Default state for a not registered request.
      */
@@ -81,19 +80,19 @@ public enum RequestState
      * Index list used to read and write from NBT
      */
     static final List<RequestState> indexList = new ArrayList<>();
-    static
-    {
+
+    static {
         /*
          * This should never be changed! It is used to read and write from NBT so it has to
          * persist between mod versions.
          */
         Collections.addAll(indexList, RequestState.values());
     }
+
     /**
      * This is an empty constructor, i don't know why, Orion probably does =D.
      */
-    RequestState()
-    {
+    RequestState() {
     }
 
     /**
@@ -102,8 +101,7 @@ public enum RequestState
      * @param nbt The nbt to deserialize from.
      * @return The RequestState that is stored in the given NBT.
      */
-    public static RequestState deserialize(final IntTag nbt)
-    {
+    public static RequestState deserialize(final IntTag nbt) {
         return indexList.get(nbt.getAsInt());
     }
 
@@ -112,8 +110,7 @@ public enum RequestState
      *
      * @return The NBT representation of the state.
      */
-    public IntTag serialize()
-    {
+    public IntTag serialize() {
         return IntTag.valueOf(indexList.indexOf(this));
     }
 
@@ -123,8 +120,7 @@ public enum RequestState
      * @param buffer The buffer to deserialize from.
      * @return The RequestState that is stored in the given NBT.
      */
-    public static RequestState deserialize(final RegistryFriendlyByteBuf buffer)
-    {
+    public static RequestState deserialize(final RegistryFriendlyByteBuf buffer) {
         return indexList.get(buffer.readInt());
     }
 
@@ -133,8 +129,7 @@ public enum RequestState
      *
      * @param buffer The buffer to write to.
      */
-    public void serialize(RegistryFriendlyByteBuf buffer)
-    {
+    public void serialize(RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(indexList.indexOf(this));
     }
 }

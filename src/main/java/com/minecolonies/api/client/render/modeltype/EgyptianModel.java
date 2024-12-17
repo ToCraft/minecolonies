@@ -7,14 +7,11 @@ import net.minecraft.client.model.geom.ModelPart;
 /**
  * Egyptian model.
  */
-public class EgyptianModel<T extends AbstractEntityEgyptian> extends HumanoidModel<AbstractEntityEgyptian>
-{
+public class EgyptianModel<T extends AbstractEntityEgyptian> extends HumanoidModel<AbstractEntityEgyptian> {
     /**
      * Create a model of a specific size.
-     *
      */
-    public EgyptianModel(final ModelPart part)
-    {
+    public EgyptianModel(final ModelPart part) {
         super(part);
     }
 }

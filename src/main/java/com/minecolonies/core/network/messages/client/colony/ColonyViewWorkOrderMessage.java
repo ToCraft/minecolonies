@@ -23,13 +23,12 @@ import java.util.List;
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
-{
+public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_workorder", ColonyViewWorkOrderMessage::new);
 
-    private final int                colonyId;
+    private final int colonyId;
     private final ResourceKey<Level> dimension;
-    private final RegistryFriendlyByteBuf       workOrderBuffer;
+    private final RegistryFriendlyByteBuf workOrderBuffer;
 
     /**
      * Updates a {@link AbstractWorkOrderView} of the workOrders.
@@ -37,22 +36,19 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
      * @param colony        colony of the workOrder.
      * @param workOrderList list of workorders to send to the client
      */
-    public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final List<IWorkOrder> workOrderList)
-    {
+    public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final List<IWorkOrder> workOrderList) {
         super(TYPE);
         this.colonyId = colony.getID();
         this.workOrderBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), colony.getWorld().registryAccess());
         this.dimension = colony.getDimension();
 
         workOrderBuffer.writeInt(workOrderList.size());
-        for (final IWorkOrder workOrder : workOrderList)
-        {
+        for (final IWorkOrder workOrder : workOrderList) {
             workOrder.serializeViewNetworkData(workOrderBuffer);
         }
     }
 
-    public ColonyViewWorkOrderMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public ColonyViewWorkOrderMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
@@ -60,8 +56,7 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         workOrderBuffer.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
@@ -69,8 +64,7 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         IColonyManager.getInstance().handleColonyViewWorkOrderMessage(colonyId, workOrderBuffer, dimension);
     }
 }

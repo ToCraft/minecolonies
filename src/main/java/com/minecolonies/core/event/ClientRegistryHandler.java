@@ -53,11 +53,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-public class ClientRegistryHandler
-{
+public class ClientRegistryHandler {
     public static final ModelLayerLocation FEMALE_FARMER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_farmer"), "female_farmer");
-    public static final ModelLayerLocation MALE_COURIER  = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_deliveryman"), "male_deliveryman");
-    public static final ModelLayerLocation FEMALE_CHILD  = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_child"), "female_child");
+    public static final ModelLayerLocation MALE_COURIER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_deliveryman"), "male_deliveryman");
+    public static final ModelLayerLocation FEMALE_CHILD = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_child"), "female_child");
     public static final ModelLayerLocation FEMALE_SHEEPFARMER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_sheepfarmer"), "female_sheepfarmer");
     public static final ModelLayerLocation MALE_CHILD = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_child"), "male_child");
     public static final ModelLayerLocation FEMALE_CONCRETEMIXER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_concretemixer"), "female_concretemixer");
@@ -76,16 +75,16 @@ public class ClientRegistryHandler
     public static final ModelLayerLocation FEMALE_UNDERTAKER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_undertaker"), "female_undertaker");
     public static final ModelLayerLocation MALE_COMPOSTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_composter"), "male_composter");
     public static final ModelLayerLocation MALE_FLETCHER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_fletcher"), "male_fletcher");
-    public static final ModelLayerLocation MALE_CITIZEN    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_citizen"), "male_citizen");
-    public static final ModelLayerLocation FEMALE_CITIZEN    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_citizen"), "female_citizen");
-    public static final ModelLayerLocation FEMALE_SETTLER    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_settler"), "female_settler");
-    public static final ModelLayerLocation MALE_SETTLER    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_settler"), "male_settler");
-    public static final ModelLayerLocation FEMALE_FISHER     = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_fisherman"), "female_fisherman");
+    public static final ModelLayerLocation MALE_CITIZEN = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_citizen"), "male_citizen");
+    public static final ModelLayerLocation FEMALE_CITIZEN = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_citizen"), "female_citizen");
+    public static final ModelLayerLocation FEMALE_SETTLER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_settler"), "female_settler");
+    public static final ModelLayerLocation MALE_SETTLER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_settler"), "male_settler");
+    public static final ModelLayerLocation FEMALE_FISHER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_fisherman"), "female_fisherman");
     public static final ModelLayerLocation MALE_RABBITHERDER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_rabbitherder"), "male_rabbitherder");
     public static final ModelLayerLocation FEMALE_FLETCHER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_fletcher"), "female_fletcher");
     public static final ModelLayerLocation FEMALE_CRAFTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_crafter"), "female_crafter");
-    public static final ModelLayerLocation MALE_DYER          = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_dyer"), "male_dyer");
-    public static final ModelLayerLocation MALE_FORESTER      = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_lumberjack"), "male_lumberjack");
+    public static final ModelLayerLocation MALE_DYER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_dyer"), "male_dyer");
+    public static final ModelLayerLocation MALE_FORESTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_lumberjack"), "male_lumberjack");
     public static final ModelLayerLocation MALE_CONCRETEMIXER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_concretemixer"), "male_concretemixer");
     public static final ModelLayerLocation FEMALE_CHICKENFARMER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_chickenfarmer"), "female_chickenfarmer");
     public static final ModelLayerLocation MALE_MINER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_miner"), "male_miner");
@@ -103,16 +102,16 @@ public class ClientRegistryHandler
     public static final ModelLayerLocation FEMALE_ARISTOCRAT = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_aristocrat"), "female_aristocrat");
     public static final ModelLayerLocation MALE_ARISTOCRAT = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_aristocrat"), "male_aristocrat");
     public static final ModelLayerLocation MALE_COWFARMER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_cowfarmer"), "male_cowfarmer");
-    public static final ModelLayerLocation FEMALE_SMELTER  = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_smelter"), "female_smelter");
+    public static final ModelLayerLocation FEMALE_SMELTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_smelter"), "female_smelter");
     public static final ModelLayerLocation FEMALE_FORESTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_lumberjack"), "female_lumberjack");
-    public static final ModelLayerLocation FEMALE_COURIER  = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_deliveryman"), "female_deliveryman");
-    public static final ModelLayerLocation FEMALE_HEALER     = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_healer"), "female_healer");
+    public static final ModelLayerLocation FEMALE_COURIER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_deliveryman"), "female_deliveryman");
+    public static final ModelLayerLocation FEMALE_HEALER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_healer"), "female_healer");
     public static final ModelLayerLocation FEMALE_PLANTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_planter"), "female_planter");
     public static final ModelLayerLocation FEMALE_STUDENT = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_student"), "female_student");
     public static final ModelLayerLocation FEMALE_COWFARMER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_cowfarmer"), "female_cowfarmer");
     public static final ModelLayerLocation FEMALE_MECHANIST = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_mechanist"), "female_mechanist");
-    public static final ModelLayerLocation FEMALE_COOK  = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_cook"), "female_cook");
-    public static final ModelLayerLocation MALE_FISHER  = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_fisherman"), "male_fisherman");
+    public static final ModelLayerLocation FEMALE_COOK = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_cook"), "female_cook");
+    public static final ModelLayerLocation MALE_FISHER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_fisherman"), "male_fisherman");
     public static final ModelLayerLocation MALE_PLANTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_planter"), "male_planter");
     public static final ModelLayerLocation MALE_BAKER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_baker"), "male_baker");
     public static final ModelLayerLocation FEMALE_BEEKEEPER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_beekeeper"), "female_beekeeper");
@@ -138,17 +137,17 @@ public class ClientRegistryHandler
     public static final ModelLayerLocation MALE_ALCHEMIST = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_alchemist"), "male_alchemist");
     public static final ModelLayerLocation FEMALE_ALCHEMIST = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_alchemist"), "female_alchemist");
 
-    public static final ModelLayerLocation MERCENARY    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mercenary"), "mercenary");
+    public static final ModelLayerLocation MERCENARY = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mercenary"), "mercenary");
 
-    public static final ModelLayerLocation MUMMY        = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mummy"), "mummy");
+    public static final ModelLayerLocation MUMMY = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mummy"), "mummy");
     public static final ModelLayerLocation ARCHER_MUMMY = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "archer_mummy"), "archer_mummy");
-    public static final ModelLayerLocation PHARAO       = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pharao"), "pharao");
+    public static final ModelLayerLocation PHARAO = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pharao"), "pharao");
 
-    public static final ModelLayerLocation SHIELD_MAIDEN   = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "shield_maiden"), "shield_maiden");
+    public static final ModelLayerLocation SHIELD_MAIDEN = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "shield_maiden"), "shield_maiden");
     public static final ModelLayerLocation NORSEMEN_ARCHER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "norsemen_archer"), "norsemen_archer");
-    public static final ModelLayerLocation NORSEMEN_CHIEF  = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "norsemen_chief"), "norsemen_chief");
+    public static final ModelLayerLocation NORSEMEN_CHIEF = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "norsemen_chief"), "norsemen_chief");
 
-    public static final ModelLayerLocation AMAZON       = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon"), "amazon");
+    public static final ModelLayerLocation AMAZON = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon"), "amazon");
     public static final ModelLayerLocation AMAZON_CHIEF = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon_chief"), "amazon_chief");
     public static final ModelLayerLocation AMAZON_SPEARMAN = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon_spearman"), "amazon_spearman");
 
@@ -158,8 +157,7 @@ public class ClientRegistryHandler
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
-    {
+    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(MERCENARY, MercenaryModel::createMesh);
 
         event.registerLayerDefinition(AMAZON, ModelAmazon::createMesh);
@@ -264,15 +262,13 @@ public class ClientRegistryHandler
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void onRegisterItemDecorations(final RegisterItemDecorationsEvent event)
-    {
+    public static void onRegisterItemDecorations(final RegisterItemDecorationsEvent event) {
         event.register(ModItems.clipboard, new ClipBoardDecorator());
     }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void doClientStuff(final EntityRenderersEvent.RegisterRenderers event)
-    {
+    public static void doClientStuff(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.CITIZEN, RenderBipedCitizen::new);
         event.registerEntityRenderer(ModEntities.VISITOR, RenderBipedCitizen::new);
         event.registerEntityRenderer(ModEntities.FISHHOOK, RenderFishHook::new);
@@ -318,7 +314,7 @@ public class ClientRegistryHandler
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.DECO_CONTROLLER.get(), TileEntityDecoControllerRenderer::new);
 
         Arrays.stream(ModBlocks.getHuts())
-          .forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
+                .forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockScarecrow, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockRack, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.cutout());
@@ -330,23 +326,21 @@ public class ClientRegistryHandler
         Arrays.stream(ModBlocks.getCrops()).forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, RenderType.cutout()));
 
         ItemProperties.register(ModItems.spear, ResourceLocation.withDefaultNamespace("throwing"), (item, world, entity, light) ->
-                                                                           (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
+                (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
         ItemProperties.register(ModItems.buildGoggles, ResourceLocation.withDefaultNamespace("disabled"), (item, world, entity, light) ->
                 (ColonyBlueprintRenderer.willRenderBlueprints() ? 0.0F : 1.0F));
     }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void registerRecipeBookCategories(@NotNull final RegisterRecipeBookCategoriesEvent event)
-    {
+    public static void registerRecipeBookCategories(@NotNull final RegisterRecipeBookCategoriesEvent event) {
         // not worthwhile creating a category for compost, as we never unlock them in the book; this hides some warnings
         event.registerRecipeCategoryFinder(ModRecipeSerializer.CompostRecipeType.get(), r -> RecipeBookCategories.UNKNOWN);
     }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void registerKeys(final RegisterKeyMappingsEvent event)
-    {
+    public static void registerKeys(final RegisterKeyMappingsEvent event) {
         ModKeyMappings.register(event);
     }
 }

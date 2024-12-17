@@ -1,14 +1,11 @@
 package com.minecolonies.api.colony.buildings.modules;
 
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import net.minecraft.world.item.ItemStack;
 
 /**
  * Module for adding minimum stocks to buildings.
  */
-public interface IMinimumStockModule extends IBuildingModule
-{
+public interface IMinimumStockModule extends IBuildingModule {
     /**
      * Remove the minimum stock.
      *
@@ -26,6 +23,7 @@ public interface IMinimumStockModule extends IBuildingModule
 
     /**
      * Check if this stack is stocked.
+     *
      * @param stack the stack to check.
      * @return true if stocked.
      */

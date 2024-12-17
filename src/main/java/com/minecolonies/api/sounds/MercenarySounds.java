@@ -5,8 +5,7 @@ import net.minecraft.sounds.SoundEvent;
 /**
  * Sounds for the mercenaries
  */
-public class MercenarySounds
-{
+public class MercenarySounds {
     public static final SoundEvent mercenaryHurt = ModSoundEvents.getSoundID("mob.mercenary.hurt");
     public static final SoundEvent mercenaryDie = ModSoundEvents.getSoundID("mob.mercenary.die");
     public static final SoundEvent mercenarySay = ModSoundEvents.getSoundID("mob.mercenary.say");

@@ -8,8 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class handling the Plate Armor.
  */
-public class ItemPlateArmor extends ArmorItem
-{
+public class ItemPlateArmor extends ArmorItem {
     /**
      * Constructor method for the Plate Armor
      *
@@ -19,11 +18,10 @@ public class ItemPlateArmor extends ArmorItem
      * @param name            the name.
      */
     public ItemPlateArmor(
-      @NotNull final String name,
-      @NotNull final Holder<ArmorMaterial> materialIn,
-      @NotNull final ArmorItem.Type equipmentSlotIn,
-      final Properties properties)
-    {
+            @NotNull final String name,
+            @NotNull final Holder<ArmorMaterial> materialIn,
+            @NotNull final ArmorItem.Type equipmentSlotIn,
+            final Properties properties) {
         super(materialIn, equipmentSlotIn, properties);
     }
 }

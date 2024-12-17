@@ -8,8 +8,7 @@ import java.util.List;
 /**
  * Interface defining the datastore for crafters.
  */
-public interface IRequestSystemCrafterJobDataStore extends IDataStore
-{
+public interface IRequestSystemCrafterJobDataStore extends IDataStore {
     /**
      * The task queue that needs to be processed by the worker.
      *

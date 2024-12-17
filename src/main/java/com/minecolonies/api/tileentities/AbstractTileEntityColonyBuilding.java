@@ -27,18 +27,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack implements IBlueprintDataProviderBE
-{
+public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack implements IBlueprintDataProviderBE {
     /**
      * Version of the TE data.
      */
     private static final String TAG_VERSION = "version";
-    private static final int    VERSION     = 2;
+    private static final int VERSION = 2;
 
     /**
      * Corner positions of schematic, relative to te pos.
      */
-    private BlockPos corner1             = BlockPos.ZERO;
+    private BlockPos corner1 = BlockPos.ZERO;
     private BlockPos corner2 = BlockPos.ZERO;
 
     /**
@@ -56,8 +55,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      */
     private int version = 0;
 
-    public AbstractTileEntityColonyBuilding(final BlockEntityType<? extends AbstractTileEntityColonyBuilding> type, final BlockPos pos, final BlockState state)
-    {
+    public AbstractTileEntityColonyBuilding(final BlockEntityType<? extends AbstractTileEntityColonyBuilding> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
     }
 
@@ -69,8 +67,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      * @param itemStackSelectionPredicate the itemStack predicate.
      * @return true if found the stack.
      */
-        public static boolean isInTileEntity(final IItemHandlerCapProvider entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
+    public static boolean isInTileEntity(final IItemHandlerCapProvider entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate) {
         return InventoryFunctions.matchFirstInProvider(entity, itemStackSelectionPredicate);
     }
 
@@ -174,7 +171,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     /**
      * Get the blueprint path of the tileEntity.
      *
-     * @return  path the path to get.
+     * @return path the path to get.
      */
     public abstract String getBlueprintPath();
 
@@ -186,91 +183,79 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     public abstract ResourceLocation getBuildingName();
 
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return schematicName.replace(".blueprint", "");
     }
 
     @Override
-    public void setSchematicName(final String name)
-    {
+    public void setSchematicName(final String name) {
         schematicName = name;
     }
 
     @Override
-    public Map<BlockPos, List<String>> getPositionedTags()
-    {
+    public Map<BlockPos, List<String>> getPositionedTags() {
         return tagPosMap;
     }
 
     @Override
-    public void setPositionedTags(final Map<BlockPos, List<String>> positionedTags)
-    {
+    public void setPositionedTags(final Map<BlockPos, List<String>> positionedTags) {
         tagPosMap = positionedTags;
         setChanged();
     }
 
     @Override
-    public Tuple<BlockPos, BlockPos> getSchematicCorners()
-    {
+    public Tuple<BlockPos, BlockPos> getSchematicCorners() {
         return new Tuple<>(corner1, corner2);
     }
 
     @Override
-    public void setSchematicCorners(final BlockPos pos1, final BlockPos pos2)
-    {
+    public void setSchematicCorners(final BlockPos pos1, final BlockPos pos2) {
         corner1 = pos1;
         corner2 = pos2;
         setChanged();
     }
 
     @Override
-    public void loadAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void loadAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.loadAdditional(compound, provider);
         readSchematicDataFromNBT(compound);
         this.version = compound.getInt(TAG_VERSION);
     }
 
     @Override
-    public void readSchematicDataFromNBT(final CompoundTag originalCompound)
-    {
+    public void readSchematicDataFromNBT(final CompoundTag originalCompound) {
         final String old = getSchematicName();
         IBlueprintDataProviderBE.super.readSchematicDataFromNBT(originalCompound);
 
-        if (level == null || level.isClientSide || getColony() == null || getColony().getBuildingManager() == null)
-        {
+        if (level == null || level.isClientSide || getColony() == null || getColony().getBuildingManager() == null) {
             return;
         }
 
         final IBuilding building = getColony().getBuildingManager().getBuilding(worldPosition);
-        if (building != null)
-        {
+        if (building != null) {
             building.onUpgradeSchematicTo(old, getSchematicName(), this);
         }
         this.version = VERSION;
     }
 
     @Override
-    public void saveAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public void saveAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         super.saveAdditional(compound, provider);
         writeSchematicDataToNBT(compound);
         compound.putInt(TAG_VERSION, this.version);
     }
 
     @Override
-    public BlockPos getTilePos()
-    {
+    public BlockPos getTilePos() {
         return worldPosition;
     }
 
     /**
      * Check if the TE is on an old data version.
+     *
      * @return true if so.
      */
-    public boolean isOutdated()
-    {
+    public boolean isOutdated() {
         return version < VERSION;
     }
 }

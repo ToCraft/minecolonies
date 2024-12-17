@@ -8,22 +8,19 @@ import net.minecraft.world.level.Level;
 /**
  * Class for the Archer amazon entity.
  */
-public class EntityArcherAmazon extends AbstractEntityAmazon implements IArcherAmazon
-{
+public class EntityArcherAmazon extends AbstractEntityAmazon implements IArcherAmazon {
     /**
      * Constructor of the entity.
      *
      * @param worldIn world to construct it in.
      * @param type    the entity type.
      */
-    public EntityArcherAmazon(final EntityType<? extends EntityArcherAmazon> type, final Level worldIn)
-    {
+    public EntityArcherAmazon(final EntityType<? extends EntityArcherAmazon> type, final Level worldIn) {
         super(type, worldIn);
     }
 
     @Override
-    public double getAttackDelayModifier()
-    {
+    public double getAttackDelayModifier() {
         return 2;
     }
 }

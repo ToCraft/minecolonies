@@ -17,18 +17,15 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
-public class DefaultDamageTypeProvider extends JsonCodecProvider<DamageType>
-{
+public class DefaultDamageTypeProvider extends JsonCodecProvider<DamageType> {
     public DefaultDamageTypeProvider(@NotNull final PackOutput packOutput,
                                      @NotNull final ExistingFileHelper existingFileHelper,
-                                     final CompletableFuture<Provider> lookupProvider)
-    {
+                                     final CompletableFuture<Provider> lookupProvider) {
         super(packOutput, Target.DATA_PACK, "damage_type", PackType.SERVER_DATA, DamageType.DIRECT_CODEC, lookupProvider, MOD_ID, existingFileHelper);
     }
 
     @Override
-    protected void gather()
-    {
+    protected void gather() {
         unconditional(DamageSourceKeys.CONSOLE.location(), damage("console"));
         unconditional(DamageSourceKeys.DEFAULT.location(), damage("default"));
         unconditional(DamageSourceKeys.DESPAWN.location(), damage("despawn"));
@@ -63,14 +60,12 @@ public class DefaultDamageTypeProvider extends JsonCodecProvider<DamageType>
     }
 
     @NotNull
-    private static DamageType entityDamage(@NotNull final EntityType<?> entityType)
-    {
+    private static DamageType entityDamage(@NotNull final EntityType<?> entityType) {
         return damage(entityType.getDescriptionId());
     }
 
     @NotNull
-    private static DamageType damage(@NotNull final String msgId)
-    {
+    private static DamageType damage(@NotNull final String msgId) {
         return new DamageType(msgId, DamageScaling.ALWAYS, 0.1F);
     }
 }

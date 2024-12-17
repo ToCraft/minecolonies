@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Alter a menu item message.
  */
-public class AlterRestaurantMenuItemMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class AlterRestaurantMenuItemMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "alter_restaurant_menu_module", AlterRestaurantMenuItemMessage::new);
 
     /**
@@ -38,25 +37,25 @@ public class AlterRestaurantMenuItemMessage extends AbstractBuildingServerMessag
 
     /**
      * Add a menu item to the building.
-     * @param building the building to add it to.
+     *
+     * @param building  the building to add it to.
      * @param itemStack the stack to add.
      * @param runtimeID the id of the module.
      * @return the message,
      */
-    public static AlterRestaurantMenuItemMessage addMenuItem(final IBuildingView building, final ItemStack itemStack, final int runtimeID)
-    {
+    public static AlterRestaurantMenuItemMessage addMenuItem(final IBuildingView building, final ItemStack itemStack, final int runtimeID) {
         return new AlterRestaurantMenuItemMessage(building, itemStack, runtimeID, true);
     }
 
     /**
      * Remove a menu item to the building.
-     * @param building the building to remove it from.
+     *
+     * @param building  the building to remove it from.
      * @param itemStack the stack to remove.
      * @param runtimeID the id of the module.
      * @return the message,
      */
-    public static AlterRestaurantMenuItemMessage removeMenuItem(final IBuildingView building, final ItemStack itemStack, final int runtimeID)
-    {
+    public static AlterRestaurantMenuItemMessage removeMenuItem(final IBuildingView building, final ItemStack itemStack, final int runtimeID) {
         return new AlterRestaurantMenuItemMessage(building, itemStack, runtimeID, false);
     }
 
@@ -65,18 +64,16 @@ public class AlterRestaurantMenuItemMessage extends AbstractBuildingServerMessag
      *
      * @param itemStack to be altered.
      * @param building  the building we're executing on.
-     * @param add if add = true if remove = false
+     * @param add       if add = true if remove = false
      */
-    private AlterRestaurantMenuItemMessage(final IBuildingView building, final ItemStack itemStack, final int runtimeID, final boolean add)
-    {
+    private AlterRestaurantMenuItemMessage(final IBuildingView building, final ItemStack itemStack, final int runtimeID, final boolean add) {
         super(TYPE, building);
         this.itemStack = itemStack;
         this.id = runtimeID;
         this.add = add;
     }
 
-    protected AlterRestaurantMenuItemMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected AlterRestaurantMenuItemMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         itemStack = Utils.deserializeCodecMess(buf);
         id = buf.readInt();
@@ -84,8 +81,7 @@ public class AlterRestaurantMenuItemMessage extends AbstractBuildingServerMessag
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         Utils.serializeCodecMess(buf, itemStack);
         buf.writeInt(id);
@@ -93,16 +89,11 @@ public class AlterRestaurantMenuItemMessage extends AbstractBuildingServerMessag
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (building.getModule(id) instanceof RestaurantMenuModule restaurantMenuModule)
-        {
-            if (add)
-            {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (building.getModule(id) instanceof RestaurantMenuModule restaurantMenuModule) {
+            if (add) {
                 restaurantMenuModule.addMenuItem(itemStack);
-            }
-            else
-            {
+            } else {
                 restaurantMenuModule.removeMenuItem(itemStack);
             }
         }

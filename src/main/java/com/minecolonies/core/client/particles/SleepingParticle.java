@@ -1,16 +1,15 @@
 package com.minecolonies.core.client.particles;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.client.particle.*;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 
 /**
  * Custom particle for sleeping.
  */
-public class SleepingParticle extends TextureSheetParticle
-{
+public class SleepingParticle extends TextureSheetParticle {
 
     /**
      * Spawn coords
@@ -29,8 +28,7 @@ public class SleepingParticle extends TextureSheetParticle
      */
     public static final ResourceLocation SLEEPING_TEXTURE = new ResourceLocation(Constants.MOD_ID, "particle/sleeping");
 
-    public SleepingParticle(SpriteSet spriteSet, ClientLevel worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
-    {
+    public SleepingParticle(SpriteSet spriteSet, ClientLevel worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 
         //this.setSprite(Minecraft.getInstance().getTextureMap().getSprite(SLEEPING_TEXTURE));
@@ -62,8 +60,7 @@ public class SleepingParticle extends TextureSheetParticle
      * Updates the particles, setting new position/scale
      */
 
-    public void tick()
-    {
+    public void tick() {
         this.xo = this.x;
         this.yo = this.y;
         this.zo = this.z;
@@ -78,36 +75,30 @@ public class SleepingParticle extends TextureSheetParticle
         this.y = this.coordY + this.yd * f;
         this.z = this.coordZ + this.zd * f;
 
-        if (this.age++ >= this.lifetime)
-        {
+        if (this.age++ >= this.lifetime) {
             this.remove();
         }
     }
 
     @Override
-    public int getLightColor(float partialTick)
-    {
+    public int getLightColor(float partialTick) {
         return LIGHT_LEVEL;
     }
 
     @Override
-    public ParticleRenderType getRenderType()
-    {
+    public ParticleRenderType getRenderType() {
         return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
-    public static class Factory implements ParticleProvider<SimpleParticleType>
-    {
+    public static class Factory implements ParticleProvider<SimpleParticleType> {
         private SpriteSet spriteSet;
 
-        public Factory(SpriteSet spriteSet)
-        {
+        public Factory(SpriteSet spriteSet) {
             this.spriteSet = spriteSet;
         }
 
         @Override
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
-        {
+        public Particle createParticle(SimpleParticleType particleType, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             return new SleepingParticle(spriteSet, world, x, y, z, xSpeed, ySpeed, zSpeed);
         }
     }

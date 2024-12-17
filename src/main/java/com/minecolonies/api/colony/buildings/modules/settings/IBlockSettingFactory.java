@@ -9,24 +9,19 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Interface for the boolean settings factory which is responsible for creating and maintaining bool setting objects.
  */
-public interface IBlockSettingFactory<T extends ISetting> extends IFactory<FactoryVoidInput, T>
-{
+public interface IBlockSettingFactory<T extends ISetting> extends IFactory<FactoryVoidInput, T> {
     @NotNull
     @Override
-    default T getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput token, @NotNull final Object... context)
-    {
-        if (context.length < 2)
-        {
+    default T getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput token, @NotNull final Object... context) {
+        if (context.length < 2) {
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only 2 are allowed!");
         }
 
-        if (!(context[0] instanceof BlockItem))
-        {
+        if (!(context[0] instanceof BlockItem)) {
             throw new IllegalArgumentException("First parameter is supposed to be a BlockItem!");
         }
 
-        if (!(context[1] instanceof BlockItem))
-        {
+        if (!(context[1] instanceof BlockItem)) {
             throw new IllegalArgumentException("Second parameter is supposed to be a BlockItem!");
         }
 

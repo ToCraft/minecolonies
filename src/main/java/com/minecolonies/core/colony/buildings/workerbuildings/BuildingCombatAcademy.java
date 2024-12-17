@@ -19,7 +19,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CarvedPumpkinBlock;
 import net.minecraft.world.level.block.HayBlock;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -32,8 +31,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Combat Academy.
  */
-public class BuildingCombatAcademy extends AbstractBuilding
-{
+public class BuildingCombatAcademy extends AbstractBuilding {
     /**
      * The Schematic name.
      */
@@ -60,25 +58,21 @@ public class BuildingCombatAcademy extends AbstractBuilding
      * @param c the colony
      * @param l the position
      */
-    public BuildingCombatAcademy(@NotNull final IColony c, final BlockPos l)
-    {
+    public BuildingCombatAcademy(@NotNull final IColony c, final BlockPos l) {
         super(c, l);
     }
-    
+
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
-    {
-        if (block instanceof CarvedPumpkinBlock && world.getBlockState(pos.below()).getBlock() instanceof HayBlock)
-        {
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world) {
+        if (block instanceof CarvedPumpkinBlock && world.getBlockState(pos.below()).getBlock() instanceof HayBlock) {
             fightingPos.add(pos.below());
         }
         super.registerBlockPosition(block, pos, world);
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
 
         fightingPos.clear();
@@ -88,12 +82,11 @@ public class BuildingCombatAcademy extends AbstractBuilding
 
         final ListTag partnersTagList = compound.getList(TAG_COMBAT_PARTNER, Tag.TAG_COMPOUND);
         trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList)
-                                  .collect(Collectors.toMap(targetCompound -> targetCompound.getInt(TAG_PARTNER1), targetCompound -> targetCompound.getInt(TAG_PARTNER2))));
+                .collect(Collectors.toMap(targetCompound -> targetCompound.getInt(TAG_PARTNER1), targetCompound -> targetCompound.getInt(TAG_PARTNER2))));
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
 
         final ListTag targetList = fightingPos.stream().map(target -> BlockPosUtil.write(new CompoundTag(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
@@ -111,8 +104,7 @@ public class BuildingCombatAcademy extends AbstractBuilding
      * @param tuple the tuple to write to NBT
      * @return a compound with the data.
      */
-    private static CompoundTag writePartnerTupleToNBT(final Map.Entry<Integer, Integer> tuple)
-    {
+    private static CompoundTag writePartnerTupleToNBT(final Map.Entry<Integer, Integer> tuple) {
         final CompoundTag compound = new CompoundTag();
         compound.putInt(TAG_PARTNER1, tuple.getKey());
         compound.putInt(TAG_PARTNER2, tuple.getValue());
@@ -121,15 +113,13 @@ public class BuildingCombatAcademy extends AbstractBuilding
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return SCHEMATIC_NAME;
     }
 
     @SuppressWarnings("squid:S109")
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return 5;
     }
 
@@ -139,10 +129,8 @@ public class BuildingCombatAcademy extends AbstractBuilding
      * @param random the random obj.
      * @return a random shooting target position.
      */
-    public BlockPos getRandomCombatTarget(final RandomSource random)
-    {
-        if (!fightingPos.isEmpty())
-        {
+    public BlockPos getRandomCombatTarget(final RandomSource random) {
+        if (!fightingPos.isEmpty()) {
             return fightingPos.get(random.nextInt(fightingPos.size()));
         }
         return null;
@@ -154,19 +142,16 @@ public class BuildingCombatAcademy extends AbstractBuilding
      * @param citizen the worker to get the partner for.
      * @return the entityCitizen partner or null.
      */
-    public AbstractEntityCitizen getRandomCombatPartner(final AbstractEntityCitizen citizen)
-    {
+    public AbstractEntityCitizen getRandomCombatPartner(final AbstractEntityCitizen citizen) {
         final ICitizenData citizenData = citizen.getCitizenData();
-        if (citizenData != null)
-        {
+        if (citizenData != null) {
             final ICitizenData partner = getFirstModuleOccurance(WorkAtHomeBuildingModule.class).getAssignedCitizen().stream()
-                                           .filter(data -> data.getId() != citizenData.getId())
-                                           .filter(data -> !trainingPartners.containsKey(data.getId()))
-                                           .filter(data -> !trainingPartners.containsValue(data.getId()))
-                                           .findFirst()
-                                           .orElse(null);
-            if (partner != null)
-            {
+                    .filter(data -> data.getId() != citizenData.getId())
+                    .filter(data -> !trainingPartners.containsKey(data.getId()))
+                    .filter(data -> !trainingPartners.containsValue(data.getId()))
+                    .findFirst()
+                    .orElse(null);
+            if (partner != null) {
                 trainingPartners.put(citizenData.getId(), partner.getId());
                 return partner.getEntity().orElse(null);
             }
@@ -181,8 +166,7 @@ public class BuildingCombatAcademy extends AbstractBuilding
      * @param citizen the citizen to check for.
      * @return true if so.
      */
-    public boolean hasCombatPartner(final AbstractEntityCitizen citizen)
-    {
+    public boolean hasCombatPartner(final AbstractEntityCitizen citizen) {
         return getCombatPartner(citizen) != null;
     }
 
@@ -192,29 +176,21 @@ public class BuildingCombatAcademy extends AbstractBuilding
      * @param citizen the citizen.
      * @return the citizen or null.
      */
-    public AbstractEntityCitizen getCombatPartner(final AbstractEntityCitizen citizen)
-    {
+    public AbstractEntityCitizen getCombatPartner(final AbstractEntityCitizen citizen) {
         final ICitizenData data = citizen.getCitizenData();
-        if (data != null)
-        {
+        if (data != null) {
             final int citizenId;
-            if (trainingPartners.containsKey(data.getId()))
-            {
+            if (trainingPartners.containsKey(data.getId())) {
                 citizenId = trainingPartners.get(data.getId());
-            }
-            else if (trainingPartners.containsValue(data.getId()))
-            {
+            } else if (trainingPartners.containsValue(data.getId())) {
                 citizenId = trainingPartners.inverse().get(data.getId());
-            }
-            else
-            {
+            } else {
                 return null;
             }
 
             final ICitizenData citizenData = getFirstModuleOccurance(WorkAtHomeBuildingModule.class).
-              getAssignedCitizen().stream().filter(cit -> cit.getId() != data.getId()).filter(cit -> cit.getId() == citizenId).findFirst().orElse(null);
-            if (citizenData != null)
-            {
+                    getAssignedCitizen().stream().filter(cit -> cit.getId() != data.getId()).filter(cit -> cit.getId() == citizenId).findFirst().orElse(null);
+            if (citizenData != null) {
                 return citizenData.getEntity().orElse(null);
             }
         }
@@ -226,17 +202,12 @@ public class BuildingCombatAcademy extends AbstractBuilding
      *
      * @param worker the worker to reset it for.
      */
-    public void resetPartner(final AbstractEntityCitizen worker)
-    {
+    public void resetPartner(final AbstractEntityCitizen worker) {
         final ICitizenData data = worker.getCitizenData();
-        if (data != null)
-        {
-            if (trainingPartners.containsKey(data.getId()))
-            {
+        if (data != null) {
+            if (trainingPartners.containsKey(data.getId())) {
                 trainingPartners.remove(data.getId());
-            }
-            else if (trainingPartners.containsValue(data.getId()))
-            {
+            } else if (trainingPartners.containsValue(data.getId())) {
                 trainingPartners.inverse().remove(data.getId());
             }
         }

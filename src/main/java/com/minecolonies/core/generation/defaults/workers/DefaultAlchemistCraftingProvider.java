@@ -25,25 +25,21 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTI
 /**
  * Datagen for Alchemist
  */
-public class DefaultAlchemistCraftingProvider extends CustomRecipeProvider
-{
+public class DefaultAlchemistCraftingProvider extends CustomRecipeProvider {
     private final String ALCHEMIST = ModJobs.ALCHEMIST_ID.getPath();
 
-    public DefaultAlchemistCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
-    {
+    public DefaultAlchemistCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "DefaultAlchemistCraftingProvider";
     }
 
     @Override
-    protected void registerRecipes(@NotNull Consumer<CustomRecipeBuilder> consumer)
-    {
+    protected void registerRecipes(@NotNull Consumer<CustomRecipeBuilder> consumer) {
         recipe(ALCHEMIST, MODULE_CRAFTING, "magicpotion")
                 .inputs(List.of(new ItemStorage(new ItemStack(ModItems.mistletoe)),
                         new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))

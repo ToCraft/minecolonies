@@ -16,40 +16,36 @@ import org.jetbrains.annotations.NotNull;
 /**
  * ------------ Class not Documented ------------
  */
-public class StationRequestResolverFactory implements IRequestResolverFactory<StationRequestResolver>
-{
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN    = "Token";
+public class StationRequestResolverFactory implements IRequestResolverFactory<StationRequestResolver> {
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_TOKEN = "Token";
     private static final String NBT_LOCATION = "Location";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
     @Override
-    public TypeToken<? extends StationRequestResolver> getFactoryOutputType()
-    {
+    public TypeToken<? extends StationRequestResolver> getFactoryOutputType() {
         return TypeToken.of(StationRequestResolver.class);
     }
 
     @NotNull
     @Override
-    public TypeToken<? extends ILocation> getFactoryInputType()
-    {
+    public TypeToken<? extends ILocation> getFactoryInputType() {
         return TypeConstants.ILOCATION;
     }
 
     @NotNull
     @Override
     public StationRequestResolver getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final ILocation iLocation, @NotNull final Object... context)
-      throws IllegalArgumentException
-    {
+            throws IllegalArgumentException {
         return new StationRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }
 
     @NotNull
     @Override
     public CompoundTag serialize(@NotNull final HolderLookup.Provider provider,
-      @NotNull final IFactoryController controller, @NotNull final StationRequestResolver StationRequestResolver)
-    {
+                                 @NotNull final IFactoryController controller, @NotNull final StationRequestResolver StationRequestResolver) {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_TOKEN, controller.serializeTag(provider, StationRequestResolver.getId()));
         compound.put(NBT_LOCATION, controller.serializeTag(provider, StationRequestResolver.getLocation()));
@@ -58,8 +54,7 @@ public class StationRequestResolverFactory implements IRequestResolverFactory<St
 
     @NotNull
     @Override
-    public StationRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
-    {
+    public StationRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) {
         final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserializeTag(provider, nbt.getCompound(NBT_LOCATION));
 
@@ -67,16 +62,14 @@ public class StationRequestResolverFactory implements IRequestResolverFactory<St
     }
 
     @Override
-    public void serialize(IFactoryController controller, StationRequestResolver input, RegistryFriendlyByteBuf packetBuffer)
-    {
+    public void serialize(IFactoryController controller, StationRequestResolver input, RegistryFriendlyByteBuf packetBuffer) {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @NotNull
     @Override
-    public StationRequestResolver deserialize(IFactoryController controller, @NotNull RegistryFriendlyByteBuf buffer) throws Throwable
-    {
+    public StationRequestResolver deserialize(IFactoryController controller, @NotNull RegistryFriendlyByteBuf buffer) throws Throwable {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 
@@ -84,8 +77,7 @@ public class StationRequestResolverFactory implements IRequestResolverFactory<St
     }
 
     @Override
-    public short getSerializationId()
-    {
+    public short getSerializationId() {
         return SerializationIdentifierConstants.STATION_REQUEST_RESOLVER_ID;
     }
 }

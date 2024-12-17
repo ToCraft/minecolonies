@@ -20,8 +20,7 @@ import static com.minecolonies.api.util.constant.translation.GuiTranslationConst
 /**
  * Client side version of the abstract class to list all fields (assigned) to a building.
  */
-public abstract class FieldsModuleView extends AbstractBuildingModuleView
-{
+public abstract class FieldsModuleView extends AbstractBuildingModuleView {
     /**
      * Checks if fields should be assigned manually.
      */
@@ -33,21 +32,18 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     private int maxFieldCount;
 
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         shouldAssignFieldManually = buf.readBoolean();
         maxFieldCount = buf.readInt();
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return "field";
     }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return BUILDING_TAB_FIELDS;
     }
 
@@ -56,8 +52,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      *
      * @return true if yes.
      */
-    public boolean assignFieldManually()
-    {
+    public boolean assignFieldManually() {
         return shouldAssignFieldManually;
     }
 
@@ -66,8 +61,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      *
      * @param assignFieldManually variable to set.
      */
-    public void setAssignFieldManually(final boolean assignFieldManually)
-    {
+    public void setAssignFieldManually(final boolean assignFieldManually) {
         this.shouldAssignFieldManually = assignFieldManually;
         new AssignmentModeMessage(buildingView, assignFieldManually, getProducer().getRuntimeID()).sendToServer();
     }
@@ -77,15 +71,12 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      *
      * @param field the field to assign.
      */
-    public void assignField(final IField field)
-    {
-        if (buildingView != null && canAssignField(field))
-        {
+    public void assignField(final IField field) {
+        if (buildingView != null && canAssignField(field)) {
             new AssignFieldMessage(buildingView, field, true, getProducer().getRuntimeID()).sendToServer();
 
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
-            if (buildingModuleView != null)
-            {
+            if (buildingModuleView != null) {
                 field.setBuilding(buildingView.getID());
             }
         }
@@ -97,8 +88,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @param field the field which is being added.
      * @return true if so.
      */
-    public final boolean canAssignField(IField field)
-    {
+    public final boolean canAssignField(IField field) {
         return getOwnedFields().size() < maxFieldCount && canAssignFieldOverride(field);
     }
 
@@ -108,13 +98,12 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @return an unmodifiable list.
      */
     @NotNull
-    public List<IField> getOwnedFields()
-    {
+    public List<IField> getOwnedFields() {
         return getFields().stream()
-                 .filter(field -> buildingView.getID().equals(field.getBuildingId()))
-                 .distinct()
-                 .sorted(new FieldsComparator(buildingView))
-                 .toList();
+                .filter(field -> buildingView.getID().equals(field.getBuildingId()))
+                .distinct()
+                .sorted(new FieldsComparator(buildingView))
+                .toList();
     }
 
     /**
@@ -131,13 +120,12 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @return an unmodifiable list.
      */
     @NotNull
-    public List<IField> getFields()
-    {
+    public List<IField> getFields() {
         return getFieldsInColony().stream()
-                 .filter(field -> !field.isTaken() || buildingView.getID().equals(field.getBuildingId()))
-                 .distinct()
-                 .sorted(new FieldsComparator(buildingView))
-                 .toList();
+                .filter(field -> !field.isTaken() || buildingView.getID().equals(field.getBuildingId()))
+                .distinct()
+                .sorted(new FieldsComparator(buildingView))
+                .toList();
     }
 
     /**
@@ -152,15 +140,12 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      *
      * @param field the field to free.
      */
-    public void freeField(final IField field)
-    {
-        if (buildingView != null)
-        {
+    public void freeField(final IField field) {
+        if (buildingView != null) {
             new AssignFieldMessage(buildingView, field, false, getProducer().getRuntimeID()).sendToServer();
 
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
-            if (buildingModuleView != null)
-            {
+            if (buildingModuleView != null) {
                 field.resetOwningBuilding();
             }
         }
@@ -173,10 +158,8 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @return a text component that should be shown if there is a problem for the specific field, else null.
      */
     @Nullable
-    public MutableComponent getFieldWarningTooltip(IField field)
-    {
-        if (getOwnedFields().size() >= maxFieldCount)
-        {
+    public MutableComponent getFieldWarningTooltip(IField field) {
+        if (getOwnedFields().size() >= maxFieldCount) {
             return Component.translatableEscape(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
         }
         return null;
@@ -187,16 +170,14 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      *
      * @return the max field count.
      */
-    public int getMaxFieldCount()
-    {
+    public int getMaxFieldCount() {
         return maxFieldCount;
     }
 
     /**
      * Comparator class for sorting fields in a predictable order in the window.
      */
-    static class FieldsComparator implements Comparator<IField>
-    {
+    static class FieldsComparator implements Comparator<IField> {
         /**
          * The building this comparator is running on.
          */
@@ -207,24 +188,17 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
          *
          * @param assignedBuilding the building this comparator is running on.
          */
-        public FieldsComparator(IBuildingView assignedBuilding)
-        {
+        public FieldsComparator(IBuildingView assignedBuilding) {
             this.assignedBuilding = assignedBuilding;
         }
 
         @Override
-        public int compare(final IField field1, final IField field2)
-        {
-            if (field1.isTaken() && field2.isTaken())
-            {
+        public int compare(final IField field1, final IField field2) {
+            if (field1.isTaken() && field2.isTaken()) {
                 return field1.getSqDistance(assignedBuilding) - field2.getSqDistance(assignedBuilding);
-            }
-            else if (field1.isTaken())
-            {
+            } else if (field1.isTaken()) {
                 return -1;
-            }
-            else if (field2.isTaken())
-            {
+            } else if (field2.isTaken()) {
                 return 1;
             }
 

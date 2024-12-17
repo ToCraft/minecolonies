@@ -12,8 +12,7 @@ import java.util.function.Supplier;
  * Basic Transition class for statemachines. Consists of a state the transition applies in, a statesupplier which determines its next state and a condition which has to be true to
  * transition into the next state.
  */
-public class BasicTransition<S extends IState> implements IStateMachineTransition<S>
-{
+public class BasicTransition<S extends IState> implements IStateMachineTransition<S> {
     /**
      * The State we're starting in
      */
@@ -39,8 +38,7 @@ public class BasicTransition<S extends IState> implements IStateMachineTransitio
      * @param condition Condition C
      * @param nextState State B
      */
-    public BasicTransition(@NotNull final S state, @NotNull final BooleanSupplier condition, @NotNull final Supplier<S> nextState)
-    {
+    public BasicTransition(@NotNull final S state, @NotNull final BooleanSupplier condition, @NotNull final Supplier<S> nextState) {
         this.state = state;
         this.condition = condition;
         this.nextState = nextState;
@@ -52,8 +50,7 @@ public class BasicTransition<S extends IState> implements IStateMachineTransitio
      * @param condition the condition.
      * @param nextState the next state to go to.
      */
-    protected BasicTransition(@NotNull final BooleanSupplier condition, @NotNull final Supplier<S> nextState)
-    {
+    protected BasicTransition(@NotNull final BooleanSupplier condition, @NotNull final Supplier<S> nextState) {
         this.state = null;
         this.condition = condition;
         this.nextState = nextState;
@@ -64,8 +61,7 @@ public class BasicTransition<S extends IState> implements IStateMachineTransitio
      *
      * @return IAIState
      */
-    public S getState()
-    {
+    public S getState() {
         return state;
     }
 
@@ -74,16 +70,14 @@ public class BasicTransition<S extends IState> implements IStateMachineTransitio
      *
      * @return next AI state
      */
-    public S getNextState()
-    {
+    public S getNextState() {
         return nextState.get();
     }
 
     /**
      * Check if the condition of this transition applies
      */
-    public boolean checkCondition()
-    {
+    public boolean checkCondition() {
         return condition.getAsBoolean();
     }
 }

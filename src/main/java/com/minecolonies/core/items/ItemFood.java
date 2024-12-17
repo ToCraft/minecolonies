@@ -14,8 +14,7 @@ import java.util.List;
 /**
  * A custom item class for food items.
  */
-public class ItemFood extends Item implements IMinecoloniesFoodItem
-{
+public class ItemFood extends Item implements IMinecoloniesFoodItem {
     /**
      * The food tier.
      */
@@ -25,23 +24,20 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
      * Creates a new food item.
      *
      * @param builder the item properties to use.
-     * @param tier the nutrition tier.
+     * @param tier    the nutrition tier.
      */
-    public ItemFood(@NotNull final Properties builder, final int tier)
-    {
+    public ItemFood(@NotNull final Properties builder, final int tier) {
         super(builder);
         this.tier = tier;
     }
 
     @Override
-    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
-    {
+    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn) {
         tooltip.add(Component.translatable(TranslationConstants.TIER_TOOLTIP + this.tier));
     }
 
     @Override
-    public int getTier()
-    {
+    public int getTier() {
         return this.tier;
     }
 }

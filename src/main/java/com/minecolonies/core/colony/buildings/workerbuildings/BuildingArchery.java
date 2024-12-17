@@ -13,7 +13,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -25,8 +24,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Archery.
  */
-public class BuildingArchery extends AbstractBuilding
-{
+public class BuildingArchery extends AbstractBuilding {
     /**
      * The Schematic name.
      */
@@ -48,29 +46,23 @@ public class BuildingArchery extends AbstractBuilding
      * @param c the colony
      * @param l the position
      */
-    public BuildingArchery(@NotNull final IColony c, final BlockPos l)
-    {
+    public BuildingArchery(@NotNull final IColony c, final BlockPos l) {
         super(c, l);
     }
 
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
-    {
-        if (block == Blocks.TARGET)
-        {
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world) {
+        if (block == Blocks.TARGET) {
             shootingTargets.add(pos);
-        }
-        else if (block == Blocks.GLOWSTONE)
-        {
+        } else if (block == Blocks.GLOWSTONE) {
             shootingStands.add(pos);
         }
         super.registerBlockPosition(block, pos, world);
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         shootingTargets.clear();
         shootingStands.clear();
@@ -83,8 +75,7 @@ public class BuildingArchery extends AbstractBuilding
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
 
         final ListTag targetList = shootingTargets.stream().map(target -> BlockPosUtil.write(new CompoundTag(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
@@ -98,8 +89,7 @@ public class BuildingArchery extends AbstractBuilding
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return SCHEMATIC_NAME;
     }
 
@@ -109,15 +99,12 @@ public class BuildingArchery extends AbstractBuilding
      * @param random the random obj.
      * @return a random shooting stand position.
      */
-    public BlockPos getRandomShootingStandPosition(final RandomSource random)
-    {
+    public BlockPos getRandomShootingStandPosition(final RandomSource random) {
         final List<BlockPos> tagged = getLocationsFromTag(TAG_WORK);
-        if (!tagged.isEmpty())
-        {
+        if (!tagged.isEmpty()) {
             return tagged.get(random.nextInt(tagged.size()));
         }
-        if (!shootingStands.isEmpty())
-        {
+        if (!shootingStands.isEmpty()) {
             return shootingStands.get(random.nextInt(shootingStands.size()));
         }
         return null;
@@ -129,10 +116,8 @@ public class BuildingArchery extends AbstractBuilding
      * @param random the random obj.
      * @return a random shooting target position.
      */
-    public BlockPos getRandomShootingTarget(final RandomSource random)
-    {
-        if (!shootingTargets.isEmpty())
-        {
+    public BlockPos getRandomShootingTarget(final RandomSource random) {
+        if (!shootingTargets.isEmpty()) {
             return shootingTargets.get(random.nextInt(shootingTargets.size()));
         }
         return null;

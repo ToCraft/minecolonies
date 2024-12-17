@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates a request from the postbox.
  */
-public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox>
-{
+public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "post_box_request", PostBoxRequestMessage::new);
 
     /**
@@ -40,8 +39,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
      * @param itemStack to be take from the player for the building
      * @param quantity  of item needed to be transfered
      */
-    public PostBoxRequestMessage(@NotNull final AbstractBuildingView building, final ItemStack itemStack, final int quantity, final boolean deliverAvailable)
-    {
+    public PostBoxRequestMessage(@NotNull final AbstractBuildingView building, final ItemStack itemStack, final int quantity, final boolean deliverAvailable) {
         super(TYPE, building);
         this.itemStack = itemStack;
         reqQuantity = quantity;
@@ -49,8 +47,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
 
         Utils.serializeCodecMess(buf, itemStack);
@@ -58,8 +55,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
         buf.writeInt(reqQuantity);
     }
 
-    protected PostBoxRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected PostBoxRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
 
         itemStack = Utils.deserializeCodecMess(buf);
@@ -68,8 +64,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final PostBox building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final PostBox building) {
 
         final int minCount = (deliverAvailable) ? 1 : reqQuantity;
         final Stack requestStack = new Stack(itemStack, reqQuantity, minCount);

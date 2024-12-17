@@ -20,31 +20,23 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public final class JobDataManager implements IJobDataManager
-{
+public final class JobDataManager implements IJobDataManager {
     @Nullable
     @Override
-    public IJob<?> createFrom(final ICitizenData citizen, @NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public IJob<?> createFrom(final ICitizenData citizen, @NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         final ResourceLocation jobType =
-          compound.contains(NbtTagConstants.TAG_JOB_TYPE) ? ResourceLocation.parse(compound.getString(NbtTagConstants.TAG_JOB_TYPE)) : ModJobs.PLACEHOLDER_ID;
+                compound.contains(NbtTagConstants.TAG_JOB_TYPE) ? ResourceLocation.parse(compound.getString(NbtTagConstants.TAG_JOB_TYPE)) : ModJobs.PLACEHOLDER_ID;
         final IJob<?> job = Optional.ofNullable(IJobRegistry.getInstance().get(jobType)).map(r -> r.produceJob(citizen)).orElse(null);
 
-        if (job != null)
-        {
-            try
-            {
+        if (job != null) {
+            try {
                 job.deserializeNBT(provider, compound);
-            }
-            catch (final RuntimeException ex)
-            {
+            } catch (final RuntimeException ex) {
                 Log.getLogger().error(String.format("A Job %s has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                  jobType), ex);
+                        jobType), ex);
                 return null;
             }
-        }
-        else
-        {
+        } else {
             Log.getLogger().warn(String.format("Unknown Job type '%s' or missing constructor of proper format.", jobType));
         }
 
@@ -53,21 +45,18 @@ public final class JobDataManager implements IJobDataManager
 
     @Override
     public IJobView createViewFrom(
-      final IColonyView colony, final ICitizenDataView citizenDataView, final RegistryFriendlyByteBuf networkBuffer)
-    {
+            final IColonyView colony, final ICitizenDataView citizenDataView, final RegistryFriendlyByteBuf networkBuffer) {
         final ResourceLocation jobName = ResourceLocation.parse(networkBuffer.readUtf(32767));
         final JobEntry entry = IJobRegistry.getInstance().get(jobName);
 
-        if (entry == null)
-        {
+        if (entry == null) {
             Log.getLogger().error(String.format("Unknown job type '%s'.", jobName), new Exception());
             return null;
         }
 
         final IJobView view = entry.getJobViewProducer().get().apply(colony, citizenDataView);
 
-        if (view != null)
-        {
+        if (view != null) {
             view.deserialize(networkBuffer);
         }
 

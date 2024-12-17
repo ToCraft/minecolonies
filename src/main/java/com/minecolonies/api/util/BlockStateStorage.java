@@ -9,8 +9,7 @@ import java.util.List;
 /**
  * Stores a blockstate for comparing.
  */
-public class BlockStateStorage
-{
+public class BlockStateStorage {
     /**
      * The state to store.
      */
@@ -38,8 +37,7 @@ public class BlockStateStorage
      * @param compareProperties the list of properties to compare
      * @param exclude           True: states are compared ignoring the properties in the given list. False: states are only compared within the properties on the list.
      */
-    public BlockStateStorage(@NotNull final BlockState state, @NotNull final List<Property<?>> compareProperties, final boolean exclude)
-    {
+    public BlockStateStorage(@NotNull final BlockState state, @NotNull final List<Property<?>> compareProperties, final boolean exclude) {
         this.state = state;
         this.propertyList = compareProperties;
         this.exclude = exclude;
@@ -47,25 +45,18 @@ public class BlockStateStorage
         // Calculating the hashcode once
         hashCode = state.getBlock().hashCode();
 
-        if (!exclude)
-        {
+        if (!exclude) {
             // hashcode only for included properties
-            for (final Property<?> prop : compareProperties)
-            {
-                if (state.hasProperty(prop))
-                {
+            for (final Property<?> prop : compareProperties) {
+                if (state.hasProperty(prop)) {
                     hashCode += prop.hashCode();
                     hashCode += state.getValue(prop).hashCode();
                 }
             }
-        }
-        else
-        {
+        } else {
             // hashcode for all except the excluded properties
-            for (final Property<?> prop : state.getProperties())
-            {
-                if (!compareProperties.contains(prop))
-                {
+            for (final Property<?> prop : state.getProperties()) {
+                if (!compareProperties.contains(prop)) {
                     hashCode += prop.hashCode();
                     hashCode += state.getValue(prop).hashCode();
                 }
@@ -78,8 +69,7 @@ public class BlockStateStorage
      *
      * @return state
      */
-    public BlockState getState()
-    {
+    public BlockState getState() {
         return state;
     }
 
@@ -88,68 +78,52 @@ public class BlockStateStorage
      *
      * @return property list
      */
-    public List<Property<?>> getCompareProperties()
-    {
+    public List<Property<?>> getCompareProperties() {
         return propertyList;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return hashCode;
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         final BlockStateStorage comparingToStorage = (BlockStateStorage) o;
 
-        if (comparingToStorage.getState() == state)
-        {
+        if (comparingToStorage.getState() == state) {
             return true;
         }
 
-        if (exclude)
-        {
-            for (final Property<?> prop : state.getProperties())
-            {
+        if (exclude) {
+            for (final Property<?> prop : state.getProperties()) {
                 // skip excluded properties upon comparing
-                if (getCompareProperties().contains(prop))
-                {
+                if (getCompareProperties().contains(prop)) {
                     continue;
                 }
 
-                if (!comparingToStorage.getState().hasProperty(prop))
-                {
+                if (!comparingToStorage.getState().hasProperty(prop)) {
                     return false;
                 }
 
-                if (!comparingToStorage.getState().getValue(prop).equals(state.getValue(prop)))
-                {
+                if (!comparingToStorage.getState().getValue(prop).equals(state.getValue(prop))) {
                     return false;
                 }
             }
-        }
-        else
-        {
-            for (final Property<?> prop : propertyList)
-            {
-                if (!comparingToStorage.getState().hasProperty(prop))
-                {
+        } else {
+            for (final Property<?> prop : propertyList) {
+                if (!comparingToStorage.getState().hasProperty(prop)) {
                     return false;
                 }
 
-                if (!comparingToStorage.getState().getValue(prop).equals(state.getValue(prop)))
-                {
+                if (!comparingToStorage.getState().getValue(prop).equals(state.getValue(prop))) {
                     return false;
                 }
             }

@@ -16,52 +16,45 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.UnaryOperator;
 
-public record ColonyId(int id, ResourceKey<Level> dimension)
-{
+public record ColonyId(int id, ResourceKey<Level> dimension) {
     public static final ColonyId EMPTY = new ColonyId(-1, Level.OVERWORLD);
 
     public static final Codec<ColonyId> CODEC = RecordCodecBuilder.create(
-      builder -> builder
-                   .group(Codec.INT.fieldOf("id").forGetter(ColonyId::id),
-                     Level.RESOURCE_KEY_CODEC.fieldOf("dimension").forGetter(ColonyId::dimension))
-                   .apply(builder, ColonyId::new));
+            builder -> builder
+                    .group(Codec.INT.fieldOf("id").forGetter(ColonyId::id),
+                            Level.RESOURCE_KEY_CODEC.fieldOf("dimension").forGetter(ColonyId::dimension))
+                    .apply(builder, ColonyId::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ColonyId> STREAM_CODEC =
-      StreamCodec.composite(ByteBufCodecs.VAR_INT,
-        ColonyId::id, ResourceKey.streamCodec(Registries.DIMENSION), ColonyId::dimension,
-        ColonyId::new);
+            StreamCodec.composite(ByteBufCodecs.VAR_INT,
+                    ColonyId::id, ResourceKey.streamCodec(Registries.DIMENSION), ColonyId::dimension,
+                    ColonyId::new);
 
-    public boolean hasColonyId()
-    {
+    public boolean hasColonyId() {
         return id != EMPTY.id;
     }
 
-    public void writeToItemStack(final ItemStack itemStack)
-    {
+    public void writeToItemStack(final ItemStack itemStack) {
         itemStack.set(ModDataComponents.COLONY_ID_COMPONENT, this);
     }
 
-    public static ColonyId readFromItemStack(final ItemStack itemStack)
-    {
+    public static ColonyId readFromItemStack(final ItemStack itemStack) {
         return itemStack.getOrDefault(ModDataComponents.COLONY_ID_COMPONENT, ColonyId.EMPTY);
     }
 
     @Nullable
-    public static IColony readColonyFromItemStack(final ItemStack itemStack)
-    {
+    public static IColony readColonyFromItemStack(final ItemStack itemStack) {
         final ColonyId colonyId = readFromItemStack(itemStack);
         return colonyId == EMPTY ? null : IColonyManager.getInstance().getColonyByDimension(colonyId.id(), colonyId.dimension());
     }
 
     @Nullable
-    public static IColonyView readColonyViewFromItemStack(final ItemStack itemStack)
-    {
+    public static IColonyView readColonyViewFromItemStack(final ItemStack itemStack) {
         final ColonyId colonyId = readFromItemStack(itemStack);
         return colonyId == EMPTY ? null : IColonyManager.getInstance().getColonyView(colonyId.id(), colonyId.dimension());
     }
 
-    public static void updateItemStack(final ItemStack itemStack, final UnaryOperator<ColonyId> updater)
-    {
+    public static void updateItemStack(final ItemStack itemStack, final UnaryOperator<ColonyId> updater) {
         updater.apply(readFromItemStack(itemStack)).writeToItemStack(itemStack);
     }
 }

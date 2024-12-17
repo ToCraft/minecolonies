@@ -1,7 +1,6 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.items.component.Desc;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
@@ -29,50 +28,40 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Colony teleport scroll, which teleports the user and any nearby players to the colony, invite a friend-style
  */
-public class ItemScrollColonyAreaTP extends AbstractItemScroll
-{
+public class ItemScrollColonyAreaTP extends AbstractItemScroll {
     /**
      * Sets the name, creative tab, and registers the item.
      *
      * @param properties the properties.
      */
-    public ItemScrollColonyAreaTP(final Properties properties)
-    {
+    public ItemScrollColonyAreaTP(final Properties properties) {
         super("scroll_area_tp", properties);
     }
 
     @Override
-    public int getUseDuration(final ItemStack itemStack, final LivingEntity livingEntity)
-    {
+    public int getUseDuration(final ItemStack itemStack, final LivingEntity livingEntity) {
         return 64;
     }
 
     @Override
-    protected ItemStack onItemUseSuccess(final ItemStack itemStack, final Level world, final ServerPlayer player)
-    {
-        if (world.random.nextInt(10) == 0)
-        {
+    protected ItemStack onItemUseSuccess(final ItemStack itemStack, final Level world, final ServerPlayer player) {
+        if (world.random.nextInt(10) == 0) {
             // Fail chance
             player.displayClientMessage(Component.translatableEscape(
-              "minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
-              ChatFormatting.GOLD)), true);
+                    "minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
+                    ChatFormatting.GOLD)), true);
 
             itemStack.shrink(1);
-            if (!ItemStackUtils.isEmpty(itemStack))
-            {
+            if (!ItemStackUtils.isEmpty(itemStack)) {
                 player.drop(itemStack.copy(), true, false);
                 itemStack.setCount(0);
             }
 
-            for (final ServerPlayer sPlayer : getAffectedPlayers(player))
-            {
+            for (final ServerPlayer sPlayer : getAffectedPlayers(player)) {
                 SoundUtils.playSoundForPlayer(sPlayer, SoundEvents.EVOKER_PREPARE_SUMMON, 0.3f, 1.0f);
             }
-        }
-        else
-        {
-            for (final ServerPlayer sPlayer : getAffectedPlayers(player))
-            {
+        } else {
+            for (final ServerPlayer sPlayer : getAffectedPlayers(player)) {
                 doTeleport(sPlayer, getColony(itemStack), itemStack);
                 SoundUtils.playSoundForPlayer(sPlayer, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 0.1f, 1.0f);
             }
@@ -84,8 +73,7 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
     }
 
     @Override
-    protected boolean needsColony()
-    {
+    protected boolean needsColony() {
         return true;
     }
 
@@ -95,19 +83,15 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
      * @param player user of the item
      * @param colony colony to teleport to
      */
-    protected void doTeleport(final ServerPlayer player, final IColony colony, final ItemStack stack)
-    {
+    protected void doTeleport(final ServerPlayer player, final IColony colony, final ItemStack stack) {
         TeleportHelper.colonyTeleport(player, colony);
     }
 
     @Override
-    public void onUseTick(Level worldIn, LivingEntity entity, ItemStack stack, int count)
-    {
-        if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0 && entity instanceof Player)
-        {
+    public void onUseTick(Level worldIn, LivingEntity entity, ItemStack stack, int count) {
+        if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0 && entity instanceof Player) {
             final ServerPlayer sPlayer = (ServerPlayer) entity;
-            for (final Entity player : getAffectedPlayers(sPlayer))
-            {
+            for (final Entity player : getAffectedPlayers(sPlayer)) {
                 new VanillaParticleMessage(player.getX(), player.getY(), player.getZ(), ParticleTypes.INSTANT_EFFECT).sendToTrackingEntity(player);
             }
 
@@ -118,14 +102,12 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
     /**
      * Get the list of players affected by the area teleport
      */
-    private List<ServerPlayer> getAffectedPlayers(final ServerPlayer user)
-    {
+    private List<ServerPlayer> getAffectedPlayers(final ServerPlayer user) {
         return user.level().getEntitiesOfClass(ServerPlayer.class, user.getBoundingBox().inflate(10, 2, 10));
     }
 
     @Override
-    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
-    {
+    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn) {
         final MutableComponent guiHint = Component.translatableEscape(TOOL_COLONY_TELEPORT_AREA_SCROLL_DESCRIPTION);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
@@ -133,8 +115,7 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
         MutableComponent colonyDesc = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
 
         final IColony colony = getColonyView(stack);
-        if (colony != null)
-        {
+        if (colony != null) {
             colonyDesc = Component.literal(colony.getName());
         }
 

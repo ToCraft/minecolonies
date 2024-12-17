@@ -105,19 +105,19 @@
             "predicate_type": "minecraft:always_true"
           }
         }
-
       ],
       "processor_type": "minecraft:rule"
     },
     {
-      "blocks":[
+      "blocks": [
         {
-          "Name":"structurize:blocksubstitution"
+          "Name": "structurize:blocksubstitution"
         },
         {
-          "Name":"minecolonies:blockwaypoint"
+          "Name": "minecolonies:blockwaypoint"
         }
       ],
       "processor_type": "minecraft:block_ignore"
-    }  ]
+    }
+  ]
 }

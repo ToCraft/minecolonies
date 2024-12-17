@@ -7,16 +7,14 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 /**
  * Hut for the mystical site. No different from {@link AbstractBlockHut}
  */
-public class BlockHutMysticalSite extends AbstractBlockHut<BlockHutMysticalSite>
-{
+public class BlockHutMysticalSite extends AbstractBlockHut<BlockHutMysticalSite> {
     /**
      * Method to return the name of the block.
      *
      * @return Name of the block.
      */
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhutmysticalsite";
     }
 
@@ -26,8 +24,7 @@ public class BlockHutMysticalSite extends AbstractBlockHut<BlockHutMysticalSite>
      * @return The building entry.
      */
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.mysticalSite.get();
     }
 }

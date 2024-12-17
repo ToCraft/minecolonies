@@ -5,8 +5,7 @@ import java.time.Duration;
 /**
  * Constants for the quest log.
  */
-public class Constants
-{
+public class Constants {
     /**
      * Highlight manager key for the quest log tracking.
      */
@@ -47,7 +46,6 @@ public class Constants
      */
     public static final String BUTTON_QUEST_LOCATOR = "questLocator";
 
-    private Constants()
-    {
+    private Constants() {
     }
 }

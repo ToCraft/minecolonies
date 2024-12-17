@@ -29,25 +29,24 @@ import java.util.Optional;
 /**
  * Class defining our configured feature - the empty colony that is spawning.
  */
-public class EmptyColonyStructure extends Structure
-{
+public class EmptyColonyStructure extends Structure {
 
     // A custom codec that changes the size limit for our code_structure_sky_fan.json's config to not be capped at 7.
     // With this, we can have a structure with a size limit up to 30 if we want to have extremely long branches of pieces in the structure.
     public static final MapCodec<EmptyColonyStructure> COLONY_CODEC = RecordCodecBuilder.<EmptyColonyStructure>mapCodec(instance ->
-                                                                                                  instance.group(EmptyColonyStructure.settingsCodec(instance),
-                                                                                                    StructureTemplatePool.CODEC.fieldOf("start_pool").forGetter(structure -> structure.startPool),
-                                                                                                    ResourceLocation.CODEC.optionalFieldOf("start_jigsaw_name").forGetter(structure -> structure.startJigsawName),
-                                                                                                    Codec.intRange(0, 10).fieldOf("size").forGetter(structure -> structure.size),
-                                                                                                    HeightProvider.CODEC.fieldOf("start_height").forGetter(structure -> structure.startHeight),
-                                                                                                    Heightmap.Types.CODEC.optionalFieldOf("project_start_to_heightmap").forGetter(structure -> structure.projectStartToHeightmap),
-                                                                                                    Codec.intRange(1, 128).fieldOf("max_distance_from_center").forGetter(structure -> structure.maxDistanceFromCenter),
-                                                                                                    Codec.BOOL.optionalFieldOf("allow_cave", false).forGetter(structure -> structure.allowCave),
-                                                                                                    Codec.list(PoolAliasBinding.CODEC).optionalFieldOf("pool_aliases", List.of()).forGetter(p_307187_ -> p_307187_.poolAliases)
-                                                                                                  ).apply(instance, EmptyColonyStructure::new));
+            instance.group(EmptyColonyStructure.settingsCodec(instance),
+                    StructureTemplatePool.CODEC.fieldOf("start_pool").forGetter(structure -> structure.startPool),
+                    ResourceLocation.CODEC.optionalFieldOf("start_jigsaw_name").forGetter(structure -> structure.startJigsawName),
+                    Codec.intRange(0, 10).fieldOf("size").forGetter(structure -> structure.size),
+                    HeightProvider.CODEC.fieldOf("start_height").forGetter(structure -> structure.startHeight),
+                    Heightmap.Types.CODEC.optionalFieldOf("project_start_to_heightmap").forGetter(structure -> structure.projectStartToHeightmap),
+                    Codec.intRange(1, 128).fieldOf("max_distance_from_center").forGetter(structure -> structure.maxDistanceFromCenter),
+                    Codec.BOOL.optionalFieldOf("allow_cave", false).forGetter(structure -> structure.allowCave),
+                    Codec.list(PoolAliasBinding.CODEC).optionalFieldOf("pool_aliases", List.of()).forGetter(p_307187_ -> p_307187_.poolAliases)
+            ).apply(instance, EmptyColonyStructure::new));
 
     private final Holder<StructureTemplatePool> startPool;
-    private final Optional<ResourceLocation>    startJigsawName;
+    private final Optional<ResourceLocation> startJigsawName;
     private final int size;
     private final HeightProvider startHeight;
     private final Optional<Heightmap.Types> projectStartToHeightmap;
@@ -56,15 +55,14 @@ public class EmptyColonyStructure extends Structure
     private boolean allowCave;
 
     public EmptyColonyStructure(Structure.StructureSettings config,
-      Holder<StructureTemplatePool> startPool,
-      Optional<ResourceLocation> startJigsawName,
-      int size,
-      HeightProvider startHeight,
-      Optional<Heightmap.Types> projectStartToHeightmap,
-      int maxDistanceFromCenter,
-      boolean allowCave,
-      List<PoolAliasBinding> poolAliases)
-    {
+                                Holder<StructureTemplatePool> startPool,
+                                Optional<ResourceLocation> startJigsawName,
+                                int size,
+                                HeightProvider startHeight,
+                                Optional<Heightmap.Types> projectStartToHeightmap,
+                                int maxDistanceFromCenter,
+                                boolean allowCave,
+                                List<PoolAliasBinding> poolAliases) {
         super(config);
         this.startPool = startPool;
         this.startJigsawName = startJigsawName;
@@ -82,13 +80,11 @@ public class EmptyColonyStructure extends Structure
     }
 
     @Override
-    public GenerationStep.Decoration step()
-    {
+    public GenerationStep.Decoration step() {
         return GenerationStep.Decoration.SURFACE_STRUCTURES;
     }
 
-    private static boolean isFeatureChunk(Structure.GenerationContext context)
-    {
+    private static boolean isFeatureChunk(Structure.GenerationContext context) {
         BlockPos blockPos = context.chunkPos().getWorldPosition();
 
         int landHeight = context.chunkGenerator().getFirstOccupiedHeight(blockPos.getX(), blockPos.getZ(), Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
@@ -100,30 +96,26 @@ public class EmptyColonyStructure extends Structure
     }
 
     @Override
-    public Optional<Structure.GenerationStub> findGenerationPoint(Structure.GenerationContext context)
-    {
-        if (allowCave)
-        {
+    public Optional<Structure.GenerationStub> findGenerationPoint(Structure.GenerationContext context) {
+        if (allowCave) {
             final BlockPos.MutableBlockPos result = isFeatureChunkCave(context);
-            if (result != null)
-            {
+            if (result != null) {
                 Optional<GenerationStub> structurePiecesGenerator =
-                  JigsawPlacement.addPieces(
-                    context,
-                    this.startPool,
-                    this.startJigsawName,
-                    this.size,
-                    result,
-                    false,
-                    this.projectStartToHeightmap,
-                    this.maxDistanceFromCenter,
-                    PoolAliasLookup.create(this.poolAliases, result, context.seed()),
-                    DimensionPadding.ZERO,
-                    LiquidSettings.IGNORE_WATERLOGGING
-                  );
+                        JigsawPlacement.addPieces(
+                                context,
+                                this.startPool,
+                                this.startJigsawName,
+                                this.size,
+                                result,
+                                false,
+                                this.projectStartToHeightmap,
+                                this.maxDistanceFromCenter,
+                                PoolAliasLookup.create(this.poolAliases, result, context.seed()),
+                                DimensionPadding.ZERO,
+                                LiquidSettings.IGNORE_WATERLOGGING
+                        );
 
-                if (structurePiecesGenerator.isPresent())
-                {
+                if (structurePiecesGenerator.isPresent()) {
                     Log.getLogger().debug("New Empty colony at" + result);
                 }
                 return structurePiecesGenerator;
@@ -131,8 +123,7 @@ public class EmptyColonyStructure extends Structure
             return Optional.empty();
         }
 
-        if (!isFeatureChunk(context))
-        {
+        if (!isFeatureChunk(context)) {
             return Optional.empty();
         }
 
@@ -143,82 +134,66 @@ public class EmptyColonyStructure extends Structure
         blockpos = blockpos.above(topLandY);
 
         Optional<Structure.GenerationStub> structurePiecesGenerator =
-          JigsawPlacement.addPieces(
-            context,
-            this.startPool,
-            this.startJigsawName,
-            this.size,
-            blockpos,
-            false,
-            this.projectStartToHeightmap,
-            this.maxDistanceFromCenter,
-            PoolAliasLookup.create(this.poolAliases, blockpos, context.seed()),
-            DimensionPadding.ZERO,
-            LiquidSettings.IGNORE_WATERLOGGING
-          );
+                JigsawPlacement.addPieces(
+                        context,
+                        this.startPool,
+                        this.startJigsawName,
+                        this.size,
+                        blockpos,
+                        false,
+                        this.projectStartToHeightmap,
+                        this.maxDistanceFromCenter,
+                        PoolAliasLookup.create(this.poolAliases, blockpos, context.seed()),
+                        DimensionPadding.ZERO,
+                        LiquidSettings.IGNORE_WATERLOGGING
+                );
 
-        if (structurePiecesGenerator.isPresent())
-        {
+        if (structurePiecesGenerator.isPresent()) {
             Log.getLogger().debug("New Empty colony at" + blockpos);
         }
         return structurePiecesGenerator;
     }
 
-    private static BlockPos.MutableBlockPos isFeatureChunkCave(GenerationContext context)
-    {
+    private static BlockPos.MutableBlockPos isFeatureChunkCave(GenerationContext context) {
         BlockPos blockPos = context.chunkPos().getWorldPosition();
         ChunkPos chunkPos = new ChunkPos(blockPos);
 
         int currentY = 0;
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
 
-        for (int i = 0; i < 10; i++)
-        {
+        for (int i = 0; i < 10; i++) {
             currentY += context.random().nextInt(0, 30);
-            for (int curChunkX = chunkPos.x - 1; curChunkX <= chunkPos.x + 1; curChunkX++)
-            {
-                for (int curChunkZ = chunkPos.z - 1; curChunkZ <= chunkPos.z + 1; curChunkZ++)
-                {
+            for (int curChunkX = chunkPos.x - 1; curChunkX <= chunkPos.x + 1; curChunkX++) {
+                for (int curChunkZ = chunkPos.z - 1; curChunkZ <= chunkPos.z + 1; curChunkZ++) {
                     NoiseColumn blockView = context.chunkGenerator().getBaseColumn(mutable.getX(), mutable.getZ(), context.heightAccessor(), context.randomState());
                     mutable.set(curChunkX << 4, currentY, curChunkZ << 4);
-                    if (blockView.getBlock(mutable.getY()).isAir())
-                    {
+                    if (blockView.getBlock(mutable.getY()).isAir()) {
                         int airCount = 1;
-                        while (mutable.getY() > context.chunkGenerator().getMinY())
-                        {
+                        while (mutable.getY() > context.chunkGenerator().getMinY()) {
                             BlockState state = blockView.getBlock(mutable.getY());
-                            if (state.isAir())
-                            {
+                            if (state.isAir()) {
                                 airCount++;
-                            }
-                            else
-                            {
+                            } else {
                                 break;
                             }
                             mutable.move(Direction.DOWN);
                         }
 
                         mutable.setY(currentY);
-                        while (mutable.getY() < context.chunkGenerator().getMinY() + context.chunkGenerator().getGenDepth())
-                        {
+                        while (mutable.getY() < context.chunkGenerator().getMinY() + context.chunkGenerator().getGenDepth()) {
                             BlockState state = blockView.getBlock(mutable.getY());
-                            if (state.isAir())
-                            {
+                            if (state.isAir()) {
                                 airCount++;
-                                if (airCount >= 32)
-                                {
+                                if (airCount >= 32) {
                                     break;
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 break;
                             }
                             mutable.move(Direction.UP);
                         }
 
-                        if (airCount >= 32)
-                        {
+                        if (airCount >= 32) {
                             return mutable;
                         }
                     }

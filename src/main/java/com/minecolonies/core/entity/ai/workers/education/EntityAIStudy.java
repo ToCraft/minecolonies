@@ -31,8 +31,7 @@ import static com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract.R
 /**
  * The Entity AI study class.
  */
-public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLibrary>
-{
+public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLibrary> {
     /**
      * Render the book.
      */
@@ -63,35 +62,30 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
      *
      * @param job a student job to use.
      */
-    public EntityAIStudy(@NotNull final JobStudent job)
-    {
+    public EntityAIStudy(@NotNull final JobStudent job) {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
-          new AITarget(STUDY, this::study, STANDARD_DELAY)
+                new AITarget(IDLE, START_WORKING, 1),
+                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+                new AITarget(STUDY, this::study, STANDARD_DELAY)
         );
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    protected void updateRenderMetaData()
-    {
+    protected void updateRenderMetaData() {
         String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.getItem() == Items.BOOK || itemStack.getItem() == Items.PAPER))
-        {
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.getItem() == Items.BOOK || itemStack.getItem() == Items.PAPER)) {
             renderMeta += RENDER_META_BOOK;
         }
-        if (worker.getNavigation().isDone())
-        {
+        if (worker.getNavigation().isDone()) {
             renderMeta += RENDER_META_STUDYING;
         }
         worker.setRenderMetadata(renderMeta);
     }
 
     @Override
-    public Class<BuildingLibrary> getExpectedBuildingClass()
-    {
+    public Class<BuildingLibrary> getExpectedBuildingClass() {
         return BuildingLibrary.class;
     }
 
@@ -100,48 +94,38 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
      *
      * @return the next IAIState.
      */
-    private IAIState study()
-    {
+    private IAIState study() {
         final ICitizenData data = worker.getCitizenData();
 
-        if (studyPos == null)
-        {
+        if (studyPos == null) {
             studyPos = building.getRandomBookShelf();
         }
 
-        if (PathfindingAIHelper.walkCloseToXNearY(worker, studyPos, building.getPosition(), 7))
-        {
+        if (PathfindingAIHelper.walkCloseToXNearY(worker, studyPos, building.getPosition(), 7)) {
             setDelay(WALK_DELAY);
             return getState();
         }
 
         // Search for Items to use to study
         final List<StudyItem> currentItems = new ArrayList<>();
-        for (final StudyItem curItem : building.getStudyItems())
-        {
+        for (final StudyItem curItem : building.getStudyItems()) {
             final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker,
-              itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == curItem.getItem());
+                    itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == curItem.getItem());
 
-            if (slot != -1)
-            {
+            if (slot != -1) {
                 curItem.setSlot(slot);
                 currentItems.add(curItem);
             }
         }
 
         // Create a new Request for items
-        if (currentItems.isEmpty())
-        {
-            for (final StudyItem studyItem : building.getStudyItems())
-            {
+        if (currentItems.isEmpty()) {
+            for (final StudyItem studyItem : building.getStudyItems()) {
                 final int bSlot = InventoryUtils.findFirstSlotInProviderWith(building, studyItem.getItem());
-                if (bSlot > -1)
-                {
+                if (bSlot > -1) {
                     needsCurrently = new Tuple<>(itemStack -> studyItem.getItem() == itemStack.getItem(), 10);
                     return GATHERING_REQUIRED_MATERIALS;
-                }
-                else
-                {
+                } else {
                     checkIfRequestForItemExistOrCreateAsync(new ItemStack(studyItem.getItem(), studyItem.getBreakPct() / 10 > 0 ? studyItem.getBreakPct() / 10 : 1));
                 }
             }
@@ -151,18 +135,15 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStackUtils.EMPTY);
         }
         // Use random item
-        else
-        {
+        else {
             final StudyItem chosenItem = currentItems.get(world.random.nextInt(currentItems.size()));
 
             worker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(chosenItem.getItem(), 1));
-            if (data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE * (100D / chosenItem.getSkillIncreasePct()), data))
-            {
+            if (data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE * (100D / chosenItem.getSkillIncreasePct()), data)) {
                 building.getModule(STATS_MODULE).increment(INT_LEVELED);
             }
             // Break item rand
-            if (world.random.nextInt(100) <= chosenItem.getBreakPct())
-            {
+            if (world.random.nextInt(100) <= chosenItem.getBreakPct()) {
                 data.getInventory().extractItem(chosenItem.getSlot(), 1, false);
                 building.getModule(STATS_MODULE).increment(ITEM_USED + ";" + chosenItem.getItem().getDescriptionId());
             }
@@ -181,10 +162,8 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
      *
      * @return the next state.
      */
-    private IAIState startWorkingAtOwnBuilding()
-    {
-        if (walkToBuilding())
-        {
+    private IAIState startWorkingAtOwnBuilding() {
+        if (walkToBuilding()) {
             return getState();
         }
         return STUDY;

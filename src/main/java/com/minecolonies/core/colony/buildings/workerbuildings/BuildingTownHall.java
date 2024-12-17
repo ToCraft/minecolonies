@@ -43,8 +43,7 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 /**
  * Class used to manage the townHall building block.
  */
-public class BuildingTownHall extends AbstractBuilding implements ITownHall
-{
+public class BuildingTownHall extends AbstractBuilding implements ITownHall {
     /**
      * Description of the block used to set this block.
      */
@@ -63,7 +62,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     /**
      * Citizen spawning.
      */
-    public static final ISettingKey<BoolSetting> MOVE_IN              = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "kidspawn"));
+    public static final ISettingKey<BoolSetting> MOVE_IN = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "kidspawn"));
     /**
      * Enter leave messages.
      */
@@ -90,31 +89,25 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingTownHall(final IColony c, final BlockPos l)
-    {
+    public BuildingTownHall(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return TOWN_HALL;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public void addPermissionEvent(final PermissionEvent event)
-    {
-        if (!permissionEvents.contains(event))
-        {
-            if (permissionEvents.size() >= MAX_COLONY_EVENTS)
-            {
+    public void addPermissionEvent(final PermissionEvent event) {
+        if (!permissionEvents.contains(event)) {
+            if (permissionEvents.size() >= MAX_COLONY_EVENTS) {
                 permissionEvents.removeFirst();
             }
             permissionEvents.add(event);
@@ -123,52 +116,41 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     }
 
     @Override
-    public void registerModule(@NotNull final IBuildingModule module)
-    {
-        if (module.getProducer() == BuildingModules.TOWNHALL_SETTINGS)
-        {
-            super.registerModule(((Colony)colony).getSettings());
-        }
-        else
-        {
+    public void registerModule(@NotNull final IBuildingModule module) {
+        if (module.getProducer() == BuildingModules.TOWNHALL_SETTINGS) {
+            super.registerModule(((Colony) colony).getSettings());
+        } else {
             super.registerModule(module);
         }
     }
 
     @Override
-    public void removePermissionEvents(@NotNull final UUID id)
-    {
-        if (permissionEvents.removeIf(e -> id.equals(e.getId())))
-        {
+    public void removePermissionEvents(@NotNull final UUID id) {
+        if (permissionEvents.removeIf(e -> id.equals(e.getId()))) {
             markDirty();
         }
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync) {
         super.serializeToView(buf, fullSync);
 
         buf.writeBoolean(MineColonies.getConfig().getServer().canPlayerUseAllyTHTeleport.get());
         buf.writeInt(permissionEvents.size());
-        for (final PermissionEvent event : permissionEvents)
-        {
+        for (final PermissionEvent event : permissionEvents) {
             event.serialize(buf);
         }
 
         List<IColonyEventDescription> colonyEvents = colony.getEventDescriptionManager().getEventDescriptions();
         buf.writeInt(colonyEvents.size());
-        for (final IColonyEventDescription event : colonyEvents)
-        {
+        for (final IColonyEventDescription event : colonyEvents) {
             buf.writeUtf(event.getEventTypeId().getPath());
             event.serialize(buf);
         }
 
         final List<ItemStack> maps = new ArrayList<>();
-        for (final ItemStack stack : InventoryUtils.getBuildingInventory(this))
-        {
-            if (!stack.isEmpty() && stack.getItem() == Items.FILLED_MAP)
-            {
+        for (final ItemStack stack : InventoryUtils.getBuildingInventory(this)) {
+            if (!stack.isEmpty() && stack.getItem() == Items.FILLED_MAP) {
                 maps.add(stack);
             }
         }
@@ -176,35 +158,27 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         final Level level = colony.getWorld();
 
         final List<MapEntry> mapDataList = new ArrayList<>();
-        for (final ItemStack stack : maps)
-        {
-            try
-            {
+        for (final ItemStack stack : maps) {
+            try {
                 final MapId mapId = stack.get(DataComponents.MAP_ID);
                 final MapItemSavedData mapData = MapItem.getSavedData(stack, level);
-                if (mapData != null && mapData.scale == 0)
-                {
+                if (mapData != null && mapData.scale == 0) {
                     mapDataList.add(new MapEntry(mapId, mapData));
                 }
-            }
-            catch (final Exception ex)
-            {
+            } catch (final Exception ex) {
                 // Do nothing
             }
         }
 
         buf.writeInt(mapDataList.size());
-        for (final MapEntry mapData : mapDataList)
-        {
+        for (final MapEntry mapData : mapDataList) {
             MapEntry.STREAM_CODEC.encode(buf, mapData);
         }
     }
 
     @Override
-    public int getClaimRadius(final int newLevel)
-    {
-        switch (newLevel)
-        {
+    public int getClaimRadius(final int newLevel) {
+        switch (newLevel) {
             case 0:
                 return 0;
             case 1:
@@ -222,16 +196,14 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     }
 
     @Override
-    public boolean canBeGathered()
-    {
+    public boolean canBeGathered() {
         return false;
     }
 
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingView implements ITownHallView
-    {
+    public static class View extends AbstractBuildingView implements ITownHallView {
         /**
          * List of permission events of the colony.
          */
@@ -258,40 +230,34 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final IColonyView c, final BlockPos l)
-        {
+        public View(final IColonyView c, final BlockPos l) {
             super(c, l);
         }
 
         @NotNull
         @Override
-        public BOWindow getWindow()
-        {
+        public BOWindow getWindow() {
             return new WindowMainPage(this);
         }
 
         @Override
-        public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-        {
+        public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
             super.deserialize(buf);
 
             canPlayerUseTP = buf.readBoolean();
             final int permissionEventsSize = buf.readInt();
             permissionEvents.clear();
-            for (int i = 0; i < permissionEventsSize; i++)
-            {
+            for (int i = 0; i < permissionEventsSize; i++) {
                 permissionEvents.add(new PermissionEvent(buf));
             }
 
             final List<IColonyEventDescription> tempEvents = new ArrayList<>();
             final int colonyEventsSize = buf.readInt();
-            for (int i = 0; i < colonyEventsSize; i++)
-            {
+            for (int i = 0; i < colonyEventsSize; i++) {
                 final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, buf.readUtf());
 
                 final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().get(eventTypeID);
-                if (registryEntry == null)
-                {
+                if (registryEntry == null) {
                     Log.getLogger().warn("Event is missing registryEntry!:" + eventTypeID.getPath());
                     continue;
                 }
@@ -303,33 +269,28 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
             final int size = buf.readInt();
             mapDataList.clear();
-            for (int i = 0; i < size; i++)
-            {
+            for (int i = 0; i < size; i++) {
                 mapDataList.add(MapEntry.STREAM_CODEC.decode(buf));
             }
         }
 
         @Override
-        public List<PermissionEvent> getPermissionEvents()
-        {
+        public List<PermissionEvent> getPermissionEvents() {
             return new LinkedList<>(permissionEvents);
         }
 
         @Override
-        public List<IColonyEventDescription> getColonyEvents()
-        {
+        public List<IColonyEventDescription> getColonyEvents() {
             return colonyEvents;
         }
 
         @Override
-        public boolean canPlayerUseTP()
-        {
+        public boolean canPlayerUseTP() {
             return canPlayerUseTP;
         }
 
         @Override
-        public List<MapEntry> getMapDataList()
-        {
+        public List<MapEntry> getMapDataList() {
             return mapDataList;
         }
     }

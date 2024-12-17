@@ -22,8 +22,7 @@ import java.util.List;
 /**
  * Creates a new building for the Chicken Herder.
  */
-public class BuildingChickenHerder extends AbstractBuilding
-{
+public class BuildingChickenHerder extends AbstractBuilding {
     /**
      * Description of the job executed in the hut.
      */
@@ -45,32 +44,27 @@ public class BuildingChickenHerder extends AbstractBuilding
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingChickenHerder(final IColony c, final BlockPos l)
-    {
+    public BuildingChickenHerder(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return JOB;
     }
 
     /**
      * Chicken herding module
      */
-    public static class HerdingModule extends AnimalHerdingModule
-    {
-        public HerdingModule()
-        {
+    public static class HerdingModule extends AnimalHerdingModule {
+        public HerdingModule() {
             super(ModJobs.chickenHerder.get(), a -> a instanceof Chicken, new ItemStack(Items.WHEAT_SEEDS, 2));
         }
 
         @NotNull
         @Override
-        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal)
-        {
+        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal) {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
 
             recipes.add(new GenericRecipe(null, new ItemStack(Items.EGG), Collections.emptyList(), Collections.emptyList(),

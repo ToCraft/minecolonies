@@ -8,18 +8,15 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Block of the Archers trainings camp.
  */
-public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery>
-{
+public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery> {
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhutarchery";
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.archery.get();
     }
 }

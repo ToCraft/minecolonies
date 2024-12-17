@@ -12,57 +12,48 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Building module view to display an expedition log
  */
-public class ExpeditionLogModuleView extends AbstractBuildingModuleView
-{
+public class ExpeditionLogModuleView extends AbstractBuildingModuleView {
     private boolean updated;
     private boolean unlocked;
     private ExpeditionLog log = new ExpeditionLog();
 
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         this.unlocked = buf.readBoolean();
-        if (this.unlocked)
-        {
+        if (this.unlocked) {
             this.log.deserialize(buf);
         }
         this.updated = true;
     }
 
-    public boolean checkAndResetUpdated()
-    {
+    public boolean checkAndResetUpdated() {
         final boolean wasUpdated = this.updated;
         this.updated = false;
         return wasUpdated;
     }
 
-    public ExpeditionLog getLog()
-    {
+    public ExpeditionLog getLog() {
         return this.log;
     }
 
     @Override
-    public boolean isPageVisible()
-    {
+    public boolean isPageVisible() {
         return this.unlocked;
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new ExpeditionLogModuleWindow(getBuildingView(), this);
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return "sword";
     }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return "com.minecolonies.gui.workerhuts.expeditionlog";
     }
 }

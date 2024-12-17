@@ -8,8 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.entity.EntityTypeTest;
 
-public class CommandKillAnimal implements IMCOPCommand
-{
+public class CommandKillAnimal implements IMCOPCommand {
     private int entitiesKilled = 0;
 
     /**
@@ -18,14 +17,12 @@ public class CommandKillAnimal implements IMCOPCommand
      * @param context the context of the command execution
      */
     @Override
-    public final int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public final int onExecute(final CommandContext<CommandSourceStack> context) {
         entitiesKilled = 0;
 
         context.getSource().getLevel().getEntities(EntityTypeTest.forClass(Animal.class), (e) -> true).forEach(entity ->
         {
-            if (entity != null)
-            {
+            if (entity != null) {
                 entity.remove(Entity.RemovalReason.DISCARDED);
                 entitiesKilled++;
             }
@@ -38,8 +35,7 @@ public class CommandKillAnimal implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "animals";
     }
 }

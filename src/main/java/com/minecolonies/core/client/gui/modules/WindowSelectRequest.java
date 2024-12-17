@@ -35,8 +35,7 @@ import static com.minecolonies.core.colony.requestsystem.requests.AbstractReques
 /**
  * Window that shows existing unmatched requests compatible with the given predicate
  */
-public class WindowSelectRequest extends AbstractModuleWindow
-{
+public class WindowSelectRequest extends AbstractModuleWindow {
     private static final String RESOURCE_STRING = ":gui/layouthuts/layoutselectrequest.xml";
 
     private final Predicate<IRequest<?>> predicate;
@@ -47,15 +46,15 @@ public class WindowSelectRequest extends AbstractModuleWindow
 
     /**
      * Construct window.
-     * @param building the building to check for requests
-     * @param predicate predicate returning true if this is a selectable request
+     *
+     * @param building          the building to check for requests
+     * @param predicate         predicate returning true if this is a selectable request
      * @param reopenWithRequest called after clicking select or cancel, with the request or null respectively.
      *                          not called if the player hits ESC or clicks a different tab
      */
     public WindowSelectRequest(final IBuildingView building,
                                final Predicate<IRequest<?>> predicate,
-                               final Consumer<@Nullable IRequest<?>> reopenWithRequest)
-    {
+                               final Consumer<@Nullable IRequest<?>> reopenWithRequest) {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
         this.predicate = predicate;
         this.reopenWithRequest = reopenWithRequest;
@@ -66,26 +65,22 @@ public class WindowSelectRequest extends AbstractModuleWindow
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
 
-        if (!Screen.hasShiftDown())
-        {
+        if (!Screen.hasShiftDown()) {
             lifeCount++;
         }
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
 
         updateRequests();
     }
 
-    private List<IRequest<?>> getOpenRequests()
-    {
+    private List<IRequest<?>> getOpenRequests() {
         final List<IRequest<?>> requests = new ArrayList<>();
 
         final IRequestManager requestManager = buildingView.getColony().getRequestManager();
@@ -96,19 +91,15 @@ public class WindowSelectRequest extends AbstractModuleWindow
         requestTokens.addAll(resolver.getAllAssignedRequests());
         requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
 
-        for (final IToken<?> token : requestTokens)
-        {
+        for (final IToken<?> token : requestTokens) {
             IRequest<?> request = requestManager.getRequestForToken(token);
 
-            while (request != null)
-            {
-                if (requests.contains(request))
-                {
+            while (request != null) {
+                if (requests.contains(request)) {
                     break;
                 }
 
-                if (predicate.test(request))
-                {
+                if (predicate.test(request)) {
                     requests.add(request);
                 }
 
@@ -120,22 +111,20 @@ public class WindowSelectRequest extends AbstractModuleWindow
         return requests;
     }
 
-    private void cancel()
-    {
+    private void cancel() {
         this.reopenWithRequest.accept(null);
     }
 
     /**
      * When clicking the select button in the request list
+     *
      * @param button the button clicked
      */
-    private void select(@NotNull final Button button)
-    {
+    private void select(@NotNull final Button button) {
         final int row = requestsList.getListElementIndexByPane(button);
         final List<IRequest<?>> requests = getOpenRequests();
 
-        if (row >= 0 && row < requests.size())
-        {
+        if (row >= 0 && row < requests.size()) {
             this.reopenWithRequest.accept(requests.get(row));
         }
     }
@@ -143,30 +132,24 @@ public class WindowSelectRequest extends AbstractModuleWindow
     /**
      * Updates request list.
      */
-    private void updateRequests()
-    {
-        requestsList.setDataProvider(new ScrollingList.DataProvider()
-        {
+    private void updateRequests() {
+        requestsList.setDataProvider(new ScrollingList.DataProvider() {
             private List<IRequest<?>> requests = null;
 
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 requests = getOpenRequests();
                 return requests.size();
             }
 
             @Override
-            public void updateElement(final int index, final Pane rowPane)
-            {
-                if (index < 0 || index >= requests.size())
-                {
+            public void updateElement(final int index, final Pane rowPane) {
+                if (index < 0 || index >= requests.size()) {
                     return;
                 }
 
                 final IRequest<?> request = requests.get(index);
-                if (request == null)
-                {
+                if (request == null) {
                     return;
                 }
 
@@ -174,34 +157,26 @@ public class WindowSelectRequest extends AbstractModuleWindow
                 final List<ItemStack> displayStacks = request.getDisplayStacks();
                 final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
 
-                if (!displayStacks.isEmpty())
-                {
+                if (!displayStacks.isEmpty()) {
                     logo.setVisible(false);
                     exampleStackDisplay.setVisible(true);
                     exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
                     rowPane.findPaneOfTypeByID(REQUESTER, Text.class).setText(request.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), request));
-                }
-                else
-                {
+                } else {
                     exampleStackDisplay.setVisible(false);
-                    if (!request.getDisplayIcon().equals(MISSING))
-                    {
+                    if (!request.getDisplayIcon().equals(MISSING)) {
                         logo.setVisible(true);
                         logo.setImage(request.getDisplayIcon(), false);
                         PaneBuilders.tooltipBuilder().hoverPane(logo).build().setText(request.getResolverToolTip(buildingView.getColony()));
                     }
                 }
 
-                if (request instanceof StandardRequests.ItemTagRequest)
-                {
-                    if (!displayStacks.isEmpty())
-                    {
+                if (request instanceof StandardRequests.ItemTagRequest) {
+                    if (!displayStacks.isEmpty()) {
                         rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(
                                 request.getDisplayStacks().get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()).getHoverName());
                     }
-                }
-                else
-                {
+                } else {
                     rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getShortDisplayString().getString().replace("§f", "")));
                 }
             }

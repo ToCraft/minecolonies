@@ -23,8 +23,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * AI for visitors, they do sometimes nap on their place, sit on their place, randomly walk around inside building outline
  */
-public class EntityAIVisitor implements IState
-{
+public class EntityAIVisitor implements IState {
     /**
      * Update interval during combat
      */
@@ -33,8 +32,7 @@ public class EntityAIVisitor implements IState
     /**
      * States of the visitor AI
      */
-    public enum VisitorState implements IState
-    {
+    public enum VisitorState implements IState {
         IDLE,
         SLEEPING,
         SITTING,
@@ -67,8 +65,7 @@ public class EntityAIVisitor implements IState
      *
      * @param entity current entity.
      */
-    public EntityAIVisitor(@NotNull final AbstractEntityCitizen entity)
-    {
+    public EntityAIVisitor(@NotNull final AbstractEntityCitizen entity) {
         super();
         this.citizen = (VisitorCitizen) entity;
 
@@ -90,15 +87,12 @@ public class EntityAIVisitor implements IState
      *
      * @return true if done
      */
-    private boolean reduceTime()
-    {
+    private boolean reduceTime() {
         citizen.getCitizenData().decreaseSaturation(0.02);
         citizen.getCitizenData().markDirty(20 * 20);
-        if (citizen.getCitizenData().getSaturation() <= 0)
-        {
+        if (citizen.getCitizenData().getSaturation() <= 0) {
             citizen.getCitizenColonyHandler().getColonyOrRegister().getVisitorManager().removeCivilian(citizen.getCitizenData());
-            if (tavern != null)
-            {
+            if (tavern != null) {
                 tavern.getFirstModuleOccurance(TavernBuildingModule.class).removeCitizen(citizen.getCivilianID());
             }
             return true;
@@ -111,18 +105,15 @@ public class EntityAIVisitor implements IState
      *
      * @return true if done
      */
-    private boolean doFight()
-    {
-        if (target == null || !target.isAlive() || (actionTimeoutCounter -= COMBAT_UPDATE_RATE) <= 0)
-        {
+    private boolean doFight() {
+        if (target == null || !target.isAlive() || (actionTimeoutCounter -= COMBAT_UPDATE_RATE) <= 0) {
             target = null;
             citizen.setLastHurtByMob(null);
             citizen.setTarget(null);
             return true;
         }
 
-        if (citizen.isWorkerAtSiteWithMove(target.blockPosition(), 2) && citizen.hasLineOfSight(target))
-        {
+        if (citizen.isWorkerAtSiteWithMove(target.blockPosition(), 2) && citizen.hasLineOfSight(target)) {
             citizen.swing(InteractionHand.MAIN_HAND);
             target.hurt(target.level().damageSources().source(DamageSourceKeys.VISITOR), 10.0f);
         }
@@ -135,10 +126,8 @@ public class EntityAIVisitor implements IState
      *
      * @return true if done
      */
-    private boolean wander()
-    {
-        if ((actionTimeoutCounter -= 50) <= 0)
-        {
+    private boolean wander() {
+        if ((actionTimeoutCounter -= 50) <= 0) {
             return true;
         }
 
@@ -146,10 +135,8 @@ public class EntityAIVisitor implements IState
         return false;
     }
 
-    private boolean shouldFight()
-    {
-        if (getTarget() != null)
-        {
+    private boolean shouldFight() {
+        if (getTarget() != null) {
             actionTimeoutCounter = 30 * 20;
             return true;
         }
@@ -161,27 +148,21 @@ public class EntityAIVisitor implements IState
      *
      * @return next state
      */
-    private VisitorState decide()
-    {
-        if (shouldFight())
-        {
+    private VisitorState decide() {
+        if (shouldFight()) {
             return VisitorState.COMBAT;
         }
 
         final int random = citizen.getRandom().nextInt(5);
-        if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColonyOrRegister().isDay()) && tavern.hasModule(BuildingModules.TAVERN_VISITOR))
-        {
+        if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColonyOrRegister().isDay()) && tavern.hasModule(BuildingModules.TAVERN_VISITOR)) {
             final BlockPos pos = tavern.getModule(BuildingModules.TAVERN_VISITOR).getFreeSitPosition();
-            if (pos != null)
-            {
+            if (pos != null) {
                 ((VisitorData) citizen.getCitizenData()).setSittingPosition(pos);
                 citizen.isWorkerAtSiteWithMove(pos, 1);
                 actionTimeoutCounter = citizen.getRandom().nextInt(2500) + 3000;
                 return VisitorState.SITTING;
             }
-        }
-        else if (random == 2)
-        {
+        } else if (random == 2) {
             citizen.getNavigation().moveToRandomPos(10, 0.6D);
             actionTimeoutCounter = citizen.getCitizenColonyHandler().getColonyOrRegister().isDay() ? citizen.getRandom().nextInt(1000) + 1000 : 300;
             return VisitorState.WANDERING;
@@ -195,22 +176,18 @@ public class EntityAIVisitor implements IState
      *
      * @return true if wants to sit
      */
-    private boolean sit()
-    {
-        if ((actionTimeoutCounter -= 50) <= 0)
-        {
+    private boolean sit() {
+        if ((actionTimeoutCounter -= 50) <= 0) {
             ((VisitorData) citizen.getCitizenData()).setSittingPosition(BlockPos.ZERO);
             return true;
         }
 
-        if (citizen.getNavigation().isInProgress() || citizen.getVehicle() instanceof SittingEntity)
-        {
+        if (citizen.getNavigation().isInProgress() || citizen.getVehicle() instanceof SittingEntity) {
             return false;
         }
 
         final BlockPos moveTo = ((VisitorData) citizen.getCitizenData()).getSittingPosition();
-        if (citizen.isWorkerAtSiteWithMove(moveTo, 1))
-        {
+        if (citizen.isWorkerAtSiteWithMove(moveTo, 1)) {
             SittingEntity.sitDown(moveTo, citizen, actionTimeoutCounter);
         }
         return false;
@@ -221,16 +198,13 @@ public class EntityAIVisitor implements IState
      *
      * @return true if loaded
      */
-    private boolean isEntityLoaded()
-    {
-        if (citizen.getCitizenColonyHandler().getColonyOrRegister() == null || citizen.getCitizenData() == null || citizen.getCitizenData().getHomeBuilding() == null)
-        {
+    private boolean isEntityLoaded() {
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister() == null || citizen.getCitizenData() == null || citizen.getCitizenData().getHomeBuilding() == null) {
             return false;
         }
 
         IBuilding building = citizen.getCitizenData().getHomeBuilding();
-        if (building.hasModule(BuildingModules.TAVERN_VISITOR))
-        {
+        if (building.hasModule(BuildingModules.TAVERN_VISITOR)) {
             tavern = (DefaultBuildingInstance) building;
         }
 
@@ -244,13 +218,10 @@ public class EntityAIVisitor implements IState
      *
      * @return target
      */
-    private Entity getTarget()
-    {
-        if (target == null)
-        {
+    private Entity getTarget() {
+        if (target == null) {
             target = citizen.getTarget();
-            if (target == null)
-            {
+            if (target == null) {
                 target = citizen.getLastHurtByMob();
             }
         }
@@ -262,24 +233,21 @@ public class EntityAIVisitor implements IState
      *
      * @param e exception to handle
      */
-    private void onException(final RuntimeException e)
-    {
+    private void onException(final RuntimeException e) {
         Log.getLogger().warn("Visitor AI of:" + citizen.getName() + " threw an Exception:", e);
     }
 
     /**
      * Resets saved data of internal logic
      */
-    private void resetLogic()
-    {
+    private void resetLogic() {
         ((VisitorData) citizen.getCitizenData()).setSittingPosition(BlockPos.ZERO);
     }
 
     /**
      * Resets the task.
      */
-    public void stop()
-    {
+    public void stop() {
         resetLogic();
     }
 }

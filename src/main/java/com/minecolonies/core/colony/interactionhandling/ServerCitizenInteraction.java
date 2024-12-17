@@ -8,19 +8,18 @@ import com.minecolonies.api.colony.interactionhandling.AbstractInteractionRespon
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -36,11 +35,10 @@ import static com.minecolonies.core.colony.interactionhandling.StandardInteracti
 /**
  * The server side interaction response handler.
  */
-public abstract class ServerCitizenInteraction extends AbstractInteractionResponseHandler
-{
-    private static final String TAG_DELAY        = "delay";
-    private static final String TAG_PARENT       = "parent";
-    private static final String TAG_PARENTS      = "parents";
+public abstract class ServerCitizenInteraction extends AbstractInteractionResponseHandler {
+    private static final String TAG_DELAY = "delay";
+    private static final String TAG_PARENT = "parent";
+    private static final String TAG_PARENTS = "parents";
     private static final String TAG_VALIDATOR_ID = "validator";
 
     /**
@@ -75,18 +73,16 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
      */
     @SafeVarargs
     public ServerCitizenInteraction(
-      final Component inquiry,
-      final boolean primary,
-      final IChatPriority priority,
-      final Predicate<ICitizenData> validator,
-      @NotNull final Component validatorId,
-      final Tuple<Component, Component>... responseTuples)
-    {
+            final Component inquiry,
+            final boolean primary,
+            final IChatPriority priority,
+            final Predicate<ICitizenData> validator,
+            @NotNull final Component validatorId,
+            final Tuple<Component, Component>... responseTuples) {
         super(inquiry, primary, priority, responseTuples);
         this.validator = validator;
         this.validatorId = validatorId;
-        if (this.validatorId == null)
-        {
+        if (this.validatorId == null) {
             this.validatorId = Component.empty();
             Log.getLogger().error("Validator id is null: " + this.getClass() + " " + this.getInquiry(), new Exception());
         }
@@ -97,20 +93,17 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
      *
      * @param data the citizen owning this handler.
      */
-    public ServerCitizenInteraction(final ICitizen data)
-    {
+    public ServerCitizenInteraction(final ICitizen data) {
         super();
     }
 
     @Override
-    public boolean isVisible(final Level world)
-    {
+    public boolean isVisible(final Level world) {
         return displayAtWorldTick == 0 || displayAtWorldTick < world.getGameTime();
     }
 
     @Override
-    public boolean isValid(final ICitizenData citizen)
-    {
+    public boolean isValid(final ICitizenData citizen) {
         return (validator == null && !this.parents.isEmpty()) || (validator != null && validator.test(citizen));
     }
 
@@ -119,8 +112,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
      *
      * @param parent the parent to add.
      */
-    public void addParent(final Component parent)
-    {
+    public void addParent(final Component parent) {
         this.parents.add(parent);
     }
 
@@ -129,39 +121,31 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
      *
      * @param oldParent the parent to remove.
      */
-    public void removeParent(final Component oldParent)
-    {
+    public void removeParent(final Component oldParent) {
         this.parents.remove(oldParent);
     }
 
     @Override
-    public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
-    {
+    public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data) {
         final Component response = getPossibleResponses().get(responseId);
         tryHandleIgnoreResponse(response, player);
     }
 
     /**
      * Check if the response was an ignore response.
+     *
      * @param response the response to compare.
-     * @param player the player that triggered it.
+     * @param player   the player that triggered it.
      */
-    private void tryHandleIgnoreResponse(final Component response, final Player player)
-    {
-        if (response.getContents() instanceof TranslatableContents)
-        {
-            if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_IGNORE))
-            {
+    private void tryHandleIgnoreResponse(final Component response, final Player player) {
+        if (response.getContents() instanceof TranslatableContents) {
+            if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_IGNORE)) {
                 // 6 hours later
                 displayAtWorldTick = (int) (player.level().getGameTime() + (TICKS_SECOND * 60 * 60 * 6));
-            }
-            else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_REMIND))
-            {
+            } else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_REMIND)) {
                 // 1 hour later
                 displayAtWorldTick = (int) (player.level().getGameTime() + (TICKS_SECOND * 60 * 60));
-            }
-            else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_OKAY) || ((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_SKIP))
-            {
+            } else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_OKAY) || ((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_SKIP)) {
                 // 5 minutes
                 displayAtWorldTick = (int) (player.level().getGameTime() + (TICKS_SECOND * 60 * 5));
             }
@@ -170,12 +154,10 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window)
-    {
+    public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window) {
         final Component response = getPossibleResponses().get(responseId);
         tryHandleIgnoreResponse(response, player);
-        if (((TranslatableContents) getPossibleResponses().get(responseId).getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
-        {
+        if (((TranslatableContents) getPossibleResponses().get(responseId).getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat")) {
             final MainWindowCitizen windowCitizen = new MainWindowCitizen(data);
             windowCitizen.open();
         }
@@ -185,13 +167,11 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compoundNBT = super.serializeNBT(provider);
         compoundNBT.putInt(TAG_DELAY, displayAtWorldTick);
         final ListTag list = new ListTag();
-        for (final Component element : parents)
-        {
+        for (final Component element : parents) {
             list.add(Utils.serializeCodecMess(ComponentSerialization.CODEC, provider, element));
         }
         compoundNBT.put(TAG_PARENTS, list);
@@ -200,14 +180,12 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT) {
         super.deserializeNBT(provider, compoundNBT);
         this.displayAtWorldTick = compoundNBT.getInt(TAG_DELAY);
         this.parents.clear();
         final ListTag list = compoundNBT.getList(TAG_PARENTS, Tag.TAG_COMPOUND);
-        for (Tag tag : list)
-        {
+        for (Tag tag : list) {
             this.parents.add(Utils.deserializeCodecMess(ComponentSerialization.CODEC, provider, tag));
         }
         this.validatorId = Utils.deserializeCodecMess(ComponentSerialization.CODEC, provider, compoundNBT.get(TAG_VALIDATOR_ID));
@@ -217,14 +195,12 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     /**
      * Load the validator.
      */
-    protected void loadValidator()
-    {
+    protected void loadValidator() {
         this.validator = InteractionValidatorRegistry.getStandardInteractionValidatorPredicate(validatorId);
     }
 
     @Override
-    public Component getId()
-    {
+    public Component getId() {
         return getInquiry();
     }
 }

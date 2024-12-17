@@ -11,16 +11,14 @@ import java.util.List;
 /**
  * This class is to store a check to see if a block is a chiselsandbits block.
  */
-public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
-{
+public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy {
     /**
      * Check if tileEntity is candb block.
      *
      * @param tileEntity the tileEntity.
      * @return if the tileEntity is a candb tileEntity.
      */
-    public static boolean isChiselAndBitsTileEntity(@NotNull final BlockEntity tileEntity)
-    {
+    public static boolean isChiselAndBitsTileEntity(@NotNull final BlockEntity tileEntity) {
         return new ChiselAndBitsCheck().checkForChiselAndBitsTileEntity(tileEntity);
     }
 
@@ -30,8 +28,7 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
      * @param blockState the blockState.
      * @return if the blockState is a candb blockState.
      */
-    public static boolean isChiselAndBitsBlock(@NotNull final BlockState blockState)
-    {
+    public static boolean isChiselAndBitsBlock(@NotNull final BlockState blockState) {
         return new ChiselAndBitsCheck().checkForChiselAndBitsBlock(blockState);
     }
 
@@ -41,26 +38,22 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
      * @param tileEntity the tileEntity.
      * @return the list of itemStacks..
      */
-    public static List<ItemStack> getBitStacks(final BlockEntity tileEntity)
-    {
+    public static List<ItemStack> getBitStacks(final BlockEntity tileEntity) {
         return new ChiselAndBitsCheck().getChiseledStacks(tileEntity);
     }
 
     @Override
-    public boolean checkForChiselAndBitsBlock(@NotNull final BlockState blockState)
-    {
+    public boolean checkForChiselAndBitsBlock(@NotNull final BlockState blockState) {
         return false;
     }
 
     @Override
-    public boolean checkForChiselAndBitsTileEntity(@NotNull final BlockEntity tileEntity)
-    {
+    public boolean checkForChiselAndBitsTileEntity(@NotNull final BlockEntity tileEntity) {
         return false;
     }
 
     @Override
-    public List<ItemStack> getChiseledStacks(@NotNull final BlockEntity tileEntity)
-    {
+    public List<ItemStack> getChiseledStacks(@NotNull final BlockEntity tileEntity) {
         return Collections.emptyList();
     }
 }

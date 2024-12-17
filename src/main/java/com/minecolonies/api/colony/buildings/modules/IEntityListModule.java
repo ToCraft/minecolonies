@@ -7,8 +7,7 @@ import java.util.List;
 /**
  * Module for ignore/acceptance lists of entities.
  */
-public interface IEntityListModule
-{
+public interface IEntityListModule {
     /**
      * Add an entity to the list.
      *
@@ -40,12 +39,14 @@ public interface IEntityListModule
 
     /**
      * Get the string identifier of the list.
+     *
      * @return the string.
      */
     String getListIdentifier();
 
     /**
      * Get the unique id of this module.
+     *
      * @return the id.
      */
     String getId();

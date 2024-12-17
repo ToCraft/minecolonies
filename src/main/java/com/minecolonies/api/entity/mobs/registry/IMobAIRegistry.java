@@ -10,9 +10,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public interface IMobAIRegistry
-{
-    static IMobAIRegistry getInstance() { return IMinecoloniesAPI.getInstance().getMobAIRegistry(); }
+public interface IMobAIRegistry {
+    static IMobAIRegistry getInstance() {
+        return IMinecoloniesAPI.getInstance().getMobAIRegistry();
+    }
 
     /**
      * Method to get the AI tasks registered for a given mob. Used by minecolonies to get the AIs that are required for a given mob.
@@ -31,8 +32,7 @@ public interface IMobAIRegistry
      * @return The registry.
      */
     @NotNull
-    default IMobAIRegistry registerNewAiTaskForMobs(final int priority, final Function<AbstractEntityRaiderMob, Goal> aiTaskProducer)
-    {
+    default IMobAIRegistry registerNewAiTaskForMobs(final int priority, final Function<AbstractEntityRaiderMob, Goal> aiTaskProducer) {
         return this.registerNewAiTaskForMobs(priority, aiTaskProducer, mob -> true);
     }
 
@@ -46,9 +46,9 @@ public interface IMobAIRegistry
      */
     @NotNull
     IMobAIRegistry registerNewAiTaskForMobs(
-      final int priority,
-      final Function<AbstractEntityRaiderMob, Goal> aiTaskProducer,
-      Predicate<AbstractEntityRaiderMob> applyPredicate);
+            final int priority,
+            final Function<AbstractEntityRaiderMob, Goal> aiTaskProducer,
+            Predicate<AbstractEntityRaiderMob> applyPredicate);
 
     /**
      * Method used to register a entity AI task for a mob that matches the predicate.
@@ -59,8 +59,8 @@ public interface IMobAIRegistry
      */
     @NotNull
     IMobAIRegistry registerNewStateAI(
-      final Function<AbstractEntityRaiderMob, IStateAI> aiTaskProducer,
-      Predicate<AbstractEntityRaiderMob> applyPredicate);
+            final Function<AbstractEntityRaiderMob, IStateAI> aiTaskProducer,
+            Predicate<AbstractEntityRaiderMob> applyPredicate);
 
     /**
      * Applies the registered AI's to the given mob
@@ -85,8 +85,7 @@ public interface IMobAIRegistry
      * @return The registry.
      */
     @NotNull
-    default IMobAIRegistry registerNewAiTargetTaskForMobs(final int priority, final Function<AbstractEntityRaiderMob, Goal> aiTaskProducer)
-    {
+    default IMobAIRegistry registerNewAiTargetTaskForMobs(final int priority, final Function<AbstractEntityRaiderMob, Goal> aiTaskProducer) {
         return this.registerNewAiTargetTaskForMobs(priority, aiTaskProducer, mob -> true);
     }
 
@@ -100,7 +99,7 @@ public interface IMobAIRegistry
      */
     @NotNull
     IMobAIRegistry registerNewAiTargetTaskForMobs(
-      final int priority,
-      final Function<AbstractEntityRaiderMob, Goal> aiTaskProducer,
-      Predicate<AbstractEntityRaiderMob> applyPredicate);
+            final int priority,
+            final Function<AbstractEntityRaiderMob, Goal> aiTaskProducer,
+            Predicate<AbstractEntityRaiderMob> applyPredicate);
 }

@@ -14,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
@@ -22,7 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,13 +32,11 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PLANTGROUND;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * The florist building.
  */
-public class BuildingFlorist extends AbstractBuilding
-{
+public class BuildingFlorist extends AbstractBuilding {
     /**
      * Florist.
      */
@@ -62,8 +58,7 @@ public class BuildingFlorist extends AbstractBuilding
      * @param c the colony
      * @param l the position
      */
-    public BuildingFlorist(@NotNull final IColony c, final BlockPos l)
-    {
+    public BuildingFlorist(@NotNull final IColony c, final BlockPos l) {
         super(c, l);
         keepX.put((stack) -> stack.getItem() == ModItems.compost, new Tuple<>(STACKSIZE, true));
     }
@@ -73,52 +68,43 @@ public class BuildingFlorist extends AbstractBuilding
      *
      * @return copy of the list
      */
-    public List<BlockPos> getPlantGround()
-    {
+    public List<BlockPos> getPlantGround() {
         return ImmutableList.copyOf(plantGround);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return FLORIST;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
-    {
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world) {
         super.registerBlockPosition(block, pos, world);
-        if (block == ModBlocks.blockCompostedDirt && !plantGround.contains(pos))
-        {
+        if (block == ModBlocks.blockCompostedDirt && !plantGround.contains(pos)) {
             plantGround.add(pos);
         }
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         final ListTag compostBinTagList = compound.getList(TAG_PLANTGROUND, Tag.TAG_INT_ARRAY);
-        for (int i = 0; i < compostBinTagList.size(); ++i)
-        {
+        for (int i = 0; i < compostBinTagList.size(); ++i) {
             plantGround.add(NBTUtils.readBlockPos(compostBinTagList.get(i)));
         }
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
         @NotNull final ListTag compostBinTagList = new ListTag();
-        for (@NotNull final BlockPos entry : plantGround)
-        {
+        for (@NotNull final BlockPos entry : plantGround) {
             compostBinTagList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_PLANTGROUND, compostBinTagList);
@@ -131,8 +117,7 @@ public class BuildingFlorist extends AbstractBuilding
      *
      * @param pos the pos to remove it at.
      */
-    public void removePlantableGround(final BlockPos pos)
-    {
+    public void removePlantableGround(final BlockPos pos) {
         this.plantGround.remove(pos);
     }
 
@@ -142,13 +127,11 @@ public class BuildingFlorist extends AbstractBuilding
      * @return the flower to grow.
      */
     @Nullable
-    public ItemStack getFlowerToGrow()
-    {
+    public ItemStack getFlowerToGrow() {
         final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
-          .filter(stack -> !getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).isItemInList(stack)).toList();
+                .filter(stack -> !getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).isItemInList(stack)).toList();
 
-        if (stacks.isEmpty())
-        {
+        if (stacks.isEmpty()) {
             return null;
         }
 
@@ -161,19 +144,17 @@ public class BuildingFlorist extends AbstractBuilding
      * @param level the building level.
      * @return the restricted list.
      */
-    public static Set<ItemStorage> getPlantablesForBuildingLevel(final int level)
-    {
-        switch (level)
-        {
+    public static Set<ItemStorage> getPlantablesForBuildingLevel(final int level) {
+        switch (level) {
             case 0:
             case 1:
                 return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
-                         .filter(storage -> storage.getItem() == Items.POPPY || storage.getItem() == Items.DANDELION)
-                         .collect(Collectors.toSet());
+                        .filter(storage -> storage.getItem() == Items.POPPY || storage.getItem() == Items.DANDELION)
+                        .collect(Collectors.toSet());
             case 2:
                 return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
-                         .filter(itemStorage -> itemStorage.getItemStack().is(ItemTags.SMALL_FLOWERS))
-                         .collect(Collectors.toSet());
+                        .filter(itemStorage -> itemStorage.getItemStack().is(ItemTags.SMALL_FLOWERS))
+                        .collect(Collectors.toSet());
             case 3:
             case 4:
             case 5:

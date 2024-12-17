@@ -10,12 +10,11 @@ import java.util.List;
 
 /**
  * Variation of the ItemIcon which accepts multiple items and slowly rotates between them.
- *  * TODO: This needs to be ported to BlockUI at a later stage, with a proper animation handler,
- *  *  instead of being backed by a timer, increased through the draw methods.
- *  *  Conferred with Nightenom that we keep this in Minecolonies for the time being.
+ * * TODO: This needs to be ported to BlockUI at a later stage, with a proper animation handler,
+ * *  instead of being backed by a timer, increased through the draw methods.
+ * *  Conferred with Nightenom that we keep this in Minecolonies for the time being.
  */
-public class RotatingItemIcon extends ItemIcon
-{
+public class RotatingItemIcon extends ItemIcon {
     /**
      * The full list of items.
      */
@@ -39,8 +38,7 @@ public class RotatingItemIcon extends ItemIcon
     /**
      * Default constructor.
      */
-    public RotatingItemIcon()
-    {
+    public RotatingItemIcon() {
     }
 
     /**
@@ -48,10 +46,8 @@ public class RotatingItemIcon extends ItemIcon
      *
      * @param items the full list of items.
      */
-    public void setItems(@NotNull final List<ItemStack> items)
-    {
-        if (items.isEmpty())
-        {
+    public void setItems(@NotNull final List<ItemStack> items) {
+        if (items.isEmpty()) {
             throw new IllegalArgumentException("Items list must contain at least one item.");
         }
 
@@ -65,10 +61,8 @@ public class RotatingItemIcon extends ItemIcon
      *
      * @param duration the new duration.
      */
-    public void setDuration(final int duration)
-    {
-        if (duration < 1)
-        {
+    public void setDuration(final int duration) {
+        if (duration < 1) {
             throw new IllegalArgumentException("Duration cannot be zero or negative.");
         }
 
@@ -77,11 +71,9 @@ public class RotatingItemIcon extends ItemIcon
     }
 
     @Override
-    public void drawSelf(final BOGuiGraphics ms, final double mx, final double my)
-    {
+    public void drawSelf(final BOGuiGraphics ms, final double mx, final double my) {
         long currentMillis = System.currentTimeMillis();
-        if ((currentMillis - this.lastUpdateMillis) >= this.duration)
-        {
+        if ((currentMillis - this.lastUpdateMillis) >= this.duration) {
             this.lastUpdateMillis = currentMillis;
             this.itemIndex++;
             this.itemIndex %= this.items.size();
@@ -95,8 +87,7 @@ public class RotatingItemIcon extends ItemIcon
     /**
      * Reset the component state back to a 0-index start.
      */
-    private void resetState()
-    {
+    private void resetState() {
         this.itemIndex = 0;
         this.lastUpdateMillis = System.currentTimeMillis();
         updateItem();
@@ -105,8 +96,7 @@ public class RotatingItemIcon extends ItemIcon
     /**
      * Handle item updates.
      */
-    private void updateItem()
-    {
+    private void updateItem() {
         final ItemStack newItem = this.items.get(this.itemIndex);
         this.setItem(newItem);
     }

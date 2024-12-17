@@ -22,27 +22,24 @@ import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 /**
  * Utility helpers for analyzing the available tools and determining which levels are able to use them.
  */
-public final class ToolsAnalyzer
-{
+public final class ToolsAnalyzer {
     /**
      * Generate the list of {@link ToolUsage}.
      */
     @NotNull
-    public static List<ToolUsage> findTools(final Level level)
-    {
+    public static List<ToolUsage> findTools(final Level level) {
         final Map<EquipmentTypeEntry, ToolUsage> toolItems = new HashMap<>();
 
-        for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
-        {
+        for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems()) {
             for (EquipmentTypeEntry toolType : ModEquipmentTypes.getRegistry()) {
-                if (toolType == ModEquipmentTypes.none.get() || !toolType.checkIsEquipment(stack)) { continue; }
+                if (toolType == ModEquipmentTypes.none.get() || !toolType.checkIsEquipment(stack)) {
+                    continue;
+                }
 
                 tryAddingToolWithLevel(toolItems, toolType, stack);
 
-                if (stack.isEnchantable())
-                {
-                    for (int enchantLevel = 1; enchantLevel < 4; ++enchantLevel)
-                    {
+                if (stack.isEnchantable()) {
+                    for (int enchantLevel = 1; enchantLevel < 4; ++enchantLevel) {
                         tryAddingEnchantedTool(toolItems, toolType, stack, enchantLevel, level);
                     }
                 }
@@ -55,8 +52,7 @@ public final class ToolsAnalyzer
     private static void tryAddingEnchantedTool(@NotNull final Map<EquipmentTypeEntry, ToolUsage> toolItems,
                                                @NotNull final EquipmentTypeEntry tool,
                                                @NotNull final ItemStack stack,
-                                               final int enchantLevel, final Level level)
-    {
+                                               final int enchantLevel, final Level level) {
         final ItemStack enchantedStack = stack.copy();
 
         // this list should theoretically end up applying a total of two enchants to each tool type
@@ -72,18 +68,15 @@ public final class ToolsAnalyzer
 
     private static void tryEnchantStack(@NotNull final ItemStack stack,
                                         @NotNull final Holder<Enchantment> enchantment,
-                                        final int enchantLevel)
-    {
-        if (enchantment.value().canEnchant(stack) && enchantLevel >= enchantment.value().getMinLevel() && enchantLevel <= enchantment.value().getMaxLevel())
-        {
+                                        final int enchantLevel) {
+        if (enchantment.value().canEnchant(stack) && enchantLevel >= enchantment.value().getMinLevel() && enchantLevel <= enchantment.value().getMaxLevel()) {
             stack.enchant(enchantment, enchantLevel);
         }
     }
 
     private static void tryAddingToolWithLevel(@NotNull final Map<EquipmentTypeEntry, ToolUsage> toolItems,
                                                @NotNull final EquipmentTypeEntry tool,
-                                               @NotNull final ItemStack stack)
-    {
+                                               @NotNull final ItemStack stack) {
         int level = tool.getMiningLevel(stack);
         if (level < 0) {
             return;
@@ -92,12 +85,9 @@ public final class ToolsAnalyzer
 
         final ToolUsage usage = toolItems.computeIfAbsent(tool, ToolUsage::create);
 
-        if (stack.isEnchanted())
-        {
+        if (stack.isEnchanted()) {
             usage.enchantedToolLevels().get(level).add(stack);
-        }
-        else
-        {
+        } else {
             usage.toolLevels().get(level).add(stack);
         }
     }

@@ -6,13 +6,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 /**
- *  Contains a list of research effects by type.  Currently only supports absolute modifiers through Global Research Effect.
+ * Contains a list of research effects by type.  Currently only supports absolute modifiers through Global Research Effect.
  */
-public class ModResearchEffects
-{
-    public static final ResourceLocation GLOBAL_EFFECT_ID     = new ResourceLocation(Constants.MOD_ID, "global");
+public class ModResearchEffects {
+    public static final ResourceLocation GLOBAL_EFFECT_ID = new ResourceLocation(Constants.MOD_ID, "global");
 
     public static DeferredHolder<ResearchEffectEntry, ResearchEffectEntry> globalResearchEffect;
 
-    public ModResearchEffects() {throw new IllegalStateException("Tried to initialize: ModResearchEffects, but this is a Utility class.");}
+    public ModResearchEffects() {
+        throw new IllegalStateException("Tried to initialize: ModResearchEffects, but this is a Utility class.");
+    }
 }

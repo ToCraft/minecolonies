@@ -39,8 +39,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_EXIT;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_INVENTORY;
 import static com.minecolonies.core.client.gui.map.MinecraftMap.MAP_CENTER;
 
-public class WindowColonyMap extends AbstractWindowSkeleton
-{
+public class WindowColonyMap extends AbstractWindowSkeleton {
     /**
      * Static multiplier to make background map larger -> icons smaller
      */
@@ -75,8 +74,8 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     /**
      * Colony data beeing currently displayed
      */
-    private Map<ICitizenDataView, Pane>             citizens       = new HashMap<>();
-    private Map<IBuildingView, ItemIcon>            buildings      = new HashMap<>();
+    private Map<ICitizenDataView, Pane> citizens = new HashMap<>();
+    private Map<IBuildingView, ItemIcon> buildings = new HashMap<>();
     private Map<ColonyListMessage.ColonyInfo, View> coloniesImages = new HashMap<>();
 
     /**
@@ -109,8 +108,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      *
      * @param building The building the info window is for.
      */
-    public WindowColonyMap(final ITownHallView building)
-    {
+    public WindowColonyMap(final ITownHallView building) {
         super(Constants.MOD_ID + WINDOW_RESOURCE);
         this.building = building;
         playerPos = Minecraft.getInstance().player.blockPosition();
@@ -119,14 +117,12 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         hasMaps = !building.getMapDataList().isEmpty();
         findPaneByID("warning").setVisible(!hasMaps);
 
-        if (hasMaps)
-        {
+        if (hasMaps) {
             // compute top left corner using all provided maps
             // then shift even more to top left to provide spacing for one more "fake" map
             // another fake map is added to bottom right for same reason
             int minX = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE, maxScale = 0;
-            for (final MapEntry entry : building.getMapDataList())
-            {
+            for (final MapEntry entry : building.getMapDataList()) {
                 final int scale = 1 << entry.mapData().scale;
                 maxScale = Math.max(maxScale, scale);
                 minX = Math.min(minX, entry.mapData().centerX - MAP_CENTER * scale);
@@ -145,9 +141,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
 
             addCitizens(building.getColony());
             addCenterPos();
-        }
-        else
-        {
+        } else {
             worldPosRoot = null;
         }
 
@@ -160,18 +154,15 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     /**
      * Action when a button opening an inventory is clicked.
      */
-    private void inventoryClicked()
-    {
+    private void inventoryClicked() {
         new OpenInventoryMessage(building).sendToServer();
     }
 
     /**
      * Add the map.
      */
-    private void addMaps()
-    {
-        for (final MapEntry mapEntry : building.getMapDataList())
-        {
+    private void addMaps() {
+        for (final MapEntry mapEntry : building.getMapDataList()) {
             final MapItemSavedData mapData = mapEntry.mapData();
             final int scale = 1 << mapData.scale;
 
@@ -189,29 +180,23 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      *
      * @param colonyInfo
      */
-    public static void setColonies(final List<ColonyListMessage.ColonyInfo> colonyInfo)
-    {
+    public static void setColonies(final List<ColonyListMessage.ColonyInfo> colonyInfo) {
         colonies = colonyInfo;
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
 
-        if (hasMaps)
-        {
-            for (Map.Entry<ICitizenDataView, Pane> entry : citizens.entrySet())
-            {
+        if (hasMaps) {
+            for (Map.Entry<ICitizenDataView, Pane> entry : citizens.entrySet()) {
                 final EntityCitizen citizen = (EntityCitizen) building.getColony().getWorld().getEntity(entry.getKey().getEntityId());
-                if (citizen != null)
-                {
+                if (citizen != null) {
                     putPaneCenterAtWorldPos(entry.getValue(), citizen.blockPosition());
                 }
             }
 
-            if (currentScale != dragView.getScale())
-            {
+            if (currentScale != dragView.getScale()) {
                 currentScale = dragView.getScale();
                 updateScale();
             }
@@ -221,48 +206,37 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     /**
      * Update elements to the new scaling factor
      */
-    private void updateScale()
-    {
-        for (final ColonyListMessage.ColonyInfo info : colonies)
-        {
+    private void updateScale() {
+        for (final ColonyListMessage.ColonyInfo info : colonies) {
             updateColonyInfoImage(info);
         }
 
-        for (final IBuildingView buildingView : building.getColony().getBuildings())
-        {
+        for (final IBuildingView buildingView : building.getColony().getBuildings()) {
             updateBuildingView(buildingView);
         }
 
-        if (currentScale < COLONY_DETAIL_SCALE)
-        {
+        if (currentScale < COLONY_DETAIL_SCALE) {
             // Hide small icons
             // show colony
 
-            for (Map.Entry<IBuildingView, ItemIcon> buildingEntry : buildings.entrySet())
-            {
+            for (Map.Entry<IBuildingView, ItemIcon> buildingEntry : buildings.entrySet()) {
                 buildingEntry.getValue().off();
             }
 
-            for (Map.Entry<ICitizenDataView, Pane> citizenEntry : citizens.entrySet())
-            {
+            for (Map.Entry<ICitizenDataView, Pane> citizenEntry : citizens.entrySet()) {
                 citizenEntry.getValue().off();
             }
-        }
-        else
-        {
+        } else {
             // Display small icons
-            for (Map.Entry<IBuildingView, ItemIcon> buildingEntry : buildings.entrySet())
-            {
+            for (Map.Entry<IBuildingView, ItemIcon> buildingEntry : buildings.entrySet()) {
                 buildingEntry.getValue().on();
             }
 
-            for (Map.Entry<ICitizenDataView, Pane> citizenEntry : citizens.entrySet())
-            {
+            for (Map.Entry<ICitizenDataView, Pane> citizenEntry : citizens.entrySet()) {
                 citizenEntry.getValue().on();
             }
 
-            for (final Map.Entry<ColonyListMessage.ColonyInfo, View> colonyEntry : coloniesImages.entrySet())
-            {
+            for (final Map.Entry<ColonyListMessage.ColonyInfo, View> colonyEntry : coloniesImages.entrySet()) {
                 colonyEntry.getValue().off();
             }
         }
@@ -275,29 +249,24 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      *
      * @param colonyInfo
      */
-    private void updateColonyInfoImage(final ColonyListMessage.ColonyInfo colonyInfo)
-    {
+    private void updateColonyInfoImage(final ColonyListMessage.ColonyInfo colonyInfo) {
         View colonyPane = coloniesImages.get(colonyInfo);
-        if (colonyPane == null)
-        {
+        if (colonyPane == null) {
             colonyPane = ColonySize.createViewForInfo(colonyInfo);
             colonyPane.setID(colonyInfo.getId() + colonyInfo.getOwner());
             dragView.addChild(colonyPane);
             coloniesImages.put(colonyInfo, colonyPane);
             PaneBuilders.tooltipBuilder().hoverPane(colonyPane)
-              .append(Component.literal("Owner:" + colonyInfo.getOwner()))
-              .appendNL(Component.literal("Coordinates: " + colonyInfo.getCenter().getX() + "X, " + colonyInfo.getCenter().getZ() + "Z"))
-              .appendNL(Component.literal("Citizens: " + colonyInfo.getCitizencount()))
-              .build();
+                    .append(Component.literal("Owner:" + colonyInfo.getOwner()))
+                    .appendNL(Component.literal("Coordinates: " + colonyInfo.getCenter().getX() + "X, " + colonyInfo.getCenter().getZ() + "Z"))
+                    .appendNL(Component.literal("Citizens: " + colonyInfo.getCitizencount()))
+                    .build();
         }
 
-        if (currentScale < COLONY_DETAIL_SCALE)
-        {
+        if (currentScale < COLONY_DETAIL_SCALE) {
             putPaneCenterAtWorldPos(colonyPane, colonyInfo.getCenter());
             colonyPane.on();
-        }
-        else
-        {
+        } else {
             colonyPane.off();
         }
     }
@@ -305,8 +274,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     /**
      * Adds the central blob identifying the current position
      */
-    private void addCenterPos()
-    {
+    private void addCenterPos() {
         final Image citizenImage = new Image();
         citizenImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/red_wax_home.png"), false);
         citizenImage.setSize(16, 16);
@@ -326,11 +294,9 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      * @param buildingView
      * @return
      */
-    private void updateBuildingView(final IBuildingView buildingView)
-    {
+    private void updateBuildingView(final IBuildingView buildingView) {
         ItemIcon uiBuilding = buildings.get(buildingView);
-        if (uiBuilding == null)
-        {
+        if (uiBuilding == null) {
             uiBuilding = new ItemIcon();
 
             uiBuilding.setID(buildingView.getID().toShortString());
@@ -341,15 +307,13 @@ public class WindowColonyMap extends AbstractWindowSkeleton
 
             AbstractTextBuilder.TooltipBuilder tooltip = PaneBuilders.tooltipBuilder();
             tooltip.hoverPane(uiBuilding)
-              .append(BOScreen.getTooltipFromItem(mc, item).get(0)).append(Component.literal(" : " + buildingView.getBuildingLevel()))
-              .appendNL(Component.literal("Coordinates: " + buildingView.getID().getX() + "X, " + buildingView.getID().getZ() + "Z"))
-              .appendNL(Component.literal("Citizens: " + buildingView.getAllAssignedCitizens().size()));
+                    .append(BOScreen.getTooltipFromItem(mc, item).get(0)).append(Component.literal(" : " + buildingView.getBuildingLevel()))
+                    .appendNL(Component.literal("Coordinates: " + buildingView.getID().getX() + "X, " + buildingView.getID().getZ() + "Z"))
+                    .appendNL(Component.literal("Citizens: " + buildingView.getAllAssignedCitizens().size()));
 
-            for (int id : buildingView.getAllAssignedCitizens())
-            {
+            for (int id : buildingView.getAllAssignedCitizens()) {
                 final ICitizenDataView dataView = building.getColony().getCitizen(id);
-                if (dataView != null)
-                {
+                if (dataView != null) {
                     tooltip.appendNL(Component.literal(dataView.getName()));
                 }
             }
@@ -368,13 +332,10 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      *
      * @param colony
      */
-    private void addCitizens(final IColonyView colony)
-    {
-        for (final ICitizenDataView data : colony.getCitizens().values())
-        {
+    private void addCitizens(final IColonyView colony) {
+        for (final ICitizenDataView data : colony.getCitizens().values()) {
             final EntityCitizen citizen = (EntityCitizen) colony.getWorld().getEntity(data.getEntityId());
-            if (citizen != null)
-            {
+            if (citizen != null) {
                 final View citizenView = new View();
                 putPaneCenterAtWorldPos(citizenView, citizen.blockPosition());
 
@@ -385,16 +346,14 @@ public class WindowColonyMap extends AbstractWindowSkeleton
 
                 dragView.addChild(citizenView);
                 final AbstractTextBuilder.TooltipBuilder builder = PaneBuilders.tooltipBuilder().hoverPane(citizenView).paragraphBreak().append(citizen.getDisplayName());
-                if (!data.getJob().isEmpty())
-                {
+                if (!data.getJob().isEmpty()) {
                     citizenImage.setSize(8, 8);
                     builder.newLine().append(Component.translatableEscape("com.minecolonies.coremod.gui.citizen.job.label", Component.translatable(data.getJob())));
                 }
                 builder.color(COLOR_TEXT_FULFILLED).build();
                 citizenView.setSize(citizenImage.getWidth(), citizenImage.getHeight());
 
-                if (data.hasVisibleInteractions())
-                {
+                if (data.hasVisibleInteractions()) {
                     final Image interactionImage = new Image();
                     interactionImage.setImage(data.getInteractionIcon(), false);
                     interactionImage.setSize(6, 6);
@@ -403,8 +362,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                     citizenView.setSize(citizenView.getWidth() + 6, citizenView.getHeight() + 6);
                 }
 
-                if (citizens.containsKey(data))
-                {
+                if (citizens.containsKey(data)) {
                     dragView.removeChild(citizens.get(data));
                 }
                 citizens.put(data, citizenView);
@@ -412,18 +370,15 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         }
     }
 
-    private void putPaneTopLeftCornerAtWorldPos(final Pane pane, final BlockPos worldPos)
-    {
+    private void putPaneTopLeftCornerAtWorldPos(final Pane pane, final BlockPos worldPos) {
         applyWorldPosToPane(pane, worldPos, 0, 0);
     }
 
-    private void putPaneCenterAtWorldPos(final Pane pane, final BlockPos worldPos)
-    {
+    private void putPaneCenterAtWorldPos(final Pane pane, final BlockPos worldPos) {
         applyWorldPosToPane(pane, worldPos, -pane.getWidth() / 2, -pane.getHeight() / 2);
     }
 
-    private void applyWorldPosToPane(final Pane pane, final BlockPos worldPos, final int offsetUiX, final int offsetUiZ)
-    {
+    private void applyWorldPosToPane(final Pane pane, final BlockPos worldPos, final int offsetUiX, final int offsetUiZ) {
         // vector from player pos
         int x = worldPos.getX() - worldPosRoot.getX();
         int z = worldPos.getZ() - worldPosRoot.getZ();

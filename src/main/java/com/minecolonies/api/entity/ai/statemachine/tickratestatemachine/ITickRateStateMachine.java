@@ -4,8 +4,7 @@ import com.minecolonies.api.entity.ai.statemachine.basestatemachine.IStateMachin
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import org.jetbrains.annotations.NotNull;
 
-public interface ITickRateStateMachine<S extends IState> extends IStateMachine<ITickingTransition<S>, S>
-{
+public interface ITickRateStateMachine<S extends IState> extends IStateMachine<ITickingTransition<S>, S> {
     /**
      * Tick the statemachine.
      */

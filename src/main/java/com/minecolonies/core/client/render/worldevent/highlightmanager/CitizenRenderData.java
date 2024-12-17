@@ -11,8 +11,7 @@ import java.time.Duration;
 /**
  * Highlight render data for marking a citizen.
  */
-public class CitizenRenderData implements IHighlightRenderData
-{
+public class CitizenRenderData implements IHighlightRenderData {
     /**
      * Which citizen should be marked.
      */
@@ -26,56 +25,46 @@ public class CitizenRenderData implements IHighlightRenderData
     /**
      * Default constructor.
      */
-    public CitizenRenderData(final int citizenId, final Duration duration)
-    {
+    public CitizenRenderData(final int citizenId, final Duration duration) {
         this.citizenId = citizenId;
         this.duration = duration;
     }
 
     @Override
-    public void startRender(final WorldEventContext context)
-    {
+    public void startRender(final WorldEventContext context) {
         final EntityCitizen citizenEntity = getCitizenEntity(context);
-        if (citizenEntity != null)
-        {
+        if (citizenEntity != null) {
             citizenEntity.setGlowing(true);
         }
     }
 
     @Override
-    public void render(final WorldEventContext context)
-    {
+    public void render(final WorldEventContext context) {
         // No-op
     }
 
     @Override
-    public void stopRender(final WorldEventContext context)
-    {
+    public void stopRender(final WorldEventContext context) {
         final EntityCitizen citizenEntity = getCitizenEntity(context);
-        if (citizenEntity != null)
-        {
+        if (citizenEntity != null) {
             citizenEntity.setGlowing(false);
         }
     }
 
     @Override
-    public @Nullable Duration getDuration()
-    {
+    public @Nullable Duration getDuration() {
         return duration;
     }
 
     @Nullable
-    private EntityCitizen getCitizenEntity(final WorldEventContext context)
-    {
+    private EntityCitizen getCitizenEntity(final WorldEventContext context) {
         final IColonyView colony = context.nearestColony;
-        if (colony == null)
-        {
+        if (colony == null) {
             return null;
         }
 
         final ICitizenDataView citizen = colony.getCitizen(citizenId);
-        if (citizen == null)
-        {
+        if (citizen == null) {
             return null;
         }
 

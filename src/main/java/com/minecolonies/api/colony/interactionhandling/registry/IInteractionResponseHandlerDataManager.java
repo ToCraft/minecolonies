@@ -11,11 +11,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The data manager of the interaction handler.
  */
-public interface IInteractionResponseHandlerDataManager
-{
+public interface IInteractionResponseHandlerDataManager {
 
-    static IInteractionResponseHandlerDataManager getInstance()
-    {
+    static IInteractionResponseHandlerDataManager getInstance() {
         return IMinecoloniesAPI.getInstance().getInteractionResponseHandlerDataManager();
     }
 

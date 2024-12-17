@@ -9,13 +9,11 @@ import java.util.Map;
 /**
  * Created by Asher on 12/6/17.
  */
-public final class RaiderSounds
-{
+public final class RaiderSounds {
     /**
      * The different types.
      */
-    public enum RaiderSoundTypes
-    {
+    public enum RaiderSoundTypes {
         SAY,
         HURT,
         DEATH
@@ -29,8 +27,7 @@ public final class RaiderSounds
     /**
      * Private constructor to hide the implicit public one.
      */
-    private RaiderSounds()
-    {
+    private RaiderSounds() {
 
     }
 }

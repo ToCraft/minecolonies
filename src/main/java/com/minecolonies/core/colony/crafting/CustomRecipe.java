@@ -45,8 +45,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.COUNT_PROP;
  * This class represents a recipe loaded from custom data that is available to a crafter
  * but not to a player
  */
-public class CustomRecipe
-{
+public class CustomRecipe {
     /**
      * The property name that indicates type for the recipe
      */
@@ -245,138 +244,104 @@ public class CustomRecipe
     /**
      * This class can only be created by the parse static
      */
-    private CustomRecipe()
-    {
+    private CustomRecipe() {
     }
 
     /**
      * Parse a Json object into a Custom recipe
      *
-     * @param recipeId the recipe id
+     * @param recipeId   the recipe id
      * @param recipeJson the json representing the recipe
      * @return new instance of CustomRecipe
      */
-    public static CustomRecipe parse(@NotNull final HolderLookup.Provider provider, @NotNull final ResourceLocation recipeId, @NotNull final JsonObject recipeJson)
-    {
+    public static CustomRecipe parse(@NotNull final HolderLookup.Provider provider, @NotNull final ResourceLocation recipeId, @NotNull final JsonObject recipeJson) {
         final CustomRecipe recipe = new CustomRecipe();
         recipe.recipeId = recipeId;
 
-        if (recipeJson.has(RECIPE_CRAFTER_PROP))
-        {
+        if (recipeJson.has(RECIPE_CRAFTER_PROP)) {
             recipe.crafter = recipeJson.get(RECIPE_CRAFTER_PROP).getAsString();
         }
-        if (recipeJson.has(RECIPE_INPUTS_PROP))
-        {
-            for (JsonElement e : recipeJson.get(RECIPE_INPUTS_PROP).getAsJsonArray())
-            {
-                if (e.isJsonObject())
-                {
+        if (recipeJson.has(RECIPE_INPUTS_PROP)) {
+            for (JsonElement e : recipeJson.get(RECIPE_INPUTS_PROP).getAsJsonArray()) {
+                if (e.isJsonObject()) {
                     JsonObject ingredient = e.getAsJsonObject();
                     ItemStorage parsed = new ItemStorage(provider, ingredient);
-                    if (!parsed.isEmpty())
-                    {
+                    if (!parsed.isEmpty()) {
                         recipe.inputs.add(parsed);
                     }
                 }
             }
         }
 
-        if (recipeJson.has(RECIPE_RESULT_PROP))
-        {
+        if (recipeJson.has(RECIPE_RESULT_PROP)) {
             recipe.result = Utils.deserializeCodecMessFromJson(ItemStack.OPTIONAL_CODEC, provider, recipeJson.get(RECIPE_RESULT_PROP));
-        }
-        else
-        {
+        } else {
             recipe.result = ItemStack.EMPTY;
         }
 
-        if (recipeJson.has(RECIPE_LOOTTABLE_PROP))
-        {
+        if (recipeJson.has(RECIPE_LOOTTABLE_PROP)) {
             recipe.lootTable = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(recipeJson.get(RECIPE_LOOTTABLE_PROP).getAsString()));
         }
 
-        if (recipeJson.has(RECIPE_TOOL_PROP))
-        {
+        if (recipeJson.has(RECIPE_TOOL_PROP)) {
             String resLoc = recipeJson.get(RECIPE_TOOL_PROP).getAsString();
             recipe.requiredTool = ModEquipmentTypes.getRegistry().get(EquipmentTypeEntry.parseResourceLocation(resLoc));
         }
 
-        if (recipeJson.has(RECIPE_SECONDARY_PROP))
-        {
-            for (JsonElement e : recipeJson.get(RECIPE_SECONDARY_PROP).getAsJsonArray())
-            {
-                if (e.isJsonObject())
-                {
+        if (recipeJson.has(RECIPE_SECONDARY_PROP)) {
+            for (JsonElement e : recipeJson.get(RECIPE_SECONDARY_PROP).getAsJsonArray()) {
+                if (e.isJsonObject()) {
                     ItemStack stack = Utils.deserializeCodecMessFromJson(ItemStack.OPTIONAL_CODEC, provider, e);
-                    if (!stack.isEmpty())
-                    {
+                    if (!stack.isEmpty()) {
                         recipe.secondary.add(stack);
                     }
                 }
             }
         }
 
-        if (recipeJson.has(RECIPE_ALTERNATE_PROP))
-        {
-            for (JsonElement e : recipeJson.get(RECIPE_ALTERNATE_PROP).getAsJsonArray())
-            {
-                if (e.isJsonObject())
-                {
+        if (recipeJson.has(RECIPE_ALTERNATE_PROP)) {
+            for (JsonElement e : recipeJson.get(RECIPE_ALTERNATE_PROP).getAsJsonArray()) {
+                if (e.isJsonObject()) {
                     ItemStack stack = Utils.deserializeCodecMessFromJson(ItemStack.OPTIONAL_CODEC, provider, e);
-                    if (!stack.isEmpty())
-                    {
+                    if (!stack.isEmpty()) {
                         recipe.altOutputs.add(stack);
                     }
                 }
             }
         }
 
-        if (recipeJson.has(COUNT_PROP) && !ItemStackUtils.isEmpty(recipe.result))
-        {
+        if (recipeJson.has(COUNT_PROP) && !ItemStackUtils.isEmpty(recipe.result)) {
             recipe.result.setCount(recipeJson.get(COUNT_PROP).getAsInt());
         }
-        if (recipeJson.has(RECIPE_INTERMEDIATE_PROP))
-        {
+        if (recipeJson.has(RECIPE_INTERMEDIATE_PROP)) {
             recipe.intermediate = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(recipeJson.get(RECIPE_INTERMEDIATE_PROP).getAsString()));
-        }
-        else
-        {
+        } else {
             recipe.intermediate = Blocks.AIR;
         }
         final JsonElement researchIds = recipeJson.get(RECIPE_RESEARCHID_PROP);
-        if (researchIds != null && researchIds.isJsonArray())
-        {
+        if (researchIds != null && researchIds.isJsonArray()) {
             recipe.researchIds.addAll(researchIds.getAsJsonArray().asList().stream()
                     .map(json -> ResourceLocation.parse(json.getAsString())).toList());
-        }
-        else if (researchIds != null)
-        {
+        } else if (researchIds != null) {
             recipe.researchIds.add(ResourceLocation.parse(researchIds.getAsString()));
         }
         final JsonElement excludedResearchIds = recipeJson.get(RECIPE_EXCLUDED_RESEARCHID_PROP);
-        if (excludedResearchIds != null && excludedResearchIds.isJsonArray())
-        {
+        if (excludedResearchIds != null && excludedResearchIds.isJsonArray()) {
             recipe.excludedResearchIds.addAll(excludedResearchIds.getAsJsonArray().asList().stream()
                     .map(json -> ResourceLocation.parse(json.getAsString())).toList());
-        }
-        else if (excludedResearchIds != null)
-        {
+        } else if (excludedResearchIds != null) {
             recipe.excludedResearchIds.add(ResourceLocation.parse(excludedResearchIds.getAsString()));
         }
-        if(recipeJson.has(RECIPE_BUILDING_MIN_LEVEL_PROP))
-        {
-            recipe.minBldgLevel= recipeJson.get(RECIPE_BUILDING_MIN_LEVEL_PROP).getAsInt();
+        if (recipeJson.has(RECIPE_BUILDING_MIN_LEVEL_PROP)) {
+            recipe.minBldgLevel = recipeJson.get(RECIPE_BUILDING_MIN_LEVEL_PROP).getAsInt();
         }
-        if(recipeJson.has(RECIPE_BUILDING_MAX_LEVEL_PROP))
-        {
-            recipe.maxBldgLevel= recipeJson.get(RECIPE_BUILDING_MAX_LEVEL_PROP).getAsInt();
+        if (recipeJson.has(RECIPE_BUILDING_MAX_LEVEL_PROP)) {
+            recipe.maxBldgLevel = recipeJson.get(RECIPE_BUILDING_MAX_LEVEL_PROP).getAsInt();
         }
-        if(recipeJson.has(RECIPE_MUST_EXIST))
-        {
+        if (recipeJson.has(RECIPE_MUST_EXIST)) {
             recipe.mustExist = recipeJson.get(RECIPE_MUST_EXIST).getAsBoolean();
         }
-        if(recipeJson.has(RECIPE_SHOW_TOOLTIP))
-        {
+        if (recipeJson.has(RECIPE_SHOW_TOOLTIP)) {
             recipe.showTooltip = recipeJson.get(RECIPE_SHOW_TOOLTIP).getAsBoolean();
         }
 
@@ -393,10 +358,9 @@ public class CustomRecipe
      */
     @NotNull
     public static List<CustomRecipe> parseTemplate(
-      @NotNull final HolderLookup.Provider provider,
-      @NotNull final ResourceLocation baseId,
-      @NotNull final JsonObject templateJson)
-    {
+            @NotNull final HolderLookup.Provider provider,
+            @NotNull final ResourceLocation baseId,
+            @NotNull final JsonObject templateJson) {
         final List<CustomRecipe> recipes = new ArrayList<>();
 
         final ResourceLocation tagId = ResourceLocation.parse(GsonHelper.getAsString(templateJson, RECIPE_TAG));
@@ -404,28 +368,25 @@ public class CustomRecipe
 
         final Predicate<ResourceLocation> filter;
         final JsonElement filterJson = templateJson.get(RECIPE_FILTER);
-        if (filterJson != null && filterJson.isJsonObject())
-        {
+        if (filterJson != null && filterJson.isJsonObject()) {
             final Predicate<ResourceLocation> include = parseArrayOrStringFilter(filterJson.getAsJsonObject().get("include"), true);
             final Predicate<ResourceLocation> exclude = parseArrayOrStringFilter(filterJson.getAsJsonObject().get("exclude"), false);
             filter = id -> include.test(id) && !exclude.test(id);
-        }
-        else
-        {
+        } else {
             filter = parseArrayOrStringFilter(filterJson, true);
         }
 
         final boolean logStatus = IMinecoloniesAPI.getInstance().getConfig().getServer().auditCraftingTags.get();
 
-        for (final Holder<Item> item : BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.create(tagId)))
-        {
+        for (final Holder<Item> item : BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.create(tagId))) {
             final ResourceLocation itemId = item.unwrapKey().orElseThrow().location();
-            if (!filter.test(itemId)) { continue; }
+            if (!filter.test(itemId)) {
+                continue;
+            }
 
             final ResourceLocation recipeId = new ResourceLocation(baseId.getNamespace(), baseId.getPath() + '/' + itemId.getNamespace() + '/' + itemId.getPath());
             final JsonObject recipeJson = populateTemplate(baseId, baseRecipeJson, itemId, logStatus);
-            if (recipeJson != null)
-            {
+            if (recipeJson != null) {
                 recipes.add(parse(provider, recipeId, recipeJson));
             }
         }
@@ -435,20 +396,14 @@ public class CustomRecipe
 
     @NotNull
     private static Predicate<ResourceLocation> parseArrayOrStringFilter(@Nullable final JsonElement filterJson,
-                                                                        final boolean defaultResult)
-    {
-        if (filterJson == null)
-        {
+                                                                        final boolean defaultResult) {
+        if (filterJson == null) {
             return id -> defaultResult;
-        }
-        else if (filterJson.isJsonArray())
-        {
+        } else if (filterJson.isJsonArray()) {
             final List<String> strings = StreamSupport.stream(filterJson.getAsJsonArray().spliterator(), false)
                     .map(JsonElement::getAsString).toList();
             return id -> strings.stream().anyMatch(f -> id.toString().contains(f));
-        }
-        else
-        {
+        } else {
             final String filterString = filterJson.getAsString();
             return id -> id.toString().contains(filterString);
         }
@@ -458,21 +413,15 @@ public class CustomRecipe
     private static JsonObject populateTemplate(@NotNull final ResourceLocation templateId,
                                                @NotNull final JsonObject baseRecipeJson,
                                                @NotNull final ResourceLocation itemId,
-                                               final boolean logStatus)
-    {
+                                               final boolean logStatus) {
         final JsonObject recipeJson = baseRecipeJson.deepCopy();
 
-        if (recipeJson.has(RECIPE_INPUTS_PROP))
-        {
-            for (final JsonElement e : recipeJson.get(RECIPE_INPUTS_PROP).getAsJsonArray())
-            {
-                if (e.isJsonObject())
-                {
+        if (recipeJson.has(RECIPE_INPUTS_PROP)) {
+            for (final JsonElement e : recipeJson.get(RECIPE_INPUTS_PROP).getAsJsonArray()) {
+                if (e.isJsonObject()) {
                     final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), itemId);
-                    if (Boolean.FALSE.equals(result.getA()))
-                    {
-                        if (logStatus)
-                        {
+                    if (Boolean.FALSE.equals(result.getA())) {
+                        if (logStatus) {
                             Log.getLogger().error("Template {} with {}: rejecting {} {}",
                                     templateId, itemId, RECIPE_INPUTS_PROP, result.getB());
                         }
@@ -483,27 +432,20 @@ public class CustomRecipe
         }
 
         final Tuple<Boolean, String> output = populateTemplateItem(recipeJson.getAsJsonObject(RECIPE_RESULT_PROP), itemId);
-        if (Boolean.FALSE.equals(output.getA()))
-        {
-            if (logStatus)
-            {
+        if (Boolean.FALSE.equals(output.getA())) {
+            if (logStatus) {
                 Log.getLogger().error("Template {} with {}: rejecting {} {}",
                         templateId, itemId, RECIPE_RESULT_PROP, output.getB());
             }
             return null;
         }
 
-        if (recipeJson.has(RECIPE_SECONDARY_PROP))
-        {
-            for (final JsonElement e : recipeJson.get(RECIPE_SECONDARY_PROP).getAsJsonArray())
-            {
-                if (e.isJsonObject())
-                {
+        if (recipeJson.has(RECIPE_SECONDARY_PROP)) {
+            for (final JsonElement e : recipeJson.get(RECIPE_SECONDARY_PROP).getAsJsonArray()) {
+                if (e.isJsonObject()) {
                     final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), itemId);
-                    if (Boolean.FALSE.equals(result.getA()))
-                    {
-                        if (logStatus)
-                        {
+                    if (Boolean.FALSE.equals(result.getA())) {
+                        if (logStatus) {
                             Log.getLogger().error("Template {} with {}: rejecting {} {}",
                                     templateId, itemId, RECIPE_SECONDARY_PROP, result.getB());
                         }
@@ -513,18 +455,13 @@ public class CustomRecipe
             }
         }
 
-        if (recipeJson.has(RECIPE_ALTERNATE_PROP))
-        {
-            for (final Iterator<JsonElement> iterator = recipeJson.get(RECIPE_ALTERNATE_PROP).getAsJsonArray().iterator(); iterator.hasNext(); )
-            {
+        if (recipeJson.has(RECIPE_ALTERNATE_PROP)) {
+            for (final Iterator<JsonElement> iterator = recipeJson.get(RECIPE_ALTERNATE_PROP).getAsJsonArray().iterator(); iterator.hasNext(); ) {
                 final JsonElement e = iterator.next();
-                if (e.isJsonObject())
-                {
+                if (e.isJsonObject()) {
                     final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), itemId);
-                    if (Boolean.FALSE.equals(result.getA()))
-                    {
-                        if (logStatus)
-                        {
+                    if (Boolean.FALSE.equals(result.getA())) {
+                        if (logStatus) {
                             Log.getLogger().warn("Template {} with {}: ignoring {} {}",
                                     templateId, itemId, RECIPE_ALTERNATE_PROP, result.getB());
                         }
@@ -536,27 +473,22 @@ public class CustomRecipe
         }
 
         if (!recipeJson.has(RECIPE_RESULT_PROP) && !recipeJson.has(RECIPE_LOOTTABLE_PROP) &&
-                (!recipeJson.has(RECIPE_ALTERNATE_PROP) || recipeJson.getAsJsonArray(RECIPE_ALTERNATE_PROP).isEmpty()))
-        {
-            if (logStatus)
-            {
+                (!recipeJson.has(RECIPE_ALTERNATE_PROP) || recipeJson.getAsJsonArray(RECIPE_ALTERNATE_PROP).isEmpty())) {
+            if (logStatus) {
                 Log.getLogger().warn("Template {} with {}: rejecting, no outputs", templateId, itemId);
             }
             return null;
         }
 
-        if (logStatus)
-        {
+        if (logStatus) {
             Log.getLogger().info("Template {} with {}: success", templateId, itemId);
         }
         return recipeJson;
     }
 
     private static Tuple<Boolean, String> populateTemplateItem(@Nullable final JsonObject obj,
-                                                               @NotNull final ResourceLocation itemId)
-    {
-        if (obj != null)
-        {
+                                                               @NotNull final ResourceLocation itemId) {
+        if (obj != null) {
             final Tuple<Boolean, String> result = ItemStackUtils.parseIdTemplate(GsonHelper.getAsString(obj, "id"), itemId);
             obj.addProperty("id", result.getB());
             return result;
@@ -567,25 +499,25 @@ public class CustomRecipe
 
     /**
      * Creates a custom recipe from its components.
-     * @param crafter           The crafter for the recipe.
-     * @param minBldgLevel      Minimum level before the recipe can be learned.
-     * @param maxBldgLevel      Maximum level before buildings in the colony will remove the recipe, if learned.
-     * @param mustExist         If true, the custom recipe will only be learned if another recipe with the same output is taught to the building.
-     * @param showTooltip       If a tooltip describing the recipe should be attached to the item.  Only one recipe per output should have showTooltip set to true.
-     * @param recipeId          The identifier for the recipe, as a resource location.
-     * @param researchReqs      Research IDs that the colony must have to begin the research.
-     * @param researchExcludes  Research IDs that will cause buildings in the colony to remove the recipe, if learned.
-     * @param lootTable         The loot table's resource location, if one is present.
-     * @param requiredTool      The tool required for this craft, if any.  (In addition to any tools inferred from the recipe itself.)
-     * @param inputs            The consumed items, as ItemStorages.
-     * @param primaryOutput     The primary output of the recipe.
-     * @param secondaryOutput   The secondary outputs of the recipe. Most often items like buckets or tools.
-     * @param altOutputs        Alternative outputs of the recipe.  Used to allow one taught recipe to result in multiple effective choices for the request system.
+     *
+     * @param crafter          The crafter for the recipe.
+     * @param minBldgLevel     Minimum level before the recipe can be learned.
+     * @param maxBldgLevel     Maximum level before buildings in the colony will remove the recipe, if learned.
+     * @param mustExist        If true, the custom recipe will only be learned if another recipe with the same output is taught to the building.
+     * @param showTooltip      If a tooltip describing the recipe should be attached to the item.  Only one recipe per output should have showTooltip set to true.
+     * @param recipeId         The identifier for the recipe, as a resource location.
+     * @param researchReqs     Research IDs that the colony must have to begin the research.
+     * @param researchExcludes Research IDs that will cause buildings in the colony to remove the recipe, if learned.
+     * @param lootTable        The loot table's resource location, if one is present.
+     * @param requiredTool     The tool required for this craft, if any.  (In addition to any tools inferred from the recipe itself.)
+     * @param inputs           The consumed items, as ItemStorages.
+     * @param primaryOutput    The primary output of the recipe.
+     * @param secondaryOutput  The secondary outputs of the recipe. Most often items like buckets or tools.
+     * @param altOutputs       Alternative outputs of the recipe.  Used to allow one taught recipe to result in multiple effective choices for the request system.
      */
     public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
-      final Set<ResourceLocation> researchReqs, final Set<ResourceLocation> researchExcludes, @Nullable final ResourceKey<LootTable> lootTable, final EquipmentTypeEntry requiredTool,
-      final List<ItemStorage> inputs, final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, Block intermediate)
-    {
+                        final Set<ResourceLocation> researchReqs, final Set<ResourceLocation> researchExcludes, @Nullable final ResourceKey<LootTable> lootTable, final EquipmentTypeEntry requiredTool,
+                        final List<ItemStorage> inputs, final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, Block intermediate) {
         this.crafter = crafter;
         this.recipeId = recipeId;
         this.researchIds = researchReqs;
@@ -605,46 +537,46 @@ public class CustomRecipe
 
     /**
      * Get the name of the crafter this recipe applies to
+     *
      * @return crafter name
      */
-    public String getCrafter()
-    {
+    public String getCrafter() {
         return crafter;
     }
 
     /**
      * Get the ID for this recipe
+     *
      * @return Recipe Resource Location
      */
-    public ResourceLocation getRecipeId()
-    {
+    public ResourceLocation getRecipeId() {
         return recipeId;
     }
 
     /**
      * Gets the input items for this recipe
+     *
      * @return input ItemStorages
      */
-    public List<ItemStorage> getInputs()
-    {
+    public List<ItemStorage> getInputs() {
         return inputs;
     }
 
     /**
      * Get the primary output for the recipe
+     *
      * @return primary output ItemStack
      */
-    public ItemStack getPrimaryOutput()
-    {
+    public ItemStack getPrimaryOutput() {
         return result;
     }
 
     /**
      * Get the secondary outputs for the recipe.
+     *
      * @return secondary output ItemStacks
      */
-    public List<ItemStack> getSecondaryOutput()
-    {
+    public List<ItemStack> getSecondaryOutput() {
         return secondary;
     }
 
@@ -653,66 +585,76 @@ public class CustomRecipe
      *
      * @return alternative output ItemStacks
      */
-    public List<ItemStack> getAltOutputs()
-    {
+    public List<ItemStack> getAltOutputs() {
         return altOutputs;
     }
 
     /**
      * Get the Loot Table, if one is present.
+     *
      * @return Loot Table resource location
      */
-    public ResourceKey<LootTable> getLootTable()
-    {
+    public ResourceKey<LootTable> getLootTable() {
         return lootTable;
     }
 
     /**
      * Get the required tool, if any.
+     *
      * @return the tool required to perform this craft
      */
     @NotNull
-    public EquipmentTypeEntry getRequiredTool()
-    {
+    public EquipmentTypeEntry getRequiredTool() {
         return requiredTool;
     }
 
     /**
      * Get the IDs of research required before this recipe is valid.  All researches must be done before this recipe
      * is valid.
+     *
      * @return The research IDs or empty if there is no such requirement.
      */
-    public Set<ResourceLocation> getRequiredResearchIds() { return this.researchIds; }
+    public Set<ResourceLocation> getRequiredResearchIds() {
+        return this.researchIds;
+    }
 
     /**
      * Get the IDs of research after which this recipe is no longer valid.  All researches must be done before this
      * recipe is no longer valid.
+     *
      * @return The research IDs or empty if there is no such requirement.
      */
-    public Set<ResourceLocation> getExcludedResearchIds() { return this.excludedResearchIds; }
+    public Set<ResourceLocation> getExcludedResearchIds() {
+        return this.excludedResearchIds;
+    }
 
     /**
      * Get the minimum (inclusive) building level required before this recipe is valid.
+     *
      * @return The minimum building level (0 means no such requirement).
      */
-    public int getMinBuildingLevel() { return this.minBldgLevel; }
+    public int getMinBuildingLevel() {
+        return this.minBldgLevel;
+    }
 
     /**
      * Get the maximum (inclusive) building level required to still consider this recipe valid.
+     *
      * @return The maximum building level (the recipe is no longer valid at higher levels).
      */
-    public int getMaxBuildingLevel() { return this.maxBldgLevel; }
+    public int getMaxBuildingLevel() {
+        return this.maxBldgLevel;
+    }
 
     /**
      * Check to see if the recipe is currently valid for the building
      * This does research checks, to verify that the appropriate researches are in the correct states
-     * @param building      Building to check recipe against.
+     *
+     * @param building Building to check recipe against.
      */
-    public boolean isValidForBuilding(IBuilding building)
-    {
+    public boolean isValidForBuilding(IBuilding building) {
         final IColony colony = building.getColony();
-        if (isPrecursorRecipeMissing(building))
-        {
+        if (isPrecursorRecipeMissing(building)) {
             return false;
         }
 
@@ -721,33 +663,28 @@ public class CustomRecipe
         final int bldgLevel = building.getBuildingLevel();
 
         return requiredEffectPresent
-                 && (excludedResearchIds.isEmpty() || !excludedEffectPresent)
-                 && (bldgLevel >= minBldgLevel)
-                 && (bldgLevel <= maxBldgLevel);
+                && (excludedResearchIds.isEmpty() || !excludedEffectPresent)
+                && (bldgLevel >= minBldgLevel)
+                && (bldgLevel <= maxBldgLevel);
     }
 
     /**
      * Check if a given researchId has been completed and has an unlock ability effect.
-     * @param researchId    The id of the research to check for.
-     * @param colony        The colony being checked against.
+     *
+     * @param researchId The id of the research to check for.
+     * @param colony     The colony being checked against.
      */
-    private boolean isUnlockEffectResearched(ResourceLocation researchId, IColony colony)
-    {
+    private boolean isUnlockEffectResearched(ResourceLocation researchId, IColony colony) {
         //Check first if the research effect exists.
-        if (!IGlobalResearchTree.getInstance().hasResearchEffect(researchId) && !IGlobalResearchTree.getInstance().hasResearch(researchId))
-        {
+        if (!IGlobalResearchTree.getInstance().hasResearchEffect(researchId) && !IGlobalResearchTree.getInstance().hasResearch(researchId)) {
             // If there's nothing registered with this effect, and no research with this key, we'll default to acting as if research is not yet completed.
             return false;
-        }
-        else
-        {
-            if (IGlobalResearchTree.getInstance().hasResearchEffect(researchId) && colony.getResearchManager().getResearchEffects().getEffectStrength(researchId) > 0)
-            {
+        } else {
+            if (IGlobalResearchTree.getInstance().hasResearchEffect(researchId) && colony.getResearchManager().getResearchEffects().getEffectStrength(researchId) > 0) {
                 // Research effect queried, present, and set to true.
                 return true;
             }
-            if (IGlobalResearchTree.getInstance().hasResearch(researchId) && colony.getResearchManager().getResearchTree().hasCompletedResearch(researchId))
-            {
+            if (IGlobalResearchTree.getInstance().hasResearch(researchId) && colony.getResearchManager().getResearchTree().hasCompletedResearch(researchId)) {
                 // Research ID queried and present.
                 // This will allow simple Recipe-style unlocks to exist without needing an extra effect category.
                 return true;
@@ -759,26 +696,22 @@ public class CustomRecipe
 
     /**
      * Check if a precursor recipe is missing from the building.
-     * @param building      The building which would contain the precursor recipe.
-     * @return              True if a precursor recipe was required and not present.
+     *
+     * @param building The building which would contain the precursor recipe.
+     * @return True if a precursor recipe was required and not present.
      */
-    private boolean isPrecursorRecipeMissing(IBuilding building)
-    {
-        if(mustExist)
-        {
+    private boolean isPrecursorRecipeMissing(IBuilding building) {
+        if (mustExist) {
             final IRecipeStorage compareStorage = this.getRecipeStorage();
             final ResourceLocation recipeSource = this.getRecipeId();
-            for (final ICraftingBuildingModule module : building.getModulesByType(ICraftingBuildingModule.class))
-            {
-                for (IToken<?> recipeToken : module.getRecipes())
-                {
+            for (final ICraftingBuildingModule module : building.getModulesByType(ICraftingBuildingModule.class)) {
+                for (IToken<?> recipeToken : module.getRecipes()) {
                     final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken);
                     if ((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (
-                      ItemStackUtils.compareItemStacksIgnoreStackSize(storage.getPrimaryOutput(), compareStorage.getPrimaryOutput(), false, true) &&
-                        storage.getCleanedInput().containsAll(compareStorage.getCleanedInput())
-                        && compareStorage.getCleanedInput()
-                             .containsAll(storage.getCleanedInput())))
-                    {
+                            ItemStackUtils.compareItemStacksIgnoreStackSize(storage.getPrimaryOutput(), compareStorage.getPrimaryOutput(), false, true) &&
+                                    storage.getCleanedInput().containsAll(compareStorage.getCleanedInput())
+                                    && compareStorage.getCleanedInput()
+                                    .containsAll(storage.getCleanedInput()))) {
                         return false;
                     }
                 }
@@ -791,50 +724,45 @@ public class CustomRecipe
 
     /**
      * Get the recipe storage represented by this recipe
+     *
      * @return Recipe Storage
      */
-    public IRecipeStorage getRecipeStorage()
-    {
-        if(cachedRecipeStorage == null)
-        {
-            if(altOutputs.isEmpty())
-            {
+    public IRecipeStorage getRecipeStorage() {
+        if (cachedRecipeStorage == null) {
+            if (altOutputs.isEmpty()) {
                 cachedRecipeStorage = StandardFactoryController.getInstance().getNewInstance(
-                    TypeConstants.RECIPE,
-                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    inputs,
-                    1,
-                    result,
-                    intermediate,
-                    this.getRecipeId(),
-                    ModRecipeTypes.CLASSIC_ID,
-                    null, //alternate outputs
-                    secondary, //secondary output
-                    lootTable,
-                    requiredTool
-                    );
-            }
-            else
-            {
+                        TypeConstants.RECIPE,
+                        StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                        inputs,
+                        1,
+                        result,
+                        intermediate,
+                        this.getRecipeId(),
+                        ModRecipeTypes.CLASSIC_ID,
+                        null, //alternate outputs
+                        secondary, //secondary output
+                        lootTable,
+                        requiredTool
+                );
+            } else {
                 cachedRecipeStorage = StandardFactoryController.getInstance().getNewInstance(
-                    TypeConstants.RECIPE,
-                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    inputs,
-                    1,
-                    result,
-                    intermediate,
-                    this.getRecipeId(),
-                    ModRecipeTypes.MULTI_OUTPUT_ID,
-                    altOutputs, //alternate outputs
-                    secondary, //secondary output
-                    lootTable,
-                    requiredTool
-                    );
+                        TypeConstants.RECIPE,
+                        StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                        inputs,
+                        1,
+                        result,
+                        intermediate,
+                        this.getRecipeId(),
+                        ModRecipeTypes.MULTI_OUTPUT_ID,
+                        altOutputs, //alternate outputs
+                        secondary, //secondary output
+                        lootTable,
+                        requiredTool
+                );
             }
             IRecipeManager recipeManager = IColonyManager.getInstance().getRecipeManager();
             IToken<?> cachedRecipeToken = recipeManager.getRecipeId(cachedRecipeStorage);
-            if(cachedRecipeToken != null && !cachedRecipeToken.equals(cachedRecipeStorage.getToken()))
-            {
+            if (cachedRecipeToken != null && !cachedRecipeToken.equals(cachedRecipeStorage.getToken())) {
                 cachedRecipeStorage = (RecipeStorage) recipeManager.getRecipes().get(cachedRecipeToken);
             }
             recipeManager.registerUse(cachedRecipeStorage.getToken());
@@ -843,20 +771,16 @@ public class CustomRecipe
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(result, researchIds.hashCode(), excludedResearchIds.hashCode(), lootTable, requiredTool, inputs.hashCode());
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
@@ -864,34 +788,31 @@ public class CustomRecipe
 
 
         return ItemStackUtils.compareItemStacksIgnoreStackSize(result, that.result)
-            && researchIds.equals(that.researchIds)
-            && excludedResearchIds.equals(that.excludedResearchIds)
-            && Objects.equals(lootTable, that.lootTable)
-            && Objects.equals(requiredTool, that.requiredTool)
-            && inputs.equals(that.inputs);
+                && researchIds.equals(that.researchIds)
+                && excludedResearchIds.equals(that.excludedResearchIds)
+                && Objects.equals(lootTable, that.lootTable)
+                && Objects.equals(requiredTool, that.requiredTool)
+                && inputs.equals(that.inputs);
     }
 
     /**
-     * Does this require it to already be there? 
+     * Does this require it to already be there?
      */
-    public boolean getMustExist()
-    {
+    public boolean getMustExist() {
         return mustExist;
     }
 
     /**
      * What is the intermediate block for this recipe?
      */
-    public Block getIntermediate()
-    {
+    public Block getIntermediate() {
         return intermediate;
     }
 
     /**
      * Should tooltip information be displayed on the client in inventory and JEI?
      */
-    public boolean getShowTooltip()
-    {
+    public boolean getShowTooltip() {
         return showTooltip;
     }
 
@@ -900,15 +821,13 @@ public class CustomRecipe
      *
      * @param packetBuffer buffer to serialize into.
      */
-    public void serialize(@NotNull final RegistryFriendlyByteBuf packetBuffer)
-    {
+    public void serialize(@NotNull final RegistryFriendlyByteBuf packetBuffer) {
         packetBuffer.writeUtf(getCrafter());
         packetBuffer.writeResourceLocation(getRecipeStorage().getRecipeSource());
         serializeIds(packetBuffer, getRequiredResearchIds());
         serializeIds(packetBuffer, getExcludedResearchIds());
         packetBuffer.writeBoolean(getLootTable() != null);
-        if(getLootTable() != null)
-        {
+        if (getLootTable() != null) {
             packetBuffer.writeResourceLocation(getLootTable().location());
         }
         packetBuffer.writeResourceLocation(getRequiredTool().getRegistryName());
@@ -917,19 +836,16 @@ public class CustomRecipe
         packetBuffer.writeBoolean(getMustExist());
         packetBuffer.writeBoolean(getShowTooltip());
         packetBuffer.writeVarInt(getInputs().size());
-        for(final ItemStorage input : getInputs())
-        {
+        for (final ItemStorage input : getInputs()) {
             StandardFactoryController.getInstance().serialize(packetBuffer, input);
         }
         Utils.serializeCodecMess(packetBuffer, getPrimaryOutput());
         packetBuffer.writeVarInt(getSecondaryOutput().size());
-        for(final ItemStack secondary : getSecondaryOutput())
-        {
+        for (final ItemStack secondary : getSecondaryOutput()) {
             Utils.serializeCodecMess(packetBuffer, secondary);
         }
         packetBuffer.writeVarInt(getAltOutputs().size());
-        for(final ItemStack alts : getAltOutputs())
-        {
+        for (final ItemStack alts : getAltOutputs()) {
             Utils.serializeCodecMess(packetBuffer, alts);
         }
         packetBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(getIntermediate()));
@@ -937,22 +853,19 @@ public class CustomRecipe
 
     /**
      * Deserialize from network.
+     *
      * @param buffer network buffer.
-     * @return       deserialized recipe.
+     * @return deserialized recipe.
      */
-    public static CustomRecipe deserialize(@NotNull final RegistryFriendlyByteBuf buffer)
-    {
+    public static CustomRecipe deserialize(@NotNull final RegistryFriendlyByteBuf buffer) {
         final String crafter = buffer.readUtf();
         final ResourceLocation recipeId = buffer.readResourceLocation();
         final Set<ResourceLocation> researchReq = deserializeIds(buffer);
         final Set<ResourceLocation> researchExclude = deserializeIds(buffer);
         final ResourceKey<LootTable> lootTable;
-        if(buffer.readBoolean())
-        {
+        if (buffer.readBoolean()) {
             lootTable = ResourceKey.create(Registries.LOOT_TABLE, buffer.readResourceLocation());
-        }
-        else
-        {
+        } else {
             lootTable = null;
         }
         final EquipmentTypeEntry requiredTool = ModEquipmentTypes.getRegistry().get(buffer.readResourceLocation());
@@ -961,19 +874,16 @@ public class CustomRecipe
         final boolean mustExist = buffer.readBoolean();
         final boolean showTooltip = buffer.readBoolean();
         final List<ItemStorage> inputs = new ArrayList<>();
-        for(int numInputs = buffer.readVarInt(); numInputs > 0; numInputs--)
-        {
+        for (int numInputs = buffer.readVarInt(); numInputs > 0; numInputs--) {
             inputs.add(StandardFactoryController.getInstance().deserialize(buffer));
         }
         final ItemStack primaryOutput = Utils.deserializeCodecMess(buffer);
         final List<ItemStack> secondaryOutput = new ArrayList<>();
-        for(int numSec = buffer.readVarInt(); numSec > 0; numSec--)
-        {
+        for (int numSec = buffer.readVarInt(); numSec > 0; numSec--) {
             secondaryOutput.add(Utils.deserializeCodecMess(buffer));
         }
         final List<ItemStack> altOutputs = new ArrayList<>();
-        for(int numAlts = buffer.readVarInt(); numAlts > 0; numAlts--)
-        {
+        for (int numAlts = buffer.readVarInt(); numAlts > 0; numAlts--) {
             altOutputs.add(Utils.deserializeCodecMess(buffer));
         }
 
@@ -986,30 +896,28 @@ public class CustomRecipe
 
     /**
      * Serialize a set of {@link ResourceLocation}.
+     *
      * @param buffer the buffer to serialize into.
      * @param ids    the set to be serialized.
      */
-    private static void serializeIds(@NotNull final RegistryFriendlyByteBuf buffer, @NotNull final Set<ResourceLocation> ids)
-    {
+    private static void serializeIds(@NotNull final RegistryFriendlyByteBuf buffer, @NotNull final Set<ResourceLocation> ids) {
         buffer.writeVarInt(ids.size());
-        for (final ResourceLocation id : ids)
-        {
+        for (final ResourceLocation id : ids) {
             buffer.writeResourceLocation(id);
         }
     }
 
     /**
      * Deserialize a set of {@link ResourceLocation}.
+     *
      * @param buffer the buffer to deserialize from.
-     * @return       the deserialized set.
+     * @return the deserialized set.
      */
-    private static Set<ResourceLocation> deserializeIds(@NotNull final RegistryFriendlyByteBuf buffer)
-    {
+    private static Set<ResourceLocation> deserializeIds(@NotNull final RegistryFriendlyByteBuf buffer) {
         final Set<ResourceLocation> ids = new HashSet<>();
 
         final int size = buffer.readVarInt();
-        for (int i = 0; i < size; ++i)
-        {
+        for (int i = 0; i < size; ++i) {
             ids.add(buffer.readResourceLocation());
         }
 

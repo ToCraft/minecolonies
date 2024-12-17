@@ -5,8 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Interface describing objects that are locatable.
  */
-public interface ILocatable
-{
+public interface ILocatable {
 
     /**
      * Getter to get the location of this locatable.

@@ -9,12 +9,10 @@ import net.minecraft.world.item.enchantment.Enchantment;
 /**
  * All our mods renchants
  */
-public class ModEnchants
-{
+public class ModEnchants {
     public static final ResourceKey<Enchantment> raiderDamage = ResourceKey.create(Registries.ENCHANTMENT, new ResourceLocation(Constants.MOD_ID, "raider_damage_enchant"));
 
-    private ModEnchants()
-    {
+    private ModEnchants() {
         // Intentionally left empty
     }
 }

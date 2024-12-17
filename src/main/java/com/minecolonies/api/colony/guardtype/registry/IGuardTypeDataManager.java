@@ -4,11 +4,9 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import net.minecraft.resources.ResourceLocation;
 
-public interface IGuardTypeDataManager
-{
+public interface IGuardTypeDataManager {
 
-    static IGuardTypeDataManager getInstance()
-    {
+    static IGuardTypeDataManager getInstance() {
         return IMinecoloniesAPI.getInstance().getGuardTypeDataManager();
     }
 

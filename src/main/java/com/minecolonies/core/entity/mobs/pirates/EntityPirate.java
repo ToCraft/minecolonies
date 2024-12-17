@@ -9,8 +9,7 @@ import net.minecraft.world.level.Level;
 /**
  * Class for the Pirate entity.
  */
-public class EntityPirate extends AbstractEntityPirate implements IMeleePirateEntity
-{
+public class EntityPirate extends AbstractEntityPirate implements IMeleePirateEntity {
 
     /**
      * Constructor of the entity.
@@ -18,8 +17,7 @@ public class EntityPirate extends AbstractEntityPirate implements IMeleePirateEn
      * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityPirate(final EntityType<? extends EntityPirate> type, final Level worldIn)
-    {
+    public EntityPirate(final EntityType<? extends EntityPirate> type, final Level worldIn) {
         super(type, worldIn);
         this.moveControl = new MovementHandler(this);
     }

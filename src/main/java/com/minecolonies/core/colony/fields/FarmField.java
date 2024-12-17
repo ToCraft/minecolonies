@@ -9,7 +9,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -22,17 +21,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Field class implementation for the plantation
  */
-public class FarmField extends AbstractField
-{
+public class FarmField extends AbstractField {
     /**
      * The max width/length of a field.
      */
     private static final int MAX_RANGE = 5;
 
-    private static final String TAG_SEED      = "seed";
-    private static final String TAG_RADIUS    = "radius";
+    private static final String TAG_SEED = "seed";
+    private static final String TAG_RADIUS = "radius";
     private static final String TAG_MAX_RANGE = "maxRange";
-    private static final String TAG_STAGE     = "stage";
+    private static final String TAG_STAGE = "stage";
 
     /**
      * The currently selected seed on the field, if any.
@@ -62,8 +60,7 @@ public class FarmField extends AbstractField
      * @param fieldType the type of field.
      * @param position  the position of the field.
      */
-    public FarmField(final FieldRegistries.FieldEntry fieldType, final BlockPos position)
-    {
+    public FarmField(final FieldRegistries.FieldEntry fieldType, final BlockPos position) {
         super(fieldType, position);
         this.maxRadius = MAX_RANGE;
     }
@@ -73,21 +70,18 @@ public class FarmField extends AbstractField
      *
      * @param position the position it is placed in.
      */
-    public static FarmField create(final BlockPos position)
-    {
+    public static FarmField create(final BlockPos position) {
         return (FarmField) FieldRegistries.farmField.get().produceField(position);
     }
 
     @Override
-    public boolean isValidPlacement(final IColony colony)
-    {
+    public boolean isValidPlacement(final IColony colony) {
         BlockState blockState = colony.getWorld().getBlockState(getPosition());
         return blockState.is(ModBlocks.blockScarecrow);
     }
 
     @Override
-    public @NotNull CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public @NotNull CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag compound = super.serializeNBT(provider);
         compound.put(TAG_SEED, seed.saveOptional(provider));
         compound.putIntArray(TAG_RADIUS, radii);
@@ -97,8 +91,7 @@ public class FarmField extends AbstractField
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final @NotNull CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final @NotNull CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         setSeed(ItemStack.parseOptional(provider, compound.getCompound(TAG_SEED)));
         radii = compound.getIntArray(TAG_RADIUS);
@@ -107,8 +100,7 @@ public class FarmField extends AbstractField
     }
 
     @Override
-    public void serialize(final @NotNull RegistryFriendlyByteBuf buf)
-    {
+    public void serialize(final @NotNull RegistryFriendlyByteBuf buf) {
         super.serialize(buf);
         Utils.serializeCodecMess(buf, getSeed());
         buf.writeVarIntArray(radii);
@@ -117,8 +109,7 @@ public class FarmField extends AbstractField
     }
 
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         super.deserialize(buf);
         setSeed(Utils.deserializeCodecMess(buf));
         radii = buf.readVarIntArray();
@@ -132,8 +123,7 @@ public class FarmField extends AbstractField
      * @return the current seed.
      */
     @NotNull
-    public ItemStack getSeed()
-    {
+    public ItemStack getSeed() {
         seed.setCount(1);
         return seed;
     }
@@ -143,8 +133,7 @@ public class FarmField extends AbstractField
      *
      * @param seed the new seed
      */
-    public void setSeed(final ItemStack seed)
-    {
+    public void setSeed(final ItemStack seed) {
         this.seed = seed.copy();
         this.seed.setCount(1);
     }
@@ -152,10 +141,8 @@ public class FarmField extends AbstractField
     /**
      * Move the field into the new state.
      */
-    public void nextState()
-    {
-        if (getFieldStage().ordinal() + 1 >= Stage.values().length)
-        {
+    public void nextState() {
+        if (getFieldStage().ordinal() + 1 >= Stage.values().length) {
             setFieldStage(Stage.values()[0]);
             return;
         }
@@ -167,8 +154,7 @@ public class FarmField extends AbstractField
      *
      * @return the stage of the field.
      */
-    public Stage getFieldStage()
-    {
+    public Stage getFieldStage() {
         return this.fieldStage;
     }
 
@@ -177,8 +163,7 @@ public class FarmField extends AbstractField
      *
      * @param fieldStage the stage of the field.
      */
-    public void setFieldStage(final Stage fieldStage)
-    {
+    public void setFieldStage(final Stage fieldStage) {
         this.fieldStage = fieldStage;
     }
 
@@ -187,8 +172,7 @@ public class FarmField extends AbstractField
      *
      * @return the maximum range.
      */
-    public int getMaxRadius()
-    {
+    public int getMaxRadius() {
         return maxRadius;
     }
 
@@ -196,8 +180,7 @@ public class FarmField extends AbstractField
      * @param direction the direction to get the range for
      * @return the radius
      */
-    public int getRadius(Direction direction)
-    {
+    public int getRadius(Direction direction) {
         return radii[direction.get2DDataValue()];
     }
 
@@ -205,8 +188,7 @@ public class FarmField extends AbstractField
      * @param direction the direction for the radius
      * @param radius    the number of blocks from the scarecrow that the farmer will work with
      */
-    public void setRadius(Direction direction, int radius)
-    {
+    public void setRadius(Direction direction, int radius) {
         this.radii[direction.get2DDataValue()] = Math.min(radius, maxRadius);
     }
 
@@ -217,8 +199,7 @@ public class FarmField extends AbstractField
      * @param position the position.
      * @return true if it is.
      */
-    public boolean isNoPartOfField(@NotNull final Level world, @NotNull final BlockPos position)
-    {
+    public boolean isNoPartOfField(@NotNull final Level world, @NotNull final BlockPos position) {
         return world.isEmptyBlock(position) || isValidDelimiter(world.getBlockState(position.above()).getBlock());
     }
 
@@ -228,16 +209,14 @@ public class FarmField extends AbstractField
      * @param block the block to analyze.
      * @return true if so.
      */
-    private static boolean isValidDelimiter(final Block block)
-    {
+    private static boolean isValidDelimiter(final Block block) {
         return block instanceof FenceBlock || block instanceof FenceGateBlock || block instanceof WallBlock;
     }
 
     /**
      * Describes the stage the field is in. Like if it has been hoed, planted or is empty.
      */
-    public enum Stage
-    {
+    public enum Stage {
         EMPTY,
         HOED,
         PLANTED

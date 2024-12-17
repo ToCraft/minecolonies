@@ -35,8 +35,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Research manager of the colony.
  */
-public class ResearchManager implements IResearchManager
-{
+public class ResearchManager implements IResearchManager {
     /**
      * The research tree of the colony, containing completed or in-progress research.
      */
@@ -64,25 +63,20 @@ public class ResearchManager implements IResearchManager
     private boolean dirty;
 
     @Override
-    public void readFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public void readFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         tree.readFromNBT(provider, compound, effects);
     }
 
     @Override
-    public void writeToNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public void writeToNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         tree.writeToNBT(provider, compound);
     }
 
     @Override
-    public void sendPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
-    {
-        if (dirty || !newSubscribers.isEmpty())
-        {
+    public void sendPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers) {
+        if (dirty || !newSubscribers.isEmpty()) {
             final Set<ServerPlayer> players = new HashSet<>();
-            if (dirty)
-            {
+            if (dirty) {
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
@@ -94,112 +88,90 @@ public class ResearchManager implements IResearchManager
     }
 
     @Override
-    public final void markDirty()
-    {
+    public final void markDirty() {
         dirty = true;
     }
 
     @Override
-    public final boolean isDirty()
-    {
+    public final boolean isDirty() {
         return dirty;
     }
 
     @Override
-    public void clearDirty()
-    {
+    public void clearDirty() {
         dirty = false;
     }
 
-    public ResearchManager(IColony colony)
-    {
+    public ResearchManager(IColony colony) {
         this.colony = colony;
         autoStartResearch.addAll(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getAutostartResearches());
         this.tree = new LocalResearchTree(colony);
     }
 
     @Override
-    public LocalResearchTree getResearchTree()
-    {
+    public LocalResearchTree getResearchTree() {
         return this.tree;
     }
 
     @Override
-    public IResearchEffectManager getResearchEffects()
-    {
+    public IResearchEffectManager getResearchEffects() {
         return this.effects;
     }
 
     @Override
-    public ResourceLocation getResearchEffectIdFrom(Block block)
-    {
+    public ResourceLocation getResearchEffectIdFrom(Block block) {
         return new ResourceLocation(BuiltInRegistries.BLOCK.getKey(block).getNamespace(), "effects/" + BuiltInRegistries.BLOCK.getKey(block).getPath());
     }
 
     @Override
-    public void checkAutoStartResearch()
-    {
-        if(colony == null || !(colony instanceof Colony))
-        {
+    public void checkAutoStartResearch() {
+        if (colony == null || !(colony instanceof Colony)) {
             return;
         }
         final List<IGlobalResearch> removes = new ArrayList<>();
-        for(IGlobalResearch research : autoStartResearch)
-        {
-            if (!IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), colony))
-            {
+        for (IGlobalResearch research : autoStartResearch) {
+            if (!IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), colony)) {
                 continue;
             }
             // Unlockable Branch Research should trigger even if the university isn't at the required depth. Otherwise, we do need to consider it. CheckAutoStart will rerun on the university upgrade completion.
-            if(IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getType() != ResearchBranchType.UNLOCKABLES)
-            {
+            if (IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getType() != ResearchBranchType.UNLOCKABLES) {
                 int level = 0;
                 Map<BlockPos, IBuilding> buildings = colony.getBuildingManager().getBuildings();
-                for (Map.Entry<BlockPos, IBuilding> building : buildings.entrySet())
-                {
-                    if (building.getValue().getBuildingType() == ModBuildings.university.get())
-                    {
-                        if (building.getValue().getBuildingLevel() > level)
-                        {
+                for (Map.Entry<BlockPos, IBuilding> building : buildings.entrySet()) {
+                    if (building.getValue().getBuildingType() == ModBuildings.university.get()) {
+                        if (building.getValue().getBuildingLevel() > level) {
                             level = building.getValue().getBuildingLevel();
                         }
                     }
                 }
-                if (level < research.getDepth())
-                {
+                if (level < research.getDepth()) {
                     continue;
                 }
             }
 
             boolean researchAlreadyRun = false;
-            for (ILocalResearch progressResearch : colony.getResearchManager().getResearchTree().getResearchInProgress())
-            {
-                if(progressResearch.getId().equals(research.getId()))
-                {
+            for (ILocalResearch progressResearch : colony.getResearchManager().getResearchTree().getResearchInProgress()) {
+                if (progressResearch.getId().equals(research.getId())) {
                     researchAlreadyRun = true;
                     break;
                 }
             }
             // Don't want to spam people about in-progress or already-completed research.  Because these might change within a world,
             // we can't just save them or check against effects.
-            if(researchAlreadyRun || colony.getResearchManager().getResearchTree().hasCompletedResearch(research.getId()))
-            {
+            if (researchAlreadyRun || colony.getResearchManager().getResearchTree().hasCompletedResearch(research.getId())) {
                 removes.add(research);
                 continue;
             }
 
             // if research has item requirements, only notify player; we don't want to have items disappearing from inventories.
-            if (!research.getCostList().isEmpty())
-            {
+            if (!research.getCostList().isEmpty()) {
                 MessageUtils.format(RESEARCH_AVAILABLE, MutableComponent.create(research.getName())).sendTo(colony).forAllPlayers();
-                for (Player player : colony.getMessagePlayerEntities())
-                {
+                for (Player player : colony.getMessagePlayerEntities()) {
                     SoundUtils.playSuccessSound(player, player.blockPosition());
                 }
             }
             // Otherwise, we can start the research without user intervention.
-            else
-            {
+            else {
                 startCostlessResearch(research);
             }
             //  If we've successfully done all those things, now we can remove the object from the list.
@@ -212,52 +184,43 @@ public class ResearchManager implements IResearchManager
 
     /**
      * Start researches that have no item consumption cost, and notify players of available for those with a cost.
-     * @param research      The global research to start.
+     *
+     * @param research The global research to start.
      */
-    private void startCostlessResearch(IGlobalResearch research)
-    {
+    private void startCostlessResearch(IGlobalResearch research) {
         markDirty();
         boolean creativePlayer = false;
-        for (Player player : colony.getMessagePlayerEntities())
-        {
-            if (player.isCreative())
-            {
+        for (Player player : colony.getMessagePlayerEntities()) {
+            if (player.isCreative()) {
                 creativePlayer = true;
             }
         }
         tree.addResearch(research.getBranch(), new LocalResearch(research.getId(), research.getBranch(), research.getDepth()));
-        if(research.isInstant() || (creativePlayer && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()))
-        {
+        if (research.isInstant() || (creativePlayer && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get())) {
             ILocalResearch localResearch = tree.getResearch(research.getBranch(), research.getId());
             localResearch.setProgress(IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime(research.getDepth()));
             localResearch.setState(ResearchState.FINISHED);
             tree.finishResearch(research.getId());
-            for (IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getEffects())
-            {
+            for (IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getEffects()) {
                 effects.applyEffect(effect);
             }
-            for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
-            {
+            for (final ICitizenData citizen : colony.getCitizenManager().getCitizens()) {
                 citizen.applyResearchEffects();
             }
 
             MessageUtils.format(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
-                MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()))
-              .sendTo(colony)
-              .forAllPlayers();
-            for (Player player : colony.getMessagePlayerEntities())
-            {
+                            MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()))
+                    .sendTo(colony)
+                    .forAllPlayers();
+            for (Player player : colony.getMessagePlayerEntities()) {
                 SoundUtils.playSuccessSound(player, player.blockPosition());
             }
-        }
-        else
-        {
+        } else {
             MessageUtils.format(RESEARCH_AVAILABLE, MutableComponent.create(research.getName()))
-              .append(MESSAGE_RESEARCH_STARTED, MutableComponent.create(research.getName()))
-              .sendTo(colony)
-              .forAllPlayers();
-            for (Player player : colony.getMessagePlayerEntities())
-            {
+                    .append(MESSAGE_RESEARCH_STARTED, MutableComponent.create(research.getName()))
+                    .sendTo(colony)
+                    .forAllPlayers();
+            for (Player player : colony.getMessagePlayerEntities()) {
                 SoundUtils.playSuccessSound(player, player.blockPosition());
             }
         }

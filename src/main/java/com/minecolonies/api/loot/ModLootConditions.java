@@ -20,9 +20,10 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
-/** Container class for registering custom loot conditions */
-public final class ModLootConditions
-{
+/**
+ * Container class for registering custom loot conditions
+ */
+public final class ModLootConditions {
     public final static DeferredRegister<LootItemConditionType> DEFERRED_REGISTER = DeferredRegister.create(Registries.LOOT_CONDITION_TYPE, Constants.MOD_ID);
 
     public static final ResourceLocation ENTITY_IN_BIOME_TAG_ID = new ResourceLocation(MOD_ID, "entity_in_biome_tag");
@@ -35,18 +36,15 @@ public final class ModLootConditions
     private static final LootItemCondition.Builder HAS_SHEARS = MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.SHEARS));
     private static final LootItemCondition.Builder HAS_HOE = MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES));
 
-    public static LootItemCondition.Builder hasShears()
-    {
+    public static LootItemCondition.Builder hasShears() {
         return HAS_SHEARS;
     }
 
-    public static LootItemCondition.Builder hasHoe()
-    {
+    public static LootItemCondition.Builder hasHoe() {
         return HAS_HOE;
     }
 
-    public static LootItemCondition.Builder hasSilkTouch(@NotNull final HolderLookup.RegistryLookup<Enchantment> enchantments)
-    {
+    public static LootItemCondition.Builder hasSilkTouch(@NotNull final HolderLookup.RegistryLookup<Enchantment> enchantments) {
         return MatchTool.toolMatches(
                 ItemPredicate.Builder.item()
                         .withSubPredicate(
@@ -58,33 +56,28 @@ public final class ModLootConditions
         );
     }
 
-    public static LootItemCondition.Builder hasShearsOrSilkTouch(@NotNull final HolderLookup.RegistryLookup<Enchantment> enchantments)
-    {
+    public static LootItemCondition.Builder hasShearsOrSilkTouch(@NotNull final HolderLookup.RegistryLookup<Enchantment> enchantments) {
         return hasShears().or(hasSilkTouch(enchantments));
     }
 
-    public static LootItemCondition.Builder doesNotHaveShearsOrSilkTouch(@NotNull final HolderLookup.RegistryLookup<Enchantment> enchantments)
-    {
+    public static LootItemCondition.Builder doesNotHaveShearsOrSilkTouch(@NotNull final HolderLookup.RegistryLookup<Enchantment> enchantments) {
         return hasShearsOrSilkTouch(enchantments).invert();
     }
 
-    public static void init()
-    {
+    public static void init() {
         // just for classloading
     }
 
-    static
-    {
+    static {
         entityInBiomeTag = DEFERRED_REGISTER.register(ModLootConditions.ENTITY_IN_BIOME_TAG_ID.getPath(),
-          () -> new LootItemConditionType(EntityInBiomeTag.CODEC));
+                () -> new LootItemConditionType(EntityInBiomeTag.CODEC));
 
         researchUnlocked = DEFERRED_REGISTER.register(ModLootConditions.RESEARCH_UNLOCKED_ID.getPath(),
-          () -> new LootItemConditionType(ResearchUnlocked.CODEC));
+                () -> new LootItemConditionType(ResearchUnlocked.CODEC));
     }
 
 
-    private ModLootConditions()
-    {
+    private ModLootConditions() {
         throw new IllegalStateException("Tried to initialize: ModLootConditions but this is a Utility class.");
     }
 }

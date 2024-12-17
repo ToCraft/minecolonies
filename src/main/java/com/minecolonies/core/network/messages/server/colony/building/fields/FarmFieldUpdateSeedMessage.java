@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to change the farm field current plant.
  */
-public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage
-{
+public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "farm_field_update_seed", FarmFieldUpdateSeedMessage::new);
 
     /**
@@ -38,32 +37,28 @@ public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage
      * @param newSeed  the new seed to assign to the field.
      * @param position the field position.
      */
-    public FarmFieldUpdateSeedMessage(@NotNull final IColony colony, final ItemStack newSeed, final BlockPos position)
-    {
+    public FarmFieldUpdateSeedMessage(@NotNull final IColony colony, final ItemStack newSeed, final BlockPos position) {
         super(TYPE, colony);
         this.newSeed = newSeed;
         this.position = position;
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         colony.getBuildingManager()
-          .getField(f -> f.getFieldType().equals(FieldRegistries.farmField.get()) && f.getPosition().equals(position))
-          .map(m -> (FarmField) m)
-          .ifPresent(field -> field.setSeed(newSeed));
+                .getField(f -> f.getFieldType().equals(FieldRegistries.farmField.get()) && f.getPosition().equals(position))
+                .map(m -> (FarmField) m)
+                .ifPresent(field -> field.setSeed(newSeed));
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         Utils.serializeCodecMess(buf, newSeed);
         buf.writeBlockPos(position);
     }
 
-    protected FarmFieldUpdateSeedMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected FarmFieldUpdateSeedMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         newSeed = Utils.deserializeCodecMess(buf);
         position = buf.readBlockPos();

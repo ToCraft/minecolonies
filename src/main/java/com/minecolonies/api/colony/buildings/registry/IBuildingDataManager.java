@@ -18,11 +18,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Helper manager to analyse and process the registry for {@link BuildingEntry}.
  */
-public interface IBuildingDataManager
-{
+public interface IBuildingDataManager {
 
-    static IBuildingDataManager getInstance()
-    {
+    static IBuildingDataManager getInstance() {
         return IMinecoloniesAPI.getInstance().getBuildingDataManager();
     }
 

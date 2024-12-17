@@ -15,8 +15,7 @@ import java.util.Set;
 /**
  * Basic job information on the client side, valid for all job types.
  */
-public class DefaultJobView implements IJobView
-{
+public class DefaultJobView implements IJobView {
     /**
      * A set of tokens that point to requests for which we do not wait.
      */
@@ -34,44 +33,40 @@ public class DefaultJobView implements IJobView
 
     /**
      * Instantiate the default job view.
-     * @param iColonyView the colony it belongs to.
+     *
+     * @param iColonyView      the colony it belongs to.
      * @param iCitizenDataView the citizen it belongs to.
      */
-    public DefaultJobView(final IColonyView iColonyView, final ICitizenDataView iCitizenDataView)
-    {
+    public DefaultJobView(final IColonyView iColonyView, final ICitizenDataView iCitizenDataView) {
         this.colonyView = iColonyView;
     }
 
     @Override
-    public void deserialize(final RegistryFriendlyByteBuf buffer)
-    {
+    public void deserialize(final RegistryFriendlyByteBuf buffer) {
         this.asyncRequests.clear();
         final int size = buffer.readInt();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             asyncRequests.add(StandardFactoryController.getInstance().deserialize(buffer));
         }
         entry = buffer.readById(IJobRegistry.getInstance()::byIdOrThrow);
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return this.entry.getTranslationKey();
     }
 
     @Override
-    public JobEntry getEntry()
-    {
+    public JobEntry getEntry() {
         return entry;
     }
 
     /**
      * Get the colony view this job belongs to.
+     *
      * @return the view.
      */
-    protected IColonyView getColonyView()
-    {
+    protected IColonyView getColonyView() {
         return colonyView;
     }
 
@@ -81,14 +76,12 @@ public class DefaultJobView implements IJobView
      * @return a set of ITokens.
      */
     @Override
-    public Set<IToken<?>> getAsyncRequests()
-    {
+    public Set<IToken<?>> getAsyncRequests() {
         return asyncRequests;
     }
 
     @Override
-    public void setEntry(final JobEntry entry)
-    {
+    public void setEntry(final JobEntry entry) {
         this.entry = entry;
     }
 }

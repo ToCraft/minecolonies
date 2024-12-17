@@ -17,27 +17,21 @@ import static com.minecolonies.core.client.gui.questlog.Constants.LABEL_QUEST_NA
 /**
  * Window quest log renderer for finished quests.
  */
-public class WindowQuestLogFinishedQuestModule implements WindowQuestLogQuestModule<FinishedQuest>
-{
+public class WindowQuestLogFinishedQuestModule implements WindowQuestLogQuestModule<FinishedQuest> {
     @Override
-    public List<FinishedQuest> getQuestItems(final IColonyView colonyView)
-    {
+    public List<FinishedQuest> getQuestItems(final IColonyView colonyView) {
         return colonyView.getQuestManager().getFinishedQuests();
     }
 
     @Override
-    public void renderQuestItem(final FinishedQuest quest, final IColonyView colonyView, final Pane row)
-    {
+    public void renderQuestItem(final FinishedQuest quest, final IColonyView colonyView, final Pane row) {
         setText(row, LABEL_QUEST_NAME, Component.translatableEscape(QUEST_LOG_NAME_PREFIX).append(quest.template().getName()));
 
-        if (quest.template().getMaxOccurrence() > 1)
-        {
+        if (quest.template().getMaxOccurrence() > 1) {
             setText(row,
-              LABEL_COMPLETED_COUNT,
-              Component.translatableEscape(QUEST_LOG_COMPLETED_MULTIPLE_TEXT, quest.finishedCount(), quest.template().getMaxOccurrence()).withStyle(ChatFormatting.GOLD));
-        }
-        else
-        {
+                    LABEL_COMPLETED_COUNT,
+                    Component.translatableEscape(QUEST_LOG_COMPLETED_MULTIPLE_TEXT, quest.finishedCount(), quest.template().getMaxOccurrence()).withStyle(ChatFormatting.GOLD));
+        } else {
             setText(row, LABEL_COMPLETED_COUNT, Component.translatableEscape(QUEST_LOG_COMPLETED_ONCE_TEXT).withStyle(ChatFormatting.GOLD));
         }
     }
@@ -49,17 +43,15 @@ public class WindowQuestLogFinishedQuestModule implements WindowQuestLogQuestMod
      * @param id        the id of the text element.
      * @param component the text component to write as text on the element.
      */
-    private void setText(final Pane container, final String id, final Component component)
-    {
+    private void setText(final Pane container, final String id, final Component component) {
         final Text label = container.findPaneOfTypeByID(id, Text.class);
         label.setText(component);
 
-        if (label.getRenderedTextWidth() > label.getWidth())
-        {
+        if (label.getRenderedTextWidth() > label.getWidth()) {
             PaneBuilders.tooltipBuilder()
-              .append(component)
-              .hoverPane(label)
-              .build();
+                    .append(component)
+                    .hoverPane(label)
+                    .build();
         }
     }
 }

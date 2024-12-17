@@ -9,23 +9,20 @@ import java.util.stream.Collectors;
 /**
  * Class to introduce custom stream collectors.
  */
-public class CollectorUtils
-{
+public class CollectorUtils {
     private static final Collector<?, ?, ?> SHUFFLER = Collectors.collectingAndThen(
-      Collectors.toCollection(ArrayList::new),
-      list -> {
-          Collections.shuffle(list);
-          return list;
-      }
+            Collectors.toCollection(ArrayList::new),
+            list -> {
+                Collections.shuffle(list);
+                return list;
+            }
     );
 
-    private CollectorUtils()
-    {
+    private CollectorUtils() {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Collector<T, ?, List<T>> toShuffledList()
-    {
+    public static <T> Collector<T, ?, List<T>> toShuffledList() {
         return (Collector<T, ?, List<T>>) SHUFFLER;
     }
 }

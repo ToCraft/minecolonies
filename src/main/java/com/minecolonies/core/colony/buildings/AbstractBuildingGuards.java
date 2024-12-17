@@ -32,7 +32,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -60,32 +59,31 @@ import static com.minecolonies.core.util.ServerUtils.getPlayerFromUUID;
  * Abstract class for Guard huts.
  */
 @SuppressWarnings({"squid:MaximumInheritanceDepth", "squid:S1448"})
-public abstract class AbstractBuildingGuards extends AbstractBuilding implements IGuardBuilding
-{
+public abstract class AbstractBuildingGuards extends AbstractBuilding implements IGuardBuilding {
     /**
      * Settings.
      */
-    public static final ISettingKey<BoolSetting>       RETREAT      =
-      new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "retreat"));
-    public static final ISettingKey<BoolSetting>            HIRE_TRAINEE =
-      new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "hiretrainee"));
+    public static final ISettingKey<BoolSetting> RETREAT =
+            new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "retreat"));
+    public static final ISettingKey<BoolSetting> HIRE_TRAINEE =
+            new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "hiretrainee"));
     public static final ISettingKey<GuardPatrolModeSetting> PATROL_MODE =
-      new SettingKey<>(GuardPatrolModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "patrolmode"));
+            new SettingKey<>(GuardPatrolModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "patrolmode"));
     public static final ISettingKey<GuardFollowModeSetting> FOLLOW_MODE =
-      new SettingKey<>(GuardFollowModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "followmode"));
-    public static final ISettingKey<GuardTaskSetting>       GUARD_TASK  =
-      new SettingKey<>(GuardTaskSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "guardtask"));
+            new SettingKey<>(GuardFollowModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "followmode"));
+    public static final ISettingKey<GuardTaskSetting> GUARD_TASK =
+            new SettingKey<>(GuardTaskSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "guardtask"));
 
 
     //manual patroll. retreat, hire from training
 
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_JOB            = "guardType";
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_JOB = "guardType";
     private static final String NBT_PATROL_TARGETS = "patrol targets";
-    private static final String NBT_TARGET         = "target";
-    private static final String NBT_GUARD          = "guard";
-    private static final String NBT_MINE_POS       = "minePos";
-    private static final String NBT_PLAYER_UUID    = "playeruuid";
+    private static final String NBT_TARGET = "target";
+    private static final String NBT_GUARD = "guard";
+    private static final String NBT_MINE_POS = "minePos";
+    private static final String NBT_PLAYER_UUID = "playeruuid";
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -157,29 +155,27 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      * @param c the colony
      * @param l the position
      */
-    public AbstractBuildingGuards(@NotNull final IColony c, final BlockPos l)
-    {
+    public AbstractBuildingGuards(@NotNull final IColony c, final BlockPos l) {
         super(c, l);
 
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.bow.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.doesItemServeAsWeapon(itemStack), new Tuple<>(1, true));
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
+                && itemStack.getItem() instanceof ArmorItem
+                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
+                && itemStack.getItem() instanceof ArmorItem
+                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
+                && itemStack.getItem() instanceof ArmorItem
+                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
+                && itemStack.getItem() instanceof ArmorItem
+                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
 
         keepX.put(itemStack -> {
-            if (ItemStackUtils.isEmpty(itemStack) || !(itemStack.getItem() instanceof ArrowItem))
-            {
+            if (ItemStackUtils.isEmpty(itemStack) || !(itemStack.getItem() instanceof ArrowItem)) {
                 return false;
             }
 
@@ -195,14 +191,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      * @param newLevel The new level.
      */
     @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        if (getAllAssignedCitizen() != null)
-        {
-            for (final ICitizenData optCitizen : getAllAssignedCitizen())
-            {
-                if (optCitizen.getEntity().isPresent())
-                {
+    public void onUpgradeComplete(final int newLevel) {
+        if (getAllAssignedCitizen() != null) {
+            for (final ICitizenData optCitizen : getAllAssignedCitizen()) {
+                if (optCitizen.getEntity().isPresent()) {
                     final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADD_VALUE);
                     AttributeModifierUtils.addHealthModifier(optCitizen.getEntity().get(), healthModBuildingHP);
                 }
@@ -214,42 +206,36 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
     //// ---- NBT Overrides ---- \\\\
 
-    //// ---- Overrides ---- \\\\
+    /// / ---- Overrides ---- \\\\
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
 
         final ListTag wayPointTagList = compound.getList(NBT_PATROL_TARGETS, Tag.TAG_COMPOUND);
-        for (int i = 0; i < wayPointTagList.size(); ++i)
-        {
+        for (int i = 0; i < wayPointTagList.size(); ++i) {
             final CompoundTag blockAtPos = wayPointTagList.getCompound(i);
             final BlockPos pos = BlockPosUtil.read(blockAtPos, NBT_TARGET);
             patrolTargets.add(pos);
         }
 
         guardPos = NBTUtils.readBlockPos(compound, NBT_GUARD);
-        if (compound.contains(NBT_MINE_POS))
-        {
+        if (compound.contains(NBT_MINE_POS)) {
             minePos = NBTUtils.readBlockPos(compound, NBT_MINE_POS);
         }
 
-        if (compound.contains(NBT_PLAYER_UUID))
-        {
+        if (compound.contains(NBT_PLAYER_UUID)) {
             followPlayerUUID = compound.getUUID(NBT_PLAYER_UUID);
         }
 
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
 
         @NotNull final ListTag wayPointTagList = new ListTag();
-        for (@NotNull final BlockPos pos : patrolTargets)
-        {
+        for (@NotNull final BlockPos pos : patrolTargets) {
             @NotNull final CompoundTag wayPointCompound = new CompoundTag();
             BlockPosUtil.write(wayPointCompound, NBT_TARGET, pos);
 
@@ -257,13 +243,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         }
         compound.put(NBT_PATROL_TARGETS, wayPointTagList);
         compound.put(NBT_GUARD, NBTUtils.writeBlockPos(guardPos));
-        if (minePos != null)
-        {
+        if (minePos != null) {
             compound.put(NBT_MINE_POS, NBTUtils.writeBlockPos(minePos));
         }
 
-        if (followPlayerUUID != null)
-        {
+        if (followPlayerUUID != null) {
             compound.putUUID(NBT_PLAYER_UUID, followPlayerUUID);
         }
 
@@ -271,49 +255,38 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync) {
         super.serializeToView(buf, fullSync);
         buf.writeInt(patrolTargets.size());
 
-        for (final BlockPos pos : patrolTargets)
-        {
+        for (final BlockPos pos : patrolTargets) {
             buf.writeBlockPos(pos);
         }
 
         buf.writeInt(this.getAllAssignedCitizen().size());
-        for (final ICitizenData citizen : this.getAllAssignedCitizen())
-        {
+        for (final ICitizenData citizen : this.getAllAssignedCitizen()) {
             buf.writeInt(citizen.getId());
         }
 
-        if (minePos != null)
-        {
+        if (minePos != null) {
             buf.writeBoolean(true);
             buf.writeBlockPos(minePos);
-        }
-        else
-        {
+        } else {
             buf.writeBoolean(false);
         }
     }
 
     @Override
-    public String getTask()
-    {
+    public String getTask() {
         return getModule(BuildingModules.GUARD_SETTINGS).getSetting(GUARD_TASK).getValue();
     }
 
     @Override
     @Nullable
-    public Player getPlayerToFollowOrRally()
-    {
-        if (rallyLocation != null && rallyLocation instanceof EntityLocation)
-        {
+    public Player getPlayerToFollowOrRally() {
+        if (rallyLocation != null && rallyLocation instanceof EntityLocation) {
             return ((EntityLocation) rallyLocation).getPlayerEntity();
-        }
-        else if (getTask().equals(GuardTaskSetting.FOLLOW))
-        {
+        } else if (getTask().equals(GuardTaskSetting.FOLLOW)) {
             return getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
         }
 
@@ -336,15 +309,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     private int patrolTimer = 0;
 
     @Override
-    public void onColonyTick(final IColony colony)
-    {
+    public void onColonyTick(final IColony colony) {
         super.onColonyTick(colony);
 
-        if (patrolTimer > 0 && getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.PATROL))
-        {
+        if (patrolTimer > 0 && getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.PATROL)) {
             patrolTimer--;
-            if (patrolTimer <= 0 && !getAllAssignedCitizen().isEmpty())
-            {
+            if (patrolTimer <= 0 && !getAllAssignedCitizen().isEmpty()) {
                 // Next patrol point
                 startPatrolNext();
             }
@@ -352,24 +322,20 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     @Override
-    public boolean requiresManualTarget()
-    {
+    public boolean requiresManualTarget() {
         return false;
     }
 
     @Override
-    public void arrivedAtPatrolPoint(final AbstractEntityCitizen guard)
-    {
+    public void arrivedAtPatrolPoint(final AbstractEntityCitizen guard) {
         // Start waiting timer for other guards
-        if (arrivedAtPatrol.isEmpty())
-        {
+        if (arrivedAtPatrol.isEmpty()) {
             patrolTimer = 1;
         }
 
         arrivedAtPatrol.add(guard);
 
-        if (getAllAssignedCitizen().size() <= arrivedAtPatrol.size() || patrolTimer <= 0)
-        {
+        if (getAllAssignedCitizen().size() <= arrivedAtPatrol.size() || patrolTimer <= 0) {
             // Next patrol point
             startPatrolNext();
         }
@@ -377,27 +343,23 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
     /**
      * Set the patroll timer.
+     *
      * @param timer the timer to set.
      */
-    public void setPatrolTimer(final int timer)
-    {
+    public void setPatrolTimer(final int timer) {
         this.patrolTimer = timer;
     }
 
     /**
      * Starts the patrol to the next point
      */
-    private void startPatrolNext()
-    {
+    private void startPatrolNext() {
         getNextPatrolTarget(true);
         patrolTimer = 5;
 
-        for (final ICitizenData curguard : getAllAssignedCitizen())
-        {
-            if (curguard.getEntity().isPresent())
-            {
-                if (curguard.getJob() instanceof AbstractJobGuard guardEntity)
-                {
+        for (final ICitizenData curguard : getAllAssignedCitizen()) {
+            if (curguard.getEntity().isPresent()) {
+                if (curguard.getJob() instanceof AbstractJobGuard guardEntity) {
                     ((AbstractEntityAIGuard<?, ?>) guardEntity.getWorkerAI()).setNextPatrolTargetAndMove(lastPatrolPoint);
                 }
             }
@@ -407,55 +369,41 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
     @Override
     @Nullable
-    public BlockPos getNextPatrolTarget(final boolean newTarget)
-    {
-        if (!newTarget && lastPatrolPoint != null)
-        {
+    public BlockPos getNextPatrolTarget(final boolean newTarget) {
+        if (!newTarget && lastPatrolPoint != null) {
             return lastPatrolPoint;
         }
 
-        if (tempNextPatrolPoint != null)
-        {
+        if (tempNextPatrolPoint != null) {
             lastPatrolPoint = tempNextPatrolPoint;
             tempNextPatrolPoint = null;
             return lastPatrolPoint;
         }
 
-        if (lastPatrolPoint == null)
-        {
+        if (lastPatrolPoint == null) {
             lastPatrolPoint = getAllAssignedCitizen().iterator().next().getLastPosition();
             return lastPatrolPoint;
         }
 
-        if (!getSetting(PATROL_MODE).getValue().equals(GuardPatrolModeSetting.MANUAL) || patrolTargets == null || patrolTargets.isEmpty())
-        {
+        if (!getSetting(PATROL_MODE).getValue().equals(GuardPatrolModeSetting.MANUAL) || patrolTargets == null || patrolTargets.isEmpty()) {
             BlockPos pos = null;
-            if (this.pathResult != null)
-            {
-                if (this.pathResult.isDone())
-                {
-                    if (pathResult.getPath() != null)
-                    {
+            if (this.pathResult != null) {
+                if (this.pathResult.isDone()) {
+                    if (pathResult.getPath() != null) {
                         pos = this.pathResult.getPath().getTarget();
                     }
                     this.pathResult = null;
                 }
-            }
-            else if (colony.getWorld().random.nextBoolean())
-            {
+            } else if (colony.getWorld().random.nextBoolean()) {
                 final PathJobRandomPos job = new PathJobRandomPos(colony.getWorld(), lastPatrolPoint, 20, 40, null);
                 this.pathResult = job.getResult();
                 Pathfinding.enqueue(job);
-            }
-            else
-            {
+            } else {
                 pos = colony.getBuildingManager().getRandomBuilding(b -> b.getBuildingLevel() >= 1);
             }
 
-            if (pos != null)
-            {
-                if (BlockPosUtil.getDistance2D(pos, getPosition()) > getPatrolDistance())
-                {
+            if (pos != null) {
+                if (BlockPosUtil.getDistance2D(pos, getPosition()) > getPatrolDistance()) {
                     lastPatrolPoint = getPosition();
                     return lastPatrolPoint;
                 }
@@ -464,12 +412,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             return lastPatrolPoint;
         }
 
-        if (patrolTargets.contains(lastPatrolPoint))
-        {
+        if (patrolTargets.contains(lastPatrolPoint)) {
             int index = patrolTargets.indexOf(lastPatrolPoint) + 1;
 
-            if (index >= patrolTargets.size())
-            {
+            if (index >= patrolTargets.size()) {
                 index = 0;
             }
 
@@ -481,14 +427,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     @Override
-    public int getPatrolDistance()
-    {
+    public int getPatrolDistance() {
         return PATROL_BASE_DIST + this.getBuildingLevel() * PATROL_DISTANCE;
     }
 
     @Override
-    public void setTempNextPatrolPoint(final BlockPos pos)
-    {
+    public void setTempNextPatrolPoint(final BlockPos pos) {
         tempNextPatrolPoint = pos;
     }
 
@@ -497,8 +441,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      *
      * @return the position of the mine
      */
-    public BlockPos getMinePos()
-    {
+    public BlockPos getMinePos() {
         return minePos;
     }
 
@@ -507,54 +450,43 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      *
      * @param pos the position of the mine
      */
-    public void setMinePos(BlockPos pos)
-    {
-        if (pos == null)
-        {
+    public void setMinePos(BlockPos pos) {
+        if (pos == null) {
             this.minePos = null;
-        }
-        else if (colony.getBuildingManager().getBuilding(pos) instanceof BuildingMiner)
-        {
+        } else if (colony.getBuildingManager().getBuilding(pos) instanceof BuildingMiner) {
             this.minePos = pos;
         }
     }
 
     @Override
-    public boolean shallRetrieveOnLowHealth()
-    {
+    public boolean shallRetrieveOnLowHealth() {
         return getSetting(RETREAT).getValue();
     }
 
     @Override
-    public boolean shallPatrolManually()
-    {
+    public boolean shallPatrolManually() {
         return getSetting(PATROL_MODE).getValue().equals(GuardPatrolModeSetting.MANUAL);
     }
 
     @Override
-    public boolean isTightGrouping()
-    {
+    public boolean isTightGrouping() {
         return getSetting(FOLLOW_MODE).getValue().equals(GuardFollowModeSetting.TIGHT);
     }
 
     @Override
-    public BlockPos getGuardPos()
-    {
+    public BlockPos getGuardPos() {
         return guardPos;
     }
 
     @Override
-    public void setGuardPos(final BlockPos guardPos)
-    {
+    public void setGuardPos(final BlockPos guardPos) {
         this.guardPos = guardPos;
     }
 
     @Override
-    public BlockPos getPositionToFollow()
-    {
+    public BlockPos getPositionToFollow() {
         Player followPlayer = getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
-        if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null && followPlayer.level().dimension() == this.colony.getDimension())
-        {
+        if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null && followPlayer.level().dimension() == this.colony.getDimension()) {
             return followPlayer.blockPosition();
         }
 
@@ -563,47 +495,37 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
     @Override
     @Nullable
-    public ILocation getRallyLocation()
-    {
-        if (rallyLocation == null)
-        {
+    public ILocation getRallyLocation() {
+        if (rallyLocation == null) {
             return null;
         }
 
         boolean outOfRange = false;
         final IColony colonyAtPosition = IColonyManager.getInstance().getColonyByPosFromDim(rallyLocation.getDimension(), rallyLocation.getInDimensionLocation());
-        if (colonyAtPosition == null || colonyAtPosition.getID() != colony.getID())
-        {
-            if (getColony().getResearchManager().getResearchEffects().getEffectStrength(TELESCOPE) <= 0 || BlockPosUtil.getDistance2D(rallyLocation.getInDimensionLocation(), colony.getCenter()) > 500)
-            {
+        if (colonyAtPosition == null || colonyAtPosition.getID() != colony.getID()) {
+            if (getColony().getResearchManager().getResearchEffects().getEffectStrength(TELESCOPE) <= 0 || BlockPosUtil.getDistance2D(rallyLocation.getInDimensionLocation(), colony.getCenter()) > 500) {
                 outOfRange = true;
             }
         }
 
-        if (rallyLocation instanceof EntityLocation)
-        {
+        if (rallyLocation instanceof EntityLocation) {
             final Player player = ((EntityLocation) rallyLocation).getPlayerEntity();
-            if (player == null)
-            {
+            if (player == null) {
                 setRallyLocation(null);
                 return null;
             }
 
-            if (outOfRange)
-            {
+            if (outOfRange) {
                 MessageUtils.format(WARNING_RALLYING_POINT_OUT_OF_RANGE).sendTo(player);
                 setRallyLocation(null);
                 return null;
             }
 
             final int size = player.getInventory().getContainerSize();
-            for (int i = 0; i < size; i++)
-            {
+            for (int i = 0; i < size; i++) {
                 final ItemStack stack = player.getInventory().getItem(i);
-                if (stack.getItem() instanceof ItemBannerRallyGuards)
-                {
-                    if (((ItemBannerRallyGuards) (stack.getItem())).isActiveForGuardTower(stack, this))
-                    {
+                if (stack.getItem() instanceof ItemBannerRallyGuards) {
+                    if (((ItemBannerRallyGuards) (stack.getItem())).isActiveForGuardTower(stack, this)) {
                         return rallyLocation;
                     }
                 }
@@ -613,11 +535,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             // But, in exchange, the player does not have to reactivate the banner so often, and it also works
             // if the user moves the banner around in the inventory.
             return null;
-        }
-        else if (rallyLocation instanceof StaticLocation)
-        {
-            if (outOfRange)
-            {
+        } else if (rallyLocation instanceof StaticLocation) {
+            if (outOfRange) {
                 MessageUtils.format(WARNING_RALLYING_POINT_OUT_OF_RANGE).sendTo(colony.getImportantMessageEntityPlayers());
                 setRallyLocation(null);
                 return null;
@@ -628,20 +547,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     @Override
-    public void setRallyLocation(final ILocation location)
-    {
+    public void setRallyLocation(final ILocation location) {
         boolean reduceSaturation = false;
-        if (rallyLocation != null && location == null)
-        {
+        if (rallyLocation != null && location == null) {
             reduceSaturation = true;
         }
 
         rallyLocation = location;
 
-        for (final ICitizenData iCitizenData : getAllAssignedCitizen())
-        {
-            if (reduceSaturation && iCitizenData.getSaturation() < LOW_SATURATION)
-            {
+        for (final ICitizenData iCitizenData : getAllAssignedCitizen()) {
+            if (reduceSaturation && iCitizenData.getSaturation() < LOW_SATURATION) {
                 // In addition to the scaled saturation reduction during rallying, stopping a rally
                 // will - if only LOW_SATURATION is left - set the saturation level to 0.
                 iCitizenData.decreaseSaturation(LOW_SATURATION);
@@ -650,15 +565,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     @Override
-    public void setPlayerToFollow(final Player player)
-    {
+    public void setPlayerToFollow(final Player player) {
         this.followPlayerUUID = player.getUUID();
 
-        for (final ICitizenData iCitizenData : getAllAssignedCitizen())
-        {
+        for (final ICitizenData iCitizenData : getAllAssignedCitizen()) {
             final AbstractJobGuard<?> job = iCitizenData.getJob(AbstractJobGuard.class);
-            if (job != null && job.getWorkerAI() != null)
-            {
+            if (job != null && job.getWorkerAI() != null) {
                 job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(AIWorkerState.PREPARING));
             }
         }
@@ -669,8 +581,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      *
      * @return the bonus health.
      */
-    public int getBonusHealth()
-    {
+    public int getBonusHealth() {
         return getBuildingLevel() * BONUS_HEALTH_PER_LEVEL;
     }
 
@@ -680,8 +591,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      * @param target the target to add
      */
     @Override
-    public void addPatrolTargets(final BlockPos target)
-    {
+    public void addPatrolTargets(final BlockPos target) {
         this.patrolTargets.add(target);
         this.markDirty();
     }
@@ -690,8 +600,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      * Resets the patrolTargets list.
      */
     @Override
-    public void resetPatrolTargets()
-    {
+    public void resetPatrolTargets() {
         this.patrolTargets = new ArrayList<>();
         this.markDirty();
     }
@@ -702,8 +611,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      * @return an integer for the additional range.
      */
     @Override
-    public int getBonusVision()
-    {
+    public int getBonusVision() {
         return BASE_VISION_RANGE + getBuildingLevel() * VISION_RANGE_PER_LEVEL;
     }
 
@@ -711,16 +619,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      * Populates the mobs list from the BuiltInRegistries.
      */
     @Override
-    public void calculateMobs()
-    {
+    public void calculateMobs() {
 
     }
 
     /**
      * The client view for the Guard building.
      */
-    public static class View extends AbstractBuildingView
-    {
+    public static class View extends AbstractBuildingView {
         /**
          * The list of manual patrol targets.
          */
@@ -740,8 +646,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
          * @param c the colony.
          * @param l the location.
          */
-        public View(final IColonyView c, @NotNull final BlockPos l)
-        {
+        public View(final IColonyView c, @NotNull final BlockPos l) {
             super(c, l);
         }
 
@@ -751,43 +656,35 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
          * @return an unmodifiable list.
          */
         @NotNull
-        public List<Integer> getGuards()
-        {
+        public List<Integer> getGuards() {
             return Collections.unmodifiableList(guards);
         }
 
         @Override
-        public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-        {
+        public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
             super.deserialize(buf);
 
             final int targetSize = buf.readInt();
             patrolTargets = new ArrayList<>();
 
-            for (int i = 0; i < targetSize; i++)
-            {
+            for (int i = 0; i < targetSize; i++) {
                 patrolTargets.add(buf.readBlockPos());
             }
 
             guards.clear();
             final int numResidents = buf.readInt();
-            for (int i = 0; i < numResidents; ++i)
-            {
+            for (int i = 0; i < numResidents; ++i) {
                 guards.add(buf.readInt());
             }
 
-            if (buf.readBoolean())
-            {
+            if (buf.readBoolean()) {
                 minePos = buf.readBlockPos();
-            }
-            else
-            {
+            } else {
                 minePos = null;
             }
         }
 
-        public List<BlockPos> getPatrolTargets()
-        {
+        public List<BlockPos> getPatrolTargets() {
             return new ArrayList<>(patrolTargets);
         }
 
@@ -796,13 +693,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
          *
          * @return the position of the mine
          */
-        public BlockPos getMinePos() { return minePos; }
+        public BlockPos getMinePos() {
+            return minePos;
+        }
 
         /**
          * Set the position of the mine the guard is patrolling
          *
          * @param pos the position of the mine
          */
-        public void setMinePos(BlockPos pos) { this.minePos = pos; }
+        public void setMinePos(BlockPos pos) {
+            this.minePos = pos;
+        }
     }
 }

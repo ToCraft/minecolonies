@@ -12,10 +12,8 @@ import java.util.function.Predicate;
  * Class that contains generic logic for handling with modules.
  */
 @SuppressWarnings("unchecked")
-public class ModuleContainerUtils
-{
-    private ModuleContainerUtils()
-    {
+public class ModuleContainerUtils {
+    private ModuleContainerUtils() {
     }
 
     /**
@@ -25,12 +23,9 @@ public class ModuleContainerUtils
      * @param clazz   the class or interface of the module to check.
      * @return true if so.
      */
-    public static <T> boolean hasModule(final Collection<T> modules, Class<? extends T> clazz)
-    {
-        for (final T module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
+    public static <T> boolean hasModule(final Collection<T> modules, Class<? extends T> clazz) {
+        for (final T module : modules) {
+            if (clazz.isInstance(module)) {
                 return true;
             }
         }
@@ -44,12 +39,9 @@ public class ModuleContainerUtils
      * @param clazz   the module's class or interface.
      * @return the module or empty if not existent.
      */
-    public static @NotNull <T, T2 extends T> Optional<T2> getFirstOptionalModuleOccurance(final Collection<T> modules, final Class<T2> clazz)
-    {
-        for (final T module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
+    public static @NotNull <T, T2 extends T> Optional<T2> getFirstOptionalModuleOccurance(final Collection<T> modules, final Class<T2> clazz) {
+        for (final T module : modules) {
+            if (clazz.isInstance(module)) {
                 return Optional.of((T2) module);
             }
         }
@@ -63,12 +55,9 @@ public class ModuleContainerUtils
      * @param clazz   the module's class or interface.
      * @return the module or empty if not existent.
      */
-    public static <T, T2 extends T> @NotNull T2 getFirstModuleOccurance(final Collection<T> modules, final Class<T2> clazz, String errorMessage)
-    {
-        for (final T module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
+    public static <T, T2 extends T> @NotNull T2 getFirstModuleOccurance(final Collection<T> modules, final Class<T2> clazz, String errorMessage) {
+        for (final T module : modules) {
+            if (clazz.isInstance(module)) {
                 return (T2) module;
             }
         }
@@ -87,15 +76,12 @@ public class ModuleContainerUtils
      * @throws IllegalArgumentException if your condition does not match any modules
      */
     public static <T, T2 extends T> @NotNull T2 getModuleMatching(
-      final Collection<T> modules,
-      final Class<T2> clazz,
-      final Predicate<? super T2> modulePredicate,
-      String errorMessage)
-    {
-        for (final T module : modules)
-        {
-            if (clazz.isInstance(module) && modulePredicate.test((T2) module))
-            {
+            final Collection<T> modules,
+            final Class<T2> clazz,
+            final Predicate<? super T2> modulePredicate,
+            String errorMessage) {
+        for (final T module : modules) {
+            if (clazz.isInstance(module) && modulePredicate.test((T2) module)) {
                 return (T2) module;
             }
         }
@@ -110,14 +96,11 @@ public class ModuleContainerUtils
      * @param clazz   the module's interface (or class, but prefer getModule in that case)
      * @return the list of modules or empty if none match.
      */
-    public static @NotNull <T, T2 extends T> List<T2> getModules(final Collection<T> modules, final Class<T2> clazz)
-    {
+    public static @NotNull <T, T2 extends T> List<T2> getModules(final Collection<T> modules, final Class<T2> clazz) {
         final List<T2> result = new ArrayList<>();
 
-        for (T module : modules)
-        {
-            if (clazz.isInstance(module))
-            {
+        for (T module : modules) {
+            if (clazz.isInstance(module)) {
                 result.add((T2) module);
             }
         }

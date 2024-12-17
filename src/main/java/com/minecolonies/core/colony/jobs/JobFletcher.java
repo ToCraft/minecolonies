@@ -12,15 +12,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class of the Fletcher job.
  */
-public class JobFletcher extends AbstractJobCrafter<EntityAIWorkFletcher, JobFletcher>
-{
+public class JobFletcher extends AbstractJobCrafter<EntityAIWorkFletcher, JobFletcher> {
     /**
      * Instantiates the job for the Fletcher.
      *
      * @param entity the citizen who becomes a Fletcher
      */
-    public JobFletcher(final ICitizenData entity)
-    {
+    public JobFletcher(final ICitizenData entity) {
         super(entity);
     }
 
@@ -31,21 +29,18 @@ public class JobFletcher extends AbstractJobCrafter<EntityAIWorkFletcher, JobFle
      */
     @NotNull
     @Override
-    public EntityAIWorkFletcher generateAI()
-    {
+    public EntityAIWorkFletcher generateAI() {
         return new EntityAIWorkFletcher(this);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.FLETCHER_ID;
     }
 
     @Override
-    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
-    {
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker) {
         worker.queueSound(SoundEvents.WOODEN_BUTTON_CLICK_ON, blockPos, 5, 0);
     }
 }

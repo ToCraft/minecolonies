@@ -8,24 +8,20 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the shepherd. No different from {@link AbstractBlockHut}
  */
-public class BlockHutSwineHerder extends AbstractBlockHut<BlockHutSwineHerder>
-{
-    public BlockHutSwineHerder()
-    {
+public class BlockHutSwineHerder extends AbstractBlockHut<BlockHutSwineHerder> {
+    public BlockHutSwineHerder() {
         //No different from Abstract parent
         super();
     }
 
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhutswineherder";
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.swineHerder.get();
     }
 }

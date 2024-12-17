@@ -8,18 +8,17 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.client.gui.modules.MinimumStockModuleWindow;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Client side representation of the minimum stock module.
  */
-public class MinimumStockModuleView extends AbstractBuildingModuleView  implements IMinimumStockModuleView
-{
+public class MinimumStockModuleView extends AbstractBuildingModuleView implements IMinimumStockModuleView {
     /**
      * The minimum stock.
      */
@@ -36,12 +35,10 @@ public class MinimumStockModuleView extends AbstractBuildingModuleView  implemen
      * @param buf The buffer to read this view from.
      */
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         minimumStock.clear();
         final int size = buf.readInt();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             minimumStock.add(new Tuple<>(new ItemStorage(Utils.deserializeCodecMess(buf)), buf.readInt()));
         }
         reachedLimit = buf.readBoolean();
@@ -49,32 +46,27 @@ public class MinimumStockModuleView extends AbstractBuildingModuleView  implemen
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return new MinimumStockModuleWindow(buildingView, this);
     }
 
     @Override
-    public List<Tuple<ItemStorage, Integer>> getStock()
-    {
+    public List<Tuple<ItemStorage, Integer>> getStock() {
         return minimumStock;
     }
 
     @Override
-    public boolean hasReachedLimit()
-    {
+    public boolean hasReachedLimit() {
         return reachedLimit;
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return "stock";
     }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return "com.minecolonies.coremod.gui.warehouse.stock";
     }
 }

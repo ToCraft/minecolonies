@@ -9,12 +9,15 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.IEntityListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -23,8 +26,7 @@ import static org.jline.utils.AttributedStyle.WHITE;
 /**
  * BOWindow for all the filterable entity lists.
  */
-public class EntityListModuleWindow extends AbstractModuleWindow
-{
+public class EntityListModuleWindow extends AbstractModuleWindow {
     /**
      * Resource scrolling list.
      */
@@ -62,14 +64,13 @@ public class EntityListModuleWindow extends AbstractModuleWindow
 
     /**
      * @param building   the building it belongs to.
-     * @param res   the building res id.
-     * @param moduleView   the assigned module view.
+     * @param res        the building res id.
+     * @param moduleView the assigned module view.
      */
     public EntityListModuleWindow(
-      final String res,
-      final IBuildingView building,
-      final IEntityListModuleView moduleView)
-    {
+            final String res,
+            final IBuildingView building,
+            final IEntityListModuleView moduleView) {
         super(building, res);
 
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
@@ -82,8 +83,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
 
         window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
-            if (!newFilter.equals(filter))
-            {
+            if (!newFilter.equals(filter)) {
                 filter = newFilter;
                 this.tick = 10;
             }
@@ -91,31 +91,24 @@ public class EntityListModuleWindow extends AbstractModuleWindow
     }
 
     @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
+    public void onButtonClicked(@NotNull final Button button) {
         super.onButtonClicked(button);
-        if (Objects.equals(button.getID(), BUTTON_SWITCH))
-        {
+        if (Objects.equals(button.getID(), BUTTON_SWITCH)) {
             switchClicked(button);
-        }
-        else if (Objects.equals(button.getID(), BUTTON_RESET_DEFAULT))
-        {
+        } else if (Objects.equals(button.getID(), BUTTON_RESET_DEFAULT)) {
             reset();
         }
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         updateResources();
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
-        if (tick > 0 && --tick == 0)
-        {
+        if (tick > 0 && --tick == 0) {
             updateResources();
         }
     }
@@ -125,20 +118,16 @@ public class EntityListModuleWindow extends AbstractModuleWindow
      *
      * @param button clicked button.
      */
-    private void switchClicked(@NotNull final Button button)
-    {
+    private void switchClicked(@NotNull final Button button) {
         final int row = resourceList.getListElementIndexByPane(button);
         final ResourceLocation item = currentDisplayedList.get(row);
         final boolean on = button.getText().equals(Component.translatableEscape(ON));
         final boolean add = (on && isInverted) || (!on && !isInverted);
         final IEntityListModuleView module = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id));
 
-        if (add)
-        {
+        if (add) {
             module.addEntity(item);
-        }
-        else
-        {
+        } else {
             module.removeEntity(item);
         }
 
@@ -148,8 +137,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
     /**
      * Fired when reset to default has been clicked.
      */
-    private void reset()
-    {
+    private void reset() {
         final IEntityListModuleView module = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id));
         module.clearEntities();
         resourceList.refreshElementPanes();
@@ -158,14 +146,11 @@ public class EntityListModuleWindow extends AbstractModuleWindow
     /**
      * Update the item list.
      */
-    private void updateResources()
-    {
+    private void updateResources() {
         final Predicate<ResourceLocation> filterPredicate = res -> filter.isEmpty() || BuiltInRegistries.ENTITY_TYPE.get(res).getDescription().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)) || res.toString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         currentDisplayedList.clear();
-        for (final ResourceLocation storage : groupedItemList)
-        {
-            if (filterPredicate.test(storage))
-            {
+        for (final ResourceLocation storage : groupedItemList) {
+            if (filterPredicate.test(storage)) {
                 currentDisplayedList.add(storage);
             }
         }
@@ -176,16 +161,11 @@ public class EntityListModuleWindow extends AbstractModuleWindow
 
             boolean o2Allowed = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(o2);
 
-            if(!o1Allowed && o2Allowed)
-            {
+            if (!o1Allowed && o2Allowed) {
                 return isInverted ? -1 : 1;
-            }
-            else if(o1Allowed && !o2Allowed)
-            {
+            } else if (o1Allowed && !o2Allowed) {
                 return isInverted ? 1 : -1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
         });
@@ -196,21 +176,18 @@ public class EntityListModuleWindow extends AbstractModuleWindow
     /**
      * Updates the resource list in the GUI with the info we need.
      */
-    private void updateResourceList()
-    {
+    private void updateResourceList() {
         resourceList.enable();
         resourceList.show();
 
         //Creates a dataProvider for the unemployed resourceList.
-        resourceList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        resourceList.setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return currentDisplayedList.size();
             }
 
@@ -220,21 +197,17 @@ public class EntityListModuleWindow extends AbstractModuleWindow
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final ResourceLocation resource = currentDisplayedList.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
                 resourceLabel.setText(BuiltInRegistries.ENTITY_TYPE.get(resource).getDescription());
                 resourceLabel.setColors(WHITE);
-                final boolean isAllowedItem  = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(resource);
+                final boolean isAllowedItem = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(resource);
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
-                if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))
-                {
+                if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem)) {
                     switchButton.setText(Component.translatableEscape(ON));
-                }
-                else
-                {
+                } else {
                     switchButton.setText(Component.translatableEscape(OFF));
                 }
             }

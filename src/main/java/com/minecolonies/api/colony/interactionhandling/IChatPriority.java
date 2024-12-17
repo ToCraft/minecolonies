@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.interactionhandling;
 
-public interface IChatPriority
-{
+public interface IChatPriority {
     /**
      * Get the priority of the interaction.
      *

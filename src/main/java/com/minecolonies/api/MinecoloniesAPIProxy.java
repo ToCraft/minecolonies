@@ -21,8 +21,8 @@ import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
-import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
+import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
@@ -32,203 +32,174 @@ import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import net.minecraft.core.Registry;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
-public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
-{
+public final class MinecoloniesAPIProxy implements IMinecoloniesAPI {
     private static MinecoloniesAPIProxy ourInstance = new MinecoloniesAPIProxy();
 
     private IMinecoloniesAPI apiInstance;
 
-    public static MinecoloniesAPIProxy getInstance()
-    {
+    public static MinecoloniesAPIProxy getInstance() {
         return ourInstance;
     }
 
-    private MinecoloniesAPIProxy()
-    {
+    private MinecoloniesAPIProxy() {
     }
 
-    public void setApiInstance(final IMinecoloniesAPI apiInstance)
-    {
+    public void setApiInstance(final IMinecoloniesAPI apiInstance) {
         this.apiInstance = apiInstance;
     }
 
     @Override
-    public IColonyManager getColonyManager()
-    {
+    public IColonyManager getColonyManager() {
         return apiInstance.getColonyManager();
     }
 
     @Override
-    public ICitizenDataManager getCitizenDataManager()
-    {
+    public ICitizenDataManager getCitizenDataManager() {
         return apiInstance.getCitizenDataManager();
     }
 
     @Override
-    public IMobAIRegistry getMobAIRegistry()
-    {
+    public IMobAIRegistry getMobAIRegistry() {
         return apiInstance.getMobAIRegistry();
     }
 
     @Override
-    public IPathNavigateRegistry getPathNavigateRegistry()
-    {
+    public IPathNavigateRegistry getPathNavigateRegistry() {
         return apiInstance.getPathNavigateRegistry();
     }
 
     @Override
-    public IBuildingDataManager getBuildingDataManager()
-    {
+    public IBuildingDataManager getBuildingDataManager() {
         return apiInstance.getBuildingDataManager();
     }
 
     @Override
-    public Registry<BuildingEntry> getBuildingRegistry()
-    {
+    public Registry<BuildingEntry> getBuildingRegistry() {
         return apiInstance.getBuildingRegistry();
     }
 
     @Override
-    public Registry<FieldRegistries.FieldEntry> getFieldRegistry()
-    {
+    public Registry<FieldRegistries.FieldEntry> getFieldRegistry() {
         return apiInstance.getFieldRegistry();
     }
 
     @Override
-    public IJobDataManager getJobDataManager()
-    {
+    public IJobDataManager getJobDataManager() {
         return apiInstance.getJobDataManager();
     }
 
     @Override
-    public Registry<JobEntry> getJobRegistry()
-    {
+    public Registry<JobEntry> getJobRegistry() {
         return apiInstance.getJobRegistry();
     }
 
     @Override
-    public Registry<InteractionResponseHandlerEntry> getInteractionResponseHandlerRegistry()
-    {
+    public Registry<InteractionResponseHandlerEntry> getInteractionResponseHandlerRegistry() {
         return apiInstance.getInteractionResponseHandlerRegistry();
     }
 
     @Override
-    public IGuardTypeDataManager getGuardTypeDataManager()
-    {
+    public IGuardTypeDataManager getGuardTypeDataManager() {
         return apiInstance.getGuardTypeDataManager();
     }
 
     @Override
-    public Registry<GuardType> getGuardTypeRegistry()
-    {
+    public Registry<GuardType> getGuardTypeRegistry() {
         return apiInstance.getGuardTypeRegistry();
     }
 
     @Override
-    public IModelTypeRegistry getModelTypeRegistry()
-    {
+    public IModelTypeRegistry getModelTypeRegistry() {
         return apiInstance.getModelTypeRegistry();
     }
 
     @Override
-    public Configurations<ClientConfiguration, ServerConfiguration, CommonConfiguration> getConfig()
-    {
+    public Configurations<ClientConfiguration, ServerConfiguration, CommonConfiguration> getConfig() {
         return apiInstance.getConfig();
     }
 
     @Override
-    public IFurnaceRecipes getFurnaceRecipes()
-    {
+    public IFurnaceRecipes getFurnaceRecipes() {
         return apiInstance.getFurnaceRecipes();
     }
 
     @Override
-    public IInteractionResponseHandlerDataManager getInteractionResponseHandlerDataManager()
-    {
+    public IInteractionResponseHandlerDataManager getInteractionResponseHandlerDataManager() {
         return apiInstance.getInteractionResponseHandlerDataManager();
     }
 
     @Override
-    public IGlobalResearchTree getGlobalResearchTree()
-    {
+    public IGlobalResearchTree getGlobalResearchTree() {
         return apiInstance.getGlobalResearchTree();
     }
 
     @Override
-    public Registry<ResearchRequirementEntry> getResearchRequirementRegistry() {return apiInstance.getResearchRequirementRegistry();}
+    public Registry<ResearchRequirementEntry> getResearchRequirementRegistry() {
+        return apiInstance.getResearchRequirementRegistry();
+    }
 
     @Override
-    public Registry<ResearchEffectEntry> getResearchEffectRegistry() {return apiInstance.getResearchEffectRegistry();}
+    public Registry<ResearchEffectEntry> getResearchEffectRegistry() {
+        return apiInstance.getResearchEffectRegistry();
+    }
 
     @Override
-    public Registry<ColonyEventTypeRegistryEntry> getColonyEventRegistry()
-    {
+    public Registry<ColonyEventTypeRegistryEntry> getColonyEventRegistry() {
         return apiInstance.getColonyEventRegistry();
     }
 
     @Override
-    public Registry<ColonyEventDescriptionTypeRegistryEntry> getColonyEventDescriptionRegistry()
-    {
+    public Registry<ColonyEventDescriptionTypeRegistryEntry> getColonyEventDescriptionRegistry() {
         return apiInstance.getColonyEventDescriptionRegistry();
     }
 
     @Override
-    public Registry<RecipeTypeEntry> getRecipeTypeRegistry()
-    {
+    public Registry<RecipeTypeEntry> getRecipeTypeRegistry() {
         return apiInstance.getRecipeTypeRegistry();
     }
 
     @Override
-    public Registry<CraftingType> getCraftingTypeRegistry()
-    {
+    public Registry<CraftingType> getCraftingTypeRegistry() {
         return apiInstance.getCraftingTypeRegistry();
     }
 
     @Override
-    public Registry<QuestRegistries.RewardEntry> getQuestRewardRegistry()
-    {
+    public Registry<QuestRegistries.RewardEntry> getQuestRewardRegistry() {
         return apiInstance.getQuestRewardRegistry();
     }
 
     @Override
-    public Registry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry()
-    {
+    public Registry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry() {
         return apiInstance.getQuestObjectiveRegistry();
     }
 
     @Override
-    public Registry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry()
-    {
+    public Registry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry() {
         return apiInstance.getQuestTriggerRegistry();
     }
 
     @Override
-    public Registry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry()
-    {
+    public Registry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry() {
         return apiInstance.getQuestDialogueAnswerRegistry();
     }
 
     @Override
-    public Registry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry()
-    {
+    public Registry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry() {
         return apiInstance.getHappinessTypeRegistry();
     }
 
     @Override
-    public Registry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry()
-    {
+    public Registry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry() {
         return apiInstance.getHappinessFunctionRegistry();
     }
 
     @Override
-    public void onRegistryNewRegistry(final NewRegistryEvent event)
-    {
+    public void onRegistryNewRegistry(final NewRegistryEvent event) {
         apiInstance.onRegistryNewRegistry(event);
     }
 
     @Override
-    public Registry<EquipmentTypeEntry> getEquipmentTypeRegistry()
-    {
+    public Registry<EquipmentTypeEntry> getEquipmentTypeRegistry() {
         return apiInstance.getEquipmentTypeRegistry();
     }
 }

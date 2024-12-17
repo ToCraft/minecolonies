@@ -3,8 +3,7 @@ package com.minecolonies.api.util.constant;
 /**
  * Constants regarding buildings.
  */
-public final class BuildingConstants
-{
+public final class BuildingConstants {
     /**
      * The default mac building level.
      */
@@ -115,8 +114,7 @@ public final class BuildingConstants
     /**
      * Private constructor to hide implicit public one.
      */
-    private BuildingConstants()
-    {
+    private BuildingConstants() {
         /*
          * Intentionally left empty.
          */

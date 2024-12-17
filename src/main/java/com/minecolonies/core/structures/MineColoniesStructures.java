@@ -11,8 +11,7 @@ import static com.minecolonies.core.structures.EmptyColonyStructure.COLONY_CODEC
 /**
  * Thanks to: https://github.com/TelepathicGrunt/StructureTutorialMod/tree/1.18.x-Forge-Jigsaw
  */
-public class MineColoniesStructures
-{
+public class MineColoniesStructures {
     /**
      * We are using the Deferred Registry system to register our structure as this is the preferred way on Forge.
      * This will handle registering the base structure for us at the correct time so we don't have to handle it ourselves.

@@ -26,8 +26,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 /**
  * Objective type entity killing mining.
  */
-public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTemplateTemplate implements IKillEntityObjectiveTemplate
-{
+public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTemplateTemplate implements IKillEntityObjectiveTemplate {
     /**
      * Amount of entities to kill.
      */
@@ -45,12 +44,12 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
 
     /**
      * Create a new objective of this type.
-     * @param target the target citizen.
+     *
+     * @param target         the target citizen.
      * @param entitiesToKill the number of entities to kill.
-     * @param entityToKill the entity to kill.
+     * @param entityToKill   the entity to kill.
      */
-    public KillEntityObjectiveTemplateTemplate(final int target, final int entitiesToKill, final EntityType<?> entityToKill, final int nextObjective, final List<Integer> rewards)
-    {
+    public KillEntityObjectiveTemplateTemplate(final int target, final int entitiesToKill, final EntityType<?> entityToKill, final int nextObjective, final List<Integer> rewards) {
         super(target, buildDialogueTree(entityToKill), rewards);
         this.entitiesToKill = entitiesToKill;
         this.nextObjective = nextObjective;
@@ -58,8 +57,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     }
 
     @NotNull
-    private static DialogueElement buildDialogueTree(final EntityType<?> entityToKill)
-    {
+    private static DialogueElement buildDialogueTree(final EntityType<?> entityToKill) {
         final Component text = Component.translatableEscape("com.minecolonies.coremod.questobjectives.kill", entityToKill.getDescription());
         final AnswerElement answer1 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.later"),
                 new IQuestDialogueAnswer.CloseUIDialogueAnswer());
@@ -70,11 +68,11 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
 
     /**
      * Parse the mine block objective from json.
+     *
      * @param jsonObject the json to parse it from.
      * @return a new objective object.
      */
-    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject)
-    {
+    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject) {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
@@ -85,11 +83,9 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     }
 
     @Override
-    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
-    {
+    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest) {
         super.startObjective(colonyQuest);
-        if (colonyQuest.getColony() instanceof Colony)
-        {
+        if (colonyQuest.getColony() instanceof Colony) {
             // Only serverside cleanup.
             QuestObjectiveEventHandler.addKillQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
@@ -97,65 +93,55 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     }
 
     @Override
-    public Component getProgressText(final IQuestInstance quest, final Style style)
-    {
-        if (quest.getCurrentObjectiveInstance() instanceof EntityKillProgressInstance progress)
-        {
+    public Component getProgressText(final IQuestInstance quest, final Style style) {
+        if (quest.getCurrentObjectiveInstance() instanceof EntityKillProgressInstance progress) {
             return Component.translatableEscape("com.minecolonies.coremod.questobjectives.kill.progress",
-              progress.currentProgress,
-              entitiesToKill,
-              entityToKill.getDescription().plainCopy().setStyle(style));
+                    progress.currentProgress,
+                    entitiesToKill,
+                    entityToKill.getDescription().plainCopy().setStyle(style));
         }
         return Component.empty();
     }
 
     @Override
-    public @Nullable IObjectiveInstance createObjectiveInstance()
-    {
+    public @Nullable IObjectiveInstance createObjectiveInstance() {
         return new EntityKillProgressInstance(this);
     }
 
     @Override
-    public void onCancellation(final IQuestInstance colonyQuest)
-    {
+    public void onCancellation(final IQuestInstance colonyQuest) {
         cleanupListener(colonyQuest);
     }
 
     /**
      * Cleanup the listener of this event.
+     *
      * @param colonyQuest the quest instance it belongs to.
      */
-    private void cleanupListener(final IQuestInstance colonyQuest)
-    {
-        if (colonyQuest.getColony() instanceof Colony)
-        {
+    private void cleanupListener(final IQuestInstance colonyQuest) {
+        if (colonyQuest.getColony() instanceof Colony) {
             // Only serverside cleanup.
             QuestObjectiveEventHandler.removeKillQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
     }
 
     @Override
-    public void onEntityKill(final IObjectiveInstance killProgressData, final IQuestInstance colonyQuest, final Player player)
-    {
-        if (killProgressData.isFulfilled())
-        {
+    public void onEntityKill(final IObjectiveInstance killProgressData, final IQuestInstance colonyQuest, final Player player) {
+        if (killProgressData.isFulfilled()) {
             return;
         }
 
         ((EntityKillProgressInstance) killProgressData).currentProgress++;
-        if (killProgressData.isFulfilled())
-        {
+        if (killProgressData.isFulfilled()) {
             cleanupListener(colonyQuest);
             colonyQuest.advanceObjective(player, nextObjective);
         }
     }
 
     @Override
-    public void onWorldLoad(final IQuestInstance colonyQuest)
-    {
+    public void onWorldLoad(final IQuestInstance colonyQuest) {
         super.onWorldLoad(colonyQuest);
-        if (colonyQuest.getColony() instanceof Colony)
-        {
+        if (colonyQuest.getColony() instanceof Colony) {
             // Only serverside cleanup.
             QuestObjectiveEventHandler.addKillQuestObjectiveListener(this.entityToKill, colonyQuest.getAssignedPlayer(), colonyQuest);
         }
@@ -164,8 +150,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     /**
      * Progress data of this objective.
      */
-    private static class EntityKillProgressInstance implements IObjectiveInstance
-    {
+    private static class EntityKillProgressInstance implements IObjectiveInstance {
         /**
          * The template belonging to this progress instance.
          */
@@ -173,34 +158,29 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
 
         private int currentProgress = 0;
 
-        public EntityKillProgressInstance(final KillEntityObjectiveTemplateTemplate template)
-        {
+        public EntityKillProgressInstance(final KillEntityObjectiveTemplateTemplate template) {
             this.template = template;
         }
 
         @Override
-        public boolean isFulfilled()
-        {
+        public boolean isFulfilled() {
             return currentProgress >= template.entitiesToKill;
         }
 
         @Override
-        public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-        {
+        public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
             final CompoundTag compoundTag = new CompoundTag();
             compoundTag.putInt(TAG_QUANTITY, currentProgress);
             return compoundTag;
         }
 
         @Override
-        public int getMissingQuantity()
-        {
+        public int getMissingQuantity() {
             return template.entitiesToKill > currentProgress ? template.entitiesToKill - currentProgress : 0;
         }
 
         @Override
-        public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
-        {
+        public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt) {
             this.currentProgress = nbt.getInt(TAG_QUANTITY);
         }
     }

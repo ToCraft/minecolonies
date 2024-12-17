@@ -26,8 +26,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.CLIPBOARD_TOGGL
 /**
  * ClipBoard window.
  */
-public class WindowClipBoard extends AbstractWindowRequestTree
-{
+public class WindowClipBoard extends AbstractWindowRequestTree {
     /**
      * Resource suffix.
      */
@@ -53,44 +52,36 @@ public class WindowClipBoard extends AbstractWindowRequestTree
      *
      * @param colony the colony to check the requests for.
      */
-    public WindowClipBoard(final IColonyView colony)
-    {
+    public WindowClipBoard(final IColonyView colony) {
         super(null, Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX, colony);
         this.colony = colony;
-        for (final ICitizenDataView view : this.colony.getCitizens().values())
-        {
-            if (view.getJobView() != null)
-            {
+        for (final ICitizenDataView view : this.colony.getCitizens().values()) {
+            if (view.getJobView() != null) {
                 asyncRequest.addAll(view.getJobView().getAsyncRequests());
             }
         }
         registerButton(CLIPBOARD_TOGGLE, this::toggleImportant);
     }
 
-    private void toggleImportant()
-    {
+    private void toggleImportant() {
         this.hide = !this.hide;
     }
 
     @Override
-    public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building)
-    {
+    public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building) {
         final ArrayList<IRequest<?>> requests = Lists.newArrayList();
 
-        if (colony == null)
-        {
+        if (colony == null) {
             return ImmutableList.of();
         }
 
         final IRequestManager requestManager = colony.getRequestManager();
 
-        if (requestManager == null)
-        {
+        if (requestManager == null) {
             return ImmutableList.of();
         }
 
-        try
-        {
+        try {
             final IPlayerRequestResolver resolver = requestManager.getPlayerResolver();
             final IRetryingRequestResolver retryingRequestResolver = requestManager.getRetryingRequestResolver();
 
@@ -98,33 +89,27 @@ public class WindowClipBoard extends AbstractWindowRequestTree
             requestTokens.addAll(resolver.getAllAssignedRequests());
             requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
 
-            for (final IToken<?> token : requestTokens)
-            {
+            for (final IToken<?> token : requestTokens) {
                 IRequest<?> request = requestManager.getRequestForToken(token);
 
-                while (request != null && request.hasParent())
-                {
+                while (request != null && request.hasParent()) {
                     request = requestManager.getRequestForToken(request.getParent());
                 }
 
-                if (request != null && !requests.contains(request))
-                {
+                if (request != null && !requests.contains(request)) {
                     requests.add(request);
                 }
             }
 
-            if (hide)
-            {
+            if (hide) {
                 requests.removeIf(req -> asyncRequest.contains(req.getId()));
             }
 
             final BlockPos playerPos = Minecraft.getInstance().player.blockPosition();
             requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getLocation().getInDimensionLocation()
-                    .distSqr(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
-                .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
-        }
-        catch (Exception e)
-        {
+                            .distSqr(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
+                    .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
+        } catch (Exception e) {
             Log.getLogger().warn("Exception trying to retreive requests:", e);
             requestManager.reset();
             return ImmutableList.of();
@@ -134,14 +119,12 @@ public class WindowClipBoard extends AbstractWindowRequestTree
     }
 
     @Override
-    public boolean fulfillable(final IRequest<?> tRequest)
-    {
+    public boolean fulfillable(final IRequest<?> tRequest) {
         return false;
     }
 
     @Override
-    protected void cancel(@NotNull final IRequest<?> request)
-    {
+    protected void cancel(@NotNull final IRequest<?> request) {
         new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null).sendToServer();
     }
 }

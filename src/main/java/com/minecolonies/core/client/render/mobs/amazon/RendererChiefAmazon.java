@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for Chief amazons.
  */
-public class RendererChiefAmazon extends AbstractRendererAmazon<AbstractEntityAmazon, ModelAmazonChief>
-{
+public class RendererChiefAmazon extends AbstractRendererAmazon<AbstractEntityAmazon, ModelAmazonChief> {
     /**
      * Texture of the entity.
      */
@@ -22,15 +21,13 @@ public class RendererChiefAmazon extends AbstractRendererAmazon<AbstractEntityAm
      *
      * @param context the renderManager
      */
-    public RendererChiefAmazon(final EntityRendererProvider.Context context)
-    {
+    public RendererChiefAmazon(final EntityRendererProvider.Context context) {
         super(context, new ModelAmazonChief(context.bakeLayer(ClientRegistryHandler.AMAZON_CHIEF)), 0.5F);
     }
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityAmazon entity)
-    {
+    public ResourceLocation getTextureLocation(final AbstractEntityAmazon entity) {
         return TEXTURE;
     }
 }

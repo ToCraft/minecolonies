@@ -12,8 +12,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityBarbarian extends AbstractEntityRaiderMob
-{
+public abstract class AbstractEntityBarbarian extends AbstractEntityRaiderMob {
     /**
      * Swim speed for barbarians
      */
@@ -25,31 +24,26 @@ public abstract class AbstractEntityBarbarian extends AbstractEntityRaiderMob
      * @param type  the type.
      * @param world the world.
      */
-    public AbstractEntityBarbarian(final EntityType<? extends AbstractEntityBarbarian> type, final Level world)
-    {
+    public AbstractEntityBarbarian(final EntityType<? extends AbstractEntityBarbarian> type, final Level world) {
         super(type, world);
     }
 
     @Override
-    public void playAmbientSound()
-    {
+    public void playAmbientSound() {
         final SoundEvent soundevent = this.getAmbientSound();
 
-        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
-        {
+        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE) {
             this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }
     }
 
     @Override
-    public RaiderType getRaiderType()
-    {
+    public RaiderType getRaiderType() {
         return RaiderType.BARBARIAN;
     }
 
     @Override
-    public double getSwimSpeedFactor()
-    {
+    public double getSwimSpeedFactor() {
         return BARBARIAN_SWIM_BONUS;
     }
 }

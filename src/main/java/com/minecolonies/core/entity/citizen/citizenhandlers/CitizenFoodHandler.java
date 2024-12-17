@@ -27,8 +27,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * The food handler for the citizen.
  */
-public class CitizenFoodHandler implements ICitizenFoodHandler
-{
+public class CitizenFoodHandler implements ICitizenFoodHandler {
     /**
      * Food queue size.
      */
@@ -37,7 +36,7 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     /**
      * Assigned citizen data.
      */
-    private final ICitizenData  citizenData;
+    private final ICitizenData citizenData;
 
     /**
      * Collection of last food items a citizen has eaten.
@@ -56,22 +55,20 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
 
     /**
      * Create the food handler.
+     *
      * @param citizenData of it.
      */
-    public CitizenFoodHandler(final ICitizenData citizenData)
-    {
+    public CitizenFoodHandler(final ICitizenData citizenData) {
         super();
         this.citizenData = citizenData;
     }
 
     @Override
-    public void addLastEaten(final Item item)
-    {
+    public void addLastEaten(final Item item) {
         lastEatenFoods.add(item);
         citizenData.markDirty(TICKS_SECOND);
         dirty = true;
-        if (lastEatenFoods.size() >= 10)
-        {
+        if (lastEatenFoods.size() >= 10) {
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY + URGENT), ChatPriority.BLOCKING));
@@ -80,19 +77,15 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     }
 
     @Override
-    public Item getLastEaten()
-    {
+    public Item getLastEaten() {
         return lastEatenFoods.peek();
     }
 
     @Override
-    public int checkLastEaten(final Item item)
-    {
+    public int checkLastEaten(final Item item) {
         int index = -1;
-        for (final Item foodItem : lastEatenFoods)
-        {
-            if (foodItem == item)
-            {
+        for (final Item foodItem : lastEatenFoods) {
+            if (foodItem == item) {
                 return index;
             }
             index++;
@@ -101,16 +94,12 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     }
 
     @Override
-    public CitizenFoodStats getFoodHappinessStats()
-    {
-        if (foodStatCache == null || dirty)
-        {
+    public CitizenFoodStats getFoodHappinessStats() {
+        if (foodStatCache == null || dirty) {
             int qualityFoodCounter = 0;
             Set<Item> uniqueFoods = new HashSet<>();
-            for (final Item foodItem : lastEatenFoods)
-            {
-                if (foodItem instanceof IMinecoloniesFoodItem)
-                {
+            for (final Item foodItem : lastEatenFoods) {
+                if (foodItem instanceof IMinecoloniesFoodItem) {
                     qualityFoodCounter++;
                 }
                 uniqueFoods.add(foodItem);
@@ -121,43 +110,35 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     }
 
     @Override
-    public boolean hasFullFoodHistory()
-    {
+    public boolean hasFullFoodHistory() {
         return lastEatenFoods.size() >= FOOD_QUEUE_SIZE;
     }
 
     @Override
-    public void read(final CompoundTag compound)
-    {
+    public void read(final CompoundTag compound) {
         @NotNull final ListTag lastFoodNbt = compound.getList(TAG_LAST_FOODS, TAG_STRING);
-        for (int i = 0; i < lastFoodNbt.size(); i++)
-        {
+        for (int i = 0; i < lastFoodNbt.size(); i++) {
             final Item lastFood = BuiltInRegistries.ITEM.get(ResourceLocation.parse(lastFoodNbt.getString(i)));
-            if (lastFood != Items.AIR)
-            {
+            if (lastFood != Items.AIR) {
                 lastEatenFoods.add(lastFood);
             }
         }
     }
 
     @Override
-    public void write(final CompoundTag compound)
-    {
+    public void write(final CompoundTag compound) {
         @NotNull final ListTag lastEatenFoodsNBT = new ListTag();
-        for (final Item foodItem : lastEatenFoods)
-        {
+        for (final Item foodItem : lastEatenFoods) {
             lastEatenFoodsNBT.add(StringTag.valueOf(BuiltInRegistries.ITEM.getKey(foodItem).toString()));
         }
         compound.put(TAG_LAST_FOODS, lastEatenFoodsNBT);
     }
 
     @Override
-    public double getDiseaseModifier(final double baseModifier)
-    {
-        if (lastEatenFoods.size() < 10 || baseModifier == 0)
-        {
+    public double getDiseaseModifier(final double baseModifier) {
+        if (lastEatenFoods.size() < 10 || baseModifier == 0) {
             return baseModifier;
         }
-        return baseModifier * 0.5 * Math.min(2.5, 5.0/getFoodHappinessStats().diversity());
+        return baseModifier * 0.5 * Math.min(2.5, 5.0 / getFoodHappinessStats().diversity());
     }
 }

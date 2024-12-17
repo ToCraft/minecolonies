@@ -17,8 +17,7 @@ import java.util.concurrent.Future;
 /**
  * Creates a pathResult of a certain path.
  */
-public class PathResult<T extends AbstractPathJob>
-{
+public class PathResult<T extends AbstractPathJob> {
     /**
      * The pathfinding status
      */
@@ -69,8 +68,7 @@ public class PathResult<T extends AbstractPathJob>
      *
      * @return status.
      */
-    public PathFindingStatus getStatus()
-    {
+    public PathFindingStatus getStatus() {
         return status;
     }
 
@@ -79,37 +77,32 @@ public class PathResult<T extends AbstractPathJob>
      *
      * @param s status to set.
      */
-    public void setStatus(final PathFindingStatus s)
-    {
+    public void setStatus(final PathFindingStatus s) {
         status = s;
     }
 
     /**
      * @return true if the path is still computing or being followed.
      */
-    public boolean isInProgress()
-    {
+    public boolean isInProgress() {
         return isComputing() || status == PathFindingStatus.IN_PROGRESS_FOLLOWING;
     }
 
-    public boolean isComputing()
-    {
+    public boolean isComputing() {
         return status == PathFindingStatus.IN_PROGRESS_COMPUTING;
     }
 
     /**
      * @return true if the no path can be found.
      */
-    public boolean failedToReachDestination()
-    {
+    public boolean failedToReachDestination() {
         return isDone() && !pathReachesDestination;
     }
 
     /**
      * @return true if the path is computed, and it reaches a desired destination.
      */
-    public boolean isPathReachingDestination()
-    {
+    public boolean isPathReachingDestination() {
         return isDone() && path != null && pathReachesDestination;
     }
 
@@ -118,32 +111,28 @@ public class PathResult<T extends AbstractPathJob>
      *
      * @param value new value for pathReachesDestination.
      */
-    public void setPathReachesDestination(final boolean value)
-    {
+    public void setPathReachesDestination(final boolean value) {
         pathReachesDestination = value;
     }
 
     /**
      * @return true if the path was cancelled before being computed or before the entity reached it's destination.
      */
-    public boolean isCancelled()
-    {
+    public boolean isCancelled() {
         return status == PathFindingStatus.CANCELLED;
     }
 
     /**
      * @return length of the compute path, in nodes.
      */
-    public int getPathLength()
-    {
+    public int getPathLength() {
         return path.getNodeCount();
     }
 
     /**
      * @return true if the path moves from the current location, useful for checking if a path actually generated.
      */
-    public boolean hasPath()
-    {
+    public boolean hasPath() {
         return path != null;
     }
 
@@ -153,8 +142,7 @@ public class PathResult<T extends AbstractPathJob>
      * @return path
      */
     @Nullable
-    public Path getPath()
-    {
+    public Path getPath() {
         return path;
     }
 
@@ -163,8 +151,7 @@ public class PathResult<T extends AbstractPathJob>
      *
      * @return
      */
-    public T getJob()
-    {
+    public T getJob() {
         return job;
     }
 
@@ -173,8 +160,7 @@ public class PathResult<T extends AbstractPathJob>
      *
      * @param job
      */
-    public void setJob(final T job)
-    {
+    public void setJob(final T job) {
         this.job = job;
     }
 
@@ -183,22 +169,18 @@ public class PathResult<T extends AbstractPathJob>
      *
      * @param uuid player ID
      */
-    public void addTrackingPlayer(final UUID uuid)
-    {
-        if (uuid == null)
-        {
+    public void addTrackingPlayer(final UUID uuid) {
+        if (uuid == null) {
             Log.getLogger().warn("Trying to add null uuid as tracking player");
         }
 
-        if (debugWatchers == null)
-        {
+        if (debugWatchers == null) {
             debugWatchers = new ArrayList<>();
         }
 
         debugWatchers.add(uuid);
 
-        if (job != null)
-        {
+        if (job != null) {
             job.initDebug();
         }
     }
@@ -208,10 +190,8 @@ public class PathResult<T extends AbstractPathJob>
      *
      * @param executorService executor
      */
-    public void startJob(final ExecutorService executorService)
-    {
-        if (job != null)
-        {
+    public void startJob(final ExecutorService executorService) {
+        if (job != null) {
             checkDebugging();
             pathCalculation = executorService.submit(job);
         }
@@ -220,46 +200,36 @@ public class PathResult<T extends AbstractPathJob>
     /**
      * Checks for debug tracking
      */
-    private void checkDebugging()
-    {
-        if (!PathfindingUtils.trackByType.isEmpty())
-        {
-            for (Iterator<Map.Entry<String, UUID>> iterator = PathfindingUtils.trackByType.entrySet().iterator(); iterator.hasNext(); )
-            {
+    private void checkDebugging() {
+        if (!PathfindingUtils.trackByType.isEmpty()) {
+            for (Iterator<Map.Entry<String, UUID>> iterator = PathfindingUtils.trackByType.entrySet().iterator(); iterator.hasNext(); ) {
                 final Map.Entry<String, UUID> entry = iterator.next();
                 final Player player = job.getActualWorld().getPlayerByUUID(entry.getValue());
-                if (player == null)
-                {
+                if (player == null) {
                     iterator.remove();
                     continue;
                 }
 
                 // Exclude stuff thats not visible
-                if (player.blockPosition().distManhattan(job.getStart()) > 400)
-                {
+                if (player.blockPosition().distManhattan(job.getStart()) > 400) {
                     continue;
                 }
 
-                if (job.getClass().getSimpleName().toLowerCase().contains(entry.getKey().toLowerCase()))
-                {
+                if (job.getClass().getSimpleName().toLowerCase().contains(entry.getKey().toLowerCase())) {
                     addTrackingPlayer(entry.getValue());
                 }
             }
         }
 
-        if (job.getEntity() != null && PathfindingUtils.trackingMap.containsValue(job.getEntity().getUUID()))
-        {
-            for (final Map.Entry<UUID, UUID> entry : PathfindingUtils.trackingMap.entrySet())
-            {
-                if (entry.getValue().equals(job.getEntity().getUUID()))
-                {
+        if (job.getEntity() != null && PathfindingUtils.trackingMap.containsValue(job.getEntity().getUUID())) {
+            for (final Map.Entry<UUID, UUID> entry : PathfindingUtils.trackingMap.entrySet()) {
+                if (entry.getValue().equals(job.getEntity().getUUID())) {
                     addTrackingPlayer(entry.getKey());
                 }
             }
         }
 
-        if (debugWatchers != null)
-        {
+        if (debugWatchers != null) {
             job.initDebug();
         }
     }
@@ -267,28 +237,22 @@ public class PathResult<T extends AbstractPathJob>
     /**
      * Processes the completed calculation results
      */
-    public void processCalculationResults()
-    {
-        if (pathingDoneAndProcessed)
-        {
+    public void processCalculationResults() {
+        if (pathingDoneAndProcessed) {
             return;
         }
 
-        try
-        {
+        try {
             path = pathCalculation.get();
             pathCalculation = null;
             setStatus(PathFindingStatus.CALCULATION_COMPLETE);
             var watchers = getDebugWatchers();
             job.syncDebug(watchers);
 
-            if (!watchers.isEmpty())
-            {
+            if (!watchers.isEmpty()) {
                 Log.getLogger().info(" Finished pathjob:" + job + " reaches: " + path.canReach() + " path target:" + path.getTarget());
             }
-        }
-        catch (InterruptedException | ExecutionException e)
-        {
+        } catch (InterruptedException | ExecutionException e) {
             Log.getLogger().catching(e);
         }
     }
@@ -298,8 +262,7 @@ public class PathResult<T extends AbstractPathJob>
      *
      * @return true
      */
-    public boolean isCalculatingPath()
-    {
+    public boolean isCalculatingPath() {
         return pathCalculation != null && !pathCalculation.isDone();
     }
 
@@ -308,12 +271,9 @@ public class PathResult<T extends AbstractPathJob>
      *
      * @return true if calculation is done and processed
      */
-    public boolean isDone()
-    {
-        if (!pathingDoneAndProcessed)
-        {
-            if (pathCalculation != null && pathCalculation.isDone())
-            {
+    public boolean isDone() {
+        if (!pathingDoneAndProcessed) {
+            if (pathCalculation != null && pathCalculation.isDone()) {
                 processCalculationResults();
                 pathingDoneAndProcessed = true;
             }
@@ -325,10 +285,8 @@ public class PathResult<T extends AbstractPathJob>
     /**
      * Cancels the path calculation
      */
-    public void cancel()
-    {
-        if (pathCalculation != null)
-        {
+    public void cancel() {
+        if (pathCalculation != null) {
             pathCalculation.cancel(true);
             pathCalculation = null;
         }
@@ -341,17 +299,13 @@ public class PathResult<T extends AbstractPathJob>
      *
      * @return
      */
-    public List<ServerPlayer> getDebugWatchers()
-    {
+    public List<ServerPlayer> getDebugWatchers() {
         final List<ServerPlayer> newList = new ArrayList<>();
 
-        if (job != null && debugWatchers != null)
-        {
-            for (final UUID playerID : debugWatchers)
-            {
+        if (job != null && debugWatchers != null) {
+            for (final UUID playerID : debugWatchers) {
                 final Player player = job.getActualWorld().getPlayerByUUID(playerID);
-                if (player instanceof ServerPlayer serverPlayer)
-                {
+                if (player instanceof ServerPlayer serverPlayer) {
                     newList.add(serverPlayer);
                 }
             }

@@ -21,8 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FurnaceRecipes implements IFurnaceRecipes
-{
+public class FurnaceRecipes implements IFurnaceRecipes {
     /**
      * Furnace recipes.
      */
@@ -37,30 +36,26 @@ public class FurnaceRecipes implements IFurnaceRecipes
     /**
      * Load all the recipes in the recipe storage.
      *
-     * @param recipeManager  The recipe manager to parse.
+     * @param recipeManager The recipe manager to parse.
      */
-    public void loadRecipes(final RecipeManager recipeManager, final Level level)
-    {
+    public void loadRecipes(final RecipeManager recipeManager, final Level level) {
         recipes.clear();
         reverseRecipes.clear();
         loadUtilityPredicates();
         recipeManager.getAllRecipesFor(RecipeType.SMELTING).forEach(holder -> {
             final SmeltingRecipe recipe = holder.value();
             final NonNullList<Ingredient> list = recipe.getIngredients();
-            if (list.size() == 1)
-            {
-                for(final ItemStack smeltable: list.get(0).getItems())
-                {
-                    if (!smeltable.isEmpty())
-                    {
+            if (list.size() == 1) {
+                for (final ItemStack smeltable : list.get(0).getItems()) {
+                    if (!smeltable.isEmpty()) {
                         final RecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-                          TypeConstants.RECIPE,
-                          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                          ImmutableList.of(new ItemStorage(smeltable)),
-                          1,
-                          recipe.getResultItem(level.registryAccess()),
-                          Blocks.FURNACE,
-                          holder.id());
+                                TypeConstants.RECIPE,
+                                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                                ImmutableList.of(new ItemStorage(smeltable)),
+                                1,
+                                recipe.getResultItem(level.registryAccess()),
+                                Blocks.FURNACE,
+                                holder.id());
 
                         recipes.put(storage.getCleanedInput().get(0), storage);
 
@@ -76,8 +71,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
     /**
      * Load all the utility predicates.
      */
-    public void loadUtilityPredicates()
-    {
+    public void loadUtilityPredicates() {
         ItemStackUtils.IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(instance.getSmeltingResult(itemStack));
         ItemStackUtils.ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
         FoodUtils.EDIBLE =
@@ -85,11 +79,9 @@ public class FurnaceRecipes implements IFurnaceRecipes
     }
 
     @Override
-    public ItemStack getSmeltingResult(final ItemStack itemStack)
-    {
+    public ItemStack getSmeltingResult(final ItemStack itemStack) {
         final RecipeStorage storage = recipes.getOrDefault(new ItemStorage(itemStack), null);
-        if (storage != null)
-        {
+        if (storage != null) {
             return storage.getPrimaryOutput();
         }
         return ItemStack.EMPTY;
@@ -97,8 +89,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
 
     @Nullable
     @Override
-    public RecipeStorage getFirstSmeltingRecipeByResult(final ItemStorage storage)
-    {
+    public RecipeStorage getFirstSmeltingRecipeByResult(final ItemStorage storage) {
         return reverseRecipes.get(storage);
     }
 
@@ -107,10 +98,8 @@ public class FurnaceRecipes implements IFurnaceRecipes
      *
      * @return the instance.
      */
-    public static FurnaceRecipes getInstance()
-    {
-        if (instance == null)
-        {
+    public static FurnaceRecipes getInstance() {
+        if (instance == null) {
             instance = new FurnaceRecipes();
         }
         return instance;

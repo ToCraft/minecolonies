@@ -19,7 +19,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -41,20 +40,19 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Building of the beekeeper (apiary).
  */
-public class BuildingBeekeeper extends AbstractBuilding
-{
+public class BuildingBeekeeper extends AbstractBuilding {
     /**
      * The beekeeper mode.
      */
     public static final ISettingKey<BeekeeperCollectionSetting> MODE =
-      new SettingKey<>(BeekeeperCollectionSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "beekeeper"));
+            new SettingKey<>(BeekeeperCollectionSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "beekeeper"));
 
     /**
      * Both setting options.
      */
     public static final String HONEYCOMB = "com.minecolonies.core.apiary.setting.honeycomb";
-    public static final String HONEY     = "com.minecolonies.core.apiary.setting.honey";
-    public static final String BOTH      = "com.minecolonies.core.apiary.setting.both";
+    public static final String HONEY = "com.minecolonies.core.apiary.setting.honey";
+    public static final String BOTH = "com.minecolonies.core.apiary.setting.both";
 
     /**
      * Description of the job executed in the hut.
@@ -72,12 +70,11 @@ public class BuildingBeekeeper extends AbstractBuilding
      * @param c the colony
      * @param l the position
      */
-    public BuildingBeekeeper(@NotNull final IColony c, final BlockPos l)
-    {
+    public BuildingBeekeeper(@NotNull final IColony c, final BlockPos l) {
         super(c, l);
         keepX.put(stack -> Items.SHEARS == stack.getItem(), new Tuple<>(1, true));
         keepX.put(stack -> Items.GLASS_BOTTLE == stack.getItem(), new Tuple<>(4, true));
-        keepX.put(stack -> stack.is(ItemTags.FLOWERS), new Tuple<>(STACKSIZE,true));
+        keepX.put(stack -> stack.is(ItemTags.FLOWERS), new Tuple<>(STACKSIZE, true));
     }
 
     /**
@@ -87,8 +84,7 @@ public class BuildingBeekeeper extends AbstractBuilding
      */
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return BEEKEEPER;
     }
 
@@ -98,29 +94,24 @@ public class BuildingBeekeeper extends AbstractBuilding
      * @return Max building level.
      */
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         final ListTag hiveTag = compound.getList(NbtTagConstants.TAG_HIVES, Tag.TAG_INT_ARRAY);
-        for (Tag tag : hiveTag)
-        {
+        for (Tag tag : hiveTag) {
             hives.add(NBTUtils.readBlockPos(tag));
         }
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag nbt = super.serializeNBT(provider);
         @NotNull final ListTag hivesTag = new ListTag();
-        for (@NotNull final BlockPos entry : hives)
-        {
+        for (@NotNull final BlockPos entry : hives) {
             hivesTag.add(NBTUtils.writeBlockPos(entry));
         }
         nbt.put(NbtTagConstants.TAG_HIVES, hivesTag);
@@ -128,22 +119,18 @@ public class BuildingBeekeeper extends AbstractBuilding
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync) {
         super.serializeToView(buf, fullSync);
 
         buf.writeVarInt(hives.size());
-        for (final BlockPos hive : hives)
-        {
+        for (final BlockPos hive : hives) {
             buf.writeBlockPos(hive);
         }
     }
 
     @Override
-    public boolean canEat(final ItemStack stack)
-    {
-        if (stack.getItem() == Items.HONEY_BOTTLE)
-        {
+    public boolean canEat(final ItemStack stack) {
+        if (stack.getItem() == Items.HONEY_BOTTLE) {
             return false;
         }
         return super.canEat(stack);
@@ -155,8 +142,7 @@ public class BuildingBeekeeper extends AbstractBuilding
      *
      * @return te set of positions of hives/nests that belong to this beekeeper
      */
-    public Set<BlockPos> getHives()
-    {
+    public Set<BlockPos> getHives() {
         return Collections.unmodifiableSet(new HashSet<>(hives));
     }
 
@@ -165,8 +151,7 @@ public class BuildingBeekeeper extends AbstractBuilding
      *
      * @param pos the position to remove
      */
-    public void removeHive(final BlockPos pos)
-    {
+    public void removeHive(final BlockPos pos) {
         hives.remove(pos);
     }
 
@@ -175,8 +160,7 @@ public class BuildingBeekeeper extends AbstractBuilding
      *
      * @param pos the position to add
      */
-    public void addHive(final BlockPos pos)
-    {
+    public void addHive(final BlockPos pos) {
         hives.add(pos);
     }
 
@@ -185,8 +169,7 @@ public class BuildingBeekeeper extends AbstractBuilding
      *
      * @return honeycomb, honey bottle, or both
      */
-    public String getHarvestTypes()
-    {
+    public String getHarvestTypes() {
         return getSetting(MODE).getValue();
     }
 
@@ -195,16 +178,14 @@ public class BuildingBeekeeper extends AbstractBuilding
      *
      * @return the number of maximum hives that can belong to this beekeeper
      */
-    public int getMaximumHives()
-    {
+    public int getMaximumHives() {
         return (int) Math.pow(2, getBuildingLevel() - 1);
     }
 
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractBuildingView
-    {
+    public static class View extends AbstractBuildingView {
         private Set<BlockPos> hives;
 
         /**
@@ -213,26 +194,22 @@ public class BuildingBeekeeper extends AbstractBuilding
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final IColonyView c, final BlockPos l)
-        {
+        public View(final IColonyView c, final BlockPos l) {
             super(c, l);
         }
 
         @Override
-        public void deserialize(@NotNull RegistryFriendlyByteBuf buf)
-        {
+        public void deserialize(@NotNull RegistryFriendlyByteBuf buf) {
             super.deserialize(buf);
 
             final int hiveCount = buf.readVarInt();
             this.hives = new HashSet<>();
-            for (int i = 0; i < hiveCount; ++i)
-            {
+            for (int i = 0; i < hiveCount; ++i) {
                 this.hives.add(buf.readBlockPos());
             }
         }
 
-        public Set<BlockPos> getHives()
-        {
+        public Set<BlockPos> getHives() {
             return Collections.unmodifiableSet(new HashSet<>(hives));
         }
     }
@@ -240,36 +217,31 @@ public class BuildingBeekeeper extends AbstractBuilding
     /**
      * Bee herding module
      */
-    public static class HerdingModule extends AnimalHerdingModule
-    {
+    public static class HerdingModule extends AnimalHerdingModule {
         // note that the beekeeper is a bit different from regular herders as they never
         // over-breed and kill the bees (bees don't drop any loot anyway).  currently this
         // doesn't matter but if we extend the AnimalHerdingModule with additional AI
         // functionality then this may need special behaviour.
 
-        public HerdingModule()
-        {
+        public HerdingModule() {
             super(ModJobs.beekeeper.get(), a -> a instanceof Bee, ItemStack.EMPTY);
         }
 
         @NotNull
         @Override
-        public List<ItemStack> getBreedingItems()
-        {
-            if (building != null)
-            {
+        public List<ItemStack> getBreedingItems() {
+            if (building != null) {
                 // todo: if we use this in AI then it should use the item list module settings from the building instead.
             }
 
             return IColonyManager.getInstance().getCompatibilityManager().getImmutableFlowers().stream()
-              .map(flower -> new ItemStack(flower.getItem(), 2))
-              .collect(Collectors.toList());
+                    .map(flower -> new ItemStack(flower.getItem(), 2))
+                    .collect(Collectors.toList());
         }
 
         @NotNull
         @Override
-        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal)
-        {
+        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal) {
             final List<IGenericRecipe> recipes = new ArrayList<>(); // we don't kill the bees so don't use the default
 
             recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEYCOMB),

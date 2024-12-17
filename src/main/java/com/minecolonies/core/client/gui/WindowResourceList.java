@@ -37,8 +37,7 @@ import static com.minecolonies.core.colony.buildings.utils.BuildingBuilderResour
 /**
  * BOWindow for the resource list item.
  */
-public class WindowResourceList extends AbstractWindowSkeleton
-{
+public class WindowResourceList extends AbstractWindowSkeleton {
     /**
      * The view.
      */
@@ -62,8 +61,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
      *
      * @param builderView the building view for the builder.
      */
-    public WindowResourceList(final @NotNull BuildingBuilder.View builderView, @NotNull final Map<String, Integer> warehouseSnapshot)
-    {
+    public WindowResourceList(final @NotNull BuildingBuilder.View builderView, @NotNull final Map<String, Integer> warehouseSnapshot) {
         super(Constants.MOD_ID + RESOURCE_SCROLL_RESOURCE_SUFFIX);
 
         this.builder = builderView;
@@ -73,15 +71,13 @@ public class WindowResourceList extends AbstractWindowSkeleton
     /**
      * Retrieve resources from the building to display in GUI.
      */
-    private void pullResourcesFromHut()
-    {
+    private void pullResourcesFromHut() {
         final BuildingResourcesModuleView moduleView = builder.getModuleViewByType(BuildingResourcesModuleView.class);
         final Inventory inventory = this.mc.player.getInventory();
         final boolean isCreative = this.mc.player.isCreative();
 
         final List<Delivery> deliveries = new ArrayList<>();
-        for (Map.Entry<Integer, Collection<IToken<?>>> entry : builder.getOpenRequestsByCitizen().entrySet())
-        {
+        for (Map.Entry<Integer, Collection<IToken<?>>> entry : builder.getOpenRequestsByCitizen().entrySet()) {
             addDeliveryRequestsToList(deliveries, ImmutableList.copyOf(entry.getValue()));
         }
 
@@ -90,27 +86,21 @@ public class WindowResourceList extends AbstractWindowSkeleton
 
         double supplied = 0;
         double total = 0;
-        for (final BuildingBuilderResource resource : resources)
-        {
+        for (final BuildingBuilderResource resource : resources) {
             final int amountToSet;
-            if (isCreative)
-            {
+            if (isCreative) {
                 amountToSet = resource.getAmount();
-            }
-            else
-            {
+            } else {
                 amountToSet =
-                  InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
-                    stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack()));
+                        InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
+                                stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack()));
             }
 
             resource.setPlayerAmount(amountToSet);
 
             resource.setAmountInDelivery(0);
-            for (final Delivery delivery : deliveries)
-            {
-                if (ItemStackUtils.compareItemStacksIgnoreStackSize(resource.getItemStack(), delivery.getStack(), false, true))
-                {
+            for (final Delivery delivery : deliveries) {
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(resource.getItemStack(), delivery.getStack(), false, true)) {
                     resource.setAmountInDelivery(resource.getAmountInDelivery() + delivery.getStack().getCount());
                 }
             }
@@ -119,11 +109,10 @@ public class WindowResourceList extends AbstractWindowSkeleton
             total += resource.getAmount();
         }
 
-        if (total > 0)
-        {
+        if (total > 0) {
             findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.progress.res",
-              (int) ((supplied / total) * 100) + "%",
-              moduleView.getProgress() + "%"));
+                    (int) ((supplied / total) * 100) + "%",
+                    moduleView.getProgress() + "%"));
         }
 
         resources.sort(new BuildingBuilderResource.ResourceComparator(NOT_NEEDED, HAVE_ENOUGH, IN_DELIVERY, NEED_MORE, DONT_HAVE));
@@ -135,20 +124,15 @@ public class WindowResourceList extends AbstractWindowSkeleton
      * @param requestList   list to add to
      * @param tokensToCheck tokens to check
      */
-    private void addDeliveryRequestsToList(final List<Delivery> requestList, final ImmutableCollection<IToken<?>> tokensToCheck)
-    {
-        for (final IToken<?> token : tokensToCheck)
-        {
+    private void addDeliveryRequestsToList(final List<Delivery> requestList, final ImmutableCollection<IToken<?>> tokensToCheck) {
+        for (final IToken<?> token : tokensToCheck) {
             final IRequest<?> request = builder.getColony().getRequestManager().getRequestForToken(token);
-            if (request != null)
-            {
-                if (request.getRequest() instanceof Delivery && ((Delivery) request.getRequest()).getTarget().getInDimensionLocation().equals(builder.getID()))
-                {
+            if (request != null) {
+                if (request.getRequest() instanceof Delivery && ((Delivery) request.getRequest()).getTarget().getInDimensionLocation().equals(builder.getID())) {
                     requestList.add((Delivery) request.getRequest());
                 }
 
-                if (request.hasChildren())
-                {
+                if (request.hasChildren()) {
                     addDeliveryRequestsToList(requestList, request.getChildren());
                 }
             }
@@ -156,23 +140,19 @@ public class WindowResourceList extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         pullResourcesFromHut();
 
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        resourceList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        resourceList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return resources.size();
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 updateResourcePane(index, rowPane);
             }
         });
@@ -183,11 +163,9 @@ public class WindowResourceList extends AbstractWindowSkeleton
         new MarkBuildingDirtyMessage(builder).sendToServer();
 
         findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(Component.literal(builder.getWorkerName()));
-        if (moduleView.getWorkOrderId() > -1)
-        {
+        if (moduleView.getWorkOrderId() > -1) {
             final IWorkOrderView workOrderView = moduleView.getBuildingView().getColony().getWorkOrder(moduleView.getWorkOrderId());
-            if (workOrderView != null)
-            {
+            if (workOrderView != null) {
                 final Text pane = findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class);
                 final Component text = Component.literal(workOrderView.getDisplayName().getString().replace("\n", " "));
                 pane.setText(text);
@@ -202,8 +180,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
      * @param index   index in the list of resources.
      * @param rowPane The Pane to use to display the information.
      */
-    private void updateResourcePane(final int index, @NotNull final Pane rowPane)
-    {
+    private void updateResourcePane(final int index, @NotNull final Pane rowPane) {
         final BuildingBuilderResource resource = resources.get(index);
         final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
         final Text resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Text.class);
@@ -217,19 +194,15 @@ public class WindowResourceList extends AbstractWindowSkeleton
         int resourceHashcode = resource.getItemStack().getComponentsPatch().hashCode();
         int warehouseAmount = warehouseSnapshot.getOrDefault(resource.getItem().getDescriptionId() + "-" + resourceHashcode, 0);
 
-        if (resource.getAmountInDelivery() > 0)
-        {
+        if (resource.getAmountInDelivery() > 0) {
             rowPane.findPaneOfTypeByID(IN_DELIVERY_ICON, Image.class).setVisible(true);
             rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText(Component.literal(String.valueOf(resource.getAmountInDelivery())));
-        }
-        else if (warehouseAmount > 0)
-        {
+        } else if (warehouseAmount > 0) {
             rowPane.findPaneOfTypeByID(IN_WAREHOUSE_ICON, Image.class).setVisible(true);
             rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText(Component.literal(String.valueOf(warehouseAmount)));
         }
 
-        switch (resource.getAvailabilityStatus())
-        {
+        switch (resource.getAvailabilityStatus()) {
             case DONT_HAVE:
                 resourceLabel.setColors(RED);
                 resourceMissingLabel.setColors(RED);
@@ -255,12 +228,9 @@ public class WindowResourceList extends AbstractWindowSkeleton
 
         resourceLabel.setText(Component.literal(resource.getName()));
         final int missing = resource.getMissingFromPlayer();
-        if (missing < 0)
-        {
+        if (missing < 0) {
             resourceMissingLabel.setText(Component.literal(Integer.toString(missing)));
-        }
-        else
-        {
+        } else {
             resourceMissingLabel.clearText();
         }
 
@@ -274,8 +244,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
 
         pullResourcesFromHut();

@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public interface IBuildingBasedRequester extends IRequester
-{
+public interface IBuildingBasedRequester extends IRequester {
     /**
      * Get the building.
      *

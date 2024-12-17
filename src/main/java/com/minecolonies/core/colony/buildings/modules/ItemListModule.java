@@ -7,13 +7,11 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Utils;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -22,8 +20,7 @@ import java.util.List;
 /**
  * Abstract class for all buildings which require a filterable list of allowed/blocked items.
  */
-public class ItemListModule extends AbstractBuildingModule implements IItemListModule, IPersistentModule
-{
+public class ItemListModule extends AbstractBuildingModule implements IItemListModule, IPersistentModule {
     /**
      * Tag to store the item list.
      */
@@ -46,37 +43,34 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
 
     /**
      * Construct a new grouped itemlist module with the unique list identifier.
+     *
      * @param id the list id.
      */
-    public ItemListModule(final String id)
-    {
+    public ItemListModule(final String id) {
         super();
         this.id = id;
     }
 
     /**
      * Construct a new grouped itemlist module with the unique list identifier and default values.
-     * @param id the list id.
+     *
+     * @param id            the list id.
      * @param defaultStacks the default values.
      */
-    public ItemListModule(final String id, final ItemStorage...defaultStacks)
-    {
+    public ItemListModule(final String id, final ItemStorage... defaultStacks) {
         this(id);
         defaultValues = ImmutableList.copyOf(defaultStacks);
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
-        if (compound.contains(id))
-        {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
+        if (compound.contains(id)) {
             compound = compound.getCompound(id);
         }
 
         final List<ItemStorage> allowedItems = new ArrayList<>();
         final ListTag filterableList = compound.getList(TAG_ITEMLIST, Tag.TAG_COMPOUND);
-        for (int i = 0; i < filterableList.size(); ++i)
-        {
+        for (int i = 0; i < filterableList.size(); ++i) {
             allowedItems.add(new ItemStorage(ItemStack.parseOptional(provider, filterableList.getCompound(i))));
         }
 
@@ -84,35 +78,29 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         @NotNull final ListTag filteredItems = new ListTag();
-        for (@NotNull final ItemStorage item : itemsAllowed)
-        {
+        for (@NotNull final ItemStorage item : itemsAllowed) {
             filteredItems.add(item.getItemStack().saveOptional(provider));
         }
         compound.put(TAG_ITEMLIST, filteredItems);
     }
 
     @Override
-    public void addItem(final ItemStorage item)
-    {
-        if (!itemsAllowed.contains(item))
-        {
+    public void addItem(final ItemStorage item) {
+        if (!itemsAllowed.contains(item)) {
             this.itemsAllowed = ImmutableList.<ItemStorage>builder().addAll(itemsAllowed).add(item).build();
             markDirty();
         }
     }
 
     @Override
-    public boolean isItemInList(final ItemStorage item)
-    {
+    public boolean isItemInList(final ItemStorage item) {
         return itemsAllowed.contains(item);
     }
 
     @Override
-    public void removeItem(final ItemStorage item)
-    {
+    public void removeItem(final ItemStorage item) {
         final List<ItemStorage> allowedItems = new ArrayList<>(itemsAllowed);
         allowedItems.remove(item);
         this.itemsAllowed = ImmutableList.copyOf(allowedItems);
@@ -120,43 +108,36 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     }
 
     @Override
-    public ImmutableList<ItemStorage> getList()
-    {
+    public ImmutableList<ItemStorage> getList() {
         return itemsAllowed;
     }
 
     @Override
-    public String getListIdentifier()
-    {
+    public String getListIdentifier() {
         return this.id;
     }
 
     @Override
-    public void clearItems()
-    {
+    public void clearItems() {
         itemsAllowed = ImmutableList.of();
         markDirty();
     }
 
     @Override
-    public void resetToDefaults()
-    {
+    public void resetToDefaults() {
         this.itemsAllowed = ImmutableList.copyOf(defaultValues);
     }
 
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(itemsAllowed.size());
-        for (final ItemStorage item : itemsAllowed)
-        {
+        for (final ItemStorage item : itemsAllowed) {
             Utils.serializeCodecMess(buf, item.getItemStack());
         }
     }
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         return this.id;
     }
 }

@@ -24,8 +24,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message sent to open an inventory.
  */
-public class OpenInventoryMessage extends AbstractColonyServerMessage
-{
+public class OpenInventoryMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "open_inventory", OpenInventoryMessage::new);
 
     /***
@@ -55,8 +54,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
      * @param id     its id.
      * @param colony the colony of the network message
      */
-    public OpenInventoryMessage(final IColonyView colony, @NotNull final String name, final int id)
-    {
+    public OpenInventoryMessage(final IColonyView colony, @NotNull final String name, final int id) {
         super(TYPE, colony);
         inventoryType = InventoryType.INVENTORY_CITIZEN;
         this.name = name;
@@ -68,22 +66,19 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
      *
      * @param building the building we're executing on.
      */
-    public OpenInventoryMessage(final IBuildingView building)
-    {
+    public OpenInventoryMessage(final IBuildingView building) {
         super(TYPE, building.getColony());
         inventoryType = InventoryType.INVENTORY_CHEST;
         name = "";
         tePos = building.getID();
     }
 
-    protected OpenInventoryMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected OpenInventoryMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
 
         inventoryType = InventoryType.values()[buf.readInt()];
         name = buf.readUtf(32767);
-        switch (inventoryType)
-        {
+        switch (inventoryType) {
             case INVENTORY_CITIZEN:
                 entityID = buf.readInt();
                 break;
@@ -94,14 +89,12 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
 
         buf.writeInt(inventoryType.ordinal());
         buf.writeUtf(name);
-        switch (inventoryType)
-        {
+        switch (inventoryType) {
             case INVENTORY_CITIZEN:
                 buf.writeInt(entityID);
                 break;
@@ -112,10 +105,8 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
-        switch (inventoryType)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
+        switch (inventoryType) {
             case INVENTORY_CITIZEN:
                 doCitizenInventory(player);
                 break;
@@ -127,13 +118,10 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
         }
     }
 
-    private void doCitizenInventory(final ServerPlayer player)
-    {
+    private void doCitizenInventory(final ServerPlayer player) {
         @Nullable final AbstractEntityCitizen citizen = (AbstractEntityCitizen) CompatibilityUtils.getWorldFromEntity(player).getEntity(entityID);
-        if (citizen != null)
-        {
-            if (!StringUtil.isNullOrEmpty(name))
-            {
+        if (citizen != null) {
+            if (!StringUtil.isNullOrEmpty(name)) {
                 citizen.getInventoryCitizen().setCustomName(name);
             }
 
@@ -141,12 +129,10 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
         }
     }
 
-    private void doHutInventory(final ServerPlayer player, final IColony colony)
-    {
+    private void doHutInventory(final ServerPlayer player, final IColony colony) {
         final BlockEntity tileEntity = BlockPosUtil.getTileEntity(player.level(), tePos);
 
-        if(tileEntity instanceof TileEntityRack || tileEntity instanceof TileEntityGrave)
-        {
+        if (tileEntity instanceof TileEntityRack || tileEntity instanceof TileEntityGrave) {
             player.openMenu((MenuProvider) tileEntity, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(tileEntity.getBlockPos()));
         }
     }
@@ -154,8 +140,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     /**
      * Type of inventory.
      */
-    private enum InventoryType
-    {
+    private enum InventoryType {
         INVENTORY_CITIZEN,
         INVENTORY_CHEST
     }

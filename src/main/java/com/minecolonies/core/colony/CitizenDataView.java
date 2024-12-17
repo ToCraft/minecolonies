@@ -41,8 +41,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
  * The CitizenDataView is the client-side representation of a CitizenData. Views contain the CitizenData's data that is relevant to a Client, in a more client-friendly form.
  * Mutable operations on a View result in a message to the server to perform the operation.
  */
-public class CitizenDataView implements ICitizenDataView
-{
+public class CitizenDataView implements ICitizenDataView {
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
 
     /**
@@ -58,13 +57,13 @@ public class CitizenDataView implements ICitizenDataView
     /**
      * Attributes.
      */
-    private final int     id;
+    private final int id;
     private final IColonyView colonyView;
-    protected     int     entityId;
-    protected     String  name;
-    protected     boolean female;
-    protected     boolean paused;
-    protected     boolean isChild;
+    protected int entityId;
+    protected String name;
+    protected boolean female;
+    protected boolean paused;
+    protected boolean isChild;
 
     private IJobView jobView;
 
@@ -131,7 +130,8 @@ public class CitizenDataView implements ICitizenDataView
     /**
      * The current location of interest.
      */
-    @Nullable private BlockPos statusPosition;
+    @Nullable
+    private BlockPos statusPosition;
 
     /**
      * Parents of the citizen.
@@ -173,8 +173,7 @@ public class CitizenDataView implements ICitizenDataView
      *
      * @param id the id to set.
      */
-    protected CitizenDataView(final int id, final IColonyView colonyView)
-    {
+    protected CitizenDataView(final int id, final IColonyView colonyView) {
         this.id = id;
         this.citizenSkillHandler = new CitizenSkillHandler();
         this.citizenHappinessHandler = new CitizenHappinessHandler();
@@ -182,44 +181,37 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
     @Override
-    public int getEntityId()
-    {
+    public int getEntityId() {
         return entityId;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     @Override
-    public boolean isFemale()
-    {
+    public boolean isFemale() {
         return female;
     }
 
     @Override
-    public boolean isPaused()
-    {
+    public boolean isPaused() {
         return paused;
     }
 
     @Override
-    public IColony getColony()
-    {
+    public IColony getColony() {
         return colonyView;
     }
 
     @Override
-    public boolean isChild()
-    {
+    public boolean isChild() {
         return isChild;
     }
 
@@ -227,74 +219,62 @@ public class CitizenDataView implements ICitizenDataView
      * DEPRECATED
      */
     @Override
-    public void setPaused(final boolean p)
-    {
+    public void setPaused(final boolean p) {
         this.paused = p;
     }
 
     @Override
-    public String getJob()
-    {
+    public String getJob() {
         return job;
     }
 
     @Override
-    public MutableComponent getJobComponent()
-    {
+    public MutableComponent getJobComponent() {
         return job.isEmpty() ? Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED) : Component.translatableEscape(job);
     }
 
     @Override
     @Nullable
-    public BlockPos getHomeBuilding()
-    {
+    public BlockPos getHomeBuilding() {
         return homeBuilding;
     }
 
     @Override
     @Nullable
-    public BlockPos getWorkBuilding()
-    {
+    public BlockPos getWorkBuilding() {
         return workBuilding;
     }
 
     @Override
-    public void setHomeBuilding(final BlockPos homeBuilding)
-    {
+    public void setHomeBuilding(final BlockPos homeBuilding) {
         this.homeBuilding = homeBuilding;
     }
 
     @Override
-    public void setWorkBuilding(@Nullable final BlockPos bp)
-    {
+    public void setWorkBuilding(@Nullable final BlockPos bp) {
         this.workBuilding = bp;
     }
 
     @Override
-    public int getColonyId()
-    {
+    public int getColonyId() {
         return colonyId;
     }
 
     @Override
-    public double getHappiness()
-    {
+    public double getHappiness() {
         return happiness;
     }
 
     @Override
-    public double getSaturation()
-    {
+    public double getSaturation() {
         return saturation;
     }
 
     @Override
-    public double getHealth()
-    {
+    public double getHealth() {
         final Entity entity = colonyView.getWorld().getEntity(entityId);
 
-        if (entity instanceof LivingEntity)
-        {
+        if (entity instanceof LivingEntity) {
             return ((LivingEntity) entity).getHealth();
         }
 
@@ -302,12 +282,10 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public double getMaxHealth()
-    {
+    public double getMaxHealth() {
         final Entity entity = colonyView.getWorld().getEntity(entityId);
 
-        if (entity instanceof LivingEntity)
-        {
+        if (entity instanceof LivingEntity) {
             return ((LivingEntity) entity).getMaxHealth();
         }
 
@@ -315,14 +293,12 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public BlockPos getPosition()
-    {
+    public BlockPos getPosition() {
         return position;
     }
 
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         name = buf.readUtf(32767);
         female = buf.readBoolean();
         entityId = buf.readInt();
@@ -351,11 +327,10 @@ public class CitizenDataView implements ICitizenDataView
 
         citizenChatOptions.clear();
         final int size = buf.readInt();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             final CompoundTag compoundNBT = buf.readNbt();
             final ServerCitizenInteraction handler =
-              (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(buf.registryAccess(), this, compoundNBT);
+                    (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(buf.registryAccess(), this, compoundNBT);
             citizenChatOptions.put(handler.getInquiry(), handler);
         }
 
@@ -368,13 +343,10 @@ public class CitizenDataView implements ICitizenDataView
         statusIcon = statusindex >= 0 ? VisibleCitizenStatus.getForId(statusindex) : null;
         statusPosition = buf.readBoolean() ? buf.readBlockPos() : null;
 
-        if (buf.readBoolean())
-        {
+        if (buf.readBoolean()) {
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
             jobView = IJobDataManager.getInstance().createViewFrom(colonyView, this, buf);
-        }
-        else
-        {
+        } else {
             jobView = null;
         }
 
@@ -383,14 +355,12 @@ public class CitizenDataView implements ICitizenDataView
 
         partner = buf.readInt();
         final int siblingsSize = buf.readInt();
-        for (int i = 0; i < siblingsSize; i++)
-        {
+        for (int i = 0; i < siblingsSize; i++) {
             siblings.add(buf.readInt());
         }
 
         final int childrenSize = buf.readInt();
-        for (int i = 0; i < childrenSize; i++)
-        {
+        for (int i = 0; i < childrenSize; i++) {
             children.add(buf.readInt());
         }
 
@@ -402,60 +372,49 @@ public class CitizenDataView implements ICitizenDataView
         participatingQuests.clear();
 
         final int avSize = buf.readInt();
-        for (int i = 0; i < avSize; i++)
-        {
+        for (int i = 0; i < avSize; i++) {
             availableQuests.add(buf.readResourceLocation());
         }
 
         final int partSize = buf.readInt();
-        for (int i = 0; i < partSize; i++)
-        {
+        for (int i = 0; i < partSize; i++) {
             participatingQuests.add(buf.readResourceLocation());
         }
 
-        if (buf.readBoolean())
-        {
+        if (buf.readBoolean()) {
             textureUUID = buf.readUUID();
         }
     }
 
     @Override
-    public IJobView getJobView()
-    {
+    public IJobView getJobView() {
         return this.jobView;
     }
 
     @Override
-    public InventoryCitizen getInventory()
-    {
+    public InventoryCitizen getInventory() {
         return inventory;
     }
 
     @Override
-    public List<IInteractionResponseHandler> getOrderedInteractions()
-    {
+    public List<IInteractionResponseHandler> getOrderedInteractions() {
         return sortedInteractions;
     }
 
     @Override
     @Nullable
-    public IInteractionResponseHandler getSpecificInteraction(@NotNull final Component component)
-    {
+    public IInteractionResponseHandler getSpecificInteraction(@NotNull final Component component) {
         return citizenChatOptions.getOrDefault(component, null);
     }
 
     @Override
-    public boolean hasBlockingInteractions()
-    {
-        if (sortedInteractions.isEmpty())
-        {
+    public boolean hasBlockingInteractions() {
+        if (sortedInteractions.isEmpty()) {
             return false;
         }
 
-        for (final IInteractionResponseHandler interaction : sortedInteractions)
-        {
-            if (interaction.getPriority().getPriority() >= ChatPriority.IMPORTANT.getPriority())
-            {
+        for (final IInteractionResponseHandler interaction : sortedInteractions) {
+            if (interaction.getPriority().getPriority() >= ChatPriority.IMPORTANT.getPriority()) {
                 return true;
             }
         }
@@ -464,17 +423,13 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public boolean hasVisibleInteractions()
-    {
-        if (sortedInteractions.isEmpty())
-        {
+    public boolean hasVisibleInteractions() {
+        if (sortedInteractions.isEmpty()) {
             return false;
         }
 
-        for (final IInteractionResponseHandler interaction : sortedInteractions)
-        {
-            if (interaction.getPriority().getPriority() >= ChatPriority.CHITCHAT.getPriority())
-            {
+        for (final IInteractionResponseHandler interaction : sortedInteractions) {
+            if (interaction.getPriority().getPriority() >= ChatPriority.CHITCHAT.getPriority()) {
                 return true;
             }
         }
@@ -482,17 +437,13 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public boolean hasPendingInteractions()
-    {
-        if (sortedInteractions.isEmpty())
-        {
+    public boolean hasPendingInteractions() {
+        if (sortedInteractions.isEmpty()) {
             return false;
         }
 
-        for (final IInteractionResponseHandler interaction : sortedInteractions)
-        {
-            if (interaction.isPrimary())
-            {
+        for (final IInteractionResponseHandler interaction : sortedInteractions) {
+            if (interaction.isPrimary()) {
                 return true;
             }
         }
@@ -501,34 +452,26 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public ICitizenSkillHandler getCitizenSkillHandler()
-    {
+    public ICitizenSkillHandler getCitizenSkillHandler() {
         return citizenSkillHandler;
     }
 
     @Override
-    public ICitizenHappinessHandler getHappinessHandler()
-    {
+    public ICitizenHappinessHandler getHappinessHandler() {
         return citizenHappinessHandler;
     }
 
     @Override
-    public ResourceLocation getInteractionIcon()
-    {
-        if (sortedInteractions == null || sortedInteractions.isEmpty())
-        {
+    public ResourceLocation getInteractionIcon() {
+        if (sortedInteractions == null || sortedInteractions.isEmpty()) {
             return null;
         }
 
         ResourceLocation icon = sortedInteractions.get(0).getInteractionIcon();
-        if (icon == null)
-        {
-            if (hasBlockingInteractions())
-            {
+        if (icon == null) {
+            if (hasBlockingInteractions()) {
                 icon = BLOCKING_RESOURCE;
-            }
-            else if (hasVisibleInteractions())
-            {
+            } else if (hasVisibleInteractions()) {
                 icon = PENDING_RESOURCE;
             }
         }
@@ -537,76 +480,63 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public VisibleCitizenStatus getVisibleStatus()
-    {
+    public VisibleCitizenStatus getVisibleStatus() {
         return statusIcon;
     }
 
     @Override
-    public @Nullable BlockPos getStatusPosition()
-    {
+    public @Nullable BlockPos getStatusPosition() {
         return statusPosition;
     }
 
     @Nullable
     @Override
-    public Integer getPartner()
-    {
+    public Integer getPartner() {
         return partner;
     }
 
     @Override
-    public List<Integer> getChildren()
-    {
+    public List<Integer> getChildren() {
         return new ArrayList<>(children);
     }
 
     @Override
-    public List<Integer> getSiblings()
-    {
+    public List<Integer> getSiblings() {
         return new ArrayList<>(siblings);
     }
 
     @Override
-    public Tuple<String, String> getParents()
-    {
+    public Tuple<String, String> getParents() {
         return parents;
     }
 
     @Override
-    public ResourceLocation getCustomTexture()
-    {
+    public ResourceLocation getCustomTexture() {
         return null;
     }
 
     @Override
-    public UUID getCustomTextureUUID()
-    {
+    public UUID getCustomTextureUUID() {
         return textureUUID;
     }
 
     @Override
-    public void setJobView(final IJobView jobView)
-    {
+    public void setJobView(final IJobView jobView) {
         this.jobView = jobView;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return id;
     }
 
     @SuppressWarnings(Suppression.TOO_MANY_RETURNS)
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 

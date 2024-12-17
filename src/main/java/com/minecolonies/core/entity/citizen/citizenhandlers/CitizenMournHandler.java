@@ -7,7 +7,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DECEASED;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MOURNING;
@@ -15,8 +16,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MOURNING;
 /**
  * The new happiness handler for the citizen.
  */
-public class CitizenMournHandler implements ICitizenMournHandler
-{
+public class CitizenMournHandler implements ICitizenMournHandler {
     /**
      * Citizens that have recently died and were somehow related to this citizen.
      */
@@ -32,73 +32,61 @@ public class CitizenMournHandler implements ICitizenMournHandler
      *
      * @param data the data to handle.
      */
-    public CitizenMournHandler(final ICitizenData data)
-    {
+    public CitizenMournHandler(final ICitizenData data) {
 
     }
 
     @Override
-    public void read(final CompoundTag compound)
-    {
+    public void read(final CompoundTag compound) {
         isMourning = compound.getBoolean(TAG_MOURNING);
         final ListTag tag = compound.getList(TAG_DECEASED, Tag.TAG_STRING);
-        for (int i = 0; i < tag.size(); i++)
-        {
+        for (int i = 0; i < tag.size(); i++) {
             deceasedCitizens.add(tag.getString(i));
         }
     }
 
     @Override
-    public void write(final CompoundTag compound)
-    {
+    public void write(final CompoundTag compound) {
         compound.putBoolean(TAG_MOURNING, isMourning);
         final ListTag deceasedNbt = new ListTag();
-        for (final String deceased : deceasedCitizens)
-        {
+        for (final String deceased : deceasedCitizens) {
             deceasedNbt.add(StringTag.valueOf(deceased));
         }
         compound.put(TAG_DECEASED, deceasedNbt);
     }
 
     @Override
-    public void addDeceasedCitizen(final String name)
-    {
+    public void addDeceasedCitizen(final String name) {
         deceasedCitizens.add(name);
     }
 
     @Override
-    public Set<String> getDeceasedCitizens()
-    {
-    	return deceasedCitizens;
+    public Set<String> getDeceasedCitizens() {
+        return deceasedCitizens;
     }
 
     @Override
-    public void removeDeceasedCitizen(final String name)
-    {
+    public void removeDeceasedCitizen(final String name) {
         deceasedCitizens.remove(name);
     }
 
     @Override
-    public void clearDeceasedCitizen()
-    {
+    public void clearDeceasedCitizen() {
         deceasedCitizens.clear();
     }
 
     @Override
-    public boolean shouldMourn()
-    {
+    public boolean shouldMourn() {
         return !deceasedCitizens.isEmpty();
     }
 
     @Override
-    public boolean isMourning()
-    {
+    public boolean isMourning() {
         return isMourning;
     }
 
     @Override
-    public void setMourning(final boolean mourn)
-    {
+    public void setMourning(final boolean mourn) {
         this.isMourning = mourn;
     }
 }

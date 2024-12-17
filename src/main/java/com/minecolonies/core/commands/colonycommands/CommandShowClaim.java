@@ -23,26 +23,21 @@ import java.util.Set;
 
 import static com.minecolonies.core.commands.CommandArgumentNames.POS_ARG;
 
-public class CommandShowClaim implements IMCOPCommand
-{
+public class CommandShowClaim implements IMCOPCommand {
     /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         final ServerLevel level = context.getSource().getLevel();
 
         // Colony
         BlockPos pos = BlockPos.containing(context.getSource().getPosition());
-        try
-        {
+        try {
             pos = BlockPosArgument.getBlockPos(context, POS_ARG);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
 
@@ -60,55 +55,40 @@ public class CommandShowClaim implements IMCOPCommand
      * @param level
      * @return
      */
-    private MutableComponent buildClaimCommandResult(final LevelChunk chunk, final BlockPos pos, final ServerLevel level)
-    {
+    private MutableComponent buildClaimCommandResult(final LevelChunk chunk, final BlockPos pos, final ServerLevel level) {
         final MutableComponent text = Component.translatableEscape("Claim data of chunk at: %sX %sZ\n", pos.getX(), pos.getZ()).withStyle(ChatFormatting.DARK_AQUA);
 
         final List<Integer> staticColonyClaims = ColonyUtils.getStaticClaims(chunk);
         final int owningColony = ColonyUtils.getOwningColony(chunk);
-        if (!staticColonyClaims.isEmpty())
-        {
+        if (!staticColonyClaims.isEmpty()) {
             text.append(Component.translatableEscape("OwnerID:%s Direct colony claims:\n", owningColony).withStyle(ChatFormatting.GOLD));
-            for (int colonyID : staticColonyClaims)
-            {
+            for (int colonyID : staticColonyClaims) {
                 final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, level.dimension());
-                if (colony == null)
-                {
+                if (colony == null) {
                     text.append(Component.translatableEscape("ID: %s Name: Unkown Colony\n", colonyID));
-                }
-                else
-                {
+                } else {
                     text.append(Component.translatableEscape("ID: %s Name: %s\n", colonyID, colony.getName()));
                 }
             }
         }
 
         final Map<Integer, Set<BlockPos>> buildingClaims = ColonyUtils.getAllClaimingBuildings(chunk);
-        if (!buildingClaims.isEmpty())
-        {
+        if (!buildingClaims.isEmpty()) {
             text.append(Component.translatableEscape("Building claims:\n").withStyle(ChatFormatting.GOLD));
-            for (Map.Entry<Integer, Set<BlockPos>> entry : buildingClaims.entrySet())
-            {
+            for (Map.Entry<Integer, Set<BlockPos>> entry : buildingClaims.entrySet()) {
                 final IColony colony = IColonyManager.getInstance().getColonyByDimension(entry.getKey(), level.dimension());
-                for (final BlockPos buildingPos : entry.getValue())
-                {
-                    if (colony != null)
-                    {
+                for (final BlockPos buildingPos : entry.getValue()) {
+                    if (colony != null) {
                         final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
-                        if (building != null)
-                        {
+                        if (building != null) {
                             text.append(Component.translatableEscape("ID: %s Building: %s Pos: %s\n",
-                              entry.getKey(),
-                              Component.translatableEscape(building.getBuildingDisplayName()),
-                              buildingPos));
-                        }
-                        else
-                        {
+                                    entry.getKey(),
+                                    Component.translatableEscape(building.getBuildingDisplayName()),
+                                    buildingPos));
+                        } else {
                             text.append(Component.translatableEscape("ID: %s Building: Unknown pos: %s\n", entry.getKey(), buildingPos));
                         }
-                    }
-                    else
-                    {
+                    } else {
                         text.append(Component.translatableEscape("ID: %s Building: Unknown Pos: %s\n", entry.getKey(), buildingPos));
                     }
                 }
@@ -121,15 +101,13 @@ public class CommandShowClaim implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "claiminfo";
     }
 
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName())
-          .then(IMCCommand.newArgument(POS_ARG, BlockPosArgument.blockPos()).executes(this::checkPreConditionAndExecute))
-          .executes(this::checkPreConditionAndExecute);
+                .then(IMCCommand.newArgument(POS_ARG, BlockPosArgument.blockPos()).executes(this::checkPreConditionAndExecute))
+                .executes(this::checkPreConditionAndExecute);
     }
 }

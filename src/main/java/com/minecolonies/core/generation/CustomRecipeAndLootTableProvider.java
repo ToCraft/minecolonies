@@ -18,16 +18,14 @@ import java.util.function.Consumer;
 /**
  * Abstract datagen for crafterrecipes that include loot tables.
  */
-public abstract class CustomRecipeAndLootTableProvider implements DataProvider
-{
+public abstract class CustomRecipeAndLootTableProvider implements DataProvider {
     private final CompletableFuture<HolderLookup.Provider> providerFuture;
     private final ChildRecipeProvider recipeProvider;
     private final ChildLootTableProvider lootTableProvider;
     protected HolderLookup.Provider provider;
 
     protected CustomRecipeAndLootTableProvider(@NotNull final PackOutput packOutput,
-                                               @NotNull final CompletableFuture<HolderLookup.Provider> providerFuture)
-    {
+                                               @NotNull final CompletableFuture<HolderLookup.Provider> providerFuture) {
         this.providerFuture = providerFuture;
         this.recipeProvider = new ChildRecipeProvider(packOutput, providerFuture);
         this.lootTableProvider = new ChildLootTableProvider(packOutput, providerFuture);
@@ -35,31 +33,29 @@ public abstract class CustomRecipeAndLootTableProvider implements DataProvider
 
     /**
      * Override this if you need to do some additional async work prior to calling the registration functions.
+     *
      * @param provider the registry provider
      * @return a future
      */
-    protected CompletableFuture<?> generate(@NotNull final HolderLookup.Provider provider)
-    {
+    protected CompletableFuture<?> generate(@NotNull final HolderLookup.Provider provider) {
         return CompletableFuture.completedFuture(null);
     }
 
     protected abstract void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer);
+
     protected abstract @NotNull List<LootTableProvider.SubProviderEntry> registerTables();
 
-    protected CustomRecipeBuilder recipe(final String crafter, final String module, final String id)
-    {
+    protected CustomRecipeBuilder recipe(final String crafter, final String module, final String id) {
         return recipeProvider.recipe(crafter, module, id);
     }
 
-    protected static ResourceKey<LootTable> table(@NotNull final ResourceLocation id)
-    {
+    protected static ResourceKey<LootTable> table(@NotNull final ResourceLocation id) {
         return SimpleLootTableProvider.table(id);
     }
 
     @NotNull
     @Override
-    public CompletableFuture<?> run(@NotNull final CachedOutput cache)
-    {
+    public CompletableFuture<?> run(@NotNull final CachedOutput cache) {
         return providerFuture
                 .thenComposeAsync(provider -> {
                     this.provider = provider;
@@ -68,40 +64,33 @@ public abstract class CustomRecipeAndLootTableProvider implements DataProvider
                 .thenCompose(x -> CompletableFuture.allOf(recipeProvider.run(cache), lootTableProvider.run(cache)));
     }
 
-    private class ChildRecipeProvider extends CustomRecipeProvider
-    {
+    private class ChildRecipeProvider extends CustomRecipeProvider {
         public ChildRecipeProvider(@NotNull final PackOutput packOutput,
-                                   @NotNull final CompletableFuture<HolderLookup.Provider> provider)
-        {
+                                   @NotNull final CompletableFuture<HolderLookup.Provider> provider) {
             super(packOutput, provider);
         }
 
         @NotNull
         @Override
-        public String getName()
-        {
+        public String getName() {
             return CustomRecipeAndLootTableProvider.this.getName() + " recipes";
         }
 
         @Override
-        protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-        {
+        protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
             CustomRecipeAndLootTableProvider.this.registerRecipes(consumer);
         }
     }
 
-    private class ChildLootTableProvider extends SimpleLootTableProvider
-    {
+    private class ChildLootTableProvider extends SimpleLootTableProvider {
         public ChildLootTableProvider(@NotNull final PackOutput packOutput,
-                                      @NotNull final CompletableFuture<HolderLookup.Provider> provider)
-        {
+                                      @NotNull final CompletableFuture<HolderLookup.Provider> provider) {
             super(packOutput, provider);
         }
 
         @NotNull
         @Override
-        public List<SubProviderEntry> getTables()
-        {
+        public List<SubProviderEntry> getTables() {
             return CustomRecipeAndLootTableProvider.this.registerTables();
         }
     }

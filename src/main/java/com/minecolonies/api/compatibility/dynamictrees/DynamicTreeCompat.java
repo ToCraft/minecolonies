@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class DynamicTreeCompat extends DynamicTreeProxy
-{
+public final class DynamicTreeCompat extends DynamicTreeProxy {
 
     private static DynamicTreeCompat instance = new DynamicTreeCompat();
 
@@ -25,8 +24,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
 
     private static final Map<ResourceKey<Level>, FakePlayer> fakePlayers = new HashMap<>();
 
-    public DynamicTreeCompat()
-    {
+    public DynamicTreeCompat() {
         /*
          * Intentionally left empty.
          */
@@ -38,8 +36,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true
      */
     @Override
-    public boolean isDynamicTreePresent()
-    {
+    public boolean isDynamicTreePresent() {
         return true;
     }
 
@@ -48,8 +45,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      *
      * @return true or false
      */
-    public static boolean isDynTreePresent()
-    {
+    public static boolean isDynTreePresent() {
         return instance.isDynamicTreePresent();
     }
 
@@ -59,8 +55,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param block Block to check
      */
     @Override
-    public boolean checkForDynamicTreeBlock(@NotNull final Block block)
-    {
+    public boolean checkForDynamicTreeBlock(@NotNull final Block block) {
         return false;
         //return block instanceof BranchBlock;
     }
@@ -71,8 +66,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param block Block to check
      * @return true if so.
      */
-    public static boolean isDynamicTreeBlock(final Block block)
-    {
+    public static boolean isDynamicTreeBlock(final Block block) {
         return instance.checkForDynamicTreeBlock(block);
     }
 
@@ -82,8 +76,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param block Block to check
      */
     @Override
-    public boolean checkForDynamicLeavesBlock(final Block block)
-    {
+    public boolean checkForDynamicLeavesBlock(final Block block) {
         return false;
         //return block instanceof DynamicLeavesBlock;
     }
@@ -94,8 +87,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param block Block to check
      * @return true if so.
      */
-    public static boolean isDynamicLeavesBlock(final Block block)
-    {
+    public static boolean isDynamicLeavesBlock(final Block block) {
         return instance.checkForDynamicLeavesBlock(block);
     }
 
@@ -106,8 +98,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true if it is a shell block.
      */
     @Override
-    public boolean checkForDynamicTrunkShellBlock(final Block block)
-    {
+    public boolean checkForDynamicTrunkShellBlock(final Block block) {
         return false;
         //return block instanceof TrunkShellBlock;
     }
@@ -118,8 +109,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param block the block to check
      * @return true if it is a shell block.
      */
-    public static boolean isDynamicTrunkShellBlock(final Block block)
-    {
+    public static boolean isDynamicTrunkShellBlock(final Block block) {
         return instance.checkForDynamicTrunkShellBlock(block);
     }
 
@@ -134,12 +124,11 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      */
     @Override
     public NonNullList<ItemStack> getDropsForLeaf(
-      final LevelAccessor world,
-      final BlockPos pos,
-      final BlockState blockstate,
-      final int fortune,
-      final Block leaf)
-    {
+            final LevelAccessor world,
+            final BlockPos pos,
+            final BlockState blockstate,
+            final int fortune,
+            final Block leaf) {
         /*if (isDynamicLeavesBlock(leaf))
         {
             ItemStack stack = ((DynamicLeavesBlock) leaf).getFamily(blockState, world, pos).getCommonSpecies().getSeedStack(1);
@@ -160,8 +149,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param leaf       The leaf to check
      * @return the list of drops.
      */
-    public static NonNullList<ItemStack> getDropsForLeafCompat(final LevelAccessor world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
-    {
+    public static NonNullList<ItemStack> getDropsForLeafCompat(final LevelAccessor world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf) {
         return instance.getDropsForLeaf(world, pos, blockState, fortune, leaf);
     }
 
@@ -171,8 +159,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param item Item to check
      */
     @Override
-    public boolean checkForDynamicSapling(@NotNull final Item item)
-    {
+    public boolean checkForDynamicSapling(@NotNull final Item item) {
         return false;
         //return item instanceof Seed;
     }
@@ -183,8 +170,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param item Item to check
      * @return true if so.
      */
-    public static boolean isDynamicTreeSapling(final Item item)
-    {
+    public static boolean isDynamicTreeSapling(final Item item) {
         return instance.checkForDynamicSapling(item);
     }
 
@@ -194,8 +180,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param stack Itemstack to check
      * @return true if it is a dynamic Sapling
      */
-    public static boolean isDynamicTreeSapling(final ItemStack stack)
-    {
+    public static boolean isDynamicTreeSapling(final ItemStack stack) {
         return instance.checkForDynamicSapling(stack.getItem());
     }
 
@@ -209,8 +194,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return Runnable to break the Tree
      */
     @Override
-    public Runnable getTreeBreakActionCompat(@NotNull final Level world, @NotNull final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos)
-    {
+    public Runnable getTreeBreakActionCompat(@NotNull final Level world, @NotNull final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos) {
         return () ->
         {
             /*final BlockState curBlockState = world.getBlockState(blockToBreak);
@@ -255,8 +239,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param workerPos    The position the fakeplayer breaks the tree from, optional
      * @return Runnable to break the Tree
      */
-    public static Runnable getTreeBreakAction(final Level world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos)
-    {
+    public static Runnable getTreeBreakAction(final Level world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos) {
         return instance.getTreeBreakActionCompat(world, blockToBreak, toolToUse, workerPos);
     }
 
@@ -269,8 +252,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true if successful
      */
     @Override
-    public boolean plantDynamicSaplingCompat(@NotNull final Level world, @NotNull final BlockPos location, @NotNull final ItemStack saplingStack)
-    {
+    public boolean plantDynamicSaplingCompat(@NotNull final Level world, @NotNull final BlockPos location, @NotNull final ItemStack saplingStack) {
         /*if (saplingStack.getItem() instanceof Seed)
         {
             return ((Seed) saplingStack.getItem()).getSpecies().plantSapling(world, location, false);
@@ -289,8 +271,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param sapling  Itemstack of the sapling
      * @return true if successful
      */
-    public static boolean plantDynamicSapling(final Level world, final BlockPos location, final ItemStack sapling)
-    {
+    public static boolean plantDynamicSapling(final Level world, final BlockPos location, final ItemStack sapling) {
         return instance.plantDynamicSaplingCompat(world, location, sapling);
     }
 
@@ -300,8 +281,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return damageType
      */
     @Override
-    public ResourceKey<DamageType> getDynamicTreeDamage()
-    {
+    public ResourceKey<DamageType> getDynamicTreeDamage() {
         return null;
     }
 
@@ -313,8 +293,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true when same family
      */
     @Override
-    public boolean hasFittingTreeFamilyCompat(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final LevelAccessor world)
-    {
+    public boolean hasFittingTreeFamilyCompat(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final LevelAccessor world) {
         /*Family fam1 = getFamilyForBlock(block1, world);
         Family fam2 = getFamilyForBlock(block2, world);
 
@@ -355,8 +334,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param world  the world.
      * @return true when same family
      */
-    public static boolean hasFittingTreeFamily(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final LevelAccessor world)
-    {
+    public static boolean hasFittingTreeFamily(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final LevelAccessor world) {
         return instance.hasFittingTreeFamilyCompat(block1, block2, world);
     }
 }

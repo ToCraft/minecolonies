@@ -18,65 +18,55 @@ import static com.minecolonies.api.research.util.ResearchConstants.DRUID_USE_POT
  * Druid AI class, which deals with equipment and movement specifics
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuildingGuards>
-{
+public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuildingGuards> {
     /**
      * Potion meta data.
      */
     public static final String RENDER_META_POTION = "potion";
 
-    public EntityAIDruid(@NotNull final JobDruid job)
-    {
+    public EntityAIDruid(@NotNull final JobDruid job) {
         super(job);
         new DruidCombatAI((EntityCitizen) worker, getStateAI(), this);
     }
 
     @Override
-    protected void updateRenderMetaData()
-    {
+    protected void updateRenderMetaData() {
         String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
-        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.POTION))
-        {
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.POTION)) {
             renderMeta += RENDER_META_POTION;
         }
         worker.setRenderMetadata(renderMeta);
     }
 
     @Override
-    protected void atBuildingActions()
-    {
+    protected void atBuildingActions() {
         super.atBuildingActions();
 
-        if (worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0)
-        {
+        if (worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0) {
             // Mistletoes and water bottles
             InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(building,
-              item -> item.getItem() == ModItems.magicpotion,
-              32,
-              worker.getInventoryCitizen());
+                    item -> item.getItem() == ModItems.magicpotion,
+                    32,
+                    worker.getInventoryCitizen());
 
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() == ModItems.magicpotion) < 8)
-            {
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() == ModItems.magicpotion) < 8) {
                 checkIfRequestForItemExistOrCreateAsync(new ItemStack(ModItems.magicpotion), 16, 8);
             }
         }
     }
 
     @Override
-    public void guardMovement()
-    {
-        if (worker.getRandom().nextInt(3) < 1)
-        {
+    public void guardMovement() {
+        if (worker.getRandom().nextInt(3) < 1) {
             worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 3);
             return;
         }
 
-        if (worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 10) || Math.abs(buildingGuards.getGuardPos().getY() - worker.blockPosition().getY()) > 3)
-        {
+        if (worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 10) || Math.abs(buildingGuards.getGuardPos().getY() - worker.blockPosition().getY()) > 3) {
             // Moves the druid randomly to close edges, for better vision to mobs
             ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobWalkRandomEdge(world, buildingGuards.getGuardPos(), 20, worker),
-              null,
-              1.0, true);
+                    null,
+                    1.0, true);
         }
     }
 }

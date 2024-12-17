@@ -23,63 +23,58 @@ import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
  * An ingredient that can be used in a vanilla recipe to match food items.
  * Only items with at least *some* healing and saturation are counted, and
  * further restrictions can be imposed if desired.
- *
+ * <p>
  * // any food item at all
  * {
- *     "type": "minecolonies:food"
+ * "type": "minecolonies:food"
  * }
- *
+ * <p>
  * // any food with at least 4 healing points (inclusive)
  * {
- *     "type": "minecolonies:food",
- *     "min-healing": 4
+ * "type": "minecolonies:food",
+ * "min-healing": 4
  * }
- *
+ * <p>
  * // any food with less than 1.0 saturation points (not including 1.0 itself)
  * {
- *     "type": "minecolonies:food",
- *     "max-saturation": 1.0
+ * "type": "minecolonies:food",
+ * "max-saturation": 1.0
  * }
- *
+ * <p>
  * Conditions can also be combined.
  * Min bounds are inclusive and max bounds are exclusive.
  *
- * @param minHealing minimum healing value
- * @param maxHealing maximum healing value
+ * @param minHealing    minimum healing value
+ * @param maxHealing    maximum healing value
  * @param minSaturation minimum saturation value
  * @param maxSaturation maximum saturation value
  */
 public record FoodIngredient(@NotNull Optional<Integer> minHealing,
                              @NotNull Optional<Integer> maxHealing,
                              @NotNull Optional<Float> minSaturation,
-                             @NotNull Optional<Float> maxSaturation) implements ICustomIngredient
-{
+                             @NotNull Optional<Float> maxSaturation) implements ICustomIngredient {
     public static final MapCodec<FoodIngredient> CODEC = RecordCodecBuilder.mapCodec(builder -> builder
-        .group(Codec.INT.optionalFieldOf("min-healing").forGetter(FoodIngredient::minHealing),
-               Codec.INT.optionalFieldOf("max-healing").forGetter(FoodIngredient::maxHealing),
-               Codec.FLOAT.optionalFieldOf("min-saturation").forGetter(FoodIngredient::minSaturation),
-               Codec.FLOAT.optionalFieldOf("max-saturation").forGetter(FoodIngredient::maxSaturation))
-        .apply(builder, FoodIngredient::new));
+            .group(Codec.INT.optionalFieldOf("min-healing").forGetter(FoodIngredient::minHealing),
+                    Codec.INT.optionalFieldOf("max-healing").forGetter(FoodIngredient::maxHealing),
+                    Codec.FLOAT.optionalFieldOf("min-saturation").forGetter(FoodIngredient::minSaturation),
+                    Codec.FLOAT.optionalFieldOf("max-saturation").forGetter(FoodIngredient::maxSaturation))
+            .apply(builder, FoodIngredient::new));
 
-    public static Builder builder()
-    {
+    public static Builder builder() {
         return new Builder();
     }
 
-    private boolean matchesFood(@NotNull final ItemStack stack)
-    {
+    private boolean matchesFood(@NotNull final ItemStack stack) {
         @NotNull final FoodProperties food = Objects.requireNonNull(stack.getItem().getFoodProperties(stack, null));
         return minHealing.map(healing -> food.nutrition() >= healing).orElse(true) &&
-               maxHealing.map(healing -> food.nutrition() < healing).orElse(true) &&
-               minSaturation.map(saturation -> food.saturation() >= saturation).orElse(true) &&
-               maxSaturation.map(saturation -> food.saturation() < saturation).orElse(true);
+                maxHealing.map(healing -> food.nutrition() < healing).orElse(true) &&
+                minSaturation.map(saturation -> food.saturation() >= saturation).orElse(true) &&
+                maxSaturation.map(saturation -> food.saturation() < saturation).orElse(true);
     }
 
     @Override
-    public boolean test(@Nullable final ItemStack stack)
-    {
-        if (stack == null)
-        {
+    public boolean test(@Nullable final ItemStack stack) {
+        if (stack == null) {
             return false;
         }
 
@@ -88,44 +83,53 @@ public record FoodIngredient(@NotNull Optional<Integer> minHealing,
 
     @NotNull
     @Override
-    public Stream<ItemStack> getItems()
-    {
+    public Stream<ItemStack> getItems() {
         return BuiltInRegistries.ITEM.stream()
                 .map(ItemStack::new)
                 .filter(this::test);
     }
 
     @Override
-    public boolean isSimple()
-    {
+    public boolean isSimple() {
         return true;
     }
 
     @NotNull
     @Override
-    public IngredientType<?> getType()
-    {
+    public IngredientType<?> getType() {
         return ModIngredientTypeInitializer.FOOD_INGREDIENT_TYPE.get();
     }
 
-    public static class Builder
-    {
+    public static class Builder {
         private Optional<Integer> minHealing = Optional.empty();
         private Optional<Integer> maxHealing = Optional.empty();
         private Optional<Float> minSaturation = Optional.empty();
         private Optional<Float> maxSaturation = Optional.empty();
 
-        private Builder()
-        {
+        private Builder() {
         }
 
-        public Builder minHealing(final int healing) { minHealing = Optional.of(healing); return this; }
-        public Builder maxHealing(final int healing) { maxHealing = Optional.of(healing); return this; }
-        public Builder minSaturation(final float saturation) { minSaturation = Optional.of(saturation); return this; }
-        public Builder maxSaturation(final float saturation) { maxSaturation = Optional.of(saturation); return this; }
+        public Builder minHealing(final int healing) {
+            minHealing = Optional.of(healing);
+            return this;
+        }
 
-        public Ingredient build()
-        {
+        public Builder maxHealing(final int healing) {
+            maxHealing = Optional.of(healing);
+            return this;
+        }
+
+        public Builder minSaturation(final float saturation) {
+            minSaturation = Optional.of(saturation);
+            return this;
+        }
+
+        public Builder maxSaturation(final float saturation) {
+            maxSaturation = Optional.of(saturation);
+            return this;
+        }
+
+        public Ingredient build() {
             return new FoodIngredient(minHealing, maxHealing, minSaturation, maxSaturation).toVanilla();
         }
     }

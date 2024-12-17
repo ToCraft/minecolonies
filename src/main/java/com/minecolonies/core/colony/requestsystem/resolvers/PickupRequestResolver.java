@@ -20,27 +20,22 @@ import org.jetbrains.annotations.NotNull;
  * There is a tiny bit of (known) code-smell in here, since this resolver should either be global or specific to a hut. Currently, it is a hut-specific resolver that acts as if it
  * were global. The performance impact is negligible though.
  */
-public class PickupRequestResolver extends DeliverymenRequestResolver<Pickup>
-{
+public class PickupRequestResolver extends DeliverymenRequestResolver<Pickup> {
     public PickupRequestResolver(
-      @NotNull final ILocation location,
-      @NotNull final IToken<?> token)
-    {
+            @NotNull final ILocation location,
+            @NotNull final IToken<?> token) {
         super(location, token);
     }
 
     @Override
-    public int getSuitabilityMetric(final @NotNull IRequestManager manager, final @NotNull IRequest<? extends Pickup> request)
-    {
+    public int getSuitabilityMetric(final @NotNull IRequestManager manager, final @NotNull IRequest<? extends Pickup> request) {
         return (int) BlockPosUtil.getDistance(request.getRequester().getLocation().getInDimensionLocation(), getLocation().getInDimensionLocation());
     }
 
     @Override
-    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends Pickup> requestToCheck)
-    {
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends Pickup> requestToCheck) {
         final IWareHouse wareHouse = manager.getColony().getBuildingManager().getBuilding(getLocation().getInDimensionLocation(), IWareHouse.class);
-        if (wareHouse == null)
-        {
+        if (wareHouse == null) {
             return false;
         }
 
@@ -49,8 +44,7 @@ public class PickupRequestResolver extends DeliverymenRequestResolver<Pickup>
 
 
     @Override
-    public TypeToken<? extends Pickup> getRequestType()
-    {
+    public TypeToken<? extends Pickup> getRequestType() {
         return TypeConstants.PICKUP;
     }
 }

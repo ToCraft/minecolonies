@@ -20,11 +20,10 @@ import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
-
 import net.minecraft.core.HolderLookup;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,8 +35,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOTAL_STAGE
 /**
  * The structureBuilder building.
  */
-public class BuildingResourcesModule extends AbstractBuildingModule implements IPersistentModule
-{
+public class BuildingResourcesModule extends AbstractBuildingModule implements IPersistentModule {
     /**
      * Contains all resources needed for a certain build.
      */
@@ -51,19 +49,17 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     /**
      * Total amount of stages.
      */
-    private int totalStages  = 0;
+    private int totalStages = 0;
     private int currentStage = 0;
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         currentStage = compound.getInt(TAG_CURR_STAGE);
         totalStages = compound.getInt(TAG_TOTAL_STAGES);
     }
 
     @Override
-    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-    {
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
         compound.putInt(TAG_TOTAL_STAGES, totalStages);
         compound.putInt(TAG_CURR_STAGE, currentStage);
     }
@@ -74,13 +70,11 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf) {
         updateAvailableResources();
         buf.writeInt(neededResources.size());
         double qty = 0;
-        for (@NotNull final BuildingBuilderResource resource : neededResources.values())
-        {
+        for (@NotNull final BuildingBuilderResource resource : neededResources.values()) {
             Utils.serializeCodecMess(buf, resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
@@ -89,12 +83,10 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
 
         final Set<ICitizenData> set = building.getAllAssignedCitizen();
         final ICitizenData data = set.isEmpty() ? null : set.iterator().next();
-        if (data != null && data.getJob() instanceof AbstractJobStructure)
-        {
+        if (data != null && data.getJob() instanceof AbstractJobStructure) {
             final AbstractJobStructure<?, ?> structureBuilderJob = (AbstractJobStructure<?, ?>) data.getJob();
             final IWorkOrder workOrder = structureBuilderJob.getWorkOrder();
-            if (workOrder != null)
-            {
+            if (workOrder != null) {
                 buf.writeInt(workOrder.getID());
                 buf.writeDouble(workOrder.getAmountOfResources() == 0 ? 0 : qty / workOrder.getAmountOfResources());
                 buf.writeInt(totalStages);
@@ -114,45 +106,37 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      * <p>
      * which are needed for the build and in the structureBuilder's chest or inventory
      */
-    private void updateAvailableResources()
-    {
+    private void updateAvailableResources() {
         final Set<ICitizenData> set = building.getAllAssignedCitizen();
         final ICitizenData data = set.isEmpty() ? null : set.iterator().next();
-        if (data == null)
-        {
+        if (data == null) {
             return;
         }
         data.getEntity().ifPresent(structureBuilder -> {
             final InventoryCitizen structureBuilderInventory = data.getInventory();
-            if (structureBuilderInventory == null)
-            {
+            if (structureBuilderInventory == null) {
                 return;
             }
 
-            for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
-            {
+            for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet()) {
                 final BuildingBuilderResource resource = entry.getValue();
 
                 resource.setAvailable(0);
 
-                if (structureBuilderInventory != null)
-                {
+                if (structureBuilderInventory != null) {
                     resource.addAvailable(InventoryUtils.getItemCountInItemHandler(structureBuilderInventory,
-                      stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
+                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
-                if (building.getTileEntity() != null)
-                {
+                if (building.getTileEntity() != null) {
                     resource.addAvailable(InventoryUtils.getItemCountInItemHandler(building.getItemHandlerCap(),
-                      stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
+                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
-                if (data.getJob() instanceof final IJobWithExternalWorkStations jobExternalStations)
-                {
-                    for (final IBuilding station : jobExternalStations.getWorkStations())
-                    {
+                if (data.getJob() instanceof final IJobWithExternalWorkStations jobExternalStations) {
+                    for (final IBuilding station : jobExternalStations.getWorkStations()) {
                         resource.addAvailable(InventoryUtils.getItemCountInItemHandler(station.getItemHandlerCap(),
-                          stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
+                                stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                     }
                 }
             }
@@ -164,8 +148,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      *
      * @return a new Hashmap.
      */
-    public Map<String, BuildingBuilderResource> getNeededResources()
-    {
+    public Map<String, BuildingBuilderResource> getNeededResources() {
         return new HashMap<>(neededResources);
     }
 
@@ -175,10 +158,9 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      * @return the bucket.
      */
     @Nullable
-    public BuilderBucket getRequiredResources()
-    {
+    public BuilderBucket getRequiredResources() {
         return (buckets.isEmpty() || ((AbstractBuildingStructureBuilder) building).getProgress() == null
-                  || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingStructureHandler.Stage.CLEAR) ? null : buckets.getFirst();
+                || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingStructureHandler.Stage.CLEAR) ? null : buckets.getFirst();
     }
 
     /**
@@ -187,8 +169,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      * @param res the resource to get.
      * @return the resource.
      */
-    public BuildingBuilderResource getResourceFromIdentifier(final String res)
-    {
+    public BuildingBuilderResource getResourceFromIdentifier(final String res) {
         return neededResources.get(res);
     }
 
@@ -198,21 +179,16 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      * @param res    the resource.
      * @param amount the amount.
      */
-    public void addNeededResource(@Nullable final ItemStack res, final int amount)
-    {
-        if (ItemStackUtils.isEmpty(res) || amount == 0)
-        {
+    public void addNeededResource(@Nullable final ItemStack res, final int amount) {
+        if (ItemStackUtils.isEmpty(res) || amount == 0) {
             return;
         }
         final int hashCode = res.getComponentsPatch().hashCode();
         final String key = res.getDescriptionId() + "-" + hashCode;
         BuildingBuilderResource resource = this.neededResources.get(key);
-        if (resource == null)
-        {
+        if (resource == null) {
             resource = new BuildingBuilderResource(res, amount);
-        }
-        else
-        {
+        } else {
             resource.setAmount(resource.getAmount() + amount);
         }
         this.neededResources.put(key, resource);
@@ -222,10 +198,8 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
         final int stacks = (int) Math.ceil((double) amount / res.getMaxStackSize());
         final int max = building.getAllAssignedCitizen().iterator().next().getInventory().getSlots() - 9;
 
-        if (last == null || last.getTotalStacks() >= max || last.getTotalStacks() + stacks >= max)
-        {
-            if (last != null)
-            {
+        if (last == null || last.getTotalStacks() >= max || last.getTotalStacks() + stacks >= max) {
+            if (last != null) {
                 buckets.add(last);
             }
             last = new BuilderBucket();
@@ -233,9 +207,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             last.setTotalStacks(stacks);
             last.addOrAdjustResource(key, amount);
             buckets.add(last);
-        }
-        else
-        {
+        } else {
             int currentQty = last.getResourceMap().getOrDefault(key, 0);
             final int currentStacks = (int) Math.ceil((double) currentQty / res.getMaxStackSize());
             final int newStacks = (int) Math.ceil((double) (currentQty + amount) / res.getMaxStackSize());
@@ -254,47 +226,36 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      * @param res    the resource.
      * @param amount the amount.
      */
-    public void reduceNeededResource(final ItemStack res, final int amount)
-    {
+    public void reduceNeededResource(final ItemStack res, final int amount) {
         final int hashCode = res.getComponentsPatch().hashCode();
         final String name = res.getDescriptionId() + "-" + hashCode;
 
         final BuilderBucket last = buckets.isEmpty() ? null : getRequiredResources();
 
-        if (last != null)
-        {
+        if (last != null) {
             final Map<String, Integer> map = last.getResourceMap();
-            if (map.containsKey(name))
-            {
+            if (map.containsKey(name)) {
                 int qty = map.get(name) - amount;
-                if (qty > 0)
-                {
+                if (qty > 0) {
                     last.addOrAdjustResource(name, map.get(name) - amount);
-                }
-                else
-                {
+                } else {
                     last.removeResources(name);
                 }
             }
 
-            if (map.isEmpty())
-            {
+            if (map.isEmpty()) {
                 buckets.remove();
             }
         }
 
         int preAmount = 0;
-        if (this.neededResources.containsKey(name))
-        {
+        if (this.neededResources.containsKey(name)) {
             preAmount = this.neededResources.get(name).getAmount();
         }
 
-        if (preAmount - amount <= 0)
-        {
+        if (preAmount - amount <= 0) {
             this.neededResources.remove(name);
-        }
-        else
-        {
+        } else {
             this.neededResources.get(name).setAmount(preAmount - amount);
         }
         this.markDirty();
@@ -303,8 +264,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     /**
      * Resets the needed resources completely.
      */
-    public void resetNeededResources()
-    {
+    public void resetNeededResources() {
         neededResources = new HashMap<>();
         buckets.clear();
         this.markDirty();
@@ -316,8 +276,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      * @param stack the stack to test.
      * @return true if so.
      */
-    public boolean requiresResourceForBuilding(final ItemStack stack)
-    {
+    public boolean requiresResourceForBuilding(final ItemStack stack) {
         final int hashCode = stack.getComponentsPatch().hashCode();
         return neededResources.containsKey(stack.getDescriptionId() + "-" + hashCode);
     }
@@ -329,42 +288,34 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      * @param requiredResources the bucket to check and request.
      * @param worker            the worker.
      */
-    public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker)
-    {
-        if (requiredResources == null)
-        {
+    public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker) {
+        if (requiredResources == null) {
             return;
         }
 
         resourceloop:
-        for (final Map.Entry<String, Integer> entry : requiredResources.getResourceMap().entrySet())
-        {
+        for (final Map.Entry<String, Integer> entry : requiredResources.getResourceMap().entrySet()) {
             final ItemStorage itemStack = neededResources.get(entry.getKey());
-            if (itemStack == null)
-            {
+            if (itemStack == null) {
                 continue;
             }
 
             int count = InventoryUtils.hasBuildingEnoughElseCount(building,
-              stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()), entry.getValue());
+                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()), entry.getValue());
 
-            if (count >= entry.getValue())
-            {
+            if (count >= entry.getValue()) {
                 continue;
             }
 
             count += InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
-            if (count >= entry.getValue())
-            {
+            if (count >= entry.getValue()) {
                 continue;
             }
 
             int requestCount = entry.getValue() - count;
             final ImmutableList<IRequest<? extends Stack>> list = building.getOpenRequestsOfType(worker.getId(), TypeToken.of(Stack.class));
-            for (final IRequest<? extends Stack> request : list)
-            {
-                if (ItemStackUtils.compareItemStacksIgnoreStackSize(request.getRequest().getStack(), itemStack.getItemStack()))
-                {
+            for (final IRequest<? extends Stack> request : list) {
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(request.getRequest().getStack(), itemStack.getItemStack())) {
                     continue resourceloop;
                 }
             }
@@ -376,10 +327,8 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     /**
      * Go to the next stage.
      */
-    public void nextStage()
-    {
-        if (this.currentStage + 1 > totalStages)
-        {
+    public void nextStage() {
+        if (this.currentStage + 1 > totalStages) {
             totalStages++;
         }
         this.currentStage++;
@@ -390,8 +339,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      *
      * @param total the total.
      */
-    public void setTotalStages(final int total)
-    {
+    public void setTotalStages(final int total) {
         this.totalStages = total;
         this.currentStage = 0;
     }
@@ -402,16 +350,13 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      * @return the next bucket or a tuple with null inside if non available.
      */
     @Nullable
-    public BuilderBucket getNextBucket()
-    {
+    public BuilderBucket getNextBucket() {
         final Iterator<BuilderBucket> iterator = buckets.iterator();
-        if (iterator.hasNext())
-        {
+        if (iterator.hasNext()) {
             iterator.next();
         }
 
-        if (iterator.hasNext())
-        {
+        if (iterator.hasNext()) {
             return iterator.next();
         }
         return null;

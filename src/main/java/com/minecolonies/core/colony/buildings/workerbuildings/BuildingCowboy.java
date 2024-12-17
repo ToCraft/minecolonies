@@ -40,8 +40,7 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 /**
  * Creates a new building for the Cowboy.
  */
-public class BuildingCowboy extends AbstractBuilding
-{
+public class BuildingCowboy extends AbstractBuilding {
     /**
      * Description of the job executed in the hut.
      */
@@ -60,7 +59,7 @@ public class BuildingCowboy extends AbstractBuilding
     /**
      * Milking amount setting.
      */
-    public static final ISettingKey<IntSetting> MILKING_AMOUNT  = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "milking_amount"));
+    public static final ISettingKey<IntSetting> MILKING_AMOUNT = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "milking_amount"));
 
     /**
      * Stewing amount setting.
@@ -70,12 +69,12 @@ public class BuildingCowboy extends AbstractBuilding
     /**
      * Milking days setting.
      */
-    public static final ISettingKey<IntSetting> MILKING_DAYS  = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "milking_days"));
+    public static final ISettingKey<IntSetting> MILKING_DAYS = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "milking_days"));
 
     /**
      * Milking days setting.
      */
-    public static final ISettingKey<StringSetting> MILK_ITEM  = new SettingKey<>(StringSetting.class, new ResourceLocation(MOD_ID, "milk_item"));
+    public static final ISettingKey<StringSetting> MILK_ITEM = new SettingKey<>(StringSetting.class, new ResourceLocation(MOD_ID, "milk_item"));
 
 
     /**
@@ -84,29 +83,24 @@ public class BuildingCowboy extends AbstractBuilding
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingCowboy(final IColony c, final BlockPos l)
-    {
+    public BuildingCowboy(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return COWBOY;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return MAX_BUILDING_LEVEL;
     }
 
     @Override
-    public boolean canEat(final ItemStack stack)
-    {
-        if (stack.getItem() == Items.WHEAT)
-        {
+    public boolean canEat(final ItemStack stack) {
+        if (stack.getItem() == Items.WHEAT) {
             return false;
         }
         return super.canEat(stack);
@@ -114,12 +108,11 @@ public class BuildingCowboy extends AbstractBuilding
 
     /**
      * Get the milking input item.
+     *
      * @return the input item.
      */
-    public ItemStack getMilkInputItem()
-    {
-        if (getSetting(MILK_ITEM).getValue().equals(ModItems.large_milk_bottle.getDescriptionId()))
-        {
+    public ItemStack getMilkInputItem() {
+        if (getSetting(MILK_ITEM).getValue().equals(ModItems.large_milk_bottle.getDescriptionId())) {
             return ModItems.large_empty_bottle.getDefaultInstance();
         }
         return Items.BUCKET.getDefaultInstance();
@@ -127,12 +120,11 @@ public class BuildingCowboy extends AbstractBuilding
 
     /**
      * Get the milking output item.
+     *
      * @return the output item.
      */
-    public ItemStack getMilkOutputItem()
-    {
-        if (getSetting(MILK_ITEM).getValue().equals(ModItems.large_milk_bottle.getDescriptionId()))
-        {
+    public ItemStack getMilkOutputItem() {
+        if (getSetting(MILK_ITEM).getValue().equals(ModItems.large_milk_bottle.getDescriptionId())) {
             return ModItems.large_milk_bottle.getDefaultInstance();
         }
         return Items.MILK_BUCKET.getDefaultInstance();
@@ -141,59 +133,49 @@ public class BuildingCowboy extends AbstractBuilding
     /**
      * Cow (and Mooshroom) herding module
      */
-    public static class HerdingModule extends AnimalHerdingModule implements IBuildingEventsModule, IHasRequiredItemsModule, IPersistentModule
-    {
+    public static class HerdingModule extends AnimalHerdingModule implements IBuildingEventsModule, IHasRequiredItemsModule, IPersistentModule {
         private int currentMilk;
         private int currentStew;
         private int currentMilkDays;
 
-        public HerdingModule()
-        {
+        public HerdingModule() {
             super(ModJobs.cowboy.get(), a -> a instanceof Cow, new ItemStack(Items.WHEAT, 2));
         }
 
         @Override
-        public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
-        {
+        public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount() {
             final int days = Math.max(1, getBuilding().getSetting(MILKING_DAYS).getValue());
             final int bucketsToKeep = (int) Math.ceil(2D * getBuilding().getSetting(MILKING_AMOUNT).getValue() / days);
             final int bowlsToKeep = (int) Math.ceil(2D * getBuilding().getSetting(STEWING_AMOUNT).getValue() / days);
 
             final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
-            if (bucketsToKeep > 0)
-            {
+            if (bucketsToKeep > 0) {
                 requiredItems.put(s -> s.is(Items.BUCKET), new Tuple<>(bucketsToKeep, false));
             }
-            if (bowlsToKeep > 0)
-            {
+            if (bowlsToKeep > 0) {
                 requiredItems.put(s -> s.is(Items.BOWL), new Tuple<>(bowlsToKeep, false));
             }
             return requiredItems;
         }
 
         @Override
-        public Map<ItemStorage, Integer> reservedStacksExcluding(@Nullable IRequest<? extends IDeliverable> excluded)
-        {
+        public Map<ItemStorage, Integer> reservedStacksExcluding(@Nullable IRequest<? extends IDeliverable> excluded) {
             return Collections.emptyMap();
         }
 
         @NotNull
         @Override
-        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal)
-        {
+        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull Animal animal) {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
 
-            if (animal instanceof MushroomCow)
-            {
+            if (animal instanceof MushroomCow) {
                 recipes.add(new GenericRecipe(null,
                         new ItemStack(Items.MUSHROOM_STEW),                                                 // output
                         Collections.singletonList(new ItemStack(Items.SUSPICIOUS_STEW)),                    // alt output
                         Collections.emptyList(),                                                            // extra output
                         Collections.singletonList(Collections.singletonList(new ItemStack(Items.BOWL))),    // input
                         1, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal.getType(), Collections.emptyList(), 0));
-            }
-            else if (animal instanceof Cow)
-            {
+            } else if (animal instanceof Cow) {
                 recipes.add(new GenericRecipe(null,
                         new ItemStack(Items.MILK_BUCKET),                                                   // output
                         Collections.emptyList(),                                                            // alt output
@@ -212,28 +194,24 @@ public class BuildingCowboy extends AbstractBuilding
         }
 
         @Override
-        public void serializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compound)
-        {
+        public void serializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compound) {
             compound.putInt("milkValue", currentMilk);
             compound.putInt("stewValue", currentStew);
             compound.putInt("milkDays", currentMilkDays);
         }
 
         @Override
-        public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
-        {
+        public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound) {
             this.currentMilk = compound.getInt("milkValue");
             this.currentStew = compound.getInt("stewValue");
             this.currentMilkDays = compound.getInt("milkDays");
         }
 
         @Override
-        public void onWakeUp()
-        {
+        public void onWakeUp() {
             ++this.currentMilkDays;
 
-            if (this.currentMilkDays >= getBuilding().getSetting(MILKING_DAYS).getValue())
-            {
+            if (this.currentMilkDays >= getBuilding().getSetting(MILKING_DAYS).getValue()) {
                 this.currentMilk = 0;
                 this.currentStew = 0;
                 this.currentMilkDays = 0;
@@ -243,32 +221,28 @@ public class BuildingCowboy extends AbstractBuilding
         /**
          * @return true if the cowboy should be allowed to try to milk (not yet reached limit)
          */
-        public boolean canTryToMilk()
-        {
+        public boolean canTryToMilk() {
             return this.currentMilk < getBuilding().getSetting(MILKING_AMOUNT).getValue();
         }
 
         /**
          * @return true if the cowboy should be allowed to try to collect stew (not yet reached limit)
          */
-        public boolean canTryToStew()
-        {
+        public boolean canTryToStew() {
             return this.currentStew < getBuilding().getSetting(STEWING_AMOUNT).getValue();
         }
 
         /**
          * Called to record successful milking.
          */
-        public void onMilked()
-        {
+        public void onMilked() {
             ++this.currentMilk;
         }
 
         /**
          * Called to record successful stewing.
          */
-        public void onStewed()
-        {
+        public void onStewed() {
             ++this.currentStew;
         }
     }

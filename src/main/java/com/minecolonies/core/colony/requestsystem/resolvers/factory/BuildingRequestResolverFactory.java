@@ -16,39 +16,35 @@ import org.jetbrains.annotations.NotNull;
 /**
  * ------------ Class not Documented ------------
  */
-public class BuildingRequestResolverFactory implements IRequestResolverFactory<BuildingRequestResolver>
-{
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN    = "Token";
+public class BuildingRequestResolverFactory implements IRequestResolverFactory<BuildingRequestResolver> {
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_TOKEN = "Token";
     private static final String NBT_LOCATION = "Location";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
     @Override
-    public TypeToken<? extends BuildingRequestResolver> getFactoryOutputType()
-    {
+    public TypeToken<? extends BuildingRequestResolver> getFactoryOutputType() {
         return TypeToken.of(BuildingRequestResolver.class);
     }
 
     @NotNull
     @Override
-    public TypeToken<? extends ILocation> getFactoryInputType()
-    {
+    public TypeToken<? extends ILocation> getFactoryInputType() {
         return TypeConstants.ILOCATION;
     }
 
     @NotNull
     @Override
     public BuildingRequestResolver getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final ILocation iLocation, @NotNull final Object... context)
-      throws IllegalArgumentException
-    {
+            throws IllegalArgumentException {
         return new BuildingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final BuildingRequestResolver buildingRequestResolver)
-    {
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final BuildingRequestResolver buildingRequestResolver) {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_TOKEN, controller.serializeTag(provider, buildingRequestResolver.getId()));
         compound.put(NBT_LOCATION, controller.serializeTag(provider, buildingRequestResolver.getLocation()));
@@ -57,8 +53,7 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
 
     @NotNull
     @Override
-    public BuildingRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
-    {
+    public BuildingRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) {
         final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserializeTag(provider, nbt.getCompound(NBT_LOCATION));
 
@@ -66,15 +61,13 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
     }
 
     @Override
-    public void serialize(IFactoryController controller, BuildingRequestResolver input, RegistryFriendlyByteBuf packetBuffer)
-    {
+    public void serialize(IFactoryController controller, BuildingRequestResolver input, RegistryFriendlyByteBuf packetBuffer) {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @Override
-    public BuildingRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
-    {
+    public BuildingRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 
@@ -82,8 +75,7 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
     }
 
     @Override
-    public short getSerializationId()
-    {
+    public short getSerializationId() {
         return SerializationIdentifierConstants.BUILDER_BASED_RESOLVER_ID;
     }
 }

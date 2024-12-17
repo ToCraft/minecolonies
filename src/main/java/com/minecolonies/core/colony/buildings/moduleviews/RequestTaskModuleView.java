@@ -15,35 +15,31 @@ import java.util.List;
 /**
  * Request task module to display tasks in the UI.
  */
-public abstract class RequestTaskModuleView extends AbstractBuildingModuleView
-{
+public abstract class RequestTaskModuleView extends AbstractBuildingModuleView {
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
 
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public BOWindow getWindow()
-    {
-        return new WindowHutRequestTaskModule(buildingView,Constants.MOD_ID + ":gui/layouthuts/layouttasklist.xml");
+    public BOWindow getWindow() {
+        return new WindowHutRequestTaskModule(buildingView, Constants.MOD_ID + ":gui/layouthuts/layouttasklist.xml");
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return "info";
     }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return "com.minecolonies.coremod.gui.workerhuts.crafter.tasks";
     }
 
     /**
      * Get the specific task list.
+     *
      * @return the task list.
      */
     public abstract List<IToken<?>> getTasks();

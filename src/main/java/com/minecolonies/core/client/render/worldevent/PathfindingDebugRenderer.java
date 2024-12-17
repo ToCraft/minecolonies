@@ -16,15 +16,14 @@ import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PathfindingDebugRenderer
-{
+public class PathfindingDebugRenderer {
     /**
      * Set of visited nodes.
      */
-    public static Set<MNode> lastDebugNodesVisited      = new HashSet<>();
+    public static Set<MNode> lastDebugNodesVisited = new HashSet<>();
     public static Set<MNode> lastDebugNodesVisitedLater = new HashSet<>();
-    public static Set<MNode> debugNodesOrgPath          = new HashSet<>();
-    public static Set<MNode> debugNodesExtra            = new HashSet<>();
+    public static Set<MNode> debugNodesOrgPath = new HashSet<>();
+    public static Set<MNode> debugNodesExtra = new HashSet<>();
 
     /**
      * Set of not visited nodes.
@@ -41,61 +40,46 @@ public class PathfindingDebugRenderer
      *
      * @param ctx rendering context
      */
-    static void render(final WorldEventContext ctx)
-    {
-        try
-        {
-            for (final MNode n : lastDebugNodesVisited)
-            {
+    static void render(final WorldEventContext ctx) {
+        try {
+            for (final MNode n : lastDebugNodesVisited) {
                 debugDrawNode(n, 0xffff0000, ctx);
             }
 
-            for (final MNode n : lastDebugNodesVisitedLater)
-            {
+            for (final MNode n : lastDebugNodesVisitedLater) {
                 debugDrawNode(n, 0xffff5050, ctx);
             }
 
-            for (final MNode n : debugNodesOrgPath)
-            {
+            for (final MNode n : debugNodesOrgPath) {
                 debugDrawNode(n, 0xff808080, ctx);
             }
 
-            for (final MNode n : debugNodesExtra)
-            {
+            for (final MNode n : debugNodesExtra) {
                 debugDrawNode(n, 0xff9999ff, ctx);
             }
 
-            for (final MNode n : lastDebugNodesNotVisited)
-            {
+            for (final MNode n : lastDebugNodesNotVisited) {
                 debugDrawNode(n, 0xff0000ff, ctx);
             }
 
-            for (final MNode n : lastDebugNodesPath)
-            {
-                if (n.isReachedByWorker())
-                {
+            for (final MNode n : lastDebugNodesPath) {
+                if (n.isReachedByWorker()) {
                     debugDrawNode(n, 0xffffff00, ctx);
-                }
-                else
-                {
+                } else {
                     debugDrawNode(n, 0xff00ff00, ctx);
                 }
             }
-        }
-        catch (final ConcurrentModificationException exc)
-        {
+        } catch (final ConcurrentModificationException exc) {
             Log.getLogger().catching(exc);
         }
     }
 
-    private static void debugDrawNode(final MNode n, final int argbColor, final WorldEventContext ctx)
-    {
+    private static void debugDrawNode(final MNode n, final int argbColor, final WorldEventContext ctx) {
         ctx.poseStack.pushPose();
         ctx.poseStack.translate(n.x + 0.375d - ctx.cameraPosition.x, n.y + 0.375d - ctx.cameraPosition.y, n.z + 0.375d - ctx.cameraPosition.z);
 
         final Entity entity = Minecraft.getInstance().getCameraEntity();
-        if (BlockPosUtil.distSqr(entity.blockPosition(), n.x, n.y, n.z) < 5d * 5d)
-        {
+        if (BlockPosUtil.distSqr(entity.blockPosition(), n.x, n.y, n.z) < 5d * 5d) {
             renderDebugText(n, ctx);
         }
 
@@ -103,8 +87,7 @@ public class PathfindingDebugRenderer
 
         ctx.renderBox(WorldEventContext.COLORED_TRIANGLES, BlockPos.ZERO, BlockPos.ZERO, argbColor);
 
-        if (n.parent != null)
-        {
+        if (n.parent != null) {
             final Matrix4f lineMatrix = ctx.poseStack.last().pose();
 
             final float pdx = n.parent.x - n.x + 0.125f;
@@ -120,8 +103,7 @@ public class PathfindingDebugRenderer
         ctx.poseStack.popPose();
     }
 
-    private static void renderDebugText(@NotNull final MNode n, final WorldEventContext ctx)
-    {
+    private static void renderDebugText(@NotNull final MNode n, final WorldEventContext ctx) {
         final Font fontrenderer = ctx.mc.font;
 
         final String s1 = String.format("C: %.1f", n.getCost());

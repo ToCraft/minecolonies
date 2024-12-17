@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Picks up the building block with the level.
  */
-public class BuildPickUpMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class BuildPickUpMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "build_pick_up", BuildPickUpMessage::new);
 
     /**
@@ -23,19 +22,16 @@ public class BuildPickUpMessage extends AbstractBuildingServerMessage<IBuilding>
      *
      * @param building the building we're executing on.
      */
-    public BuildPickUpMessage(@NotNull final IBuildingView building)
-    {
+    public BuildPickUpMessage(@NotNull final IBuildingView building) {
         super(TYPE, building);
     }
 
-    protected BuildPickUpMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected BuildPickUpMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
         building.pickUp(player);
     }
 }

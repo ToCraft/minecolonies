@@ -38,14 +38,12 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 /**
  * Datagen for Sifter
  */
-public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvider
-{
+public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvider {
     public static final String SIFTER = ModJobs.SIFTER_ID.getPath();
     private final Map<Item, List<SifterMeshDetails>> inputs = new HashMap<>();
 
     public DefaultSifterCraftingProvider(@NotNull final PackOutput packOutput,
-                                         @NotNull final CompletableFuture<HolderLookup.Provider> provider)
-    {
+                                         @NotNull final CompletableFuture<HolderLookup.Provider> provider) {
         super(packOutput, provider);
 
         inputs.put(Items.DIRT, Arrays.asList(
@@ -107,7 +105,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.ACACIA_SAPLING).setWeight(5))
                         ))
 
-                ));
+        ));
 
         inputs.put(Items.GRAVEL, Arrays.asList(
                 new SifterMeshDetails(ModItems.sifterMeshString, 1, LootTable.lootTable()
@@ -155,7 +153,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.DIAMOND).setWeight(2))
                         ))
 
-                ));
+        ));
 
         inputs.put(Items.SAND, Arrays.asList(
                 new SifterMeshDetails(ModItems.sifterMeshString, 1, LootTable.lootTable()
@@ -193,7 +191,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.COCOA_BEANS).setWeight(15))
                         ))
 
-                ));
+        ));
 
         inputs.put(Items.SOUL_SAND, Arrays.asList(
                 new SifterMeshDetails(ModItems.sifterMeshString, 1, LootTable.lootTable()
@@ -234,25 +232,22 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.PLAYER_HEAD).setWeight(5))
                         ))
 
-                ));
+        ));
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "SifterCraftingProvider";
     }
 
-    private static class SifterMeshDetails
-    {
+    private static class SifterMeshDetails {
         private final String name;
         private final Item mesh;
         private final int minBuildingLevel;
         private final LootTable.Builder lootTable;
 
-        public SifterMeshDetails(@NotNull final Item mesh, final int minBuildingLevel, @NotNull final LootTable.Builder lootTable)
-        {
+        public SifterMeshDetails(@NotNull final Item mesh, final int minBuildingLevel, @NotNull final LootTable.Builder lootTable) {
             this.name = BuiltInRegistries.ITEM.getKey(mesh).getPath().replace("sifter_mesh_", "");
             this.mesh = mesh;
             this.minBuildingLevel = minBuildingLevel;
@@ -260,24 +255,29 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
         }
 
         @NotNull
-        public String getName() { return name; }
+        public String getName() {
+            return name;
+        }
 
         @NotNull
-        public Item getMesh() { return mesh; }
+        public Item getMesh() {
+            return mesh;
+        }
 
-        public int getMinBuildingLevel() { return minBuildingLevel; }
+        public int getMinBuildingLevel() {
+            return minBuildingLevel;
+        }
 
         @NotNull
-        public LootTable.Builder getLootTable() { return lootTable; }
+        public LootTable.Builder getLootTable() {
+            return lootTable;
+        }
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
-    {
-        for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet())
-        {
-            for (final SifterMeshDetails mesh : inputEntry.getValue())
-            {
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer) {
+        for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet()) {
+            for (final SifterMeshDetails mesh : inputEntry.getValue()) {
                 final String name = mesh.getName() + "/" + BuiltInRegistries.ITEM.getKey(inputEntry.getKey()).getPath();
 
                 final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(provider, Holder.direct(mesh.getLootTable().build()));
@@ -310,8 +310,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                       @NotNull final ResourceLocation job,
                       @NotNull final ItemLike input,
                       @NotNull final ItemLike output,
-                      @NotNull final ResourceLocation research)
-    {
+                      @NotNull final ResourceLocation research) {
         recipe(job.getPath(), MODULE_CRAFTING, BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input))))
                 .result(new ItemStack(output))
@@ -322,14 +321,11 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
 
     @NotNull
     @Override
-    protected List<LootTableProvider.SubProviderEntry> registerTables()
-    {
+    protected List<LootTableProvider.SubProviderEntry> registerTables() {
         return List.of(new LootTableProvider.SubProviderEntry(provider -> builder ->
         {
-            for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet())
-            {
-                for (final SifterMeshDetails mesh : inputEntry.getValue())
-                {
+            for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet()) {
+                for (final SifterMeshDetails mesh : inputEntry.getValue()) {
                     final String name = mesh.getName() + "/" + BuiltInRegistries.ITEM.getKey(inputEntry.getKey()).getPath();
                     builder.accept(table(new ResourceLocation(MOD_ID, "recipes/" + name)), mesh.getLootTable());
                 }

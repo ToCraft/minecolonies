@@ -21,8 +21,7 @@ import java.util.List;
 /**
  * Base class for planter modules that determines how the AI should work specific fields.
  */
-public abstract class AbstractPlantationModule extends AbstractFieldModule implements IPlantationModule
-{
+public abstract class AbstractPlantationModule extends AbstractFieldModule implements IPlantationModule {
     /**
      * The default maximum amount of plants the field can have.
      */
@@ -52,8 +51,7 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
      * @param item     the item which is harvested.
      */
     protected AbstractPlantationModule(
-      final IField field, final String fieldTag, final String workTag, final Item item)
-    {
+            final IField field, final String fieldTag, final String workTag, final Item item) {
         super(field);
         this.fieldTag = fieldTag;
         this.workTag = workTag;
@@ -61,44 +59,36 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
     }
 
     @Override
-    public final String getFieldTag()
-    {
+    public final String getFieldTag() {
         return fieldTag;
     }
 
     @Override
-    public final String getWorkTag()
-    {
+    public final String getWorkTag() {
         return workTag;
     }
 
     @Override
-    public final Item getItem()
-    {
+    public final Item getItem() {
         return item;
     }
 
     @Override
-    public int getPlantsToRequest()
-    {
+    public int getPlantsToRequest() {
         return (int) Math.ceil(new ItemStack(item).getMaxStackSize() / 4d);
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
-    {
+    public ResourceLocation getRequiredResearchEffect() {
         return null;
     }
 
     @Override
-    public List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions)
-    {
+    public List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions) {
         List<BlockPos> result = new ArrayList<>();
         int maxWorkingPositions = getMaxWorkingPositions();
-        for (int i = 0; i < maxWorkingPositions; i++)
-        {
-            if (workingPositions.size() == i)
-            {
+        for (int i = 0; i < maxWorkingPositions; i++) {
+            if (workingPositions.size() == i) {
                 break;
             }
             result.add(workingPositions.get(i));
@@ -112,32 +102,27 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
      *
      * @return the maximum amount of plants.
      */
-    protected int getMaxWorkingPositions()
-    {
+    protected int getMaxWorkingPositions() {
         return DEFAULT_MAX_PLANTS;
     }
 
     @Override
-    public List<Item> getValidBonemeal()
-    {
+    public List<Item> getValidBonemeal() {
         return List.of();
     }
 
     @Override
-    public BlockPos getPositionToWalkTo(final Level world, final BlockPos workingPosition)
-    {
+    public BlockPos getPositionToWalkTo(final Level world, final BlockPos workingPosition) {
         return workingPosition;
     }
 
     @Override
-    public BlockState getPlantingBlockState(final Level world, final BlockPos workPosition, final BlockState blockState)
-    {
+    public BlockState getPlantingBlockState(final Level world, final BlockPos workPosition, final BlockState blockState) {
         return blockState;
     }
 
     @Override
-    public void applyBonemeal(AbstractEntityCitizen worker, BlockPos workPosition, ItemStack stackInSlot, Player fakePlayer)
-    {
+    public void applyBonemeal(AbstractEntityCitizen worker, BlockPos workPosition, ItemStack stackInSlot, Player fakePlayer) {
         BoneMealItem.applyBonemeal(stackInSlot, worker.level(), workPosition, fakePlayer);
         BoneMealItem.addGrowthParticles(worker.level(), workPosition, 1);
     }
@@ -147,30 +132,24 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
      *
      * @return a list of working positions.
      */
-    protected final List<BlockPos> getWorkingPositions()
-    {
-        if (field instanceof PlantationField plantationField)
-        {
+    protected final List<BlockPos> getWorkingPositions() {
+        if (field instanceof PlantationField plantationField) {
             return plantationField.getWorkingPositions();
         }
         return new ArrayList<>();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return fieldTag.hashCode();
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 

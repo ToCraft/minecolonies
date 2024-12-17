@@ -27,8 +27,7 @@ import java.util.Set;
 /**
  * Update message for auto syncing the entire field list.
  */
-public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
-{
+public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_fields_update", ColonyViewFieldsUpdateMessage::new);
 
     /**
@@ -52,8 +51,7 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
      * @param colony the colony this field is in.
      * @param fields the complete list of fields of this colony.
      */
-    public ColonyViewFieldsUpdateMessage(@NotNull final IColony colony, @NotNull final Set<IField> fields)
-    {
+    public ColonyViewFieldsUpdateMessage(@NotNull final IColony colony, @NotNull final Set<IField> fields) {
         super(TYPE);
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
@@ -62,43 +60,36 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
         buf.writeInt(fields.size());
-        for (final IField field : fields.keySet())
-        {
+        for (final IField field : fields.keySet()) {
             final RegistryFriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field, buf.registryAccess());
             fieldBuffer.resetReaderIndex();
             buf.writeByteArray(fieldBuffer.array());
         }
     }
 
-    protected ColonyViewFieldsUpdateMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ColonyViewFieldsUpdateMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
         fields = new HashMap<>();
         final int fieldCount = buf.readInt();
-        for (int i = 0; i < fieldCount; i++)
-        {
+        for (int i = 0; i < fieldCount; i++) {
             final IField parsedField = FieldDataManager.bufferToField(new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()), buf.registryAccess()));
             fields.put(parsedField, parsedField);
         }
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, dimension);
-        if (view != null)
-        {
+        if (view != null) {
             final Set<IField> updatedFields = new HashSet<>();
             view.getFields(field -> true).forEach(existingField -> {
-                if (this.fields.containsKey(existingField))
-                {
+                if (this.fields.containsKey(existingField)) {
                     final RegistryFriendlyByteBuf copyBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), player.level().registryAccess());
                     this.fields.get(existingField).serialize(copyBuffer);
                     existingField.deserialize(copyBuffer);
@@ -108,9 +99,7 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
             updatedFields.addAll(this.fields.keySet());
 
             view.handleColonyFieldViewUpdateMessage(updatedFields);
-        }
-        else
-        {
+        } else {
             Log.getLogger().error("Colony view does not exist for ID #{}", colonyId);
         }
     }

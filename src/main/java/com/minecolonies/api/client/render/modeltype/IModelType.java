@@ -7,8 +7,7 @@ import net.minecraft.resources.ResourceLocation;
  * Defines a model type and its textures. Use the {@link com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry} to register it, together with a Citizen model for
  * both male and female.
  */
-public interface IModelType
-{
+public interface IModelType {
     /**
      * The name of the model type.
      *

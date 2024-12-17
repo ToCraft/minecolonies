@@ -8,12 +8,12 @@ import java.time.Duration;
 /**
  * Interface for highlightable items.
  */
-public interface IHighlightRenderData
-{
+public interface IHighlightRenderData {
     /**
      * Indicate the render data it should start rendering.
      */
-    default void startRender(final WorldEventContext context) {}
+    default void startRender(final WorldEventContext context) {
+    }
 
     /**
      * Indicate the render data it should continue rendering.
@@ -23,7 +23,8 @@ public interface IHighlightRenderData
     /**
      * Indicate the render data it should stop rendering.
      */
-    default void stopRender(final WorldEventContext context) {}
+    default void stopRender(final WorldEventContext context) {
+    }
 
     /**
      * Get the duration of the highlight.

@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HighlightManager
-{
+public class HighlightManager {
     /**
      * A position to highlight with a unique id.
      */
@@ -20,34 +19,27 @@ public class HighlightManager
      *
      * @param context rendering context
      */
-    static void render(final WorldEventContext context)
-    {
-        if (HIGHLIGHT_ITEMS.isEmpty())
-        {
+    static void render(final WorldEventContext context) {
+        if (HIGHLIGHT_ITEMS.isEmpty()) {
             return;
         }
 
         final long worldTime = context.clientLevel.getGameTime();
 
         List<HighlightRenderDataContainer> itemsToRemove = new ArrayList<>();
-        for (final HighlightRenderDataContainer renderDataContainer : HIGHLIGHT_ITEMS.values())
-        {
+        for (final HighlightRenderDataContainer renderDataContainer : HIGHLIGHT_ITEMS.values()) {
             renderDataContainer.attemptStart(context);
             IHighlightRenderData renderData = renderDataContainer.data;
 
-            if (renderDataContainer.isExpired(worldTime))
-            {
+            if (renderDataContainer.isExpired(worldTime)) {
                 renderData.stopRender(context);
                 itemsToRemove.add(renderDataContainer);
-            }
-            else
-            {
+            } else {
                 renderData.render(context);
             }
         }
 
-        for (HighlightRenderDataContainer container : itemsToRemove)
-        {
+        for (HighlightRenderDataContainer container : itemsToRemove) {
             HIGHLIGHT_ITEMS.remove(container.key);
         }
     }
@@ -57,8 +49,7 @@ public class HighlightManager
      *
      * @param key the key to remove the render data for.
      */
-    public static void clearHighlightsForKey(final String key)
-    {
+    public static void clearHighlightsForKey(final String key) {
         HIGHLIGHT_ITEMS.remove(key);
     }
 
@@ -68,16 +59,14 @@ public class HighlightManager
      * @param key  the key of the item to render.
      * @param data the highlight render data.
      */
-    public static void addHighlight(final String key, final IHighlightRenderData data)
-    {
+    public static void addHighlight(final String key, final IHighlightRenderData data) {
         HIGHLIGHT_ITEMS.put(key, new HighlightRenderDataContainer(key, data));
     }
 
     /**
      * Internal container for managing highlight renderer data.
      */
-    private static class HighlightRenderDataContainer
-    {
+    private static class HighlightRenderDataContainer {
         /**
          * The key for this renderer.
          */
@@ -96,8 +85,7 @@ public class HighlightManager
         /**
          * Default constructor.
          */
-        private HighlightRenderDataContainer(String key, IHighlightRenderData data)
-        {
+        private HighlightRenderDataContainer(String key, IHighlightRenderData data) {
             this.key = key;
             this.data = data;
         }
@@ -107,11 +95,9 @@ public class HighlightManager
          *
          * @return true if expired.
          */
-        private boolean isExpired(final long worldTime)
-        {
+        private boolean isExpired(final long worldTime) {
             Duration duration = data.getDuration();
-            if (duration != null)
-            {
+            if (duration != null) {
                 return (startTime + (duration.getSeconds() * 20)) < worldTime;
             }
             return false;
@@ -122,10 +108,8 @@ public class HighlightManager
          *
          * @param context the world event context.
          */
-        private void attemptStart(final WorldEventContext context)
-        {
-            if (startTime == 0)
-            {
+        private void attemptStart(final WorldEventContext context) {
+            if (startTime == 0) {
                 startTime = context.clientLevel.getGameTime();
                 data.startRender(context);
             }

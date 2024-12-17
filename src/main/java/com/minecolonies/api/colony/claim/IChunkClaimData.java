@@ -4,13 +4,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Capability for the colony tag for chunks
  */
-public interface IChunkClaimData
-{
+public interface IChunkClaimData {
     /**
      * Remove a colony from the list. Only relevant in non dynamic claiming.
      *

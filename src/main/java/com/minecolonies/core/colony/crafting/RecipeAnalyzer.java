@@ -25,22 +25,19 @@ import java.util.Map;
 /**
  * Utility helpers for analyzing the available recipes and determining which crafters are able to use them.
  */
-public final class RecipeAnalyzer
-{
+public final class RecipeAnalyzer {
     /**
      * Build a map of all potentially learnable vanilla recipes, converted to {@link IGenericRecipe}.
      *
      * @param recipeManager the vanilla recipe manager
-     * @param world the world, if available (some recipes need it)
+     * @param world         the world, if available (some recipes need it)
      * @return the recipe map
      */
     public static Map<CraftingType, List<IGenericRecipe>> buildVanillaRecipesMap(@NotNull final RecipeManager recipeManager,
-                                                                                 @NotNull final Level world)
-    {
+                                                                                 @NotNull final Level world) {
         final ImmutableMap.Builder<CraftingType, List<IGenericRecipe>> builder = ImmutableMap.builder();
 
-        for (final CraftingType type : MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry())
-        {
+        for (final CraftingType type : MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry()) {
             final List<IGenericRecipe> recipes = type.findRecipes(recipeManager, world);
             builder.put(type, recipes);
         }
@@ -51,27 +48,22 @@ public final class RecipeAnalyzer
     /**
      * Find all recipes for a given crafter.
      *
-     * @param vanilla vanilla recipes map.
+     * @param vanilla  vanilla recipes map.
      * @param crafting crafting module.
      * @return list of recipes
      */
     @NotNull
     public static List<IGenericRecipe> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
                                                    @NotNull final ICraftingBuildingModule crafting,
-                                                   @NotNull final Level world)
-    {
+                                                   @NotNull final Level world) {
         final List<IGenericRecipe> recipes = new ArrayList<>();
 
         // all vanilla teachable recipes
-        for (final Map.Entry<CraftingType, List<IGenericRecipe>> entry : vanilla.entrySet())
-        {
-            if (crafting.canLearn(entry.getKey()))
-            {
-                for (final IGenericRecipe recipe : entry.getValue())
-                {
+        for (final Map.Entry<CraftingType, List<IGenericRecipe>> entry : vanilla.entrySet()) {
+            if (crafting.canLearn(entry.getKey())) {
+                for (final IGenericRecipe recipe : entry.getValue()) {
                     final IGenericRecipe safeRecipe = GenericRecipeUtils.filterInputs(recipe, crafting.getIngredientValidator());
-                    if (crafting.isRecipeCompatible(safeRecipe))
-                    {
+                    if (crafting.isRecipeCompatible(safeRecipe)) {
                         recipes.add(safeRecipe);
                     }
                 }
@@ -79,11 +71,9 @@ public final class RecipeAnalyzer
         }
 
         // custom MineColonies additional recipes
-        for (final CustomRecipe customRecipe : CustomRecipeManager.getInstance().getRecipes(crafting.getCustomRecipeKey()))
-        {
+        for (final CustomRecipe customRecipe : CustomRecipeManager.getInstance().getRecipes(crafting.getCustomRecipeKey())) {
             final IRecipeStorage recipeStorage = customRecipe.getRecipeStorage();
-            if (!recipeStorage.getAlternateOutputs().isEmpty())
-            {
+            if (!recipeStorage.getAlternateOutputs().isEmpty()) {
                 // this is a multi-output recipe; assume it replaces a bunch of vanilla
                 // recipes we already added above
                 recipes.removeIf(r -> ItemStackUtils.isNotEmpty(r.getPrimaryOutput()) &&
@@ -106,25 +96,21 @@ public final class RecipeAnalyzer
      * @param level a level
      * @return list of animals
      */
-    public static List<Animal> createAnimals(@NotNull final Level level)
-    {
+    public static List<Animal> createAnimals(@NotNull final Level level) {
         final List<Animal> animals = new ArrayList<>();
 
-        for (final EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE)
-        {
-            if (entityType.getCategory() != MobCategory.CREATURE) { continue; }
+        for (final EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
+            if (entityType.getCategory() != MobCategory.CREATURE) {
+                continue;
+            }
 
-            try
-            {
+            try {
                 // sadly there doesn't seem to be a better way to discover the actual classes for each type, because Java
                 final Entity entity = entityType.create(level);
-                if (entity instanceof Animal animal)
-                {
+                if (entity instanceof Animal animal) {
                     animals.add(animal);
                 }
-            }
-            catch (final Exception ex)
-            {
+            } catch (final Exception ex) {
                 Log.getLogger().error("Couldnt analyze animal", ex);
             }
         }
@@ -140,14 +126,11 @@ public final class RecipeAnalyzer
      * @return recipes for that module
      */
     public static List<IGenericRecipe> findRecipes(@NotNull final List<Animal> animals,
-                                                   @NotNull final AnimalHerdingModule module)
-    {
+                                                   @NotNull final AnimalHerdingModule module) {
         final List<IGenericRecipe> recipes = new ArrayList<>();
 
-        for (final Animal animal : animals)
-        {
-            if (module.isCompatible(animal))
-            {
+        for (final Animal animal : animals) {
+            if (module.isCompatible(animal)) {
                 recipes.addAll(module.getRecipesForDisplayPurposesOnly(animal));
             }
         }
@@ -155,8 +138,7 @@ public final class RecipeAnalyzer
         return recipes;
     }
 
-    private RecipeAnalyzer()
-    {
+    private RecipeAnalyzer() {
         /*
          * Intentionally left empty.
          */

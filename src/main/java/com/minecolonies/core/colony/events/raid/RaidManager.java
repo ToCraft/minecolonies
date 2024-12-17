@@ -44,9 +44,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -65,8 +65,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Handles spawning hostile raid events.
  */
-public class RaidManager implements IRaiderManager
-{
+public class RaidManager implements IRaiderManager {
     /**
      * Spawn modifier to decrease the spawn-rate.
      */
@@ -80,7 +79,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Thresholds for reducing or increasing raid difficulty
      */
-    private static final double LOST_CITIZEN_DIFF_REDUCE_PCT   = 0.15d;
+    private static final double LOST_CITIZEN_DIFF_REDUCE_PCT = 0.15d;
     private static final double LOST_CITIZEN_DIFF_INCREASE_PCT = 0.05d;
 
     /**
@@ -98,7 +97,7 @@ public class RaidManager implements IRaiderManager
      * Difficulty nbt tag
      */
     private static final String TAG_RAID_DIFFICULTY = "difficulty";
-    private static final String TAG_LOST_CITIZENS   = "lostCitizens";
+    private static final String TAG_LOST_CITIZENS = "lostCitizens";
 
     /**
      * Min required raidlevel
@@ -210,81 +209,66 @@ public class RaidManager implements IRaiderManager
      *
      * @param colony the colony.
      */
-    public RaidManager(final Colony colony)
-    {
+    public RaidManager(final Colony colony) {
         this.colony = colony;
     }
 
     @Override
-    public boolean canHaveRaiderEvents()
-    {
+    public boolean canHaveRaiderEvents() {
         return this.haveBarbEvents;
     }
 
     @Override
-    public boolean willRaidTonight()
-    {
+    public boolean willRaidTonight() {
         return this.raidTonight;
     }
 
     @Override
-    public void setCanHaveRaiderEvents(final boolean canHave)
-    {
+    public void setCanHaveRaiderEvents(final boolean canHave) {
         this.haveBarbEvents = canHave;
     }
 
     @Override
-    public void setRaidNextNight(final boolean willRaid, final String raidType, final boolean allowShips)
-    {
+    public void setRaidNextNight(final boolean willRaid, final String raidType, final boolean allowShips) {
         this.raidTonight = willRaid;
         this.nextForcedType = raidType;
         this.allowShips = allowShips;
     }
 
     @Override
-    public boolean areSpiesEnabled()
-    {
+    public boolean areSpiesEnabled() {
         return spiesEnabled;
     }
 
     @Override
-    public void setSpiesEnabled(final boolean enabled)
-    {
-        if (spiesEnabled != enabled)
-        {
+    public void setSpiesEnabled(final boolean enabled) {
+        if (spiesEnabled != enabled) {
             colony.markDirty();
         }
         spiesEnabled = enabled;
     }
 
     @Override
-    public void raiderEvent()
-    {
+    public void raiderEvent() {
         raiderEvent("", false);
     }
 
     @Override
-    public RaidSpawnResult raiderEvent(String raidType, final boolean forced, final boolean allowShips)
-    {
-        if (colony.getWorld() == null || raidType == null)
-        {
+    public RaidSpawnResult raiderEvent(String raidType, final boolean forced, final boolean allowShips) {
+        if (colony.getWorld() == null || raidType == null) {
             return RaidSpawnResult.ERROR;
-        }
-        else if (!forced && !canRaid())
-        {
+        } else if (!forced && !canRaid()) {
             return RaidSpawnResult.CANNOT_RAID;
         }
 
         final int raidLevel = getColonyRaidLevel();
         int amount = calculateRaiderAmount(raidLevel);
-        if (amount <= 0 || raidLevel < MIN_REQUIRED_RAIDLEVEL)
-        {
+        if (amount <= 0 || raidLevel < MIN_REQUIRED_RAIDLEVEL) {
             return RaidSpawnResult.TOO_SMALL;
         }
 
         spawnCountAdjustedDifficulty = 1.0;
-        if (amount >= MineColonies.getConfig().getServer().maxRaiders.get())
-        {
+        if (amount >= MineColonies.getConfig().getServer().maxRaiders.get()) {
             // Scales difficulty by the % of raiders we could not spawn due to entity limit
             spawnCountAdjustedDifficulty = ((double) amount / MineColonies.getConfig().getServer().maxRaiders.get());
         }
@@ -295,14 +279,11 @@ public class RaidManager implements IRaiderManager
         final Set<BlockPos> spawnPoints = new HashSet<>();
 
         int retries = 0;
-        for (int i = 0; i < raidCount; i++)
-        {
+        for (int i = 0; i < raidCount; i++) {
             final BlockPos targetSpawnPoint = calculateSpawnLocation();
             if (targetSpawnPoint == null || targetSpawnPoint.equals(colony.getCenter())
-                  || !colony.getWorld().getWorldBorder().isWithinBounds(targetSpawnPoint))
-            {
-                if (retries < 10)
-                {
+                    || !colony.getWorld().getWorldBorder().isWithinBounds(targetSpawnPoint)) {
+                if (retries < 10) {
                     retries++;
                     i--;
                 }
@@ -312,8 +293,7 @@ public class RaidManager implements IRaiderManager
             spawnPoints.add(targetSpawnPoint);
         }
 
-        if (spawnPoints.isEmpty())
-        {
+        if (spawnPoints.isEmpty()) {
             return RaidSpawnResult.NO_SPAWN_POINT;
         }
 
@@ -322,12 +302,10 @@ public class RaidManager implements IRaiderManager
         raidTonight = false;
         amount = (int) Math.ceil((float) amount / spawnPoints.size());
 
-        for (BlockPos targetSpawnPoint : spawnPoints)
-        {
+        for (BlockPos targetSpawnPoint : spawnPoints) {
             IColonyRaidEvent raidEvent = null;
 
-            if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
-            {
+            if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get()) {
                 MessageUtils.format(Component.literal("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
             }
 
@@ -336,21 +314,16 @@ public class RaidManager implements IRaiderManager
             final BlockState belowState = colony.getWorld().getBlockState(targetSpawnPoint.below());
 
             if (MineColonies.getConfig().getServer().skyRaiders.get() &&
-                  spawnState.isAir()
-                  && belowState.isAir())
-            {
+                    spawnState.isAir()
+                    && belowState.isAir()) {
                 raidType = PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
-            }
-            else if ((raidType.isEmpty() || raidType.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
-                       && (PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint.above(), aboveState, null) || ColonyConstants.rand.nextInt(100) <= 20)
-                       && PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint, spawnState, null)
-                       && PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint.below(), belowState, null))
-            {
+            } else if ((raidType.isEmpty() || raidType.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
+                    && (PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint.above(), aboveState, null) || ColonyConstants.rand.nextInt(100) <= 20)
+                    && PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint, spawnState, null)
+                    && PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint.below(), belowState, null)) {
                 raidType = DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
-                for (int i = 0; i < DrownedPirateRaidEvent.DEPTH_REQ; i++)
-                {
-                    if (!PathfindingUtils.isLiquid(colony.getWorld().getBlockState(targetSpawnPoint.above())))
-                    {
+                for (int i = 0; i < DrownedPirateRaidEvent.DEPTH_REQ; i++) {
+                    if (!PathfindingUtils.isLiquid(colony.getWorld().getBlockState(targetSpawnPoint.above()))) {
                         break;
                     }
                     targetSpawnPoint = targetSpawnPoint.above();
@@ -362,9 +335,8 @@ public class RaidManager implements IRaiderManager
             final Holder<Biome> biome = colony.getWorld().getBiome(colony.getCenter());
             final int rand = colony.getWorld().random.nextInt(100);
             if (allowShips && (raidType.isEmpty() && (biome.is(BiomeTags.IS_TAIGA) || rand < IGNORE_BIOME_CHANCE)
-                   || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
-                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, NorsemenShipRaidEvent.SHIP_NAME))
-            {
+                    || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
+                    && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, NorsemenShipRaidEvent.SHIP_NAME)) {
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
@@ -373,11 +345,9 @@ public class RaidManager implements IRaiderManager
                 event.setMaxRaiderCount(amount * 2);
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
-            }
-            else if (allowShips && (raidType.isEmpty() && (biome.is(BiomeTags.IS_OCEAN))
-                                 || raidType.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
-                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, DrownedPirateRaidEvent.SHIP_NAME, DrownedPirateRaidEvent.DEPTH_REQ))
-            {
+            } else if (allowShips && (raidType.isEmpty() && (biome.is(BiomeTags.IS_OCEAN))
+                    || raidType.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
+                    && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, DrownedPirateRaidEvent.SHIP_NAME, DrownedPirateRaidEvent.DEPTH_REQ)) {
                 final DrownedPirateRaidEvent event = new DrownedPirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
@@ -386,10 +356,8 @@ public class RaidManager implements IRaiderManager
                 event.setMaxRaiderCount(amount * 2);
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
-            }
-            else if (allowShips && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, PirateRaidEvent.SHIP_NAME)
-                       && (raidType.isEmpty() || raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())))
-            {
+            } else if (allowShips && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, PirateRaidEvent.SHIP_NAME)
+                    && (raidType.isEmpty() || raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))) {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
@@ -398,35 +366,22 @@ public class RaidManager implements IRaiderManager
                 event.setMaxRaiderCount(amount * 2);
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
-            }
-            else
-            {
+            } else {
                 final HordeRaidEvent event;
                 if (((biome.is(BiomeTags.HAS_DESERT_PYRAMID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
-                       && raidType.isEmpty()) || raidType.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath()))
-                {
+                        && raidType.isEmpty()) || raidType.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath())) {
                     event = new EgyptianRaidEvent(colony);
-                }
-                else if (((biome.is(BiomeTags.IS_JUNGLE) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3))
-                            && raidType.isEmpty()) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
-                {
+                } else if (((biome.is(BiomeTags.IS_JUNGLE) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3))
+                        && raidType.isEmpty()) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath()))) {
                     event = new AmazonRaidEvent(colony);
-                }
-                else if (((biome.is(BiomeTags.IS_TAIGA) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
-                            && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
-                {
+                } else if (((biome.is(BiomeTags.IS_TAIGA) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
+                        && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath())) {
                     event = new NorsemenRaidEvent(colony);
-                }
-                else if (raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
-                {
+                } else if (raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())) {
                     event = new PirateGroundRaidEvent(colony);
-                }
-                else if (raidType.isEmpty() || raidType.equals(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID.getPath()))
-                {
+                } else if (raidType.isEmpty() || raidType.equals(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID.getPath())) {
                     event = new BarbarianRaidEvent(colony);
-                }
-                else
-                {
+                } else {
                     return RaidSpawnResult.NO_SPAWN_POINT;
                 }
 
@@ -451,11 +406,10 @@ public class RaidManager implements IRaiderManager
      * @param targetSpawnPoint
      * @return
      */
-    private PathResult createSpawnPath(final BlockPos targetSpawnPoint, final boolean underwater)
-    {
+    private PathResult createSpawnPath(final BlockPos targetSpawnPoint, final boolean underwater) {
         final BlockPos closestBuildingPos = colony.getBuildingManager().getBestBuilding(targetSpawnPoint, IBuilding.class);
         final PathJobRaiderPathing job =
-          new PathJobRaiderPathing(new ArrayList<>(colony.getBuildingManager().getBuildings().values()), colony.getWorld(), closestBuildingPos, targetSpawnPoint);
+                new PathJobRaiderPathing(new ArrayList<>(colony.getBuildingManager().getBuildings().values()), colony.getWorld(), closestBuildingPos, targetSpawnPoint);
         job.getPathingOptions().withWalkUnderWater(underwater);
         job.getResult().startJob(Pathfinding.getExecutor());
         return job.getResult();
@@ -467,22 +421,18 @@ public class RaidManager implements IRaiderManager
      * @return Returns the random blockPos
      */
     @Override
-    public BlockPos calculateSpawnLocation()
-    {
+    public BlockPos calculateSpawnLocation() {
         BlockPos locationSum = new BlockPos(0, 0, 0);
         int amount = 0;
 
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
-        {
-            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), building.getPosition()))
-            {
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values()) {
+            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), building.getPosition())) {
                 amount++;
                 locationSum = locationSum.offset(building.getPosition());
             }
         }
 
-        if (amount == 0)
-        {
+        if (amount == 0) {
             Log.getLogger().info("Trying to spawn raid on colony with no loaded buildings, aborting!");
             return null;
         }
@@ -499,49 +449,42 @@ public class RaidManager implements IRaiderManager
         BlockPos spawnPos = null;
         final BlockPos closestBuilding = colony.getBuildingManager().getBestBuilding(advanceTowards, IBuilding.class);
 
-        if (closestBuilding == null)
-        {
+        if (closestBuilding == null) {
             return null;
         }
 
         BlockPos worldSpawnPos = null;
         // 8 Tries
-        for (int i = 0; i < 8; i++)
-        {
+        for (int i = 0; i < 8; i++) {
             spawnPos = findSpawnPointInDirections(new BlockPos(closestBuilding.getX(), calcCenter.getY(), closestBuilding.getZ()), advanceTowards);
-            if (spawnPos != null)
-            {
+            if (spawnPos != null) {
                 worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
-                  BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
-                  30,
-                  3,
-                  SOLID_AIR_POS_SELECTOR);
+                        BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
+                        30,
+                        3,
+                        SOLID_AIR_POS_SELECTOR);
 
-                if (worldSpawnPos == null && colony.getWorld().getBlockState(spawnPos).getBlock() == Blocks.WATER)
-                {
+                if (worldSpawnPos == null && colony.getWorld().getBlockState(spawnPos).getBlock() == Blocks.WATER) {
                     worldSpawnPos = spawnPos;
                     break;
                 }
 
-                if (worldSpawnPos != null || MineColonies.getConfig().getServer().skyRaiders.get())
-                {
+                if (worldSpawnPos != null || MineColonies.getConfig().getServer().skyRaiders.get()) {
                     break;
                 }
             }
         }
 
-        if (spawnPos == null)
-        {
+        if (spawnPos == null) {
             return null;
         }
 
-        if (worldSpawnPos == null && MineColonies.getConfig().getServer().skyRaiders.get())
-        {
+        if (worldSpawnPos == null && MineColonies.getConfig().getServer().skyRaiders.get()) {
             worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
-              BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
-              15,
-              10,
-              DOUBLE_AIR_POS_SELECTOR);
+                    BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
+                    15,
+                    10,
+                    DOUBLE_AIR_POS_SELECTOR);
         }
 
         return worldSpawnPos;
@@ -555,9 +498,8 @@ public class RaidManager implements IRaiderManager
      * @return the calculated position
      */
     private BlockPos findSpawnPointInDirections(
-      final BlockPos start,
-      final BlockPos advancePos)
-    {
+            final BlockPos start,
+            final BlockPos advancePos) {
         BlockPos spawnPos = new BlockPos(start);
         BlockPos tempPos = new BlockPos(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
         final Collection<IBuilding> buildings = colony.getBuildingManager().getBuildings().values();
@@ -570,37 +512,27 @@ public class RaidManager implements IRaiderManager
         xzRatio = xzRatio.normalize().scale(3);
 
         int validChunkCount = 0;
-        for (int i = 0; i < 10; i++)
-        {
-            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
-            {
+        for (int i = 0; i < 10; i++) {
+            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos)) {
                 tempPos = tempPos.offset((int) (16 * xzRatio.x), 0, (int) (16 * xzRatio.z));
 
-                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
-                {
-                    if (isValidSpawnPoint(buildings, tempPos) && !isOtherColony(tempPos.getX(), tempPos.getZ()))
-                    {
+                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos)) {
+                    if (isValidSpawnPoint(buildings, tempPos) && !isOtherColony(tempPos.getX(), tempPos.getZ())) {
                         spawnPos = tempPos;
                         validChunkCount++;
-                        if (validChunkCount > 2 || i > 2)
-                        {
+                        if (validChunkCount > 2 || i > 2) {
                             return spawnPos;
                         }
                     }
-                }
-                else
-                {
+                } else {
                     break;
                 }
-            }
-            else
-            {
+            } else {
                 break;
             }
         }
 
-        if (!spawnPos.equals(start))
-        {
+        if (!spawnPos.equals(start)) {
             return spawnPos;
         }
 
@@ -614,8 +546,7 @@ public class RaidManager implements IRaiderManager
      * @param z the z param.
      * @return
      */
-    private boolean isOtherColony(final int x, final int z)
-    {
+    private boolean isOtherColony(final int x, final int z) {
         final int owningColonyId = ColonyUtils.getOwningColony(colony.getWorld().getChunk(x >> 4, z >> 4));
         return owningColonyId != NO_COLONY_ID && owningColonyId != colony.getID();
     }
@@ -626,37 +557,26 @@ public class RaidManager implements IRaiderManager
      * @param spawnPos the spawn point to check
      * @return true if valid
      */
-    public static boolean isValidSpawnPoint(final Collection<IBuilding> buildings, final BlockPos spawnPos)
-    {
-        for (final IBuilding building : buildings)
-        {
-            if (building.getBuildingLevel() == 0)
-            {
+    public static boolean isValidSpawnPoint(final Collection<IBuilding> buildings, final BlockPos spawnPos) {
+        for (final IBuilding building : buildings) {
+            if (building.getBuildingLevel() == 0) {
                 continue;
             }
 
             int minDist = MIN_BUILDING_SPAWN_DIST;
 
             // Additional raid protection for certain buildings, towers can be used now to deal with unlucky - inwall spawns
-            if (building instanceof BuildingGuardTower)
-            {
+            if (building instanceof BuildingGuardTower) {
                 minDist += building.getBuildingLevel() * 7;
-            }
-            else if (building.hasModule(LivingBuildingModule.class))
-            {
+            } else if (building.hasModule(LivingBuildingModule.class)) {
                 minDist += building.getBuildingLevel() * 4;
-            }
-            else if (building instanceof BuildingTownHall)
-            {
+            } else if (building instanceof BuildingTownHall) {
                 minDist += building.getBuildingLevel() * 8;
-            }
-            else
-            {
+            } else {
                 minDist += building.getBuildingLevel() * 2;
             }
 
-            if (BlockPosUtil.getDistance2D(building.getPosition(), spawnPos) < minDist)
-            {
+            if (BlockPosUtil.getDistance2D(building.getPosition(), spawnPos) < minDist) {
                 return false;
             }
         }
@@ -665,10 +585,8 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public List<BlockPos> getLastSpawnPoints()
-    {
-        if (raidHistories.isEmpty())
-        {
+    public List<BlockPos> getLastSpawnPoints() {
+        if (raidHistories.isEmpty()) {
             return List.of();
         }
 
@@ -682,35 +600,28 @@ public class RaidManager implements IRaiderManager
      * @return the amount of barbarians.
      */
     @Override
-    public int calculateRaiderAmount(final int raidLevel)
-    {
+    public int calculateRaiderAmount(final int raidLevel) {
         int nearbyColonyPlayers = 0;
-        for (final Player player : colony.getMessagePlayerEntities())
-        {
-            if (!player.isSpectator())
-            {
+        for (final Player player : colony.getMessagePlayerEntities()) {
+            if (!player.isSpectator()) {
                 nearbyColonyPlayers++;
             }
         }
 
         return 1 + Math.min(MineColonies.getConfig().getServer().maxRaiders.get(),
-          (int) ((raidLevel / SPAWN_MODIFIER)
-                   * getRaidDifficultyModifier()
-                   * (1.0 + nearbyColonyPlayers * INCREASE_PER_PLAYER)
-                   * ((ColonyConstants.rand.nextDouble() * 0.3) + 0.85)));
+                (int) ((raidLevel / SPAWN_MODIFIER)
+                        * getRaidDifficultyModifier()
+                        * (1.0 + nearbyColonyPlayers * INCREASE_PER_PLAYER)
+                        * ((ColonyConstants.rand.nextDouble() * 0.3) + 0.85)));
     }
 
     @Override
-    public boolean isRaided()
-    {
-        if (colony.getWorld().getGameTime() <= passingThroughRaidTime)
-        {
+    public boolean isRaided() {
+        if (colony.getWorld().getGameTime() <= passingThroughRaidTime) {
             return true;
         }
-        for (final IColonyEvent event : colony.getEventManager().getEvents().values())
-        {
-            if (event instanceof IColonyRaidEvent raidEvent && raidEvent.isRaidActive())
-            {
+        for (final IColonyEvent event : colony.getEventManager().getEvents().values()) {
+            if (event instanceof IColonyRaidEvent raidEvent && raidEvent.isRaidActive()) {
                 return true;
             }
         }
@@ -718,80 +629,62 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void onNightFall()
-    {
-        if (!isRaided() || passingThroughRaidTime > 0)
-        {
-            if (nightsSinceLastRaid == 0)
-            {
-                if (!raidHistories.isEmpty())
-                {
+    public void onNightFall() {
+        if (!isRaided() || passingThroughRaidTime > 0) {
+            if (nightsSinceLastRaid == 0) {
+                if (!raidHistories.isEmpty()) {
                     RaidHistory history = raidHistories.get(raidHistories.size() - 1);
                     final double lostPct = (double) history.lostCitizens / colony.getCitizenManager().getMaxCitizens();
-                    if (lostPct > LOST_CITIZEN_DIFF_REDUCE_PCT)
-                    {
+                    if (lostPct > LOST_CITIZEN_DIFF_REDUCE_PCT) {
                         raidDifficulty = Math.max(MIN_RAID_DIFFICULTY, raidDifficulty - (int) (lostPct / LOST_CITIZEN_DIFF_REDUCE_PCT));
-                    }
-                    else if (lostPct < LOST_CITIZEN_DIFF_INCREASE_PCT)
-                    {
+                    } else if (lostPct < LOST_CITIZEN_DIFF_INCREASE_PCT) {
                         raidDifficulty = Math.min(MAX_RAID_DIFFICULTY, raidDifficulty + 1);
                     }
                 }
             }
 
             nightsSinceLastRaid++;
-        }
-        else
-        {
+        } else {
             nightsSinceLastRaid = 0;
         }
 
-        if (raidTonight)
-        {
+        if (raidTonight) {
             final boolean overrideConfig = !nextForcedType.isEmpty();
             RaidSpawnResult result = raiderEvent(nextForcedType, overrideConfig, allowShips);
-            if (result == RaidSpawnResult.SUCCESS || result == RaidSpawnResult.TOO_SMALL)
-            {
+            if (result == RaidSpawnResult.SUCCESS || result == RaidSpawnResult.TOO_SMALL) {
                 raidTonight = false;
                 nextForcedType = INITIAL_NEXT_RAID_TYPE;
             }
-        }
-        else
-        {
+        } else {
             determineRaidForNextDay();
         }
     }
 
     @Override
-    public int getNightsSinceLastRaid()
-    {
+    public int getNightsSinceLastRaid() {
         return nightsSinceLastRaid;
     }
 
     @Override
-    public void setNightsSinceLastRaid(final int nightsSinceLastRaid)
-    {
+    public void setNightsSinceLastRaid(final int nightsSinceLastRaid) {
         this.nightsSinceLastRaid = nightsSinceLastRaid;
     }
 
     @Override
-    public boolean canRaid()
-    {
+    public boolean canRaid() {
         return !WorldUtil.isPeaceful(colony.getWorld())
-                 && (MineColonies.getConfig().getServer().enableColonyRaids.get())
-                 && colony.getRaiderManager().canHaveRaiderEvents()
-                 && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
+                && (MineColonies.getConfig().getServer().enableColonyRaids.get())
+                && colony.getRaiderManager().canHaveRaiderEvents()
+                && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
     }
 
     /**
      * Determines whether we raid on the next day
      */
-    private void determineRaidForNextDay()
-    {
+    private void determineRaidForNextDay() {
         final boolean raid = canRaid() && raidThisNight(colony.getWorld(), colony);
 
-        if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
-        {
+        if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get()) {
             MessageUtils.format(Component.literal("Will raid tomorrow: " + raid)).sendTo(colony).forAllPlayers();
         }
 
@@ -803,29 +696,23 @@ public class RaidManager implements IRaiderManager
      *
      * @return an int describing the raid level
      */
-    public int getColonyRaidLevel()
-    {
+    public int getColonyRaidLevel() {
         // TODO: after competition(civilian vs military)
         int levels = 0;
 
-        for (final ICitizenData data : colony.getCitizenManager().getCitizens())
-        {
-            if (!data.isChild())
-            {
+        for (final ICitizenData data : colony.getCitizenManager().getCitizens()) {
+            if (!data.isChild()) {
                 levels += 5;
                 int skillSum = 0;
-                for (final CitizenSkillHandler.SkillData skillData : data.getCitizenSkillHandler().getSkills().values())
-                {
+                for (final CitizenSkillHandler.SkillData skillData : data.getCitizenSkillHandler().getSkills().values()) {
                     skillSum += skillData.getLevel();
                 }
                 levels += skillSum / 100;
             }
         }
 
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
-        {
-            if (building.getBuildingLevel() > 0)
-            {
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values()) {
+            if (building.getBuildingLevel() > 0) {
                 levels += 5 + (building.getBuildingLevel() * building.getBuildingLevel()) / 5;
             }
         }
@@ -843,50 +730,40 @@ public class RaidManager implements IRaiderManager
      * @param colony The colony to raid
      * @return Boolean value on whether to act this night
      */
-    private boolean raidThisNight(final Level world, final IColony colony)
-    {
-        if (nightsSinceLastRaid < MineColonies.getConfig().getServer().minimumNumberOfNightsBetweenRaids.get())
-        {
+    private boolean raidThisNight(final Level world, final IColony colony) {
+        if (nightsSinceLastRaid < MineColonies.getConfig().getServer().minimumNumberOfNightsBetweenRaids.get()) {
             return false;
         }
 
-        if (nightsSinceLastRaid > MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() + 2)
-        {
+        if (nightsSinceLastRaid > MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() + 2) {
             return true;
         }
 
         return world.random.nextDouble() < 1.0 / (MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
-                                                                                                                                   .getServer().minimumNumberOfNightsBetweenRaids.get());
+                .getServer().minimumNumberOfNightsBetweenRaids.get());
     }
 
     @Override
     @NotNull
-    public BlockPos getRandomBuilding()
-    {
+    public BlockPos getRandomBuilding() {
         buildingPosUsage++;
-        if (buildingPosUsage > Math.max(6, getLastRaid().raiderAmount / 3) || lastBuilding == null)
-        {
+        if (buildingPosUsage > Math.max(6, getLastRaid().raiderAmount / 3) || lastBuilding == null) {
             buildingPosUsage = 0;
             final Collection<IBuilding> buildingList = colony.getBuildingManager().getBuildings().values();
             final Object[] buildingArray = buildingList.toArray();
-            if (buildingArray.length != 0)
-            {
+            if (buildingArray.length != 0) {
                 final int rand = colony.getWorld().random.nextInt(buildingArray.length);
                 final IBuilding building = (IBuilding) buildingArray[rand];
 
-                if (lastBuilding != null)
-                {
+                if (lastBuilding != null) {
                     // Alerts guards of raiders reaching a building
                     final List<AbstractEntityCitizen> possibleGuards = new ArrayList<>();
 
-                    for (final ICitizenData entry : colony.getCitizenManager().getCitizens())
-                    {
+                    for (final ICitizenData entry : colony.getCitizenManager().getCitizens()) {
                         if (entry.getEntity().isPresent()
-                              && entry.getJob() instanceof AbstractJobGuard
-                              && BlockPosUtil.getDistanceSquared(entry.getEntity().get().blockPosition(), lastBuilding) < 75 * 75 && entry.getJob().getWorkerAI() != null)
-                        {
-                            if (((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp(building.getPosition()))
-                            {
+                                && entry.getJob() instanceof AbstractJobGuard
+                                && BlockPosUtil.getDistanceSquared(entry.getEntity().get().blockPosition(), lastBuilding) < 75 * 75 && entry.getJob().getWorkerAI() != null) {
+                            if (((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp(building.getPosition())) {
                                 possibleGuards.add(entry.getEntity().get());
                             }
                         }
@@ -894,16 +771,13 @@ public class RaidManager implements IRaiderManager
 
                     possibleGuards.sort(Comparator.comparingInt(guard -> (int) lastBuilding.distSqr(guard.blockPosition())));
 
-                    for (int i = 0; i < possibleGuards.size() && i <= 3; i++)
-                    {
+                    for (int i = 0; i < possibleGuards.size() && i <= 3; i++) {
                         ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).setNextPatrolTargetAndMove(lastBuilding);
                     }
                 }
 
                 lastBuilding = building.getPosition();
-            }
-            else
-            {
+            } else {
                 lastBuilding = colony.getCenter();
             }
         }
@@ -912,43 +786,33 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public double getRaidDifficultyModifier()
-    {
+    public double getRaidDifficultyModifier() {
         return ((raidDifficulty / (double) 10) + MIN_DIFFICULTY_MODIFIER)
-                 * (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidDifficulty.get() / (double) DEFAULT_BARBARIAN_DIFFICULTY)
-                 * (colony.getWorld().getDifficulty().getId() / 2d)
-                 * spawnCountAdjustedDifficulty;
+                * (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidDifficulty.get() / (double) DEFAULT_BARBARIAN_DIFFICULTY)
+                * (colony.getWorld().getDifficulty().getId() / 2d)
+                * spawnCountAdjustedDifficulty;
     }
 
     @Override
-    public void onLostCitizen(final ICitizenData citizen)
-    {
-        if (!isRaided())
-        {
+    public void onLostCitizen(final ICitizenData citizen) {
+        if (!isRaided()) {
             return;
         }
 
-        if (raidHistories.isEmpty())
-        {
+        if (raidHistories.isEmpty()) {
             return;
         }
 
         final RaidHistory history = raidHistories.get(raidHistories.size() - 1);
-        if (citizen.getJob() instanceof AbstractJobGuard)
-        {
+        if (citizen.getJob() instanceof AbstractJobGuard) {
             history.lostCitizens++;
-        }
-        else
-        {
+        } else {
             history.lostCitizens += 2;
         }
 
-        if (((double) history.lostCitizens / colony.getCitizenManager().getMaxCitizens()) > 0.5)
-        {
-            for (final IColonyEvent event : colony.getEventManager().getEvents().values())
-            {
-                if (event instanceof IColonyRaidEvent raidEvent)
-                {
+        if (((double) history.lostCitizens / colony.getCitizenManager().getMaxCitizens()) > 0.5) {
+            for (final IColonyEvent event : colony.getEventManager().getEvents().values()) {
+                if (event instanceof IColonyRaidEvent raidEvent) {
                     raidEvent.setStatus(EventStatus.DONE);
                     raidEvent.setMercyEnd();
                 }
@@ -957,55 +821,44 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void write(final CompoundTag compound)
-    {
+    public void write(final CompoundTag compound) {
         compound.putBoolean(TAG_RAIDABLE, canHaveRaiderEvents());
         compound.putInt(TAG_NIGHTS_SINCE_LAST_RAID, getNightsSinceLastRaid());
         compound.putInt(TAG_RAID_DIFFICULTY, raidDifficulty);
 
         ListTag nbtList = new ListTag();
-        for (final RaidHistory history : raidHistories)
-        {
+        for (final RaidHistory history : raidHistories) {
             nbtList.add(history.write());
         }
         compound.put(TAG_RAID_HISTORY, nbtList);
     }
 
     @Override
-    public void read(final CompoundTag compound)
-    {
-        if (compound.contains(TAG_RAIDABLE))
-        {
+    public void read(final CompoundTag compound) {
+        if (compound.contains(TAG_RAIDABLE)) {
             setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
-        }
-        else
-        {
+        } else {
             setCanHaveRaiderEvents(true);
         }
 
-        if (compound.contains(TAG_NIGHTS_SINCE_LAST_RAID))
-        {
+        if (compound.contains(TAG_NIGHTS_SINCE_LAST_RAID)) {
             setNightsSinceLastRaid(compound.getInt(TAG_NIGHTS_SINCE_LAST_RAID));
         }
 
         raidDifficulty = Mth.clamp(compound.getInt(TAG_RAID_DIFFICULTY), MIN_RAID_DIFFICULTY, MAX_RAID_DIFFICULTY);
 
-        if (compound.contains(TAG_RAID_HISTORY))
-        {
+        if (compound.contains(TAG_RAID_HISTORY)) {
             raidHistories.clear();
             ListTag nbtList = compound.getList(TAG_RAID_HISTORY, Tag.TAG_COMPOUND);
-            for (final Tag tag : nbtList)
-            {
+            for (final Tag tag : nbtList) {
                 raidHistories.add(RaidHistory.fromNBT((CompoundTag) tag));
             }
         }
     }
 
     @Override
-    public int getLostCitizen()
-    {
-        if (raidHistories.isEmpty())
-        {
+    public int getLostCitizen() {
+        if (raidHistories.isEmpty()) {
             return 0;
         }
 
@@ -1013,11 +866,9 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void onRaiderDeath(final AbstractEntityRaiderMob entity)
-    {
+    public void onRaiderDeath(final AbstractEntityRaiderMob entity) {
         final RaidHistory last = getLastRaid();
-        if (last != null)
-        {
+        if (last != null) {
             last.deadRaiders++;
         }
     }
@@ -1027,10 +878,8 @@ public class RaidManager implements IRaiderManager
      *
      * @return
      */
-    public RaidHistory getLastRaid()
-    {
-        if (raidHistories.isEmpty())
-        {
+    public RaidHistory getLastRaid() {
+        if (raidHistories.isEmpty()) {
             return null;
         }
 
@@ -1038,8 +887,7 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void setPassThroughRaid()
-    {
+    public void setPassThroughRaid() {
         passingThroughRaidTime = colony.getWorld().getGameTime() + TICKS_SECOND * 20;
     }
 
@@ -1048,24 +896,22 @@ public class RaidManager implements IRaiderManager
      *
      * @return
      */
-    public List<RaidHistory> getAllRaids()
-    {
+    public List<RaidHistory> getAllRaids() {
         return new ArrayList<>(raidHistories);
     }
 
     /**
      * Data holder for raid history
      */
-    public static class RaidHistory
-    {
+    public static class RaidHistory {
         /**
          * Serialization constants
          */
         static final String TAG_LOSTCITIZENS = "lostCitizens";
         static final String TAG_RAIDERAMOUNT = "raiderAmount";
-        static final String TAG_RAIDTIME     = "raidTime";
+        static final String TAG_RAIDTIME = "raidTime";
         static final String TAG_DIFFICULTY = "difficulty";
-        static final String TAG_SPAWNINFO    = "spawnInfo";
+        static final String TAG_SPAWNINFO = "spawnInfo";
 
         /**
          * Lost citizens during the raid
@@ -1097,36 +943,31 @@ public class RaidManager implements IRaiderManager
          */
         public final List<RaidSpawnInfo> spawnData = new ArrayList<>();
 
-        public RaidHistory(final int raiderAmount, final long raidTime)
-        {
+        public RaidHistory(final int raiderAmount, final long raidTime) {
             this.raidTime = raidTime;
             this.raiderAmount = raiderAmount;
         }
 
-        private CompoundTag write()
-        {
+        private CompoundTag write() {
             CompoundTag tag = new CompoundTag();
             tag.putInt(TAG_LOSTCITIZENS, lostCitizens);
             tag.putInt(TAG_RAIDERAMOUNT, raiderAmount);
             tag.putLong(TAG_RAIDTIME, raidTime);
             tag.putDouble(TAG_DIFFICULTY, difficulty);
             ListTag nbtList = new ListTag();
-            for (final RaidSpawnInfo raidSpawnInfo : spawnData)
-            {
+            for (final RaidSpawnInfo raidSpawnInfo : spawnData) {
                 nbtList.add(raidSpawnInfo.write());
             }
             tag.put(TAG_SPAWNINFO, nbtList);
             return tag;
         }
 
-        private static RaidHistory fromNBT(final CompoundTag tag)
-        {
+        private static RaidHistory fromNBT(final CompoundTag tag) {
             RaidHistory history = new RaidHistory(tag.getInt(TAG_RAIDERAMOUNT), tag.getLong(TAG_RAIDTIME));
             history.lostCitizens = tag.getInt(TAG_LOST_CITIZENS);
             history.difficulty = tag.getDouble(TAG_DIFFICULTY);
             ListTag nbtList = tag.getList(TAG_SPAWNINFO, Tag.TAG_COMPOUND);
-            for (final Tag entry : nbtList)
-            {
+            for (final Tag entry : nbtList) {
                 history.spawnData.add(RaidSpawnInfo.fromNBT((CompoundTag) entry));
             }
 
@@ -1134,22 +975,20 @@ public class RaidManager implements IRaiderManager
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "Raid on: " + raidTime / 24000L
-                     + "\nRaiders spawned: " + raiderAmount
-                     + "\nRaiders killed: " + deadRaiders
-                     + "\nCitizens lost: " + lostCitizens
-                     + "\nDifficulty: " + difficulty
-                     + "\nSpawns:" + spawnData.stream().map(Object::toString).collect(Collectors.joining("\n"));
+                    + "\nRaiders spawned: " + raiderAmount
+                    + "\nRaiders killed: " + deadRaiders
+                    + "\nCitizens lost: " + lostCitizens
+                    + "\nDifficulty: " + difficulty
+                    + "\nSpawns:" + spawnData.stream().map(Object::toString).collect(Collectors.joining("\n"));
         }
     }
 
     /**
      * Data holder for raid spawns
      */
-    public static class RaidSpawnInfo
-    {
+    public static class RaidSpawnInfo {
         /**
          * Serialization constants
          */
@@ -1165,14 +1004,12 @@ public class RaidManager implements IRaiderManager
          */
         public final BlockPos spawnpos;
 
-        public RaidSpawnInfo(final ResourceLocation raidType, final BlockPos spawnpos)
-        {
+        public RaidSpawnInfo(final ResourceLocation raidType, final BlockPos spawnpos) {
             this.raidType = raidType;
             this.spawnpos = spawnpos;
         }
 
-        private CompoundTag write()
-        {
+        private CompoundTag write() {
             CompoundTag tag = new CompoundTag();
             tag.putString(TAG_RAIDTYPE, raidType.toString());
             tag.putInt("x", spawnpos.getX());
@@ -1181,13 +1018,11 @@ public class RaidManager implements IRaiderManager
             return tag;
         }
 
-        public static RaidSpawnInfo fromNBT(final CompoundTag tag)
-        {
+        public static RaidSpawnInfo fromNBT(final CompoundTag tag) {
             return new RaidSpawnInfo(ResourceLocation.parse(tag.getString(TAG_RAIDTYPE)), new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z")));
         }
 
-        public String toString()
-        {
+        public String toString() {
             return "Type: " + raidType.toString() + " pos: " + spawnpos.toShortString();
         }
     }

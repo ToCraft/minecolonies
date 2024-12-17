@@ -8,8 +8,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class ClickGuiButtonTriggerMessage extends AbstractServerPlayMessage
-{
+public class ClickGuiButtonTriggerMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "click_gui_button_trigger", ClickGuiButtonTriggerMessage::new);
 
     /**
@@ -22,30 +21,26 @@ public class ClickGuiButtonTriggerMessage extends AbstractServerPlayMessage
      */
     private final String resource;
 
-    public ClickGuiButtonTriggerMessage(final String buttonId, final String resource)
-    {
+    public ClickGuiButtonTriggerMessage(final String buttonId, final String resource) {
         super(TYPE);
         this.resource = resource;
         this.buttonId = buttonId;
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         buf.writeUtf(this.resource);
         buf.writeUtf(this.buttonId);
     }
 
-    protected ClickGuiButtonTriggerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ClickGuiButtonTriggerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.resource = buf.readUtf(32767);
         this.buttonId = buf.readUtf(32767);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player) {
         AdvancementTriggers.CLICK_GUI_BUTTON.get().trigger(player, this.buttonId, this.resource);
     }
 }

@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job that handles moving close to a position near another
  */
-public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestinationPathJob
-{
+public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestinationPathJob {
     /**
      * Position to go close to
      */
@@ -32,12 +31,11 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestin
     public final int distToDesired;
 
     public PathJobMoveCloseToXNearY(
-      final Level world,
-      final BlockPos desiredPosition,
-      final BlockPos nearbyPosition,
-      final int distToDesired,
-      final Mob entity)
-    {
+            final Level world,
+            final BlockPos desiredPosition,
+            final BlockPos nearbyPosition,
+            final int distToDesired,
+            final Mob entity) {
         super(world, PathfindingUtils.prepareStart(entity), desiredPosition, new PathResult<PathJobMoveCloseToXNearY>(), entity);
 
         this.desiredPosition = desiredPosition;
@@ -47,39 +45,31 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestin
     }
 
     @Override
-    protected double computeHeuristic(final int x, final int y, final int z)
-    {
+    protected double computeHeuristic(final int x, final int y, final int z) {
         return BlockPosUtil.distManhattan(desiredPosition, x, y, z) + BlockPosUtil.distManhattan(nearbyPosition, x, y, z) * 2;
     }
 
     @Override
-    protected boolean isAtDestination(@NotNull final MNode n)
-    {
-        if (desiredPosition.getX() == n.x && desiredPosition.getZ() == n.z)
-        {
+    protected boolean isAtDestination(@NotNull final MNode n) {
+        if (desiredPosition.getX() == n.x && desiredPosition.getZ() == n.z) {
             return false;
         }
 
         return BlockPosUtil.distManhattan(desiredPosition, n.x, n.y, n.z) < distToDesired
-                 && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
-                      == SurfaceType.WALKABLE;
+                && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                == SurfaceType.WALKABLE;
     }
 
     @Override
-    protected double getEndNodeScore(@NotNull final MNode n)
-    {
-        if (desiredPosition.getX() == n.x && desiredPosition.getZ() == n.z)
-        {
+    protected double getEndNodeScore(@NotNull final MNode n) {
+        if (desiredPosition.getX() == n.x && desiredPosition.getZ() == n.z) {
             return 1000;
         }
 
         double dist = BlockPosUtil.distManhattan(desiredPosition, n.x, n.y, n.z) * 2 + BlockPosUtil.distManhattan(nearbyPosition, n.x, n.y, n.z);
-        if (n.isSwimming())
-        {
+        if (n.isSwimming()) {
             dist += 50;
-        }
-        else if (cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z) == Blocks.WATER.defaultBlockState())
-        {
+        } else if (cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z) == Blocks.WATER.defaultBlockState()) {
             dist += 50;
         }
 
@@ -87,22 +77,17 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestin
     }
 
     @Override
-    protected boolean stopOnNodeLimit(final int totalNodesVisited, final MNode bestNode, final int nodesSinceEndNode)
-    {
-        if (nodesSinceEndNode > 200)
-        {
+    protected boolean stopOnNodeLimit(final int totalNodesVisited, final MNode bestNode, final int nodesSinceEndNode) {
+        if (nodesSinceEndNode > 200) {
             return true;
-        }
-        else
-        {
+        } else {
             maxNodes += 200;
             return false;
         }
     }
 
     @Override
-    public BlockPos getDestination()
-    {
+    public BlockPos getDestination() {
         return desiredPosition;
     }
 }

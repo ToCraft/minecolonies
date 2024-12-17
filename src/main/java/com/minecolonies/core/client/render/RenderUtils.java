@@ -8,8 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-public class RenderUtils
-{
+public class RenderUtils {
     /**
      * Arm pose helper, take from PlayerRenderer#getArmPose
      *
@@ -17,66 +16,50 @@ public class RenderUtils
      * @param hand
      * @return
      */
-    public static HumanoidModel.ArmPose getArmPose(Mob entity, InteractionHand hand)
-    {
-        if (entity.isLeftHanded())
-        {
+    public static HumanoidModel.ArmPose getArmPose(Mob entity, InteractionHand hand) {
+        if (entity.isLeftHanded()) {
             hand = hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         }
 
         ItemStack itemstack = entity.getItemInHand(hand);
-        if (itemstack.isEmpty())
-        {
+        if (itemstack.isEmpty()) {
             return HumanoidModel.ArmPose.EMPTY;
-        }
-        else
-        {
-            if (entity.getUsedItemHand() == hand && entity.getUseItemRemainingTicks() > 0)
-            {
+        } else {
+            if (entity.getUsedItemHand() == hand && entity.getUseItemRemainingTicks() > 0) {
                 UseAnim useanim = itemstack.getUseAnimation();
-                if (useanim == UseAnim.BLOCK)
-                {
+                if (useanim == UseAnim.BLOCK) {
                     return HumanoidModel.ArmPose.BLOCK;
                 }
 
-                if (useanim == UseAnim.BOW)
-                {
+                if (useanim == UseAnim.BOW) {
                     return HumanoidModel.ArmPose.BOW_AND_ARROW;
                 }
 
-                if (useanim == UseAnim.SPEAR)
-                {
+                if (useanim == UseAnim.SPEAR) {
                     return HumanoidModel.ArmPose.THROW_SPEAR;
                 }
 
-                if (useanim == UseAnim.CROSSBOW && hand == entity.getUsedItemHand())
-                {
+                if (useanim == UseAnim.CROSSBOW && hand == entity.getUsedItemHand()) {
                     return HumanoidModel.ArmPose.CROSSBOW_CHARGE;
                 }
 
-                if (useanim == UseAnim.SPYGLASS)
-                {
+                if (useanim == UseAnim.SPYGLASS) {
                     return HumanoidModel.ArmPose.SPYGLASS;
                 }
 
-                if (useanim == UseAnim.TOOT_HORN)
-                {
+                if (useanim == UseAnim.TOOT_HORN) {
                     return HumanoidModel.ArmPose.TOOT_HORN;
                 }
 
-                if (useanim == UseAnim.BRUSH)
-                {
+                if (useanim == UseAnim.BRUSH) {
                     return HumanoidModel.ArmPose.BRUSH;
                 }
-            }
-            else if (!entity.swinging && itemstack.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(itemstack))
-            {
+            } else if (!entity.swinging && itemstack.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(itemstack)) {
                 return HumanoidModel.ArmPose.CROSSBOW_HOLD;
             }
 
             HumanoidModel.ArmPose forgeArmPose = IClientItemExtensions.of(itemstack).getArmPose(entity, hand, itemstack);
-            if (forgeArmPose != null)
-            {
+            if (forgeArmPose != null) {
                 return forgeArmPose;
             }
 

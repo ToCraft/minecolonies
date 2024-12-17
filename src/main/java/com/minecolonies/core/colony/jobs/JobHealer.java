@@ -1,25 +1,22 @@
 package com.minecolonies.core.colony.jobs;
 
-import com.minecolonies.core.colony.buildings.modules.BuildingModules;
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkHealer;
 import com.minecolonies.core.util.AttributeModifierUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
 import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD_NAME;
 
 /**
  * The healer job class.
  */
-public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
-{
+public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer> {
     /**
      * Walking speed bonus per level
      */
@@ -30,8 +27,7 @@ public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
      *
      * @param entity the healer.
      */
-    public JobHealer(final ICitizenData entity)
-    {
+    public JobHealer(final ICitizenData entity) {
         super(entity);
     }
 
@@ -42,8 +38,7 @@ public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.HEALER_ID;
     }
 
@@ -54,26 +49,22 @@ public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
      */
     @NotNull
     @Override
-    public EntityAIWorkHealer generateAI()
-    {
+    public EntityAIWorkHealer generateAI() {
         return new EntityAIWorkHealer(this);
     }
 
     @Override
-    public void onLevelUp()
-    {
-        if (getCitizen().getEntity().isPresent())
-        {
+    public void onLevelUp() {
+        if (getCitizen().getEntity().isPresent()) {
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
             final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD_NAME, getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(
-              BuildingModules.HEALER_WORK).getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADD_VALUE);
+                    BuildingModules.HEALER_WORK).getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADD_VALUE);
             AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED);
         }
     }
 
     @Override
-    public double getDiseaseModifier()
-    {
+    public double getDiseaseModifier() {
         return 0;
     }
 }

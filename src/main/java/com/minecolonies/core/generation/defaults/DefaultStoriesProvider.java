@@ -19,34 +19,29 @@ import java.util.concurrent.CompletableFuture;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.core.generation.DataGeneratorConstants.COLONY_STORIES_DIR;
 
-public class DefaultStoriesProvider implements DataProvider
-{
+public class DefaultStoriesProvider implements DataProvider {
     private final PackOutput packOutput;
 
-    public DefaultStoriesProvider(@NotNull final PackOutput packOutput)
-    {
+    public DefaultStoriesProvider(@NotNull final PackOutput packOutput) {
         this.packOutput = packOutput;
     }
 
     @NotNull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "Default Stories Provider";
     }
 
     @NotNull
     @Override
-    public CompletableFuture<?> run(@NotNull final CachedOutput cachedOutput)
-    {
+    public CompletableFuture<?> run(@NotNull final CachedOutput cachedOutput) {
         final PackOutput.PathProvider outputProvider = packOutput.createPathProvider(PackOutput.Target.RESOURCE_PACK, COLONY_STORIES_DIR);
 
         return CompletableFuture.allOf(makeAbandonedStories(outputProvider, cachedOutput), makeSupplyStories(outputProvider, cachedOutput));
     }
 
     private CompletableFuture<?> makeAbandonedStories(@NotNull final PackOutput.PathProvider outputProvider,
-                                                      @NotNull final CachedOutput cachedOutput)
-    {
+                                                      @NotNull final CachedOutput cachedOutput) {
         final JsonArray json = new JsonArray();
 
         json.add(new StoryBuilder(ColonyStoryListener.ABANDONED_COLONY_NAME)
@@ -135,8 +130,7 @@ public class DefaultStoriesProvider implements DataProvider
     }
 
     private CompletableFuture<?> makeSupplyStories(@NotNull final PackOutput.PathProvider outputProvider,
-                                                   @NotNull final CachedOutput cachedOutput)
-    {
+                                                   @NotNull final CachedOutput cachedOutput) {
         final JsonArray json = new JsonArray();
 
         json.add(new StoryBuilder(ColonyStoryListener.SUPPLY_CAMP_STORY)
@@ -170,61 +164,49 @@ public class DefaultStoriesProvider implements DataProvider
         return DataProvider.saveStable(cachedOutput, json, outputProvider.json(new ResourceLocation(MOD_ID, "supplies")));
     }
 
-    private static class StoryBuilder
-    {
+    private static class StoryBuilder {
         final JsonObject json = new JsonObject();
 
-        public StoryBuilder(@NotNull final ResourceLocation type)
-        {
+        public StoryBuilder(@NotNull final ResourceLocation type) {
             json.addProperty("type", type.toString());
         }
 
-        public JsonObject build()
-        {
+        public JsonObject build() {
             return this.json;
         }
 
         @SafeVarargs
-        public final StoryBuilder addBiome(@NotNull final Holder<Biome>... biomes)
-        {
+        public final StoryBuilder addBiome(@NotNull final Holder<Biome>... biomes) {
             final String[] ids = Arrays.stream(biomes).map(b -> b.unwrapKey().get().location().toString()).toArray(String[]::new);
             return addStringOrArray("biomes", ids);
         }
 
         @SafeVarargs
-        public final StoryBuilder addBiomeTag(@NotNull final TagKey<Biome>... tags)
-        {
+        public final StoryBuilder addBiomeTag(@NotNull final TagKey<Biome>... tags) {
             final String[] ids = Arrays.stream(tags).map(t -> "#" + t.location()).toArray(String[]::new);
             return addStringOrArray("biomes", ids);
         }
 
-        public StoryBuilder addContents(@NotNull final String... contents)
-        {
+        public StoryBuilder addContents(@NotNull final String... contents) {
             return addStringOrArray("content", contents);
         }
 
-        private StoryBuilder addStringOrArray(@NotNull final String property, @NotNull final String... values)
-        {
+        private StoryBuilder addStringOrArray(@NotNull final String property, @NotNull final String... values) {
             if (values.length == 0) return this;
-            if (values.length == 1 && !json.has(property))
-            {
+            if (values.length == 1 && !json.has(property)) {
                 json.addProperty(property, values[0]);
                 return this;
             }
 
             final JsonArray array;
-            if (json.has(property))
-            {
+            if (json.has(property)) {
                 array = json.getAsJsonArray(property);
-            }
-            else
-            {
+            } else {
                 array = new JsonArray();
                 json.add(property, array);
             }
 
-            for (final String value : values)
-            {
+            for (final String value : values) {
                 array.add(value);
             }
             return this;

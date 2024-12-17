@@ -25,8 +25,7 @@ import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 /**
  * Raider AI for shooting arrows at a target
  */
-public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEntity & IRangedMobEntity> extends AttackMoveAI<T>
-{
+public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEntity & IRangedMobEntity> extends AttackMoveAI<T> {
     /**
      * Max delay between attacks is 3s, aka 60 ticks.
      */
@@ -56,7 +55,7 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
      * Sound variance
      */
     private static final double PITCH_MULTIPLIER = 0.4;
-    private static final double BASE_PITCH       = 0.8D;
+    private static final double BASE_PITCH = 0.8D;
     private static final double PITCH_DIVIDER = 1.0D;
 
     /**
@@ -65,26 +64,20 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
     private int flightCounter = 0;
 
     public RaiderRangedAI(
-      final T owner,
-      final ITickRateStateMachine<IState> stateMachine)
-    {
+            final T owner,
+            final ITickRateStateMachine<IState> stateMachine) {
         super(owner, stateMachine);
     }
 
     @Override
-    protected boolean isInDistanceForAttack(final LivingEntity target)
-    {
-        if (EntityUtils.isFlying(target))
-        {
+    protected boolean isInDistanceForAttack(final LivingEntity target) {
+        if (EntityUtils.isFlying(target)) {
             flightCounter++;
-        }
-        else
-        {
+        } else {
             flightCounter = 0;
         }
 
-        if (flightCounter > 5)
-        {
+        if (flightCounter > 5) {
             // Always allowed to try attacking flying targets
             return true;
         }
@@ -93,27 +86,23 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
     }
 
     @Override
-    protected void doAttack(final LivingEntity target)
-    {
+    protected void doAttack(final LivingEntity target) {
         user.getNavigation().stop();
 
         // Setup arrow
         AbstractArrow arrowEntity = CombatUtils.createArrowForShooter(user);
-        if (this.user.penetrateFluids() && arrowEntity instanceof CustomArrowEntity customArrowEntity )
-        {
+        if (this.user.penetrateFluids() && arrowEntity instanceof CustomArrowEntity customArrowEntity) {
             customArrowEntity.setWaterInertia(0.99f);
         }
 
         arrowEntity.setBaseDamage(user.getAttribute(MOB_ATTACK_DAMAGE).getValue());
-        if (flightCounter > 5 && arrowEntity instanceof CustomArrowEntity)
-        {
+        if (flightCounter > 5 && arrowEntity instanceof CustomArrowEntity) {
             ((CustomArrowEntity) arrowEntity).setPlayerArmorPierce();
             arrowEntity.setRemainingFireTicks(200 * TICKS_PER_SECOND);
             arrowEntity.setBaseDamage(10);
         }
 
-        if (user.getDifficulty() > ARROW_PIERCE_DIFFICULTY)
-        {
+        if (user.getDifficulty() > ARROW_PIERCE_DIFFICULTY) {
             arrowEntity.setPierceLevel((byte) 2);
         }
 
@@ -124,8 +113,7 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
         user.swing(InteractionHand.MAIN_HAND);
         user.stopUsingItem();
         SoundEvent attackSound = SoundEvents.SKELETON_SHOOT;
-        if (arrowEntity instanceof ICustomAttackSound)
-        {
+        if (arrowEntity instanceof ICustomAttackSound) {
             attackSound = ((ICustomAttackSound) arrowEntity).getAttackSound();
         }
         user.playSound(attackSound, (float) 1.0D, (float) getRandomPitch());
@@ -136,22 +124,18 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
      *
      * @return A random double to act as a pitch value
      */
-    private double getRandomPitch()
-    {
+    private double getRandomPitch() {
         return PITCH_DIVIDER / (user.getRandom().nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
     }
 
     @Override
-    protected double getAttackDistance()
-    {
+    protected double getAttackDistance() {
         return MAX_ATTACK_DISTANCE * Math.max(user.getDifficulty(), 2.0d);
     }
 
     @Override
-    protected int getAttackDelay()
-    {
-        if (flightCounter > 5)
-        {
+    protected int getAttackDelay() {
+        if (flightCounter > 5) {
             return 10;
         }
 
@@ -159,10 +143,8 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
     }
 
     @Override
-    public boolean canAttack()
-    {
-        if (nextAttackTime - BOW_HOLDING_DELAY >= user.level().getGameTime() && !user.isUsingItem() && !user.getMainHandItem().isEmpty())
-        {
+    public boolean canAttack() {
+        if (nextAttackTime - BOW_HOLDING_DELAY >= user.level().getGameTime() && !user.isUsingItem() && !user.getMainHandItem().isEmpty()) {
             user.startUsingItem(InteractionHand.MAIN_HAND);
         }
 
@@ -170,12 +152,10 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
     }
 
     @Override
-    protected boolean checkForTarget()
-    {
+    protected boolean checkForTarget() {
         final boolean validTarget = super.checkForTarget();
 
-        if (!validTarget && user.isUsingItem())
-        {
+        if (!validTarget && user.isUsingItem()) {
             user.stopUsingItem();
         }
 
@@ -183,20 +163,17 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
     }
 
     @Override
-    protected PathResult moveInAttackPosition(final LivingEntity target)
-    {
+    protected PathResult moveInAttackPosition(final LivingEntity target) {
         return user.getNavigation().moveToXYZ(target.getX(), target.getY(), target.getZ(), COMBAT_MOVEMENT_SPEED);
     }
 
     @Override
-    protected boolean isAttackableTarget(final LivingEntity target)
-    {
+    protected boolean isAttackableTarget(final LivingEntity target) {
         return (target instanceof EntityCitizen && !target.isInvisible()) || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
     }
 
     @Override
-    protected boolean isWithinPersecutionDistance(final LivingEntity target)
-    {
+    protected boolean isWithinPersecutionDistance(final LivingEntity target) {
         return true;
     }
 }

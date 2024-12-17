@@ -6,15 +6,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Colony created event.
  */
-public class ColonyCreatedEvent extends AbstractColonyEvent
-{
+public class ColonyCreatedEvent extends AbstractColonyEvent {
     /**
      * Constructs a colony created event.
      *
      * @param colony The colony related to the event.
      */
-    public ColonyCreatedEvent(final @NotNull IColony colony)
-    {
+    public ColonyCreatedEvent(final @NotNull IColony colony) {
         super(colony);
     }
 }

@@ -25,8 +25,7 @@ import java.util.List;
 /**
  * Special abstract minecolonies mob that overrides laggy vanilla behaviour.
  */
-public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob implements IStuckHandlerEntity
-{
+public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob implements IStuckHandlerEntity {
     /**
      * Whether this entity can be stuck for stuckhandling
      */
@@ -68,21 +67,18 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
      * @param type    from type.
      * @param worldIn the world.
      */
-    protected AbstractFastMinecoloniesEntity(final EntityType<? extends PathfinderMob> type, final Level worldIn)
-    {
+    protected AbstractFastMinecoloniesEntity(final EntityType<? extends PathfinderMob> type, final Level worldIn) {
         super(type, worldIn);
         lookControl = new LookHandler(this);
     }
 
     @Override
-    public boolean canBeLeashed()
-    {
+    public boolean canBeLeashed() {
         return false;
     }
 
     @Override
-    public boolean canBeStuck()
-    {
+    public boolean canBeStuck() {
         return canBeStuck;
     }
 
@@ -91,14 +87,12 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
      *
      * @param canBeStuck
      */
-    public void setCanBeStuck(final boolean canBeStuck)
-    {
+    public void setCanBeStuck(final boolean canBeStuck) {
         this.canBeStuck = canBeStuck;
     }
 
     @Override
-    protected boolean isHorizontalCollisionMinor(Vec3 vec3)
-    {
+    protected boolean isHorizontalCollisionMinor(Vec3 vec3) {
         lastHorizontalCollision = level().getGameTime();
         return super.isHorizontalCollisionMinor(vec3);
     }
@@ -108,50 +102,42 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
      *
      * @return
      */
-    public boolean hadHorizontalCollission()
-    {
+    public boolean hadHorizontalCollission() {
         return level().getGameTime() - lastHorizontalCollision < 10;
     }
 
     @Override
-    public boolean checkBedExists()
-    {
+    public boolean checkBedExists() {
         return false;
     }
 
     @Override
-    protected void removeFrost()
-    {
+    protected void removeFrost() {
 
     }
 
     @Override
-    protected void tryAddFrost()
-    {
+    protected void tryAddFrost() {
 
     }
 
     @Override
-    public void onInsideBubbleColumn(boolean down)
-    {
+    public void onInsideBubbleColumn(boolean down) {
 
     }
 
     @Override
-    protected int decreaseAirSupply(final int supply)
-    {
+    protected int decreaseAirSupply(final int supply) {
         return supply - 1;
     }
 
     @Override
-    protected int increaseAirSupply(final int supply)
-    {
+    protected int increaseAirSupply(final int supply) {
         return supply + 1;
     }
 
     @Override
-    protected void onChangedBlock(final ServerLevel level, final BlockPos pos)
-    {
+    protected void onChangedBlock(final ServerLevel level, final BlockPos pos) {
         // This just tries to apply soulspeed or frostwalker
     }
 
@@ -159,26 +145,18 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
      * Ignores cramming
      */
     @Override
-    public void pushEntities()
-    {
-        if (this.level().isClientSide())
-        {
+    public void pushEntities() {
+        if (this.level().isClientSide()) {
             this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox(), EntityUtils.pushableBy()).forEach(this::doPush);
-        }
-        else
-        {
-            if (this.tickCount % 10 == randomVariance % 10)
-            {
+        } else {
+            if (this.tickCount % 10 == randomVariance % 10) {
                 entityPushCache = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox());
             }
 
-            if (!entityPushCache.isEmpty())
-            {
-                for (int i = 0, entityPushCacheSize = entityPushCache.size(); i < entityPushCacheSize; i++)
-                {
+            if (!entityPushCache.isEmpty()) {
+                for (int i = 0, entityPushCacheSize = entityPushCache.size(); i < entityPushCacheSize; i++) {
                     final Entity entity = entityPushCache.get(i);
-                    if (getBoundingBox().contains(entity.position()))
-                    {
+                    if (getBoundingBox().contains(entity.position())) {
                         this.doPush(entity);
                     }
                 }
@@ -191,31 +169,25 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
      */
     @Nullable
     @Override
-    public Entity changeDimension(final DimensionTransition dimensionTransition)
-    {
+    public Entity changeDimension(final DimensionTransition dimensionTransition) {
         return null;
     }
 
     @Override
-    public boolean canSpawnSprintParticle()
-    {
+    public boolean canSpawnSprintParticle() {
         return false;
     }
 
     @Override
-    public void updateFluidOnEyes()
-    {
-        if (tickCount % 20 == randomVariance)
-        {
+    public void updateFluidOnEyes() {
+        if (tickCount % 20 == randomVariance) {
             super.updateFluidOnEyes();
         }
     }
 
     @Override
-    protected boolean updateInWaterStateAndDoFluidPushing()
-    {
-        if (tickCount % 10 == randomVariance % 10)
-        {
+    protected boolean updateInWaterStateAndDoFluidPushing() {
+        if (tickCount % 10 == randomVariance % 10) {
             isInFluid = super.updateInWaterStateAndDoFluidPushing();
         }
 
@@ -223,32 +195,26 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     }
 
     @Override
-    public void setSharedFlagOnFire(boolean newState)
-    {
-        if (newState != onFire)
-        {
+    public void setSharedFlagOnFire(boolean newState) {
+        if (newState != onFire) {
             super.setSharedFlagOnFire(newState);
             onFire = newState;
         }
     }
 
     @Override
-    protected void handlePortal()
-    {
+    protected void handlePortal() {
         // Noop our entities dont use portals
     }
 
     @Override
-    public void updateSwimming()
-    {
+    public void updateSwimming() {
         // Noop our entities dont swim
     }
 
     @Override
-    public boolean isInWall()
-    {
-        if (tickCount % 10 == randomVariance % 10)
-        {
+    public boolean isInWall() {
+        if (tickCount % 10 == randomVariance % 10) {
             return super.isInWall();
         }
 
@@ -256,11 +222,9 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     }
 
     @Override
-    public boolean isInWaterRainOrBubble()
-    {
+    public boolean isInWaterRainOrBubble() {
         // Used to extinguish fire, only check if on fire
-        if (getRemainingFireTicks() > 0 || level().isClientSide)
-        {
+        if (getRemainingFireTicks() > 0 || level().isClientSide) {
             return super.isInWaterRainOrBubble();
         }
 
@@ -268,14 +232,11 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     }
 
     @Override
-    public void updateFallFlying()
-    {
+    public void updateFallFlying() {
         // Simplified updateFallflying to only set flags when they did change
-        if (!this.level().isClientSide && tickCount % 5 == randomVariance % 5)
-        {
+        if (!this.level().isClientSide && tickCount % 5 == randomVariance % 5) {
             boolean flag = this.getSharedFlag(7);
-            if (!flag || this.onGround() || this.isPassenger() || this.hasEffect(MobEffects.LEVITATION))
-            {
+            if (!flag || this.onGround() || this.isPassenger() || this.hasEffect(MobEffects.LEVITATION)) {
                 flag = false;
                 this.setSharedFlag(7, flag);
             }
@@ -283,62 +244,50 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     }
 
     @Override
-    protected void sendDebugPackets()
-    {
+    protected void sendDebugPackets() {
     }
 
     @Override
-    public void setTicksFrozen(int p_146918_)
-    {
+    public void setTicksFrozen(int p_146918_) {
 
     }
 
     @Override
-    public void updateSwimAmount()
-    {
+    public void updateSwimAmount() {
 
     }
 
     /**
      * Static Byte values to avoid frequent autoboxing
      */
-    final Byte ENABLE  = 2;
+    final Byte ENABLE = 2;
     final Byte DISABLE = 0;
 
     @Override
-    public void setShiftKeyDown(boolean enable)
-    {
-        if (enable)
-        {
+    public void setShiftKeyDown(boolean enable) {
+        if (enable) {
             this.entityData.set(DATA_SHARED_FLAGS_ID, ENABLE);
-        }
-        else
-        {
+        } else {
             this.entityData.set(DATA_SHARED_FLAGS_ID, DISABLE);
         }
     }
 
     @Override
-    public boolean isShiftKeyDown()
-    {
+    public boolean isShiftKeyDown() {
         return (this.entityData.get(DATA_SHARED_FLAGS_ID)).byteValue() == ENABLE.byteValue();
     }
 
     @Override
-    public void knockback(double power, double xRatio, double zRatio)
-    {
-        if (level().getGameTime() - lastKnockBack > 20 * 3)
-        {
+    public void knockback(double power, double xRatio, double zRatio) {
+        if (level().getGameTime() - lastKnockBack > 20 * 3) {
             lastKnockBack = level().getGameTime();
             super.knockback(power, xRatio, zRatio);
         }
     }
 
     @Override
-    public boolean hurt(final DamageSource dmgSource, final float dmg)
-    {
-        if (dmgSource.getEntity() instanceof AbstractFastMinecoloniesEntity otherFastMinecolEntity && otherFastMinecolEntity.getTeamId() == getTeamId())
-        {
+    public boolean hurt(final DamageSource dmgSource, final float dmg) {
+        if (dmgSource.getEntity() instanceof AbstractFastMinecoloniesEntity otherFastMinecolEntity && otherFastMinecolEntity.getTeamId() == getTeamId()) {
             return false;
         }
         return super.hurt(dmgSource, dmg);
@@ -347,6 +296,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     /**
      * Get the team name of this entity.
      * todo sam make colony ids unique across dimensions.
+     *
      * @return the team name.
      */
     public abstract int getTeamId();

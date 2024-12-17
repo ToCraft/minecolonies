@@ -26,28 +26,22 @@ import static com.minecolonies.core.generation.defaults.DefaultCropsLootProvider
 /**
  * NeoForge global loot table modifier datagen.
  */
-public class DefaultLootModifiersProvider extends GlobalLootModifierProvider
-{
+public class DefaultLootModifiersProvider extends GlobalLootModifierProvider {
     public DefaultLootModifiersProvider(@NotNull final PackOutput output,
-                                        @NotNull final CompletableFuture<HolderLookup.Provider> registries)
-    {
+                                        @NotNull final CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, MOD_ID);
     }
 
     @Override
-    protected void start()
-    {
+    protected void start() {
         final Set<ResourceLocation> cropSources = new HashSet<>();
-        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
-        {
-            for (final Block source : crop.getDroppedFrom())
-            {
+        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops()) {
+            for (final Block source : crop.getDroppedFrom()) {
                 cropSources.add(source.getLootTable().location());
             }
         }
 
-        for (final ResourceLocation source : cropSources)
-        {
+        for (final ResourceLocation source : cropSources) {
             final ResourceKey<LootTable> cropTable = DefaultCropsLootProvider.getCropSourceLootTable(source);
             add(cropTable.location().getPath(),
                     new AddTableLootModifier(forLootTable(source), cropTable),
@@ -58,8 +52,7 @@ public class DefaultLootModifiersProvider extends GlobalLootModifierProvider
                 new AddTableLootModifier(forLootTable(BuiltInLootTables.SIMPLE_DUNGEON.location()), DUNGEON_CROPS));
     }
 
-    private static LootItemCondition[] forLootTable(@NotNull final ResourceLocation table)
-    {
+    private static LootItemCondition[] forLootTable(@NotNull final ResourceLocation table) {
         final LootItemCondition[] conditions = new LootItemCondition[1];
         conditions[0] = LootTableIdCondition.builder(table).build();
         return conditions;

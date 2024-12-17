@@ -10,8 +10,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-public interface IResolverHandler
-{
+public interface IResolverHandler {
     IRequestManager getManager();
 
     /**
@@ -166,6 +165,7 @@ public interface IResolverHandler
 
     /**
      * Check if a resolver is in the progress of being removed.
+     *
      * @param id the id of the resolver to check.
      * @return true if so.
      */

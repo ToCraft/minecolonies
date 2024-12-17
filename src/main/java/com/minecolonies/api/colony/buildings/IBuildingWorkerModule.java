@@ -6,8 +6,7 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import org.jetbrains.annotations.NotNull;
 
-public interface IBuildingWorkerModule
-{
+public interface IBuildingWorkerModule {
     /**
      * The abstract method which creates a job for the building.
      *
@@ -42,6 +41,7 @@ public interface IBuildingWorkerModule
 
     /**
      * Getter for the job entry.
+     *
      * @return the entry.
      */
     JobEntry getJobEntry();

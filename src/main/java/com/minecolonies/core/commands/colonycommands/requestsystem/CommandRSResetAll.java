@@ -9,18 +9,15 @@ import net.minecraft.network.chat.Component;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_REQUEST_SYSTEM_RESET_ALL_SUCCESS;
 
-public class CommandRSResetAll implements IMCOPCommand
-{
+public class CommandRSResetAll implements IMCOPCommand {
     /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
-        for (final IColony colony : IColonyManager.getInstance().getAllColonies())
-        {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
+        for (final IColony colony : IColonyManager.getInstance().getAllColonies()) {
             colony.getRequestManager().reset();
         }
         context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_REQUEST_SYSTEM_RESET_ALL_SUCCESS), true);
@@ -32,8 +29,7 @@ public class CommandRSResetAll implements IMCOPCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "requestsystem-reset-all";
     }
 }

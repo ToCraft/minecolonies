@@ -55,8 +55,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TAVERN;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TOWN_HALL;
 
-public class RegisteredStructureManager implements IRegisteredStructureManager
-{
+public class RegisteredStructureManager implements IRegisteredStructureManager {
     /**
      * List of building in the colony.
      */
@@ -117,14 +116,12 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
      *
      * @param colony the colony.
      */
-    public RegisteredStructureManager(final Colony colony)
-    {
+    public RegisteredStructureManager(final Colony colony) {
         this.colony = colony;
     }
 
     @Override
-    public void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         buildings = ImmutableMap.of();
         maxChunkX = colony.getCenter().getX() >> 4;
         minChunkX = colony.getCenter().getX() >> 4;
@@ -132,15 +129,12 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         minChunkZ = colony.getCenter().getZ() >> 4;
 
         // Fields
-        if (compound.contains(TAG_FIELDS))
-        {
+        if (compound.contains(TAG_FIELDS)) {
             final ListTag fieldsTagList = compound.getList(TAG_FIELDS, Tag.TAG_COMPOUND);
-            for (int i = 0; i < fieldsTagList.size(); ++i)
-            {
+            for (int i = 0; i < fieldsTagList.size(); ++i) {
                 final CompoundTag fieldCompound = fieldsTagList.getCompound(i);
                 final IField field = FieldDataManager.compoundToField(provider, fieldCompound);
-                if (field != null)
-                {
+                if (field != null) {
                     addField(field);
                 }
             }
@@ -148,26 +142,21 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         //  Buildings
         final ListTag buildingTagList = compound.getList(TAG_BUILDINGS, Tag.TAG_COMPOUND);
-        for (int i = 0; i < buildingTagList.size(); ++i)
-        {
+        for (int i = 0; i < buildingTagList.size(); ++i) {
             final CompoundTag buildingCompound = buildingTagList.getCompound(i);
             @Nullable final IBuilding b = IBuildingDataManager.getInstance().createFrom(colony, buildingCompound, provider);
-            if (b != null)
-            {
+            if (b != null) {
                 addBuilding(b);
                 setMaxChunk(b);
             }
         }
 
-        if (compound.contains(TAG_LEISURE))
-        {
+        if (compound.contains(TAG_LEISURE)) {
             final ListTag leisureTagList = compound.getList(TAG_LEISURE, Tag.TAG_COMPOUND);
             final List<BlockPos> leisureSitesList = new ArrayList<>();
-            for (int i = 0; i < leisureTagList.size(); ++i)
-            {
+            for (int i = 0; i < leisureTagList.size(); ++i) {
                 final BlockPos pos = BlockPosUtil.read(leisureTagList.getCompound(i), TAG_POS);
-                if (!leisureSitesList.contains(pos))
-                {
+                if (!leisureSitesList.contains(pos)) {
                     leisureSitesList.add(pos);
                 }
             }
@@ -175,21 +164,17 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
 
         // Ensure fields are still tied to an appropriate building
-        for (IField field : fields.stream().filter(IField::isTaken).toList())
-        {
+        for (IField field : fields.stream().filter(IField::isTaken).toList()) {
             final IBuilding building = buildings.get(field.getBuildingId());
-            if (building == null)
-            {
+            if (building == null) {
                 field.resetOwningBuilding();
                 continue;
             }
 
             final FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
-            if (fieldsModule == null || !field.getClass().equals(fieldsModule.getExpectedFieldType()))
-            {
+            if (fieldsModule == null || !field.getClass().equals(fieldsModule.getExpectedFieldType())) {
                 field.resetOwningBuilding();
-                if (fieldsModule != null)
-                {
+                if (fieldsModule != null) {
                     fieldsModule.freeField(field);
                 }
             }
@@ -201,38 +186,31 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
      *
      * @param b the max chunk dir.
      */
-    private void setMaxChunk(final IBuilding b)
-    {
+    private void setMaxChunk(final IBuilding b) {
         final int chunkX = b.getPosition().getX() >> 4;
         final int chunkZ = b.getPosition().getZ() >> 4;
-        if (chunkX >= maxChunkX)
-        {
+        if (chunkX >= maxChunkX) {
             maxChunkX = chunkX + 1;
         }
 
-        if (chunkX <= minChunkX)
-        {
+        if (chunkX <= minChunkX) {
             minChunkX = chunkX - 1;
         }
 
-        if (chunkZ >= maxChunkZ)
-        {
+        if (chunkZ >= maxChunkZ) {
             maxChunkZ = chunkZ + 1;
         }
 
-        if (chunkZ <= minChunkZ)
-        {
+        if (chunkZ <= minChunkZ) {
             minChunkZ = chunkZ - 1;
         }
     }
 
     @Override
-    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
-    {
+    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) {
         //  Buildings
         @NotNull final ListTag buildingTagList = new ListTag();
-        for (@NotNull final IBuilding b : buildings.values())
-        {
+        for (@NotNull final IBuilding b : buildings.values()) {
             @NotNull final CompoundTag buildingCompound = b.serializeNBT(provider);
             buildingTagList.add(buildingCompound);
         }
@@ -240,13 +218,12 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         // Fields
         compound.put(TAG_FIELDS, fields.stream()
-                                   .map(f -> FieldDataManager.fieldToCompound(provider, f))
-                                   .collect(NBTUtils.toListNBT()));
+                .map(f -> FieldDataManager.fieldToCompound(provider, f))
+                .collect(NBTUtils.toListNBT()));
 
         // Leisure sites
         @NotNull final ListTag leisureTagList = new ListTag();
-        for (@NotNull final BlockPos pos : leisureSites)
-        {
+        for (@NotNull final BlockPos pos : leisureSites) {
             @NotNull final CompoundTag leisureCompound = new CompoundTag();
             BlockPosUtil.write(leisureCompound, TAG_POS, pos);
             leisureTagList.add(leisureCompound);
@@ -255,16 +232,14 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void clearDirty()
-    {
+    public void clearDirty() {
         isBuildingsDirty = false;
         isFieldsDirty = false;
         buildings.values().forEach(IBuilding::clearDirty);
     }
 
     @Override
-    public void sendPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
-    {
+    public void sendPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers) {
         sendBuildingPackets(closeSubscribers, newSubscribers);
         sendFieldPackets(closeSubscribers, newSubscribers);
         isBuildingsDirty = false;
@@ -272,131 +247,104 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void onColonyTick(final IColony colony)
-    {
+    public void onColonyTick(final IColony colony) {
         //  Tick Buildings
-        for (@NotNull final IBuilding building : buildings.values())
-        {
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
-            {
+        for (@NotNull final IBuilding building : buildings.values()) {
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition())) {
                 building.onColonyTick(colony);
             }
         }
     }
 
     @Override
-    public void markBuildingsDirty()
-    {
+    public void markBuildingsDirty() {
         isBuildingsDirty = true;
     }
 
     @Override
-    public void cleanUpBuildings(@NotNull final IColony colony)
-    {
+    public void cleanUpBuildings(@NotNull final IColony colony) {
         @Nullable final List<IBuilding> removedBuildings = new ArrayList<>();
 
         //Need this list, we may enter here while we add a building in the real world.
         final List<IBuilding> tempBuildings = new ArrayList<>(buildings.values());
 
-        for (@NotNull final IBuilding building : tempBuildings)
-        {
+        for (@NotNull final IBuilding building : tempBuildings) {
             final BlockPos loc = building.getPosition();
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), loc) && !building.isMatchingBlock(colony.getWorld().getBlockState(loc).getBlock()))
-            {
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), loc) && !building.isMatchingBlock(colony.getWorld().getBlockState(loc).getBlock())) {
                 //  Sanity cleanup
                 removedBuildings.add(building);
             }
         }
 
-        for (final IField field : fields)
-        {
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), field.getPosition()) || !field.isValidPlacement(colony)))
-            {
+        for (final IField field : fields) {
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), field.getPosition()) || !field.isValidPlacement(colony))) {
                 removeField(f -> f.equals(field));
             }
         }
 
-        for (@NotNull final BlockPos pos : leisureSites)
-        {
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), pos) && (!(colony.getWorld().getBlockEntity(pos) instanceof TileEntityDecorationController)))
-            {
+        for (@NotNull final BlockPos pos : leisureSites) {
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), pos) && (!(colony.getWorld().getBlockEntity(pos) instanceof TileEntityDecorationController))) {
                 removeLeisureSite(pos);
             }
         }
 
-        if (!removedBuildings.isEmpty() && removedBuildings.size() >= buildings.values().size())
-        {
+        if (!removedBuildings.isEmpty() && removedBuildings.size() >= buildings.values().size()) {
             Log.getLogger()
-              .warn("Colony:" + colony.getID()
-                      + " is removing all buildings at once. Did you just load a backup? If not there is a chance that colony data got corrupted and you want to restore a backup.");
+                    .warn("Colony:" + colony.getID()
+                            + " is removing all buildings at once. Did you just load a backup? If not there is a chance that colony data got corrupted and you want to restore a backup.");
         }
 
         removedBuildings.forEach(IBuilding::destroy);
     }
 
     @Override
-    public IBuilding getBuilding(final BlockPos buildingId)
-    {
-        if (buildingId != null)
-        {
+    public IBuilding getBuilding(final BlockPos buildingId) {
+        if (buildingId != null) {
             return buildings.get(buildingId);
         }
         return null;
     }
 
     @Override
-    public List<BlockPos> getLeisureSites()
-    {
+    public List<BlockPos> getLeisureSites() {
         return leisureSites;
     }
 
     @Override
-    public BlockPos getRandomLeisureSite()
-    {
+    public BlockPos getRandomLeisureSite() {
         final boolean isRaining = colony.getWorld().isRaining();
 
         IBuilding building = null;
         final int randomDist = RANDOM.nextInt(4);
-        if (randomDist < 1)
-        {
+        if (randomDist < 1) {
             building = getFirstBuildingMatching(b -> b instanceof BuildingTownHall && b.getBuildingLevel() >= 3);
-            if (building != null)
-            {
+            if (building != null) {
                 return building.getPosition();
             }
         }
 
-        if (randomDist < 2)
-        {
-            if (!isRaining && RANDOM.nextBoolean())
-            {
+        if (randomDist < 2) {
+            if (!isRaining && RANDOM.nextBoolean()) {
                 building = getFirstBuildingMatching(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
-                if (building != null)
-                {
+                if (building != null) {
                     return building.getPosition();
                 }
-            }
-            else
-            {
+            } else {
                 building = getFirstBuildingMatching(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
-                if (building != null)
-                {
+                if (building != null) {
                     return building.getPosition();
                 }
             }
         }
 
-        if (randomDist < 3)
-        {
+        if (randomDist < 3) {
             building = getFirstBuildingMatching(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
-            if (building != null)
-            {
+            if (building != null) {
                 return building.getPosition();
             }
         }
 
-        if (isRaining)
-        {
+        if (isRaining) {
             return null;
         }
 
@@ -405,12 +353,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
     @Nullable
     @Override
-    public IBuilding getFirstBuildingMatching(final Predicate<IBuilding> predicate)
-    {
-        for (final IBuilding building : buildings.values())
-        {
-            if (predicate.test(building))
-            {
+    public IBuilding getFirstBuildingMatching(final Predicate<IBuilding> predicate) {
+        for (final IBuilding building : buildings.values()) {
+            if (predicate.test(building)) {
                 return building;
             }
         }
@@ -418,11 +363,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void addLeisureSite(final BlockPos pos)
-    {
+    public void addLeisureSite(final BlockPos pos) {
         final List<BlockPos> tempList = new ArrayList<>(leisureSites);
-        if (!tempList.contains(pos))
-        {
+        if (!tempList.contains(pos)) {
             tempList.add(pos);
             this.leisureSites = ImmutableList.copyOf(tempList);
             markBuildingsDirty();
@@ -430,10 +373,8 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void removeLeisureSite(final BlockPos pos)
-    {
-        if (leisureSites.contains(pos))
-        {
+    public void removeLeisureSite(final BlockPos pos) {
+        if (leisureSites.contains(pos)) {
             final List<BlockPos> tempList = new ArrayList<>(leisureSites);
             tempList.remove(pos);
             this.leisureSites = ImmutableList.copyOf(tempList);
@@ -443,17 +384,13 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
     @Nullable
     @Override
-    public IWareHouse getClosestWarehouseInColony(final BlockPos pos)
-    {
+    public IWareHouse getClosestWarehouseInColony(final BlockPos pos) {
         IWareHouse wareHouse = null;
         double dist = 0;
-        for (final IWareHouse building : wareHouses)
-        {
-            if (building.getBuildingLevel() > 0 && building.getTileEntity() != null)
-            {
+        for (final IWareHouse building : wareHouses) {
+            if (building.getBuildingLevel() > 0 && building.getTileEntity() != null) {
                 final double tempDist = building.getPosition().distSqr(pos);
-                if (wareHouse == null || tempDist < dist)
-                {
+                if (wareHouse == null || tempDist < dist) {
                     dist = tempDist;
                     wareHouse = building;
                 }
@@ -464,26 +401,20 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public boolean keepChunkColonyLoaded(final LevelChunk chunk)
-    {
+    public boolean keepChunkColonyLoaded(final LevelChunk chunk) {
         final Set<BlockPos> capList = ColonyUtils.getAllClaimingBuildings(chunk).get(colony.getID());
         return capList != null && capList.size() >= MineColonies.getConfig().getServer().colonyLoadStrictness.get();
     }
 
     @Override
-    public IBuilding getHouseWithSpareBed()
-    {
-        for (final IBuilding building : buildings.values())
-        {
-            if (building.hasModule(LivingBuildingModule.class))
-            {
+    public IBuilding getHouseWithSpareBed() {
+        for (final IBuilding building : buildings.values()) {
+            if (building.hasModule(LivingBuildingModule.class)) {
                 final LivingBuildingModule module = building.getFirstModuleOccurance(LivingBuildingModule.class);
-                if (HiringMode.LOCKED.equals(module.getHiringMode()))
-                {
+                if (HiringMode.LOCKED.equals(module.getHiringMode())) {
                     continue;
                 }
-                if (module.getAssignedCitizen().size() < module.getModuleMax())
-                {
+                if (module.getAssignedCitizen().size() < module.getModuleMax()) {
                     return building;
                 }
             }
@@ -493,28 +424,22 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
     @NotNull
     @Override
-    public Map<BlockPos, IBuilding> getBuildings()
-    {
+    public Map<BlockPos, IBuilding> getBuildings() {
         return buildings;
     }
 
     @Nullable
     @Override
-    public ITownHall getTownHall()
-    {
+    public ITownHall getTownHall() {
         return townHall;
     }
 
     @Override
-    public int getMysticalSiteMaxBuildingLevel()
-    {
+    public int getMysticalSiteMaxBuildingLevel() {
         int maxLevel = 0;
-        if (hasMysticalSite())
-        {
-            for (final IMysticalSite mysticalSite : mysticalSites)
-            {
-                if (mysticalSite.getBuildingLevel() > maxLevel)
-                {
+        if (hasMysticalSite()) {
+            for (final IMysticalSite mysticalSite : mysticalSites) {
+                if (mysticalSite.getBuildingLevel() > maxLevel) {
                     maxLevel = mysticalSite.getBuildingLevel();
                 }
             }
@@ -523,69 +448,55 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public boolean hasWarehouse()
-    {
+    public boolean hasWarehouse() {
         return !wareHouses.isEmpty();
     }
 
     @Override
-    public boolean hasMysticalSite()
-    {
+    public boolean hasMysticalSite() {
         return !mysticalSites.isEmpty();
     }
 
     @Override
-    public boolean hasTownHall()
-    {
+    public boolean hasTownHall() {
         return townHall != null;
     }
 
     @Override
-    public <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type)
-    {
-        try
-        {
+    public <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type) {
+        try {
             return type.cast(buildings.get(buildingId));
-        }
-        catch (final ClassCastException e)
-        {
+        } catch (final ClassCastException e) {
             Log.getLogger().warn("getBuilding called with wrong type: ", e);
             return null;
         }
     }
 
     @Override
-    public IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world)
-    {
+    public IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world) {
         tileEntity.setColony(colony);
-        if (!buildings.containsKey(tileEntity.getPosition()))
-        {
+        if (!buildings.containsKey(tileEntity.getPosition())) {
             @Nullable final IBuilding building = IBuildingDataManager.getInstance().createFrom(colony, tileEntity);
-            if (building != null)
-            {
+            if (building != null) {
                 addBuilding(building);
                 tileEntity.setBuilding(building);
                 building.upgradeBuildingLevelToSchematicData();
 
                 Log.getLogger().debug(String.format("Colony %d - new Building %s for %s at %s",
-                  colony.getID(),
-                  building.getBuildingDisplayName(),
-                  tileEntity.getBlockState().getBlock(),
-                  tileEntity.getPosition()));
+                        colony.getID(),
+                        building.getBuildingDisplayName(),
+                        tileEntity.getBlockState().getBlock(),
+                        tileEntity.getPosition()));
 
                 building.setRotationMirror(tileEntity.getRotationMirror());
-                if (tileEntity.getStructurePack() != null)
-                {
+                if (tileEntity.getStructurePack() != null) {
                     building.setStructurePack(tileEntity.getStructurePack().getName());
                     building.setBlueprintPath(tileEntity.getBlueprintPath());
-                }
-                else
-                {
+                } else {
                     building.setStructurePack(colony.getStructurePack());
                 }
 
-                if (world != null && !(building instanceof IRSComponent))
-                {
+                if (world != null && !(building instanceof IRSComponent)) {
                     building.onPlacement();
                     ConstructionTapeHelper.placeConstructionTape(building);
                 }
@@ -593,13 +504,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 colony.getRequestManager().onProviderAddedToColony(building);
 
                 setMaxChunk(building);
-            }
-            else
-            {
+            } else {
                 Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
-                  colony.getID(),
-                  tileEntity.getBlockState().getClass(),
-                  tileEntity.getPosition()), new Exception());
+                        colony.getID(),
+                        tileEntity.getBlockState().getClass(),
+                        tileEntity.getPosition()), new Exception());
             }
 
             colony.getCitizenManager().calculateMaxCitizens();
@@ -610,15 +519,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void removeBuilding(@NotNull final IBuilding building, final Set<ServerPlayer> subscribers)
-    {
-        if (buildings.containsKey(building.getID()))
-        {
+    public void removeBuilding(@NotNull final IBuilding building, final Set<ServerPlayer> subscribers) {
+        if (buildings.containsKey(building.getID())) {
             final ImmutableMap.Builder<BlockPos, IBuilding> builder = new ImmutableMap.Builder<>();
-            for (final IBuilding tbuilding : buildings.values())
-            {
-                if (tbuilding != building)
-                {
+            for (final IBuilding tbuilding : buildings.values()) {
+                if (tbuilding != building) {
                     builder.put(tbuilding.getID(), tbuilding);
                 }
             }
@@ -628,27 +533,21 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             new ColonyViewRemoveBuildingMessage(colony, building.getID()).sendToPlayer(subscribers);
 
             Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
-              colony.getID(),
-              building.getID(),
-              building.getSchematicName()));
+                    colony.getID(),
+                    building.getID(),
+                    building.getSchematicName()));
         }
 
-        if (building instanceof BuildingTownHall)
-        {
+        if (building instanceof BuildingTownHall) {
             townHall = null;
-        }
-        else if (building instanceof BuildingWareHouse)
-        {
+        } else if (building instanceof BuildingWareHouse) {
             wareHouses.remove(building);
-        }
-        else if (building instanceof BuildingMysticalSite)
-        {
+        } else if (building instanceof BuildingMysticalSite) {
             mysticalSites.remove(building);
         }
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
-        for (@NotNull final ICitizenData citizen : colony.getCitizenManager().getCitizens())
-        {
+        for (@NotNull final ICitizenData citizen : colony.getCitizenManager().getCitizens()) {
             citizen.onRemoveBuilding(building);
             building.cancelAllRequestsOfCitizen(citizen);
         }
@@ -660,23 +559,18 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> clazz)
-    {
+    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> clazz) {
         return getBestBuilding(citizen.blockPosition(), clazz);
     }
 
     @Override
-    public BlockPos getBestBuilding(final BlockPos citizen, final Class<? extends IBuilding> clazz)
-    {
+    public BlockPos getBestBuilding(final BlockPos citizen, final Class<? extends IBuilding> clazz) {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;
-        for (final IBuilding building : buildings.values())
-        {
-            if (clazz.isInstance(building) && building.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
-            {
+        for (final IBuilding building : buildings.values()) {
+            if (clazz.isInstance(building) && building.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition())) {
                 final double localDistance = building.getPosition().distSqr(citizen);
-                if (localDistance < distance)
-                {
+                if (localDistance < distance) {
                     distance = localDistance;
                     goodCook = building.getPosition();
                 }
@@ -686,19 +580,15 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate)
-    {
+    public BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate) {
         final List<IBuilding> allowedBuildings = new ArrayList<>();
-        for (final IBuilding building : buildings.values())
-        {
-            if (filterPredicate.test(building))
-            {
+        for (final IBuilding building : buildings.values()) {
+            if (filterPredicate.test(building)) {
                 allowedBuildings.add(building);
             }
         }
 
-        if (allowedBuildings.isEmpty())
-        {
+        if (allowedBuildings.isEmpty()) {
             return null;
         }
 
@@ -712,20 +602,15 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
      * @return false if no guard tower close, true in other cases
      */
     @Override
-    public boolean hasGuardBuildingNear(final IBuilding building)
-    {
-        if (building == null)
-        {
+    public boolean hasGuardBuildingNear(final IBuilding building) {
+        if (building == null) {
             return true;
         }
 
-        for (final IBuilding colonyBuilding : getBuildings().values())
-        {
-            if (colonyBuilding.getBuildingLevel() > 0 && (colonyBuilding instanceof IGuardBuilding || colonyBuilding instanceof BuildingBarracks))
-            {
+        for (final IBuilding colonyBuilding : getBuildings().values()) {
+            if (colonyBuilding.getBuildingLevel() > 0 && (colonyBuilding instanceof IGuardBuilding || colonyBuilding instanceof BuildingBarracks)) {
                 final BoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(colonyBuilding.getPosition(), colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()));
-                if (guardedRegion.isInside(building.getPosition()))
-                {
+                if (guardedRegion.isInside(building.getPosition())) {
                     return true;
                 }
             }
@@ -735,46 +620,38 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void guardBuildingChangedAt(final IBuilding guardBuilding, final int newLevel)
-    {
+    public void guardBuildingChangedAt(final IBuilding guardBuilding, final int newLevel) {
         final int claimRadius = guardBuilding.getClaimRadius(Math.max(guardBuilding.getBuildingLevel(), newLevel));
         final BoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(guardBuilding.getPosition(), claimRadius);
-        for (final IBuilding building : getBuildings().values())
-        {
-            if (guardedRegion.isInside(building.getPosition()))
-            {
+        for (final IBuilding building : getBuildings().values()) {
+            if (guardedRegion.isInside(building.getPosition())) {
                 building.resetGuardBuildingNear();
             }
         }
     }
 
     @Override
-    public void setTownHall(@Nullable final ITownHall building)
-    {
+    public void setTownHall(@Nullable final ITownHall building) {
         this.townHall = building;
     }
 
     @Override
-    public List<IWareHouse> getWareHouses()
-    {
+    public List<IWareHouse> getWareHouses() {
         return wareHouses;
     }
 
     @Override
-    public void removeWareHouse(final IWareHouse wareHouse)
-    {
+    public void removeWareHouse(final IWareHouse wareHouse) {
         wareHouses.remove(wareHouse);
     }
 
     @Override
-    public List<IMysticalSite> getMysticalSites()
-    {
+    public List<IMysticalSite> getMysticalSites() {
         return mysticalSites;
     }
 
     @Override
-    public void removeMysticalSite(final IMysticalSite mysticalSite)
-    {
+    public void removeMysticalSite(final IMysticalSite mysticalSite) {
         mysticalSites.remove(mysticalSite);
     }
 
@@ -782,8 +659,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
      * Updates all subscribers of fields etc.
      */
     @Override
-    public void markFieldsDirty()
-    {
+    public void markFieldsDirty() {
         isFieldsDirty = true;
     }
 
@@ -792,24 +668,19 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
      *
      * @param building AbstractBuilding to add to the colony.
      */
-    private void addBuilding(@NotNull final IBuilding building)
-    {
+    private void addBuilding(@NotNull final IBuilding building) {
         buildings = new ImmutableMap.Builder<BlockPos, IBuilding>().putAll(buildings).put(building.getID(), building).build();
 
         building.markDirty();
 
         //  Limit 1 town hall
-        if (building instanceof BuildingTownHall && townHall == null)
-        {
+        if (building instanceof BuildingTownHall && townHall == null) {
             townHall = (ITownHall) building;
         }
 
-        if (building instanceof BuildingWareHouse)
-        {
+        if (building instanceof BuildingWareHouse) {
             wareHouses.add((IWareHouse) building);
-        }
-        else if (building instanceof BuildingMysticalSite)
-        {
+        } else if (building instanceof BuildingMysticalSite) {
             mysticalSites.add((IMysticalSite) building);
         }
     }
@@ -820,20 +691,15 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
      * @param closeSubscribers the current event subscribers.
      * @param newSubscribers   the new event subscribers.
      */
-    private void sendBuildingPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
-    {
-        if (isBuildingsDirty || !newSubscribers.isEmpty())
-        {
+    private void sendBuildingPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers) {
+        if (isBuildingsDirty || !newSubscribers.isEmpty()) {
             final Set<ServerPlayer> players = new HashSet<>();
-            if (isBuildingsDirty)
-            {
+            if (isBuildingsDirty) {
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
-            for (@NotNull final IBuilding building : buildings.values())
-            {
-                if (building.isDirty() || !newSubscribers.isEmpty())
-                {
+            for (@NotNull final IBuilding building : buildings.values()) {
+                if (building.isDirty() || !newSubscribers.isEmpty()) {
                     new ColonyViewBuildingViewMessage(building, !newSubscribers.isEmpty()).sendToPlayer(players);
                 }
             }
@@ -846,13 +712,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
      * @param closeSubscribers the current event subscribers.
      * @param newSubscribers   the new event subscribers.
      */
-    private void sendFieldPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
-    {
-        if (isFieldsDirty || !newSubscribers.isEmpty())
-        {
+    private void sendFieldPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers) {
+        if (isFieldsDirty || !newSubscribers.isEmpty()) {
             final Set<ServerPlayer> players = new HashSet<>();
-            if (isFieldsDirty)
-            {
+            if (isFieldsDirty) {
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
@@ -861,26 +724,18 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public boolean canPlaceAt(final Block block, final BlockPos pos, final Player player)
-    {
-        if (block instanceof BlockHutTownHall)
-        {
-            if (colony.hasTownHall())
-            {
-                if (colony.getWorld() != null && !colony.getWorld().isClientSide)
-                {
+    public boolean canPlaceAt(final Block block, final BlockPos pos, final Player player) {
+        if (block instanceof BlockHutTownHall) {
+            if (colony.hasTownHall()) {
+                if (colony.getWorld() != null && !colony.getWorld().isClientSide) {
                     MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL, townHall.getPosition().toShortString()).sendTo(player);
                 }
                 return false;
             }
             return true;
-        }
-        else if (block instanceof BlockHutTavern)
-        {
-            for (final IBuilding building : buildings.values())
-            {
-                if (building.hasModule(BuildingModules.TAVERN_VISITOR))
-                {
+        } else if (block instanceof BlockHutTavern) {
+            for (final IBuilding building : buildings.values()) {
+                if (building.hasModule(BuildingModules.TAVERN_VISITOR)) {
                     MessageUtils.format(WARNING_DUPLICATE_TAVERN, building.getPosition().toShortString()).sendTo(player);
                     return false;
                 }
@@ -891,10 +746,8 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void onBuildingUpgradeComplete(@Nullable final IBuilding building, final int level)
-    {
-        if (building != null)
-        {
+    public void onBuildingUpgradeComplete(@Nullable final IBuilding building, final int level) {
+        if (building != null) {
             colony.getCitizenManager().calculateMaxCitizens();
             markBuildingsDirty();
             QuestObjectiveEventHandler.onBuildingUpgradeComplete(building, level);
@@ -902,26 +755,22 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public @NotNull List<IField> getFields(Predicate<IField> matcher)
-    {
+    public @NotNull List<IField> getFields(Predicate<IField> matcher) {
         return fields.stream()
-                 .filter(matcher)
-                 .toList();
+                .filter(matcher)
+                .toList();
     }
 
     @Override
-    public Optional<IField> getField(Predicate<IField> matcher)
-    {
+    public Optional<IField> getField(Predicate<IField> matcher) {
         return getFields(matcher)
-                 .stream()
-                 .findFirst();
+                .stream()
+                .findFirst();
     }
 
     @Override
-    public boolean addField(IField field)
-    {
-        if (fields.add(field))
-        {
+    public boolean addField(IField field) {
+        if (fields.add(field)) {
             markFieldsDirty();
             return true;
         }
@@ -929,17 +778,15 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void removeField(Predicate<IField> matcher)
-    {
+    public void removeField(Predicate<IField> matcher) {
         final List<IField> fieldsToRemove = fields.stream()
-                                              .filter(matcher)
-                                              .toList();
+                .filter(matcher)
+                .toList();
 
         // We must send the message to everyone since fields here will be permanently removed from the list.
         // And the clients have no way to later on also get their fields removed, thus every client has to be told
         // immediately that the field is gone.
-        for (IField field : fieldsToRemove)
-        {
+        for (IField field : fieldsToRemove) {
             fields.remove(field);
             markFieldsDirty();
         }

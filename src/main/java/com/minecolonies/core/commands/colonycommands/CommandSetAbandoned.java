@@ -16,36 +16,31 @@ import static com.minecolonies.api.util.constant.translation.CommandTranslationC
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_OWNER_CHANGE_SUCCESS;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
-public class CommandSetAbandoned implements IMCColonyOfficerCommand
-{
+public class CommandSetAbandoned implements IMCColonyOfficerCommand {
     /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSourceStack> context)
-    {
+    public int onExecute(final CommandContext<CommandSourceStack> context) {
         final Entity sender = context.getSource().getEntity();
 
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
+        if (colony == null) {
             context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         boolean addOfficer = false;
-        if (sender != null && (colony.getPermissions().getRank((Player) sender).isColonyManager()))
-        {
+        if (sender != null && (colony.getPermissions().getRank((Player) sender).isColonyManager())) {
             addOfficer = true;
         }
 
         colony.getPermissions().setOwnerAbandoned();
 
-        if (addOfficer)
-        {
+        if (addOfficer) {
             colony.getPermissions().addPlayer(((Player) sender).getGameProfile(), colony.getPermissions().getRankOfficer());
         }
 
@@ -57,15 +52,13 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
      * Name string of the command.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "setAbandoned";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    public LiteralArgumentBuilder<CommandSourceStack> build() {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
+                .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
     }
 }

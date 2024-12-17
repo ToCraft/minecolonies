@@ -25,33 +25,28 @@ import java.util.Optional;
 /**
  * JEI recipe transfer handler for teaching brewing recipes
  */
-public class PrivateBrewingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCraftingBrewingstand, IJeiBrewingRecipe>
-{
+public class PrivateBrewingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCraftingBrewingstand, IJeiBrewingRecipe> {
     private final IRecipeTransferHandlerHelper handlerHelper;
 
-    public PrivateBrewingTeachingTransferHandler(@NotNull final IRecipeTransferHandlerHelper handlerHelper)
-    {
+    public PrivateBrewingTeachingTransferHandler(@NotNull final IRecipeTransferHandlerHelper handlerHelper) {
         this.handlerHelper = handlerHelper;
     }
 
     @NotNull
     @Override
-    public Class<ContainerCraftingBrewingstand> getContainerClass()
-    {
+    public Class<ContainerCraftingBrewingstand> getContainerClass() {
         return ContainerCraftingBrewingstand.class;
     }
 
     @NotNull
     @Override
-    public Optional<MenuType<ContainerCraftingBrewingstand>> getMenuType()
-    {
+    public Optional<MenuType<ContainerCraftingBrewingstand>> getMenuType() {
         return Optional.empty();
     }
 
     @NotNull
     @Override
-    public RecipeType<IJeiBrewingRecipe> getRecipeType()
-    {
+    public RecipeType<IJeiBrewingRecipe> getRecipeType() {
         return RecipeTypes.BREWING;
     }
 
@@ -63,8 +58,7 @@ public class PrivateBrewingTeachingTransferHandler implements IRecipeTransferHan
             @NotNull final IRecipeSlotsView recipeSlots,
             @NotNull final Player player,
             final boolean maxTransfer,
-            final boolean doTransfer)
-    {
+            final boolean doTransfer) {
         final IRecipeSlotView potionSlot = recipeSlots.getSlotViews(RecipeIngredientRole.INPUT).get(0);
         final IRecipeSlotView inputSlot = recipeSlots.getSlotViews(RecipeIngredientRole.INPUT).get(3);
 
@@ -72,8 +66,7 @@ public class PrivateBrewingTeachingTransferHandler implements IRecipeTransferHan
         guiIngredients.put(0, inputSlot.getDisplayedIngredient(VanillaTypes.ITEM_STACK).orElse(ItemStack.EMPTY));
         guiIngredients.put(1, potionSlot.getDisplayedIngredient(VanillaTypes.ITEM_STACK).orElse(ItemStack.EMPTY));
 
-        if (doTransfer)
-        {
+        if (doTransfer) {
             craftingGUIBuilding.setInput(guiIngredients.get(0));
             craftingGUIBuilding.setContainer(guiIngredients.get(1));
 

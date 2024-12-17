@@ -25,8 +25,7 @@ import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_SAWMILL;
 /**
  * Class of the sawmill building.
  */
-public class BuildingSawmill extends AbstractBuilding
-{
+public class BuildingSawmill extends AbstractBuilding {
     /**
      * Description string of the building.
      */
@@ -43,47 +42,40 @@ public class BuildingSawmill extends AbstractBuilding
      * @param c the colony.
      * @param l the location
      */
-    public BuildingSawmill(final IColony c, final BlockPos l)
-    {
+    public BuildingSawmill(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return SAWMILL;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
-    {
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public CraftingModule(final JobEntry jobEntry)
-        {
+        public CraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         @NotNull
         @Override
-        public OptionalPredicate<ItemStack> getIngredientValidator()
-        {
+        public OptionalPredicate<ItemStack> getIngredientValidator() {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL)
                     .combine(super.getIngredientValidator());
         }
 
         @Override
-        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-        {
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) {
             if (!super.isRecipeCompatible(recipe)) return false;
 
             final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_SAWMILL);
@@ -91,22 +83,17 @@ public class BuildingSawmill extends AbstractBuilding
 
             double amountOfValidBlocks = 0;
             double blocks = 0;
-            for (final List<ItemStack> stacks : recipe.getInputs())
-            {
+            for (final List<ItemStack> stacks : recipe.getInputs()) {
                 // just check the first alternative for now
                 if (stacks.isEmpty()) continue;
                 final ItemStack stack = stacks.get(0);
-                if (!ItemStackUtils.isEmpty(stack))
-                {
-                    if (stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS))
-                    {
+                if (!ItemStackUtils.isEmpty(stack)) {
+                    if (stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS)) {
                         amountOfValidBlocks += stack.getCount();
                         continue;
                     }
-                    for (final TagKey<Item> tag : stack.getTags().toList())
-                    {
-                        if (tag.location().getPath().contains("wood"))
-                        {
+                    for (final TagKey<Item> tag : stack.getTags().toList()) {
+                        if (tag.location().getPath().contains("wood")) {
                             amountOfValidBlocks += stack.getCount();
                             break;
                         }
@@ -119,31 +106,29 @@ public class BuildingSawmill extends AbstractBuilding
         }
     }
 
-    public static class DOCraftingModule extends AbstractCraftingBuildingModule.Domum
-    {
+    public static class DOCraftingModule extends AbstractCraftingBuildingModule.Domum {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public DOCraftingModule(final JobEntry jobEntry)
-        {
+        public DOCraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         /**
          * See {@link ICraftingBuildingModule#getIngredientValidator}.
+         *
          * @return the validator
          */
-        public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
-        {
+        public @NotNull
+        static OptionalPredicate<ItemStack> getStaticIngredientValidator() {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL, true)
                     .combine(stack -> Optional.of(stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS)));
         }
 
         @Override
-        public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
-        {
+        public @NotNull OptionalPredicate<ItemStack> getIngredientValidator() {
             return getStaticIngredientValidator();
         }
     }

@@ -40,8 +40,7 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 /**
  * Utility class to manage colony border mapping.
  */
-public class ColonyBorderMapping
-{
+public class ColonyBorderMapping {
     /**
      * Number of chunk update entries to process per tick, to avoid over-processing.
      */
@@ -56,8 +55,7 @@ public class ColonyBorderMapping
     /**
      * Static utility class
      */
-    private ColonyBorderMapping()
-    {
+    private ColonyBorderMapping() {
     }
 
     /**
@@ -65,8 +63,7 @@ public class ColonyBorderMapping
      *
      * @return The colony name, or an empty string.
      */
-    public static String getCurrentColony()
-    {
+    public static String getCurrentColony() {
         final BlockPos pos = Minecraft.getInstance().player.blockPosition();
         final IColony colony = IColonyManager.getInstance().getIColony(Minecraft.getInstance().level, pos);
         return colony != null ? colony.getName() : "";
@@ -76,8 +73,7 @@ public class ColonyBorderMapping
      * Loads cached colony data, if any.  Also starts tracking data for a dimension.
      */
     public static void load(@NotNull final Journeymap jmap,
-                            @NotNull final ResourceKey<Level> dimension)
-    {
+                            @NotNull final ResourceKey<Level> dimension) {
         if (overlays.containsKey(dimension)) return;    // don't bother reloading
 
         final AbstractInt2ObjectMap<ColonyBorderOverlay> dimensionOverlays =
@@ -87,8 +83,7 @@ public class ColonyBorderMapping
         jmap.loadData(dataPath, "colony border data", DIM_BORDER_CODEC)
                 .ifPresent(saved ->
                 {
-                    for (final ColonyBorderOverlay overlay : saved)
-                    {
+                    for (final ColonyBorderOverlay overlay : saved) {
                         dimensionOverlays.put(overlay.id, overlay);
                     }
                 });
@@ -98,14 +93,11 @@ public class ColonyBorderMapping
      * Stops tracking data for a dimension and clears any related overlays.
      */
     public static void unload(@NotNull final Journeymap jmap,
-                              @NotNull final ResourceKey<Level> dimension)
-    {
+                              @NotNull final ResourceKey<Level> dimension) {
         final AbstractInt2ObjectMap<ColonyBorderOverlay> dimensionOverlays = overlays.remove(dimension);
 
-        if (dimensionOverlays != null)
-        {
-            for (final ColonyBorderOverlay overlay : dimensionOverlays.values())
-            {
+        if (dimensionOverlays != null) {
+            for (final ColonyBorderOverlay overlay : dimensionOverlays.values()) {
                 overlay.unload(jmap);
             }
 
@@ -114,8 +106,7 @@ public class ColonyBorderMapping
                     new ArrayList<>(dimensionOverlays.values()));
         }
 
-        if (pendingClaimsDimension == dimension)
-        {
+        if (pendingClaimsDimension == dimension) {
             pendingClaims.clear();
         }
     }
@@ -123,22 +114,20 @@ public class ColonyBorderMapping
     /**
      * Flags the colony border overlay for update, if needed for a single just-loaded chunk.
      *
-     * @param jmap The JourneyMap API
+     * @param jmap      The JourneyMap API
      * @param dimension The dimension of the world.  Nothing happens unless this is the client world.
-     * @param chunk The chunk that was just loaded.
+     * @param chunk     The chunk that was just loaded.
      */
     public static void updateChunk(@NotNull final Journeymap jmap,
                                    @NotNull final ResourceKey<Level> dimension,
-                                   @NotNull final ChunkAccess chunk)
-    {
+                                   @NotNull final ChunkAccess chunk) {
         updateChunk(jmap, dimension, ColonyUtils.getOwningColony(chunk), chunk.getPos());
     }
 
     private static void updateChunk(@NotNull final Journeymap jmap,
                                     @NotNull final ResourceKey<Level> dimension,
                                     final int id,
-                                    @NotNull final ChunkPos pos)
-    {
+                                    @NotNull final ChunkPos pos) {
         final Level world = Minecraft.getInstance().level;
         if (world == null || !dimension.equals(world.dimension())) return;
 
@@ -146,18 +135,13 @@ public class ColonyBorderMapping
         if (dimensionOverlays == null) return;  // not ready yet
 
         boolean changed = false;
-        if (id == 0)
-        {
-            for (final AbstractInt2ObjectMap<ColonyBorderOverlay> overlayMap : overlays.values())
-            {
-                for (final ColonyBorderOverlay overlay : overlayMap.values())
-                {
+        if (id == 0) {
+            for (final AbstractInt2ObjectMap<ColonyBorderOverlay> overlayMap : overlays.values()) {
+                for (final ColonyBorderOverlay overlay : overlayMap.values()) {
                     changed |= overlay.updateChunks(Collections.emptySet(), Collections.singleton(pos));
                 }
             }
-        }
-        else
-        {
+        } else {
             final ColonyBorderOverlay overlay = dimensionOverlays
                     .computeIfAbsent(id, k -> new ColonyBorderOverlay(dimension, id));
             changed |= overlay.updateChunks(Collections.singleton(pos), Collections.emptySet());
@@ -165,18 +149,14 @@ public class ColonyBorderMapping
     }
 
     public static void queueChunks(@NotNull final Journeymap jmap,
-                                   @NotNull final ResourceKey<Level> dimension)
-    {
+                                   @NotNull final ResourceKey<Level> dimension) {
         final Level world = Minecraft.getInstance().level;
         if (world == null || !dimension.equals(world.dimension())) return;
 
-        if (pendingClaimsDimension != world.dimension())
-        {
+        if (pendingClaimsDimension != world.dimension()) {
             pendingClaims.clear();
             pendingClaimsDimension = world.dimension();
-        }
-        else if (!pendingClaims.isEmpty())
-        {
+        } else if (!pendingClaims.isEmpty()) {
             // we haven't finished processing the last set yet; to avoid leaking memory and
             // getting even further behind, let's let that finish before we queue any more work.
             return;
@@ -186,12 +166,10 @@ public class ColonyBorderMapping
         final Map<ChunkPos, IChunkClaimData> claims = colonyManager.getClaimData(dimension);
         final IntRBTreeSet colonies = new IntRBTreeSet();
 
-        for (final Map.Entry<ChunkPos, IChunkClaimData> entry : claims.entrySet())
-        {
+        for (final Map.Entry<ChunkPos, IChunkClaimData> entry : claims.entrySet()) {
             final int id = entry.getValue().getOwningColony();
             pendingClaims.add(new ChunkOwnership(entry.getKey(), id));
-            if (id != 0)
-            {
+            if (id != 0) {
                 colonies.add(id);
             }
         }
@@ -199,8 +177,7 @@ public class ColonyBorderMapping
         final AbstractInt2ObjectMap<ColonyBorderOverlay> dimensionOverlays = overlays.get(dimension);
         if (dimensionOverlays == null) return;  // not ready yet
 
-        for (final int id : colonies)
-        {
+        for (final int id : colonies) {
             final ColonyBorderOverlay overlay = dimensionOverlays
                     .computeIfAbsent(id, k -> new ColonyBorderOverlay(dimension, id));
             final IColonyView colony = colonyManager.getColonyView(id, dimension);
@@ -211,42 +188,42 @@ public class ColonyBorderMapping
     /**
      * Check if any colony border overlays need to be updated.
      *
-     * @param jmap The Journeymap API
+     * @param jmap      The Journeymap API
      * @param dimension The dimension to check
      */
     public static void updatePending(@NotNull final Journeymap jmap,
-                                     @NotNull final ResourceKey<Level> dimension)
-    {
-        if (dimension == pendingClaimsDimension)
-        {
-            for (int i = 0; i < UPDATES_PER_TICK && !pendingClaims.isEmpty(); ++i)
-            {
+                                     @NotNull final ResourceKey<Level> dimension) {
+        if (dimension == pendingClaimsDimension) {
+            for (int i = 0; i < UPDATES_PER_TICK && !pendingClaims.isEmpty(); ++i) {
                 final ChunkOwnership entry = pendingClaims.poll();
                 updateChunk(jmap, dimension, entry.id(), entry.pos());
             }
         }
 
-        for (final Int2ObjectMap.Entry<ColonyBorderOverlay> colonyEntry : overlays.getOrDefault(dimension, new Int2ObjectRBTreeMap<>()).int2ObjectEntrySet())
-        {
+        for (final Int2ObjectMap.Entry<ColonyBorderOverlay> colonyEntry : overlays.getOrDefault(dimension, new Int2ObjectRBTreeMap<>()).int2ObjectEntrySet()) {
             colonyEntry.getValue().updatePending(jmap);
         }
     }
 
-    /** Chunk -> owning colony mapping entry. */
-    private record ChunkOwnership(@NotNull ChunkPos pos, int id) { }
+    /**
+     * Chunk -> owning colony mapping entry.
+     */
+    private record ChunkOwnership(@NotNull ChunkPos pos, int id) {
+    }
 
-    /** Overlay tracking information for one entire colony */
-    private static class ColonyBorderOverlay
-    {
+    /**
+     * Overlay tracking information for one entire colony
+     */
+    private static class ColonyBorderOverlay {
         private final ResourceKey<Level> dimension;
         private final int id;
         private final String name;
-        private final Set<ChunkPos>        chunks;
+        private final Set<ChunkPos> chunks;
         private final List<PolygonOverlay> overlays = new ArrayList<>();
-        private final ShapeProperties      fill;
+        private final ShapeProperties fill;
         private final ShapeProperties stroke;
-        private final TextProperties  text;
-        private final TextProperties  noText;
+        private final TextProperties text;
+        private final TextProperties noText;
 
         private boolean dirty = false;
         private boolean permitted = true;
@@ -267,24 +244,26 @@ public class ColonyBorderMapping
                         CODEC_SET_CHUNKPOSLONG.optionalFieldOf("chunks", Collections.emptySet()).forGetter(o -> o.chunks)
                 ).apply(instance, ColonyBorderOverlay::new));
 
-        /** Deserialization */
+        /**
+         * Deserialization
+         */
         private ColonyBorderOverlay(@NotNull final ResourceKey<Level> dimension,
                                     final int id,
                                     final String colonyName,
                                     final int colour,
                                     final boolean permitted,
-                                    @NotNull final Set<ChunkPos> chunks)
-        {
+                                    @NotNull final Set<ChunkPos> chunks) {
             this(dimension, id);
             this.chunks.addAll(chunks);
             updateInfo(colonyName, colour, permitted, true);
             this.dirty = true;
         }
 
-        /** Normal construction */
+        /**
+         * Normal construction
+         */
         public ColonyBorderOverlay(@NotNull final ResourceKey<Level> dimension,
-                                   final int id)
-        {
+                                   final int id) {
             this.dimension = dimension;
             this.id = id;
             this.name = String.format("colony_%s_%d", dimension.location(), id);
@@ -310,10 +289,11 @@ public class ColonyBorderMapping
             this.noText = new TextProperties().setActiveUIs();
         }
 
-        /** Add or remove chunks from this overlay */
+        /**
+         * Add or remove chunks from this overlay
+         */
         public boolean updateChunks(@NotNull final Set<ChunkPos> addChunks,
-                                    @NotNull final Set<ChunkPos> removeChunks)
-        {
+                                    @NotNull final Set<ChunkPos> removeChunks) {
             boolean changed;
             changed = this.chunks.addAll(addChunks);                // new owned chunks
             changed |= this.chunks.removeAll(removeChunks);         // new disowned chunks
@@ -321,12 +301,12 @@ public class ColonyBorderMapping
             return changed;
         }
 
-        /** Update colony-specific data if needed. */
-        public boolean updateInfo(@Nullable final IColonyView colony, final boolean showColonyName)
-        {
+        /**
+         * Update colony-specific data if needed.
+         */
+        public boolean updateInfo(@Nullable final IColonyView colony, final boolean showColonyName) {
             boolean changed = false;
-            if (colony != null)
-            {
+            if (colony != null) {
                 final boolean permitted = colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.MAP_BORDER);
 
                 //noinspection ConstantConditions
@@ -338,8 +318,7 @@ public class ColonyBorderMapping
         private boolean updateInfo(@Nullable final String colonyName,
                                    final int colour,
                                    final boolean permitted,
-                                   final boolean showColonyName)
-        {
+                                   final boolean showColonyName) {
             final boolean changed = !Objects.equals(colonyName, this.colonyName) ||
                     this.text.getColor() != colour || this.permitted != permitted;
 
@@ -352,46 +331,42 @@ public class ColonyBorderMapping
             this.colonyName = colonyName;
             this.permitted = permitted;
 
-            for (final PolygonOverlay overlay : this.overlays)
-            {
+            for (final PolygonOverlay overlay : this.overlays) {
                 overlay.setLabel(showColonyName ? this.colonyName : "");
             }
 
             return changed;
         }
 
-        /** Update the map overlays if needed */
-        public void updatePending(@NotNull final Journeymap jmap)
-        {
+        /**
+         * Update the map overlays if needed
+         */
+        public void updatePending(@NotNull final Journeymap jmap) {
             final JourneymapOptions.BorderStyle fullscreenStyle = JourneymapOptions.getBorderFullscreenStyle(jmap.getOptions());
             final JourneymapOptions.BorderStyle minimapStyle = JourneymapOptions.getBorderMinimapStyle(jmap.getOptions());
             final boolean enabled = this.permitted
                     && !(JourneymapOptions.BorderStyle.HIDDEN.equals(fullscreenStyle)
-                            && JourneymapOptions.BorderStyle.HIDDEN.equals(minimapStyle));
+                    && JourneymapOptions.BorderStyle.HIDDEN.equals(minimapStyle));
 
             this.dirty |= !enabled && !this.overlays.isEmpty();                         // freshly disabled; remove
             this.dirty |= enabled && this.overlays.isEmpty() && !this.chunks.isEmpty(); // freshly enabled; add
             this.dirty |= !fullscreenStyle.equals(this.fullscreenStyle);
             this.dirty |= !minimapStyle.equals(this.minimapStyle);
 
-            if (this.dirty)
-            {
+            if (this.dirty) {
                 this.fullscreenStyle = fullscreenStyle;
                 this.minimapStyle = minimapStyle;
 
                 unload(jmap);
 
-                if (!this.chunks.isEmpty() && enabled && jmap.getApi().playerAccepts(MOD_ID, DisplayType.Polygon))
-                {
+                if (!this.chunks.isEmpty() && enabled && jmap.getApi().playerAccepts(MOD_ID, DisplayType.Polygon)) {
                     this.dirty = false;
 
                     final List<MapPolygonWithHoles> polygons = PolygonHelper.createChunksPolygon(this.chunks, 256);
 
-                    for (final MapPolygonWithHoles polygon : polygons)
-                    {
+                    for (final MapPolygonWithHoles polygon : polygons) {
                         // fullscreen map
-                        if (!JourneymapOptions.BorderStyle.HIDDEN.equals(fullscreenStyle))
-                        {
+                        if (!JourneymapOptions.BorderStyle.HIDDEN.equals(fullscreenStyle)) {
                             final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(fullscreenStyle)
                                     ? this.fill : this.stroke;
 
@@ -405,8 +380,7 @@ public class ColonyBorderMapping
                         }
 
                         // minimap
-                        if (!JourneymapOptions.BorderStyle.HIDDEN.equals(minimapStyle))
-                        {
+                        if (!JourneymapOptions.BorderStyle.HIDDEN.equals(minimapStyle)) {
                             final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(minimapStyle)
                                     ? this.fill : this.stroke;
 
@@ -422,11 +396,11 @@ public class ColonyBorderMapping
             }
         }
 
-        /** Removes any existing overlays (since we're about to make some new ones). */
-        public void unload(@NotNull final Journeymap jmap)
-        {
-            for (final PolygonOverlay overlay : this.overlays)
-            {
+        /**
+         * Removes any existing overlays (since we're about to make some new ones).
+         */
+        public void unload(@NotNull final Journeymap jmap) {
+            for (final PolygonOverlay overlay : this.overlays) {
                 jmap.getApi().remove(overlay);
             }
             this.overlays.clear();

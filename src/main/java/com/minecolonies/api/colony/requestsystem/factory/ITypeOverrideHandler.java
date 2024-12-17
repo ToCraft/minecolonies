@@ -2,8 +2,7 @@ package com.minecolonies.api.colony.requestsystem.factory;
 
 import com.google.common.reflect.TypeToken;
 
-public interface ITypeOverrideHandler<O>
-{
+public interface ITypeOverrideHandler<O> {
     /**
      * Method used if this typeoverride handler is used to override a given type.
      *

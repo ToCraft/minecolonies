@@ -9,8 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class handling the Santa hat.
  */
-public class ItemSantaHead extends ArmorItem
-{
+public class ItemSantaHead extends ArmorItem {
     /**
      * Constructor method for the Chief Sword Item
      *
@@ -20,11 +19,10 @@ public class ItemSantaHead extends ArmorItem
      * @param properties      the item properties.
      */
     public ItemSantaHead(
-      @NotNull final String name,
-      @NotNull final Holder<ArmorMaterial> materialIn,
-      @NotNull final Type equipmentSlotIn,
-      final Item.Properties properties)
-    {
+            @NotNull final String name,
+            @NotNull final Holder<ArmorMaterial> materialIn,
+            @NotNull final Type equipmentSlotIn,
+            final Item.Properties properties) {
         super(materialIn, equipmentSlotIn, properties);
     }
 }

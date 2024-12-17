@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PrivateCrafting extends AbstractCrafting
-{
+public class PrivateCrafting extends AbstractCrafting {
     /**
      * Set of type tokens belonging to this class.
      */
@@ -27,13 +26,12 @@ public class PrivateCrafting extends AbstractCrafting
     /**
      * Create a Stack deliverable.
      *
-     * @param stack    the required stack.
-     * @param count    the crafting count.
-     * @param minCount the min count.
+     * @param stack       the required stack.
+     * @param count       the crafting count.
+     * @param minCount    the min count.
      * @param recipeToken the recipe token.
      */
-    public PrivateCrafting(@NotNull final ItemStack stack, final int count, final int minCount, final IToken<?> recipeToken)
-    {
+    public PrivateCrafting(@NotNull final ItemStack stack, final int count, final int minCount, final IToken<?> recipeToken) {
         super(stack, count, minCount, recipeToken);
     }
 
@@ -44,8 +42,7 @@ public class PrivateCrafting extends AbstractCrafting
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final PrivateCrafting input)
-    {
+    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final PrivateCrafting input) {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_STACK, input.getStack().saveOptional(provider));
         compound.putInt(NBT_COUNT, input.getCount());
@@ -63,18 +60,14 @@ public class PrivateCrafting extends AbstractCrafting
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static PrivateCrafting deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
-    {
+    public static PrivateCrafting deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound) {
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK), provider);
         final int count = compound.getInt(NBT_COUNT);
         final int minCount = compound.getInt(NBT_MIN_COUNT);
         IToken<?> token = null;
-        if (compound.contains(NBT_TOKEN))
-        {
+        if (compound.contains(NBT_TOKEN)) {
             token = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompound(NBT_TOKEN));
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Old Data - Missing Token!");
         }
         return new PrivateCrafting(stack, count, minCount == 0 ? count : minCount, token);
@@ -87,8 +80,7 @@ public class PrivateCrafting extends AbstractCrafting
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final PrivateCrafting input)
-    {
+    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final PrivateCrafting input) {
         Utils.serializeCodecMess(buffer, input.getStack());
         buffer.writeInt(input.getCount());
         buffer.writeInt(input.getMinCount());
@@ -102,8 +94,7 @@ public class PrivateCrafting extends AbstractCrafting
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static PrivateCrafting deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
-    {
+    public static PrivateCrafting deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer) {
         final ItemStack stack = Utils.deserializeCodecMess(buffer);
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
@@ -113,8 +104,7 @@ public class PrivateCrafting extends AbstractCrafting
     }
 
     @Override
-    public Set<TypeToken<?>> getSuperClasses()
-    {
+    public Set<TypeToken<?>> getSuperClasses() {
         return TYPE_TOKENS;
     }
 }

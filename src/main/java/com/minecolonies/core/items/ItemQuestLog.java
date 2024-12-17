@@ -1,12 +1,11 @@
 package com.minecolonies.core.items;
 
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.component.ColonyId;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.client.gui.questlog.WindowQuestLog;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -25,8 +24,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Class describing the quest log item.
  */
-public class ItemQuestLog extends AbstractItemMinecolonies
-{
+public class ItemQuestLog extends AbstractItemMinecolonies {
     /**
      * Tag of the colony.
      */
@@ -37,28 +35,22 @@ public class ItemQuestLog extends AbstractItemMinecolonies
      *
      * @param properties the properties.
      */
-    public ItemQuestLog(final Item.Properties properties)
-    {
+    public ItemQuestLog(final Item.Properties properties) {
         super("questlog", properties.stacksTo(STACKSIZE));
     }
 
     @Override
     @NotNull
-    public InteractionResult useOn(final UseOnContext ctx)
-    {
+    public InteractionResult useOn(final UseOnContext ctx) {
         final ItemStack questLog = ctx.getPlayer().getItemInHand(ctx.getHand());
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
-        if (entity instanceof TileEntityColonyBuilding buildingEntity)
-        {
+        if (entity instanceof TileEntityColonyBuilding buildingEntity) {
             buildingEntity.writeColonyToItemStack(questLog);
-            if (!ctx.getLevel().isClientSide)
-            {
+            if (!ctx.getLevel().isClientSide) {
                 MessageUtils.format(COM_MINECOLONIES_QUEST_LOG_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
-        }
-        else if (ctx.getLevel().isClientSide)
-        {
+        } else if (ctx.getLevel().isClientSide) {
             openWindow(questLog, ctx.getLevel(), ctx.getPlayer());
         }
 
@@ -76,14 +68,12 @@ public class ItemQuestLog extends AbstractItemMinecolonies
     @Override
     @NotNull
     public InteractionResultHolder<ItemStack> use(
-      final Level worldIn,
-      final Player playerIn,
-      final InteractionHand hand)
-    {
+            final Level worldIn,
+            final Player playerIn,
+            final InteractionHand hand) {
         final ItemStack questLog = playerIn.getItemInHand(hand);
 
-        if (!worldIn.isClientSide)
-        {
+        if (!worldIn.isClientSide) {
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, questLog);
         }
 
@@ -95,18 +85,14 @@ public class ItemQuestLog extends AbstractItemMinecolonies
     /**
      * Opens the quest log window if there is a valid colony linked
      *
-     * @param stack the item
-     * @param player   the player entity opening the window
+     * @param stack  the item
+     * @param player the player entity opening the window
      */
-    private static void openWindow(ItemStack stack, Level world, Player player)
-    {
+    private static void openWindow(ItemStack stack, Level world, Player player) {
         final IColonyView colonyView = ColonyId.readColonyViewFromItemStack(stack);
-        if (colonyView != null)
-        {
+        if (colonyView != null) {
             new WindowQuestLog(colonyView).open();
-        }
-        else
-        {
+        } else {
             player.displayClientMessage(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_QUEST_LOG_NEED_COLONY), true);
         }
     }

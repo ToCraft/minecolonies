@@ -8,11 +8,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class used to handle internal state changes that might cause a loop. Simply returns without notifying its wrapped manager about the state change.
  */
-public final class WrappedStaticStateRequestManager extends AbstractWrappedRequestManager
-{
+public final class WrappedStaticStateRequestManager extends AbstractWrappedRequestManager {
 
-    public WrappedStaticStateRequestManager(@NotNull final IStandardRequestManager wrappedManager)
-    {
+    public WrappedStaticStateRequestManager(@NotNull final IStandardRequestManager wrappedManager) {
         super(wrappedManager);
     }
 
@@ -24,8 +22,7 @@ public final class WrappedStaticStateRequestManager extends AbstractWrappedReque
      * @throws IllegalArgumentException when the token is unknown to this manager.
      */
     @Override
-    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state) throws IllegalArgumentException
-    {
+    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state) throws IllegalArgumentException {
         //TODO: implement when link is created with worker
     }
 }

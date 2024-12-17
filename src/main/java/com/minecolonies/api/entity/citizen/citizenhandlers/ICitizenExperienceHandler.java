@@ -1,7 +1,6 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
-public interface ICitizenExperienceHandler
-{
+public interface ICitizenExperienceHandler {
     /**
      * Updates the level of the citizen.
      */

@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewRemoveWorkOrderMessage extends AbstractClientPlayMessage
-{
+public class ColonyViewRemoveWorkOrderMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_remove_workorder", ColonyViewRemoveWorkOrderMessage::new);
 
     private final int colonyId;
@@ -26,30 +25,26 @@ public class ColonyViewRemoveWorkOrderMessage extends AbstractClientPlayMessage
      * @param colony      colony the workOrder is in.
      * @param workOrderId workOrder ID.
      */
-    public ColonyViewRemoveWorkOrderMessage(@NotNull final Colony colony, final int workOrderId)
-    {
+    public ColonyViewRemoveWorkOrderMessage(@NotNull final Colony colony, final int workOrderId) {
         super(TYPE);
         this.colonyId = colony.getID();
         this.workOrderId = workOrderId;
     }
 
-    protected ColonyViewRemoveWorkOrderMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ColonyViewRemoveWorkOrderMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         colonyId = buf.readInt();
         workOrderId = buf.readInt();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(colonyId);
         buf.writeInt(workOrderId);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(colonyId, workOrderId, player.level().dimension());
     }
 }

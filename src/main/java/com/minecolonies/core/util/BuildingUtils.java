@@ -21,13 +21,11 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public final class BuildingUtils
-{
+public final class BuildingUtils {
     /**
      * Private constructor to hide public one.
      */
-    private BuildingUtils()
-    {
+    private BuildingUtils() {
         /*
          * Intentionally left empty.
          */
@@ -40,15 +38,13 @@ public final class BuildingUtils
      * @param hut       the hut to fetch.
      * @return the stack or if not found empty.
      */
-    public static ItemStack getItemStackForHutFromInventory(final Inventory inventory, final String hut)
-    {
+    public static ItemStack getItemStackForHutFromInventory(final Inventory inventory, final String hut) {
         final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(IItemHandlerCapProvider.wrap(inventory.player, false),
-          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && BuiltInRegistries.BLOCK.getKey(((BlockItem) item.getItem()).getBlock())
-                  .getPath()
-                  .endsWith(hut));
+                item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && BuiltInRegistries.BLOCK.getKey(((BlockItem) item.getItem()).getBlock())
+                        .getPath()
+                        .endsWith(hut));
 
-        if (slot != -1)
-        {
+        if (slot != -1) {
             return inventory.getItem(slot);
         }
         return ItemStack.EMPTY;
@@ -59,22 +55,19 @@ public final class BuildingUtils
      *
      * @param world       the world.
      * @param buildingPos the position of the hut block.
-     * @return            a predicate that returns true if the specified job is permitted.  (note
-     *                    that there may be other reasons the job isn't allowed, such as being the
-     *                    wrong building type for that job; this does not check that.)
-     *                    it returns {@link #UNRESTRICTED} when there are no explicit restrictions.
+     * @return a predicate that returns true if the specified job is permitted.  (note
+     * that there may be other reasons the job isn't allowed, such as being the
+     * wrong building type for that job; this does not check that.)
+     * it returns {@link #UNRESTRICTED} when there are no explicit restrictions.
      */
     @NotNull
-    public static Predicate<JobEntry> getAllowedJobs(@NotNull final Level world, @NotNull final BlockPos buildingPos)
-    {
-        if (world.getBlockEntity(buildingPos) instanceof final IBlueprintDataProviderBE provider)
-        {
+    public static Predicate<JobEntry> getAllowedJobs(@NotNull final Level world, @NotNull final BlockPos buildingPos) {
+        if (world.getBlockEntity(buildingPos) instanceof final IBlueprintDataProviderBE provider) {
             final Set<String> jobTags = provider.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).stream()
                     .filter(t -> t.startsWith("job="))
                     .map(t -> t.substring(4))
                     .collect(Collectors.toSet());
-            if (!jobTags.isEmpty())
-            {
+            if (!jobTags.isEmpty()) {
                 return job -> jobTags.contains(job.getKey().getPath()) || jobTags.contains(job.getKey().toString());
             }
         }
@@ -93,12 +86,11 @@ public final class BuildingUtils
      * @param building   the building to check.
      * @param hiringMode the current hiring mode of the job.
      * @param job        the job to hire, or null for a non-specific check.
-     * @return           true if automatic hiring is allowed.
+     * @return true if automatic hiring is allowed.
      */
     public static boolean canAutoHire(@NotNull final IBuilding building,
                                       @NotNull final HiringMode hiringMode,
-                                      @Nullable final JobEntry job)
-    {
+                                      @Nullable final JobEntry job) {
         return building.canAssignCitizens()
                 && (hiringMode == HiringMode.DEFAULT && !building.getColony().isManualHiring() || hiringMode == HiringMode.AUTO)
                 && (job == null || getAllowedJobs(building.getColony().getWorld(), building.getPosition()).test(job));

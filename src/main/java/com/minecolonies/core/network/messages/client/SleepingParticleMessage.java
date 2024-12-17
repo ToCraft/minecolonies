@@ -11,8 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Message for sleeping particles
  */
-public class SleepingParticleMessage extends AbstractClientPlayMessage
-{
+public class SleepingParticleMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "sleeping_particle", SleepingParticleMessage::new);
 
     /**
@@ -22,16 +21,14 @@ public class SleepingParticleMessage extends AbstractClientPlayMessage
     private final double y;
     private final double z;
 
-    public SleepingParticleMessage(final double x, final double y, final double z)
-    {
+    public SleepingParticleMessage(final double x, final double y, final double z) {
         super(TYPE);
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    protected SleepingParticleMessage(final RegistryFriendlyByteBuf byteBuf, final PlayMessageType<?> type)
-    {
+    protected SleepingParticleMessage(final RegistryFriendlyByteBuf byteBuf, final PlayMessageType<?> type) {
         super(byteBuf, type);
         x = byteBuf.readDouble();
         y = byteBuf.readDouble();
@@ -39,23 +36,21 @@ public class SleepingParticleMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf byteBuf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf byteBuf) {
         byteBuf.writeDouble(x);
         byteBuf.writeDouble(y);
         byteBuf.writeDouble(z);
     }
 
     @Override
-    
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
+
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
         player.level().addParticle(ModParticleTypesInitializer.SLEEPINGPARTICLE_TYPE,
-          x,
-          y,
-          z,
-          1.0f,
-          1.0f,
-          1.0f);
+                x,
+                y,
+                z,
+                1.0f,
+                1.0f,
+                1.0f);
     }
 }

@@ -24,8 +24,7 @@ import static com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToWit
 /**
  * Find and return a path to the nearest tree. Created: May 21, 2015
  */
-public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
-{
+public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob {
     /**
      * The list of trees the Lumberjack is not supposed to cut.
      */
@@ -40,7 +39,7 @@ public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
      * Position we want to search towards
      */
     private final BlockPos searchTowards;
-    private final int      dyntreesize;
+    private final int dyntreesize;
 
     /**
      * Box restriction area
@@ -60,15 +59,14 @@ public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
      * @param colony      the colony.
      */
     public PathJobFindTree(
-      final Level world,
-      @NotNull final BlockPos start,
-      final BlockPos home,
-      final int range,
-      final List<ItemStorage> treesToCut,
-      final int dyntreesize,
-      final IColony colony,
-      final Mob entity)
-    {
+            final Level world,
+            @NotNull final BlockPos start,
+            final BlockPos home,
+            final int range,
+            final List<ItemStorage> treesToCut,
+            final int dyntreesize,
+            final IColony colony,
+            final Mob entity) {
         super(world, start, range, new TreePathResult(), entity);
         this.excludedTrees = treesToCut;
         this.colony = colony;
@@ -89,31 +87,30 @@ public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
      * @param colony           the colony.
      */
     public PathJobFindTree(
-      final Level world,
-      @NotNull final BlockPos start,
-      final BlockPos startRestriction,
-      final BlockPos endRestriction,
-      final BlockPos furthestRestriction,
-      final List<ItemStorage> excludedTrees,
-      final int dyntreesize,
-      final IColony colony,
-      final Mob entity)
-    {
+            final Level world,
+            @NotNull final BlockPos start,
+            final BlockPos startRestriction,
+            final BlockPos endRestriction,
+            final BlockPos furthestRestriction,
+            final List<ItemStorage> excludedTrees,
+            final int dyntreesize,
+            final IColony colony,
+            final Mob entity) {
         super(world,
-          start,
-          (int) (BlockPosUtil.dist(entity.blockPosition(),
-            (startRestriction.getX() + endRestriction.getX()) / 2,
-            (startRestriction.getY() + endRestriction.getY()) / 2,
-            (startRestriction.getZ() + endRestriction.getZ()) / 2) + BlockPosUtil.dist(startRestriction, endRestriction)),
-          new TreePathResult(),
-          entity);
+                start,
+                (int) (BlockPosUtil.dist(entity.blockPosition(),
+                        (startRestriction.getX() + endRestriction.getX()) / 2,
+                        (startRestriction.getY() + endRestriction.getY()) / 2,
+                        (startRestriction.getZ() + endRestriction.getZ()) / 2) + BlockPosUtil.dist(startRestriction, endRestriction)),
+                new TreePathResult(),
+                entity);
 
         restrictionBox = new AABB(Math.min(startRestriction.getX(), endRestriction.getX()),
-          Math.min(startRestriction.getY(), endRestriction.getY()),
-          Math.min(startRestriction.getZ(), endRestriction.getZ()),
-          Math.max(startRestriction.getX(), endRestriction.getX()),
-          Math.max(startRestriction.getY(), endRestriction.getY()),
-          Math.max(startRestriction.getZ(), endRestriction.getZ()));
+                Math.min(startRestriction.getY(), endRestriction.getY()),
+                Math.min(startRestriction.getZ(), endRestriction.getZ()),
+                Math.max(startRestriction.getX(), endRestriction.getX()),
+                Math.max(startRestriction.getY(), endRestriction.getY()),
+                Math.max(startRestriction.getZ(), endRestriction.getZ()));
 
         this.excludedTrees = excludedTrees;
         this.colony = colony;
@@ -124,54 +121,43 @@ public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
 
     @NotNull
     @Override
-    public TreePathResult getResult()
-    {
+    public TreePathResult getResult() {
         return (TreePathResult) super.getResult();
     }
 
     @Override
-    protected double computeHeuristic(final int x, final int y, final int z)
-    {
+    protected double computeHeuristic(final int x, final int y, final int z) {
         return searchTowards == null ? BlockPosUtil.distManhattan(start, x, y, z) : BlockPosUtil.distManhattan(searchTowards, x, y, z);
     }
 
     @Override
-    protected boolean isAtDestination(@NotNull final MNode n)
-    {
-        if (restrictionBox != null && !restrictionBox.contains(n.x, n.y, n.z))
-        {
+    protected boolean isAtDestination(@NotNull final MNode n) {
+        if (restrictionBox != null && !restrictionBox.contains(n.x, n.y, n.z)) {
             return false;
         }
 
         return n.parent != null && isNearTree(n)
-                 && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
-                      == SurfaceType.WALKABLE;
+                && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                == SurfaceType.WALKABLE;
     }
 
-    private boolean isNearTree(@NotNull final MNode n)
-    {
-        if (n.parent == null)
-        {
+    private boolean isNearTree(@NotNull final MNode n) {
+        if (n.parent == null) {
             return false;
         }
 
         // TODO: Recheck logic
-        if (n.x == n.parent.x)
-        {
+        if (n.x == n.parent.x) {
             final int dz = n.z > n.parent.z ? 1 : -1;
             return isTree(tempWorldPos.set(n.x, n.y, n.z + dz)) || isTree(tempWorldPos.set(n.x - 1, n.y, n.z)) || isTree(tempWorldPos.set(n.x + 1, n.y, n.z));
-        }
-        else
-        {
+        } else {
             final int dx = n.x > n.parent.x ? 1 : -1;
             return isTree(tempWorldPos.set(n.x + dx, n.y, n.z)) || isTree(tempWorldPos.set(n.x, n.y, n.z - 1)) || isTree(tempWorldPos.set(n.x, n.y, n.z + 1));
         }
     }
 
-    private boolean isTree(final BlockPos pos)
-    {
-        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize) && Tree.checkIfInColony(pos, colony, world, restrictionBox != null))
-        {
+    private boolean isTree(final BlockPos pos) {
+        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize) && Tree.checkIfInColony(pos, colony, world, restrictionBox != null)) {
             getResult().treeLocation = pos.immutable();
             return true;
         }
@@ -180,52 +166,43 @@ public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
     }
 
     @Override
-    public double getEndNodeScore(final MNode n)
-    {
+    public double getEndNodeScore(final MNode n) {
         return BlockPosUtil.distManhattan(searchTowards, n.x, n.y, n.z);
     }
 
     @Override
-    protected boolean isPassable(@NotNull final BlockState block, final int x, final int y, final int z, final MNode parent, final boolean head)
-    {
+    protected boolean isPassable(@NotNull final BlockState block, final int x, final int y, final int z, final MNode parent, final boolean head) {
         return super.isPassable(block, x, y, z, parent, head) || isLeafLike(block);
     }
 
     @Override
     protected double modifyCost(
-      double cost,
-      final MNode parent,
-      final boolean swimstart,
-      final boolean swimming,
-      final int x,
-      final int y,
-      final int z,
-      final BlockState state,
-      final BlockState below)
-    {
-        if (!state.isAir() && isLeafLike(state))
-        {
+            double cost,
+            final MNode parent,
+            final boolean swimstart,
+            final boolean swimming,
+            final int x,
+            final int y,
+            final int z,
+            final BlockState state,
+            final BlockState below) {
+        if (!state.isAir() && isLeafLike(state)) {
             cost *= PASSING_COST;
-        }
-        else
-        {
+        } else {
             final BlockState above = cachedBlockLookup.getBlockState(x, y + 1, z);
-            if (!above.isAir() && isLeafLike(above))
-            {
+            if (!above.isAir() && isLeafLike(above)) {
                 cost *= PASSING_COST;
             }
         }
 
-        if (restrictionBox != null && !restrictionBox.contains(x, y, z))
-        {
+        if (restrictionBox != null && !restrictionBox.contains(x, y, z)) {
             cost *= 2;
         }
 
         return cost;
     }
 
-    private boolean isLeafLike(@NotNull final BlockState block)
-    {
+    private boolean isLeafLike(@NotNull final BlockState block) {
         return block.is(BlockTags.LEAVES) || Compatibility.isDynamicTrunkShell(block.getBlock()) || block.is(ModTags.hugeMushroomBlocks);
     }
 }

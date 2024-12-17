@@ -23,8 +23,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.*;
 /**
  * Objective type tracking research.
  */
-public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate implements IResearchObjectiveTemplate
-{
+public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate implements IResearchObjectiveTemplate {
     /**
      * The research to execute.
      */
@@ -38,31 +37,29 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
     /**
      * Create a new objective of this type.
      *
-     * @param target        the target citizen.
-     * @param rewards       the rewards this unlocks.
+     * @param target  the target citizen.
+     * @param rewards the rewards this unlocks.
      */
     public ResearchObjectiveTemplate(
-      final int target,
-      final ResourceLocation researchId,
-      final int nextObjective,
-      final List<Integer> rewards)
-    {
+            final int target,
+            final ResourceLocation researchId,
+            final int nextObjective,
+            final List<Integer> rewards) {
         super(target, buildDialogueTree(researchId), rewards);
         this.researchId = researchId;
         this.nextObjective = nextObjective;
     }
 
     @NotNull
-    private static DialogueElement buildDialogueTree(final ResourceLocation researchId)
-    {
+    private static DialogueElement buildDialogueTree(final ResourceLocation researchId) {
         final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(researchId);
 
-        final Component text  = Component.translatable("com.minecolonies.coremod.questobjectives.research", MutableComponent.create((research.getName())));
+        final Component text = Component.translatable("com.minecolonies.coremod.questobjectives.research", MutableComponent.create((research.getName())));
 
         final AnswerElement answer1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.later"),
-          new IQuestDialogueAnswer.CloseUIDialogueAnswer());
+                new IQuestDialogueAnswer.CloseUIDialogueAnswer());
         final AnswerElement answer2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.cancel"),
-          new IQuestDialogueAnswer.QuestCancellationDialogueAnswer());
+                new IQuestDialogueAnswer.QuestCancellationDialogueAnswer());
         return new DialogueElement(text, List.of(answer1, answer2));
     }
 
@@ -72,8 +69,7 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
      * @param jsonObject the json to parse it from.
      * @return a new objective object.
      */
-    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject)
-    {
+    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject) {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
 
         final int target = details.get(TARGET_KEY).getAsInt();
@@ -85,14 +81,11 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
     }
 
     @Override
-    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest)
-    {
+    public IObjectiveInstance startObjective(final IQuestInstance colonyQuest) {
         super.startObjective(colonyQuest);
 
-        if (colonyQuest.getColony() instanceof Colony colony)
-        {
-            if (colony.getResearchManager().getResearchTree().isComplete(this.researchId))
-            {
+        if (colonyQuest.getColony() instanceof Colony colony) {
+            if (colony.getResearchManager().getResearchTree().isComplete(this.researchId)) {
                 return colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
             }
 
@@ -108,10 +101,8 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
      * @param colonyQuest the quest instance.
      * @return the next quest or null if not finished.
      */
-    private boolean advanceIfFinished(final IQuestInstance colonyQuest)
-    {
-        if (colonyQuest.getColony() instanceof Colony colony && colony.getResearchManager().getResearchTree().isComplete(this.researchId))
-        {
+    private boolean advanceIfFinished(final IQuestInstance colonyQuest) {
+        if (colonyQuest.getColony() instanceof Colony colony && colony.getResearchManager().getResearchTree().isComplete(this.researchId)) {
             cleanupListener(colonyQuest);
             colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
             return true;
@@ -124,42 +115,35 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
      *
      * @param colonyQuest the listener.
      */
-    private void cleanupListener(final IQuestInstance colonyQuest)
-    {
-        if (colonyQuest.getColony() instanceof Colony)
-        {
+    private void cleanupListener(final IQuestInstance colonyQuest) {
+        if (colonyQuest.getColony() instanceof Colony) {
             // Only serverside cleanup.
             QuestObjectiveEventHandler.stopTrackingResearch(this.researchId, colonyQuest);
         }
     }
 
     @Override
-    public Component getProgressText(final IQuestInstance quest, final Style style)
-    {
+    public Component getProgressText(final IQuestInstance quest, final Style style) {
         final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(this.researchId);
 
         return Component.translatable("com.minecolonies.coremod.questobjectives.research.progress", MutableComponent.create(research.getName()));
     }
 
     @Override
-    public void onCancellation(final IQuestInstance colonyQuest)
-    {
+    public void onCancellation(final IQuestInstance colonyQuest) {
         cleanupListener(colonyQuest);
     }
 
     @Override
-    public void onWorldLoad(final IQuestInstance colonyQuest)
-    {
+    public void onWorldLoad(final IQuestInstance colonyQuest) {
         super.onWorldLoad(colonyQuest);
-        if (colonyQuest.getColony() instanceof Colony colony && !advanceIfFinished(colonyQuest))
-        {
+        if (colonyQuest.getColony() instanceof Colony colony && !advanceIfFinished(colonyQuest)) {
             QuestObjectiveEventHandler.trackResearch(this.researchId, colonyQuest);
         }
     }
 
     @Override
-    public void onResearchCompletion(final IQuestInstance colonyQuest)
-    {
+    public void onResearchCompletion(final IQuestInstance colonyQuest) {
         cleanupListener(colonyQuest);
         colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
     }

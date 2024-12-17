@@ -8,8 +8,7 @@ import java.util.List;
 /**
  * Interface type for raid events
  */
-public interface IColonyRaidEvent extends IColonyEntitySpawnEvent
-{
+public interface IColonyRaidEvent extends IColonyEntitySpawnEvent {
     /**
      * Get the normal raider type.
      *
@@ -45,11 +44,11 @@ public interface IColonyRaidEvent extends IColonyEntitySpawnEvent
 
     /**
      * Whether or not the raid is still active.
+     *
      * @return true if so.
      */
-    default boolean isRaidActive()
-    {
-        return getStatus() == EventStatus.PROGRESSING ||getStatus() == EventStatus.PREPARING;
+    default boolean isRaidActive() {
+        return getStatus() == EventStatus.PROGRESSING || getStatus() == EventStatus.PREPARING;
     }
 
     /**

@@ -8,8 +8,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class OpenGuiWindowTriggerMessage extends AbstractServerPlayMessage
-{
+public class OpenGuiWindowTriggerMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "open_gui_window_trigger", OpenGuiWindowTriggerMessage::new);
 
     /**
@@ -17,27 +16,23 @@ public class OpenGuiWindowTriggerMessage extends AbstractServerPlayMessage
      */
     private final String resource;
 
-    public OpenGuiWindowTriggerMessage(final String resource)
-    {
+    public OpenGuiWindowTriggerMessage(final String resource) {
         super(TYPE);
         this.resource = resource;
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         buf.writeUtf(this.resource);
     }
 
-    protected OpenGuiWindowTriggerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected OpenGuiWindowTriggerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.resource = buf.readUtf(32767);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player) {
         AdvancementTriggers.OPEN_GUI_WINDOW.get().trigger(player, this.resource);
     }
 }

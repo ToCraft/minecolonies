@@ -11,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,8 +23,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Message to execute the renaiming of the townHall.
  */
-public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessage
-{
+public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "change_free_to_interact_block", ChangeFreeToInteractBlockMessage::new);
 
     /**
@@ -51,8 +49,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
      * @param block  the blockState.
      * @param type   the type of
      */
-    public ChangeFreeToInteractBlockMessage(@NotNull final IColonyView colony, @NotNull final Block block, @NotNull final MessageType type)
-    {
+    public ChangeFreeToInteractBlockMessage(@NotNull final IColonyView colony, @NotNull final Block block, @NotNull final MessageType type) {
         super(TYPE, colony);
         this.pos = new BlockPos(0, 0, 0);
         this.block = block.defaultBlockState();
@@ -67,8 +64,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
      * @param pos    the position.
      * @param type   the type of
      */
-    public ChangeFreeToInteractBlockMessage(@NotNull final IColonyView colony, @NotNull final BlockPos pos, @NotNull final MessageType type)
-    {
+    public ChangeFreeToInteractBlockMessage(@NotNull final IColonyView colony, @NotNull final BlockPos pos, @NotNull final MessageType type) {
         super(TYPE, colony);
         this.pos = pos;
         this.block = Blocks.DIRT.defaultBlockState();
@@ -76,8 +72,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
         this.msgMode = MessageMode.LOCATION;
     }
 
-    protected ChangeFreeToInteractBlockMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ChangeFreeToInteractBlockMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
 
         block = Block.stateById(buf.readInt());
@@ -87,8 +82,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
 
         buf.writeInt(Block.getId(block));
@@ -99,23 +93,18 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
 
     @Nullable
     @Override
-    protected Action permissionNeeded()
-    {
+    protected Action permissionNeeded() {
         return Action.EDIT_PERMISSIONS;
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
-        if (player == null)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
+        if (player == null) {
             return;
         }
 
-        if (msgType == MessageType.ADD_BLOCK)
-        {
-            switch (msgMode)
-            {
+        if (msgType == MessageType.ADD_BLOCK) {
+            switch (msgMode) {
                 case LOCATION:
                     colony.addFreePosition(pos);
                     MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_ADD_POSITION_SUCCESS, pos.getX(), pos.getY(), pos.getZ()).sendTo(player);
@@ -127,11 +116,8 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
                 default:
                     // Error!
             }
-        }
-        else
-        {
-            switch (msgMode)
-            {
+        } else {
+            switch (msgMode) {
                 case LOCATION:
                     colony.removeFreePosition(pos);
                     MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_REMOVE_POSITION_SUCCESS, pos.getX(), pos.getY(), pos.getZ()).sendTo(player);
@@ -151,8 +137,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
      * <p>
      * ADD_BLOCK       Add a block or pos. REMOVE_BLOCK    Removing a block or pos.
      */
-    public enum MessageType
-    {
+    public enum MessageType {
         REMOVE_BLOCK,
         ADD_BLOCK,
     }
@@ -160,8 +145,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     /**
      * Enums of modes this message exists.
      */
-    public enum MessageMode
-    {
+    public enum MessageMode {
         LOCATION,
         BLOCK,
     }

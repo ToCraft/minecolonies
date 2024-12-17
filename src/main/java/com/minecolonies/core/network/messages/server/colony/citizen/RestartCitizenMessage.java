@@ -17,8 +17,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_CI
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class RestartCitizenMessage extends AbstractColonyServerMessage
-{
+public class RestartCitizenMessage extends AbstractColonyServerMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "restart_citizen", RestartCitizenMessage::new);
 
     /**
@@ -32,8 +31,7 @@ public class RestartCitizenMessage extends AbstractColonyServerMessage
      * @param building  view of the building to read data from
      * @param citizenID the id of the citizen to fill the job.
      */
-    public RestartCitizenMessage(@NotNull final AbstractBuildingView building, final int citizenID)
-    {
+    public RestartCitizenMessage(@NotNull final AbstractBuildingView building, final int citizenID) {
         super(TYPE, building.getColony());
         this.citizenID = citizenID;
     }
@@ -43,8 +41,7 @@ public class RestartCitizenMessage extends AbstractColonyServerMessage
      *
      * @param buf the used byteBuffer.
      */
-    protected RestartCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected RestartCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
 
         citizenID = buf.readInt();
@@ -56,16 +53,14 @@ public class RestartCitizenMessage extends AbstractColonyServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
 
         buf.writeInt(citizenID);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony) {
         final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
 
         // Restart also worker building and AI

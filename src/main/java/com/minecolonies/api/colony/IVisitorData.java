@@ -3,13 +3,10 @@ package com.minecolonies.api.colony;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.UUID;
-
 /**
  * Data for colony visitors, based on citizendata
  */
-public interface IVisitorData extends ICitizenData
-{
+public interface IVisitorData extends ICitizenData {
     /**
      * Sets the recruitment cost stack
      */

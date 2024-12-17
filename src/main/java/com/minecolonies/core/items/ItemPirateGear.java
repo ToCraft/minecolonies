@@ -1,14 +1,15 @@
 package com.minecolonies.core.items;
 
 import net.minecraft.core.Holder;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class handling the Pirate Gear.
  */
-public class ItemPirateGear extends ArmorItem
-{
+public class ItemPirateGear extends ArmorItem {
     /**
      * Constructor method for the Pirate Gear
      *
@@ -18,11 +19,10 @@ public class ItemPirateGear extends ArmorItem
      * @param name            the name.
      */
     public ItemPirateGear(
-      @NotNull final String name,
-      @NotNull final Holder<ArmorMaterial> materialIn,
-      @NotNull final Type equipmentSlotIn,
-      final Item.Properties properties)
-    {
+            @NotNull final String name,
+            @NotNull final Holder<ArmorMaterial> materialIn,
+            @NotNull final Type equipmentSlotIn,
+            final Item.Properties properties) {
         super(materialIn, equipmentSlotIn, properties);
     }
 }

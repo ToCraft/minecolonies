@@ -22,8 +22,7 @@ import java.util.List;
 /**
  * The window shown when clicking on plantation fields blocks.
  */
-public class WindowPlantationField extends AbstractWindowSkeleton
-{
+public class WindowPlantationField extends AbstractWindowSkeleton {
     /**
      * Link to the xml file of the window.
      */
@@ -74,41 +73,38 @@ public class WindowPlantationField extends AbstractWindowSkeleton
      *
      * @param tileEntityPlantationField the tile entity which is at this location.
      */
-    public WindowPlantationField(AbstractTileEntityPlantationField tileEntityPlantationField)
-    {
+    public WindowPlantationField(AbstractTileEntityPlantationField tileEntityPlantationField) {
         super(Constants.MOD_ID + WINDOW_RESOURCE);
         this.tileEntityPlantationField = tileEntityPlantationField;
         this.plants = tileEntityPlantationField.getPlantationFieldTypes().stream()
-                        .flatMap(f -> f.getFieldModuleProducers().stream().map(m -> m.apply(null)).filter(IPlantationModule.class::isInstance).map(m -> (IPlantationModule) m))
-                        .map(fieldType -> new ItemStack(fieldType.getItem()))
-                        .toList();
+                .flatMap(f -> f.getFieldModuleProducers().stream().map(m -> m.apply(null)).filter(IPlantationModule.class::isInstance).map(m -> (IPlantationModule) m))
+                .map(fieldType -> new ItemStack(fieldType.getItem()))
+                .toList();
 
         registerButton(BUTTON_REPAIR_ID, this::repairField);
 
         updateElementStates();
     }
 
-    private void repairField()
-    {
+    private void repairField() {
         close();
         new WindowBuildDecoration(tileEntityPlantationField.getBlockPos(),
-          tileEntityPlantationField.getPackName(),
-          tileEntityPlantationField.getBlueprintPath(),
-          tileEntityPlantationField.getRotationMirror(),
-          builder -> new PlantationFieldBuildRequestMessage(WorkOrderType.REPAIR,
-            tileEntityPlantationField.getBlockPos(),
-            tileEntityPlantationField.getPackName(),
-            tileEntityPlantationField.getBlueprintPath(),
-            Minecraft.getInstance().level.dimension(),
-            tileEntityPlantationField.getRotationMirror(),
-            builder)).open();
+                tileEntityPlantationField.getPackName(),
+                tileEntityPlantationField.getBlueprintPath(),
+                tileEntityPlantationField.getRotationMirror(),
+                builder -> new PlantationFieldBuildRequestMessage(WorkOrderType.REPAIR,
+                        tileEntityPlantationField.getBlockPos(),
+                        tileEntityPlantationField.getPackName(),
+                        tileEntityPlantationField.getBlueprintPath(),
+                        Minecraft.getInstance().level.dimension(),
+                        tileEntityPlantationField.getRotationMirror(),
+                        builder)).open();
     }
 
     /**
      * Updates the states of certain additional elements, determining whether they should be enabled/visible.
      */
-    private void updateElementStates()
-    {
+    private void updateElementStates() {
         IColonyView colonyView = getCurrentColony();
 
         findPaneOfTypeByID(NOT_IN_COLONY_TEXT_ID, Text.class).setVisible(colonyView == null);
@@ -123,49 +119,40 @@ public class WindowPlantationField extends AbstractWindowSkeleton
      * @return the colony view, if exists.
      */
     @Nullable
-    private IColonyView getCurrentColony()
-    {
-        if (tileEntityPlantationField.getCurrentColony() instanceof IColonyView colonyView)
-        {
+    private IColonyView getCurrentColony() {
+        if (tileEntityPlantationField.getCurrentColony() instanceof IColonyView colonyView) {
             return colonyView;
         }
         return null;
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
         updateElementStates();
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
 
         ScrollingList fieldList = findPaneOfTypeByID(LIST_PLANTS_ID, ScrollingList.class);
-        fieldList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        fieldList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return (int) Math.ceil(plants.size() / LIST_PLANTS_COLUMN_COUNT);
             }
 
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                for (int id = 1; id <= LIST_PLANTS_COLUMN_COUNT; id++)
-                {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
+                for (int id = 1; id <= LIST_PLANTS_COLUMN_COUNT; id++) {
                     ItemIcon pane = rowPane.findPaneOfTypeByID(LIST_PLANTS_ICON_ID + id, ItemIcon.class);
                     final Box parent = (Box) pane.getParent();
                     parent.setLineWidth(0);
 
                     // Row index + item index
                     int itemIndex = ((index + 1) * id) - 1;
-                    if (itemIndex < plants.size())
-                    {
+                    if (itemIndex < plants.size()) {
                         pane.setItem(plants.get(itemIndex));
                         parent.setLineWidth(1);
                     }

@@ -17,8 +17,7 @@ import java.util.Random;
  * The scarecrow tile entity to store extra data.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class TileEntityScarecrow extends AbstractTileEntityScarecrow
-{
+public class TileEntityScarecrow extends AbstractTileEntityScarecrow {
     /**
      * Random generator.
      */
@@ -37,16 +36,13 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
     /**
      * Creates an instance of the tileEntity.
      */
-    public TileEntityScarecrow(final BlockPos pos, final BlockState state)
-    {
+    public TileEntityScarecrow(final BlockPos pos, final BlockState state) {
         super(pos, state);
     }
 
     @Override
-    public ScareCrowType getScarecrowType()
-    {
-        if (this.type == null)
-        {
+    public ScareCrowType getScarecrowType() {
+        if (this.type == null) {
             final ScareCrowType[] values = ScareCrowType.values();
             this.type = values[this.random.nextInt(values.length)];
         }
@@ -54,25 +50,21 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
     }
 
     @Override
-    public IColony getCurrentColony()
-    {
-        if (currentColony == null && level != null)
-        {
+    public IColony getCurrentColony() {
+        if (currentColony == null && level != null) {
             this.currentColony = IColonyManager.getInstance().getIColony(level, worldPosition);
         }
         return currentColony;
     }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket()
-    {
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider) {
         return saveWithId(provider);
     }
 }

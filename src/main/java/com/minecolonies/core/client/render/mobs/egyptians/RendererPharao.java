@@ -9,8 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Renderer used for the pharao.
  */
-public class RendererPharao extends AbstractRendererEgyptian<AbstractEntityEgyptian, ModelPharaoh>
-{
+public class RendererPharao extends AbstractRendererEgyptian<AbstractEntityEgyptian, ModelPharaoh> {
     /**
      * Texture of the entity.
      */
@@ -21,14 +20,12 @@ public class RendererPharao extends AbstractRendererEgyptian<AbstractEntityEgypt
      *
      * @param context the renderManager
      */
-    public RendererPharao(final EntityRendererProvider.Context context)
-    {
+    public RendererPharao(final EntityRendererProvider.Context context) {
         super(context, new ModelPharaoh(context.bakeLayer(ClientRegistryHandler.PHARAO)), 0.5F);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityEgyptian entity)
-    {
+    public ResourceLocation getTextureLocation(final AbstractEntityEgyptian entity) {
         return TEXTURE;
     }
 }

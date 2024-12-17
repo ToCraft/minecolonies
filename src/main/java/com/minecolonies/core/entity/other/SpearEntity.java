@@ -28,8 +28,7 @@ import static com.minecolonies.api.util.DamageSourceKeys.SPEAR;
 /**
  * Custom arrow entity used for spear throwing, acts similar to the trident without any of the special effects.
  */
-public class SpearEntity extends ThrownTrident implements ICustomAttackSound
-{
+public class SpearEntity extends ThrownTrident implements ICustomAttackSound {
     /**
      * Max time the spear is alive before removing it
      */
@@ -48,7 +47,7 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
     /**
      * The NBT key for the spear ItemStack.
      */
-    public static final String NBT_WEAPON       = "Weapon";
+    public static final String NBT_WEAPON = "Weapon";
     /**
      * The NBT key for the spears dealt damage value.
      */
@@ -64,13 +63,11 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
      */
     private boolean dealtDamage;
 
-    public SpearEntity(EntityType<? extends ThrownTrident> type, Level world)
-    {
+    public SpearEntity(EntityType<? extends ThrownTrident> type, Level world) {
         super(type, world);
     }
 
-    public SpearEntity(Level world, LivingEntity thrower, ItemStack thrownWeapon)
-    {
+    public SpearEntity(Level world, LivingEntity thrower, ItemStack thrownWeapon) {
         super(ModEntities.SPEAR, world);
         this.weapon = thrownWeapon.copy();
         this.setOwner(thrower);
@@ -80,49 +77,40 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
 
     @NotNull
     @Override
-    public ItemStack getPickupItem()
-    {
+    public ItemStack getPickupItem() {
         return this.weapon.copy();
     }
 
     @Nullable
     @Override
-    protected EntityHitResult findHitEntity(final Vec3 startVec, final Vec3 endVec)
-    {
+    protected EntityHitResult findHitEntity(final Vec3 startVec, final Vec3 endVec) {
         return this.dealtDamage ? null : super.findHitEntity(startVec, endVec);
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult result)
-    {
+    protected void onHitEntity(EntityHitResult result) {
         Entity targetEntity = result.getEntity();
         Entity ownerEntity = this.getOwner();
 
         float damageAmount = BASE_DAMAGE;
         DamageSource damageSource = this.level().damageSources().source(SPEAR, this, ownerEntity == null ? this : ownerEntity);
-        if (targetEntity instanceof LivingEntity)
-        {
-            if (this.level() instanceof ServerLevel serverlevel)
-            {
+        if (targetEntity instanceof LivingEntity) {
+            if (this.level() instanceof ServerLevel serverlevel) {
                 damageAmount += EnchantmentHelper.modifyDamage(serverlevel, this.weapon, targetEntity, damageSource, damageAmount);
             }
         }
 
         this.dealtDamage = true;
-        if (targetEntity.hurt(damageSource, damageAmount))
-        {
-            if (targetEntity.getType() == EntityType.ENDERMAN)
-            {
+        if (targetEntity.hurt(damageSource, damageAmount)) {
+            if (targetEntity.getType() == EntityType.ENDERMAN) {
                 return;
             }
 
-            if (this.level() instanceof ServerLevel serverlevel)
-            {
+            if (this.level() instanceof ServerLevel serverlevel) {
                 EnchantmentHelper.doPostAttackEffectsWithItemSource(serverlevel, targetEntity, damageSource, this.getWeaponItem());
             }
 
-            if (targetEntity instanceof LivingEntity livingentity)
-            {
+            if (targetEntity instanceof LivingEntity livingentity) {
                 this.doKnockback(livingentity, damageSource);
                 this.doPostHurtEffects(livingentity);
             }
@@ -134,21 +122,18 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
 
     @NotNull
     @Override
-    protected SoundEvent getDefaultHitGroundSoundEvent()
-    {
+    protected SoundEvent getDefaultHitGroundSoundEvent() {
         return SoundEvents.TRIDENT_HIT_GROUND;
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag nbt)
-    {
+    public void readAdditionalSaveData(@NotNull CompoundTag nbt) {
         super.readAdditionalSaveData(nbt);
         this.dealtDamage = nbt.getBoolean(NBT_DEALT_DAMAGE);
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag nbt)
-    {
+    public void addAdditionalSaveData(@NotNull CompoundTag nbt) {
         super.addAdditionalSaveData(nbt);
         nbt.putBoolean(NBT_DEALT_DAMAGE, this.dealtDamage);
     }
@@ -157,16 +142,13 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
      * Remove spear after certain time alive.
      */
     @Override
-    public void tick()
-    {
-        if (this.tickCount > MAX_LIVE_TIME)
-        {
+    public void tick() {
+        if (this.tickCount > MAX_LIVE_TIME) {
             remove(RemovalReason.DISCARDED);
             return;
         }
 
-        if (this.inGroundTime > GROUND_LIVE_TIME)
-        {
+        if (this.inGroundTime > GROUND_LIVE_TIME) {
             remove(RemovalReason.DISCARDED);
             return;
         }
@@ -175,41 +157,34 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
     }
 
     @Override
-    public void tickDespawn()
-    {
-        if (this.pickup != AbstractArrow.Pickup.ALLOWED)
-        {
+    public void tickDespawn() {
+        if (this.pickup != AbstractArrow.Pickup.ALLOWED) {
             super.tickDespawn();
         }
     }
 
     @Override
-    protected float getWaterInertia()
-    {
+    protected float getWaterInertia() {
         return 0.9F;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public boolean shouldRender(double x, double y, double z)
-    {
+    public boolean shouldRender(double x, double y, double z) {
         return true;
     }
 
     @Override
-    public SoundEvent getAttackSound()
-    {
+    public SoundEvent getAttackSound() {
         return SoundEvents.TRIDENT_THROW.value();
     }
 
     @Override
-    public boolean save(@NotNull CompoundTag nbt)
-    {
+    public boolean save(@NotNull CompoundTag nbt) {
         return false;
     }
 
     @Override
-    public void load(@NotNull CompoundTag nbt)
-    {
+    public void load(@NotNull CompoundTag nbt) {
         discard();
     }
 }

@@ -7,21 +7,18 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Crafts tools and armour.
  */
-public class EntityAIWorkBlacksmith extends AbstractEntityAICrafting<JobBlacksmith, BuildingBlacksmith>
-{
+public class EntityAIWorkBlacksmith extends AbstractEntityAICrafting<JobBlacksmith, BuildingBlacksmith> {
     /**
      * Initialize the blacksmith and add all his tasks.
      *
      * @param blacksmith the job he has.
      */
-    public EntityAIWorkBlacksmith(@NotNull final JobBlacksmith blacksmith)
-    {
+    public EntityAIWorkBlacksmith(@NotNull final JobBlacksmith blacksmith) {
         super(blacksmith);
     }
 
     @Override
-    public Class<BuildingBlacksmith> getExpectedBuildingClass()
-    {
+    public Class<BuildingBlacksmith> getExpectedBuildingClass() {
         return BuildingBlacksmith.class;
     }
 }

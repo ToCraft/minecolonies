@@ -12,8 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <Input>  The input type.
  * @param <Output> The output type.
  */
-public interface IFactory<Input, Output>
-{
+public interface IFactory<Input, Output> {
     /**
      * Method to get the type this factory can produce.
      *
@@ -32,6 +31,7 @@ public interface IFactory<Input, Output>
 
     /**
      * Get a serialization id for the factory.
+     *
      * @return the short id.
      */
     short getSerializationId();

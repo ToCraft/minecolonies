@@ -3,8 +3,7 @@ package com.minecolonies.api.colony.colonyEvents;
 /**
  * Raid event with campfires for delayed start
  */
-public interface IColonyCampFireRaidEvent
-{
+public interface IColonyCampFireRaidEvent {
     /**
      * Sets the intervals to wait before moving away from campfires.
      *

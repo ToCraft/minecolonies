@@ -1,23 +1,21 @@
 package com.minecolonies.core.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The smelter job class.
  */
-public class JobSmelter extends AbstractJob<EntityAIWorkSmelter, JobSmelter>
-{
+public class JobSmelter extends AbstractJob<EntityAIWorkSmelter, JobSmelter> {
     /**
      * Create a smelter job.
      *
      * @param entity the lumberjack.
      */
-    public JobSmelter(final ICitizenData entity)
-    {
+    public JobSmelter(final ICitizenData entity) {
         super(entity);
     }
 
@@ -28,8 +26,7 @@ public class JobSmelter extends AbstractJob<EntityAIWorkSmelter, JobSmelter>
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.SMELTER_ID;
     }
 
@@ -40,8 +37,7 @@ public class JobSmelter extends AbstractJob<EntityAIWorkSmelter, JobSmelter>
      */
     @NotNull
     @Override
-    public EntityAIWorkSmelter generateAI()
-    {
+    public EntityAIWorkSmelter generateAI() {
         return new EntityAIWorkSmelter(this);
     }
 }

@@ -1,15 +1,14 @@
 package com.minecolonies.core.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkBeekeeper;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Class of the Beekeeper job.
  */
-public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeeper>
-{
+public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeeper> {
     /**
      * The value where when reached the counter check returns true. 100 ticks * 4 = 1 ingame day.
      */
@@ -25,8 +24,7 @@ public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeepe
      *
      * @param entity the citizen data.
      */
-    public JobBeekeeper(final ICitizenData entity)
-    {
+    public JobBeekeeper(final ICitizenData entity) {
         super(entity);
     }
 
@@ -39,16 +37,14 @@ public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeepe
      * @return your personal AI instance.
      */
     @Override
-    public EntityAIWorkBeekeeper generateAI()
-    {
+    public EntityAIWorkBeekeeper generateAI() {
         return new EntityAIWorkBeekeeper(this);
     }
 
     /**
      * Tick the bee interaction counter to determine the time when the interaction gets triggered.
      */
-    public void tickNoBees()
-    {
+    public void tickNoBees() {
         if (counter < 100) // to prevent unnecessary high counter when ignored by player
         {
             counter++;
@@ -58,8 +54,7 @@ public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeepe
     /**
      * Reset the bee interaction counter.
      */
-    public void resetCounter()
-    {
+    public void resetCounter() {
         counter = 0;
     }
 
@@ -68,14 +63,12 @@ public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeepe
      *
      * @return true if the interaction is valid/should be triggered.
      */
-    public boolean checkForBeeInteraction()
-    {
+    public boolean checkForBeeInteraction() {
         return counter > COUNTER_TRIGGER;
     }
 
     @Override
-    public ResourceLocation getModel()
-    {
+    public ResourceLocation getModel() {
         return ModModelTypes.BEEKEEPER_ID;
     }
 }

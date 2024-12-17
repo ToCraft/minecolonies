@@ -5,8 +5,7 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 /**
  * Higher level Citizen data (Englobes server and client side variants).
  */
-public interface ICitizen
-{
+public interface ICitizen {
     /**
      * Returns the id of the citizen.
      *

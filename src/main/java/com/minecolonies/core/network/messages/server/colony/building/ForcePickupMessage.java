@@ -19,8 +19,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Message class which manages the messages to request an immediate pickup
  */
-public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "force_pickup", ForcePickupMessage::new);
 
     /**
@@ -28,27 +27,21 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
      *
      * @param building view of the building to read data from
      */
-    public ForcePickupMessage(@NotNull final IBuildingView building)
-    {
+    public ForcePickupMessage(@NotNull final IBuildingView building) {
         super(TYPE, building);
     }
 
-    protected ForcePickupMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ForcePickupMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         // Noop
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (building.createPickupRequest(getPlayerActionPriority(true)))
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (building.createPickupRequest(getPlayerActionPriority(true))) {
             MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP).sendTo(ctxIn.player());
             building.markDirty();
-        }
-        else
-        {
+        } else {
             MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED).sendTo(player);
         }
     }

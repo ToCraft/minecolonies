@@ -26,8 +26,7 @@ import static com.minecolonies.api.util.constant.TagConstants.*;
 /**
  * Class of the mechanic building.
  */
-public class BuildingMechanic extends AbstractBuilding
-{
+public class BuildingMechanic extends AbstractBuilding {
     /**
      * Description string of the building.
      */
@@ -39,85 +38,78 @@ public class BuildingMechanic extends AbstractBuilding
      * @param c the colony.
      * @param l the location
      */
-    public BuildingMechanic(final IColony c, final BlockPos l)
-    {
+    public BuildingMechanic(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return MECHANIC;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
     /**
      * Mechanic crafting module.
      */
-    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
-    {
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public CraftingModule(final JobEntry jobEntry)
-        {
+        public CraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         @NotNull
         @Override
-        public OptionalPredicate<ItemStack> getIngredientValidator()
-        {
+        public OptionalPredicate<ItemStack> getIngredientValidator() {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_MECHANIC)
                     .combine(super.getIngredientValidator());
         }
 
         @Override
-        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-        {
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) {
             if (!super.isRecipeCompatible(recipe)) return false;
 
             final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_MECHANIC);
-            if (isRecipeAllowed.isPresent()) { return isRecipeAllowed.get(); }
+            if (isRecipeAllowed.isPresent()) {
+                return isRecipeAllowed.get();
+            }
 
             final Item item = recipe.getPrimaryOutput().getItem();
             return item instanceof MinecartItem
-                     || (item instanceof BlockItem && ((BlockItem) item).getBlock() instanceof HopperBlock);
+                    || (item instanceof BlockItem && ((BlockItem) item).getBlock() instanceof HopperBlock);
         }
 
         @Override
-        protected int getMaxRecipes()
-        {
+        protected int getMaxRecipes() {
             return super.getMaxRecipes() + 5;     // grant a few extra to offset all the built-in recipes
         }
     }
 
-    public static class DOCraftingModule extends AbstractCraftingBuildingModule.Domum
-    {
+    public static class DOCraftingModule extends AbstractCraftingBuildingModule.Domum {
         /**
          * Create a new module.
          *
          * @param jobEntry the entry of the job.
          */
-        public DOCraftingModule(final JobEntry jobEntry)
-        {
+        public DOCraftingModule(final JobEntry jobEntry) {
             super(jobEntry);
         }
 
         /**
          * See {@link ICraftingBuildingModule#getIngredientValidator}.
+         *
          * @return the validator
          */
-        public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
-        {
+        public @NotNull
+        static OptionalPredicate<ItemStack> getStaticIngredientValidator() {
             final OptionalPredicate<ItemStack> sawmill = CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL, true)
                     .combine(stack -> Optional.of(stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS)));
 
@@ -132,8 +124,7 @@ public class BuildingMechanic extends AbstractBuilding
         }
 
         @Override
-        public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
-        {
+        public @NotNull OptionalPredicate<ItemStack> getIngredientValidator() {
             return getStaticIngredientValidator();
         }
     }

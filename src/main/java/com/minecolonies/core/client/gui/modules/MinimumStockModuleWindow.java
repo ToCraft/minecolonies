@@ -25,8 +25,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Cook window class. Specifies the extras the composter has for its list.
  */
-public class MinimumStockModuleWindow extends AbstractModuleWindow
-{
+public class MinimumStockModuleWindow extends AbstractModuleWindow {
     /**
      * The resource string.
      */
@@ -50,21 +49,19 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
     /**
      * Constructor for the minimum stock window view.
      *
-     * @param building class extending
+     * @param building   class extending
      * @param moduleView the module view.
      */
     public MinimumStockModuleWindow(
-      final IBuildingView building,
-      final IMinimumStockModuleView moduleView)
-    {
+            final IBuildingView building,
+            final IMinimumStockModuleView moduleView) {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
         this.moduleView = moduleView;
 
         registerButton(STOCK_ADD, this::addStock);
-        if (moduleView.hasReachedLimit())
-        {
+        if (moduleView.hasReachedLimit()) {
             final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
             button.setText(Component.translatableEscape(LABEL_LIMIT_REACHED));
             button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_disabled.png"));
@@ -78,8 +75,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
      *
      * @param button the button.
      */
-    private void removeStock(final Button button)
-    {
+    private void removeStock(final Button button) {
         final int row = resourceList.getListElementIndexByPane(button);
         final Tuple<ItemStorage, Integer> tuple = moduleView.getStock().get(row);
         moduleView.getStock().remove(row);
@@ -90,17 +86,14 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
     /**
      * Add the stock.
      */
-    private void addStock()
-    {
-        if (!moduleView.hasReachedLimit())
-        {
+    private void addStock() {
+        if (!moduleView.hasReachedLimit()) {
             new WindowSelectRes(this, (stack) -> true, (stack, qty) -> new AddMinimumStockToBuildingModuleMessage(buildingView, stack, qty).sendToServer(), true).open();
         }
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         super.onOpened();
         updateStockList();
     }
@@ -108,21 +101,18 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
     /**
      * Updates the resource list in the GUI with the info we need.
      */
-    private void updateStockList()
-    {
+    private void updateStockList() {
         resourceList.enable();
         resourceList.show();
 
         //Creates a dataProvider for the unemployed resourceList.
-        resourceList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        resourceList.setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return moduleView.getStock().size();
             }
 
@@ -132,8 +122,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final ItemStack resource = moduleView.getStock().get(index).getA().getItemStack().copy();
                 resource.setCount(resource.getMaxStackSize());
 

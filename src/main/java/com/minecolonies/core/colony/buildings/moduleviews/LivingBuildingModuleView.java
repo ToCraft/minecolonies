@@ -13,8 +13,7 @@ import java.util.*;
 /**
  * Client side version of the living building module.
  */
-public class LivingBuildingModuleView extends AbstractBuildingModuleView
-{
+public class LivingBuildingModuleView extends AbstractBuildingModuleView {
     /**
      * List of the residents assigned.
      */
@@ -30,8 +29,7 @@ public class LivingBuildingModuleView extends AbstractBuildingModuleView
      */
     private int maxInhabitants = 1;
 
-    public LivingBuildingModuleView()
-    {
+    public LivingBuildingModuleView() {
         super();
     }
 
@@ -40,8 +38,7 @@ public class LivingBuildingModuleView extends AbstractBuildingModuleView
      *
      * @return
      */
-    public List<Integer> getAssignedCitizens()
-    {
+    public List<Integer> getAssignedCitizens() {
         return Collections.unmodifiableList(new ArrayList<>(residents));
     }
 
@@ -50,8 +47,7 @@ public class LivingBuildingModuleView extends AbstractBuildingModuleView
      *
      * @param id
      */
-    public void remove(final int id)
-    {
+    public void remove(final int id) {
         residents.remove(id);
     }
 
@@ -60,24 +56,20 @@ public class LivingBuildingModuleView extends AbstractBuildingModuleView
      *
      * @param id
      */
-    public void add(final int id)
-    {
+    public void add(final int id) {
         residents.add(id);
     }
 
     @Override
-    public String getDesc()
-    {
+    public String getDesc() {
         return null;
     }
 
     @Override
-    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf) {
         residents.clear();
         final int numResidents = buf.readInt();
-        for (int i = 0; i < numResidents; ++i)
-        {
+        for (int i = 0; i < numResidents; ++i) {
             residents.add(buf.readInt());
         }
         hiringMode = HiringMode.values()[buf.readInt()];
@@ -86,31 +78,28 @@ public class LivingBuildingModuleView extends AbstractBuildingModuleView
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public BOWindow getWindow()
-    {
+    public BOWindow getWindow() {
         return null;
     }
 
     @Override
-    public String getIcon()
-    {
+    public String getIcon() {
         return null;
     }
 
-    public boolean isPageVisible() {return false;}
+    public boolean isPageVisible() {
+        return false;
+    }
 
-    public int getMax()
-    {
+    public int getMax() {
         return maxInhabitants;
     }
 
-    public HiringMode getHiringMode()
-    {
+    public HiringMode getHiringMode() {
         return hiringMode;
     }
 
-    public void setHiringMode(final HiringMode value)
-    {
+    public void setHiringMode(final HiringMode value) {
         this.hiringMode = value;
     }
 }

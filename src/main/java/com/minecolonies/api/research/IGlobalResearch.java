@@ -13,8 +13,7 @@ import java.util.List;
 /**
  * Interface defining how a research globally is defined.
  */
-public interface IGlobalResearch
-{
+public interface IGlobalResearch {
     /**
      * Check if this research can be executed at this moment.
      *
@@ -49,24 +48,28 @@ public interface IGlobalResearch
 
     /**
      * Start the research.
+     *
      * @param localResearchTree the local research tree to store in the colony.
      */
     void startResearch(@NotNull final ILocalResearchTree localResearchTree);
 
     /**
      * Human-readable description of research, in human-readable text or as a translation key.
+     *
      * @return the description.
      */
     TranslatableContents getName();
 
     /**
      * Subtitle description of research, in human-readable text or as a translation key.
+     *
      * @return the optional subtitle name.
      */
     TranslatableContents getSubtitle();
 
     /**
      * Getter of the id of the research.
+     *
      * @return the research id, as a ResourceLocation
      */
     ResourceLocation getId();
@@ -74,12 +77,14 @@ public interface IGlobalResearch
     /**
      * Getter of the research icon's resource location.
      * On the client, this texture file's presence has already been validated.
+     *
      * @return the ResourceLocation of the icon.
      */
     ResourceLocation getIconTextureResourceLocation();
 
     /**
      * Getter of the research icon's item stack.
+     *
      * @return the ItemStack for the icon.
      */
     ItemStack getIconItemStack();
@@ -122,6 +127,7 @@ public interface IGlobalResearch
     /**
      * Check if this research should automatically start when requirements are complete.
      * This can temporarily exceed normal limits of the max number of concurrent researches.
+     *
      * @return true if so.
      */
     boolean isAutostart();
@@ -171,24 +177,28 @@ public interface IGlobalResearch
 
     /**
      * Add a child to a research, without setting parentage.
+     *
      * @param child the child to add
      */
     void addChild(final ResourceLocation child);
 
     /**
      * Add item costs.
+     *
      * @param cost the items to add to the cost list.
      */
     void addCosts(final List<SizedIngredient> cost);
 
     /**
      * Add an individual effect.
+     *
      * @param effect the individual effect to add to the research, as a IResearchEffect.
      */
     void addEffect(final IResearchEffect<?> effect);
 
     /**
      * Add an individual requirement
+     *
      * @param requirement the individual requirement to add to the research, as an IResearchRequirement.
      */
     void addRequirement(final IResearchRequirement requirement);

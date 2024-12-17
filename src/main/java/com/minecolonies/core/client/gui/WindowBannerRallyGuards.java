@@ -26,8 +26,7 @@ import static com.minecolonies.core.items.ItemBannerRallyGuards.*;
 /**
  * ClipBoard window.
  */
-public class WindowBannerRallyGuards extends AbstractWindowSkeleton
-{
+public class WindowBannerRallyGuards extends AbstractWindowSkeleton {
     /**
      * Resource suffix.
      */
@@ -78,8 +77,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
      *
      * @param banner The banner to be displayed
      */
-    public WindowBannerRallyGuards(final ItemStack banner)
-    {
+    public WindowBannerRallyGuards(final ItemStack banner) {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
         this.banner = banner;
 
@@ -88,24 +86,19 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onOpened()
-    {
+    public void onOpened() {
         guardTowerList = findPaneOfTypeByID(LIST_GUARDTOWERS, ScrollingList.class);
 
-        if (isActive(banner))
-        {
+        if (isActive(banner)) {
             findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(Component.translatableEscape(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS));
-        }
-        else
-        {
+        } else {
             findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(Component.translatableEscape(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY));
         }
 
         guardTowerList.setDataProvider(() -> getGuardTowerViews(banner, mc.level).size(), (index, rowPane) ->
         {
             final List<Pair<BlockPos, AbstractBuildingGuards.View>> guardTowers = getGuardTowerViews(banner, mc.level);
-            if (index < 0 || index >= guardTowers.size())
-            {
+            if (index < 0 || index >= guardTowers.size()) {
                 return;
             }
 
@@ -115,22 +108,19 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(ICON_GUARD, ItemIcon.class);
             final AbstractBuildingGuards.View guardTowerView = guardTower.getSecond();
 
-            if (guardTowerView != null)
-            {
+            if (guardTowerView != null) {
                 exampleStackDisplay.setItem(new ItemStack(Items.IRON_SWORD));
                 rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setText(Component.translatableEscape(ModGuardTypes.knight.get().getJobTranslationKey())
-                  .append("|")
-                  .append(Component.translatableEscape(ModGuardTypes.ranger.get().getJobTranslationKey()))
-                  .append(": ")
-                  .append(String.valueOf(guardTowerView.getGuards().size())));
+                        .append("|")
+                        .append(Component.translatableEscape(ModGuardTypes.ranger.get().getJobTranslationKey()))
+                        .append(": ")
+                        .append(String.valueOf(guardTowerView.getGuards().size())));
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(Component.literal(guardTower.getFirst().toString()));
-            }
-            else
-            {
+            } else {
                 exampleStackDisplay.setItem(new ItemStack(Items.COOKIE));
 
                 rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class)
-                  .setText(Component.translatableEscape(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING));
+                        .setText(Component.translatableEscape(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING));
                 rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setColors(Color.rgbaToInt(255, 0, 0, 1));
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(Component.literal(guardTower.getFirst().toString()));
             }
@@ -142,13 +132,11 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
      *
      * @param button The button used to remove the tower.
      */
-    private void removeClicked(@NotNull final Button button)
-    {
+    private void removeClicked(@NotNull final Button button) {
         final int row = guardTowerList.getListElementIndexByPane(button);
 
         final List<Pair<BlockPos, AbstractBuildingGuards.View>> guardTowers = getGuardTowerViews(banner, mc.level);
-        if (guardTowers.size() > row && row >= 0)
-        {
+        if (guardTowers.size() > row && row >= 0) {
             final BlockPos locationToRemove = guardTowers.get(row).getFirst();
             // Server side removal
             new RemoveFromRallyingListMessage(banner, locationToRemove).sendToServer();
@@ -163,8 +151,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
      *
      * @param button The button used to toggle the banner.
      */
-    private void rallyClicked(@NotNull final Button button)
-    {
+    private void rallyClicked(@NotNull final Button button) {
         new ToggleBannerRallyGuardsMessage(banner).sendToServer();
         this.close();
     }

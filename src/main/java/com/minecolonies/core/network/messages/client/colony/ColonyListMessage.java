@@ -19,33 +19,29 @@ import java.util.List;
 /**
  * Add or Update a AbstractBuilding.View to a ColonyView on the client.
  */
-public class ColonyListMessage extends AbstractPlayMessage
-{
+public class ColonyListMessage extends AbstractPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forBothSides(Constants.MOD_ID, "colony_list", ColonyListMessage::new);
 
     /**
      * List of colonies
      */
-    private final List<IColony>    colonies;
+    private final List<IColony> colonies;
     private final List<ColonyInfo> colonyInfo;
 
-    public ColonyListMessage()
-    {
+    public ColonyListMessage() {
         this(Collections.emptyList());
     }
 
     /**
      * Creates a message to handle colony views.
      */
-    public ColonyListMessage(final List<IColony> colonies)
-    {
+    public ColonyListMessage(final List<IColony> colonies) {
         super(TYPE);
         this.colonies = colonies;
         this.colonyInfo = null;
     }
 
-    protected ColonyListMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected ColonyListMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         colonies = null;
         colonyInfo = buf.readList(b -> {
@@ -59,9 +55,8 @@ public class ColonyListMessage extends AbstractPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
-        buf.writeCollection(colonies, (b, colony) ->{
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
+        buf.writeCollection(colonies, (b, colony) -> {
             b.writeInt(colony.getID());
             b.writeBlockPos(colony.getCenter());
             b.writeUtf(colony.getName());
@@ -71,52 +66,43 @@ public class ColonyListMessage extends AbstractPlayMessage
     }
 
     @Override
-    protected void onClientExecute(final IPayloadContext context, final Player player)
-    {
+    protected void onClientExecute(final IPayloadContext context, final Player player) {
         WindowColonyMap.setColonies(colonyInfo);
     }
 
     @Override
-    protected void onServerExecute(final IPayloadContext context, final ServerPlayer player)
-    {
+    protected void onServerExecute(final IPayloadContext context, final ServerPlayer player) {
         new ColonyListMessage(IColonyManager.getInstance().getColonies(player.level())).sendToPlayer(player);
     }
 
-    public static class ColonyInfo
-    {
-        private final int      id;
-        private       BlockPos center;
-        private       String   name;
-        private       int      citizencount;
-        private       String   owner;
+    public static class ColonyInfo {
+        private final int id;
+        private BlockPos center;
+        private String name;
+        private int citizencount;
+        private String owner;
 
-        public ColonyInfo(final int id)
-        {
+        public ColonyInfo(final int id) {
             this.id = id;
         }
 
-        public int getId()
-        {
+        public int getId() {
             return id;
         }
 
-        public BlockPos getCenter()
-        {
+        public BlockPos getCenter() {
             return center;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
-        public int getCitizencount()
-        {
+        public int getCitizencount() {
             return citizencount;
         }
 
-        public String getOwner()
-        {
+        public String getOwner() {
             return owner;
         }
     }

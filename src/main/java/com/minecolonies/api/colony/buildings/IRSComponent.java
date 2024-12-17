@@ -5,6 +5,5 @@ package com.minecolonies.api.colony.buildings;
  * <p>
  * Originally intended for detecting Stash and Postbox instances
  */
-public interface IRSComponent
-{
+public interface IRSComponent {
 }

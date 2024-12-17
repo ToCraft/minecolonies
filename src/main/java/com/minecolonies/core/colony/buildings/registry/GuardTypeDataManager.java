@@ -5,13 +5,10 @@ import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import net.minecraft.resources.ResourceLocation;
 
-public final class GuardTypeDataManager implements IGuardTypeDataManager
-{
+public final class GuardTypeDataManager implements IGuardTypeDataManager {
     @Override
-    public GuardType getFrom(final ResourceLocation jobName)
-    {
-        if (jobName == null)
-        {
+    public GuardType getFrom(final ResourceLocation jobName) {
+        if (jobName == null) {
             return null;
         }
 

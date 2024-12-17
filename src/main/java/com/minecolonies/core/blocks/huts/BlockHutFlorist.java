@@ -5,18 +5,15 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockHutFlorist extends AbstractBlockHut<BlockHutFlorist>
-{
+public class BlockHutFlorist extends AbstractBlockHut<BlockHutFlorist> {
     @NotNull
     @Override
-    public String getHutName()
-    {
+    public String getHutName() {
         return "blockhutflorist";
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
+    public BuildingEntry getBuildingEntry() {
         return ModBuildings.florist.get();
     }
 }

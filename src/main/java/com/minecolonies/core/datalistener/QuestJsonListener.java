@@ -9,9 +9,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.network.messages.client.GlobalQuestSyncMessage;
-import com.minecolonies.core.quests.*;
-import com.minecolonies.api.quests.IQuestTriggerTemplate;
-import com.minecolonies.api.quests.ITriggerReturnData;
+import com.minecolonies.core.quests.QuestTemplate;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.FriendlyByteBuf;
@@ -29,13 +27,11 @@ import java.util.function.Function;
 
 import static com.minecolonies.core.generation.DataGeneratorConstants.COLONY_QUESTS_DIR;
 import static com.minecolonies.core.quests.QuestParsingConstants.*;
-import static com.minecolonies.core.quests.QuestParsingConstants.BRACE_CLOSE;
 
 /**
  * Loader for Json based quest data.
  */
-public class QuestJsonListener extends SimpleJsonResourceReloadListener
-{
+public class QuestJsonListener extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     /**
@@ -46,21 +42,19 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
     /**
      * Set up the core loading, with the directory in the datapack that contains this data Directory is: <namespace>/colony/quests/<path>
      */
-    public QuestJsonListener()
-    {
+    public QuestJsonListener() {
         super(GSON, COLONY_QUESTS_DIR);
     }
 
     /**
      * Sync to client.
+     *
      * @param player to send it to.
      */
-    public static void sendGlobalQuestPackets(final ServerPlayer player)
-    {
+    public static void sendGlobalQuestPackets(final ServerPlayer player) {
         final RegistryFriendlyByteBuf byteBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), player.level().registryAccess());
         byteBuf.writeInt(globalJsonElementMap.size());
-        for (final Map.Entry<ResourceLocation, JsonElement> entry : globalJsonElementMap.entrySet())
-        {
+        for (final Map.Entry<ResourceLocation, JsonElement> entry : globalJsonElementMap.entrySet()) {
             byteBuf.writeResourceLocation(entry.getKey());
             byteBuf.writeByteArray(entry.getValue().toString().getBytes());
         }
@@ -69,22 +63,20 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
     /**
      * Read the data from the packet and parse it.
+     *
      * @param byteBuf pck.
      */
-    public static void readGlobalQuestPackets(final RegistryFriendlyByteBuf byteBuf)
-    {
+    public static void readGlobalQuestPackets(final RegistryFriendlyByteBuf byteBuf) {
         globalJsonElementMap.clear();
         final int size = byteBuf.readInt();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             globalJsonElementMap.put(byteBuf.readResourceLocation(), GSON.fromJson(new String(byteBuf.readByteArray()), JsonObject.class));
         }
         apply(byteBuf.registryAccess(), globalJsonElementMap);
     }
 
     @Override
-    protected void apply(final Map<ResourceLocation, JsonElement> jsonElementMap, final @NotNull ResourceManager resourceManager, final @NotNull ProfilerFiller profiler)
-    {
+    protected void apply(final Map<ResourceLocation, JsonElement> jsonElementMap, final @NotNull ResourceManager resourceManager, final @NotNull ProfilerFiller profiler) {
         globalJsonElementMap.clear();
         globalJsonElementMap.putAll(jsonElementMap);
         apply(getRegistryLookup(), jsonElementMap);
@@ -92,27 +84,23 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
     /**
      * Our universal apply.
+     *
      * @param jsonElementMap the map.
      */
-    private static void apply(@NotNull final HolderLookup.Provider provider, final Map<ResourceLocation, JsonElement> jsonElementMap)
-    {
+    private static void apply(@NotNull final HolderLookup.Provider provider, final Map<ResourceLocation, JsonElement> jsonElementMap) {
         Log.getLogger().info("Loading quests from data");
 
         // We start by clearing all old requests.
         IQuestManager.GLOBAL_SERVER_QUESTS.clear();
 
-        for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
-        {
+        for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet()) {
             final ResourceLocation fileResLoc = entry.getKey();
             final JsonObject questDataJson = entry.getValue().getAsJsonObject();
 
-            try
-            {
+            try {
                 final IQuestTemplate data = loadDataFromJson(provider, fileResLoc, questDataJson);
                 IQuestManager.GLOBAL_SERVER_QUESTS.put(fileResLoc, data);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.getLogger().error("Skipping quest: " + fileResLoc + " due to parsing error:", e);
             }
         }
@@ -120,92 +108,68 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
         Log.getLogger().info("Finished loading quests from data");
     }
 
-    public static IQuestTemplate loadDataFromJson(@NotNull final HolderLookup.Provider provider, final ResourceLocation questId, final JsonObject jsonObject) throws Exception
-    {
+    public static IQuestTemplate loadDataFromJson(@NotNull final HolderLookup.Provider provider, final ResourceLocation questId, final JsonObject jsonObject) throws Exception {
         final List<IQuestTriggerTemplate> questTriggers = new ArrayList<>();
         // Read quest triggers
-        for (final JsonElement triggerJson : jsonObject.get(QUEST_TRIGGERS).getAsJsonArray())
-        {
+        for (final JsonElement triggerJson : jsonObject.get(QUEST_TRIGGERS).getAsJsonArray()) {
             final JsonObject triggerObj = triggerJson.getAsJsonObject();
             final String type = triggerObj.get(TYPE).getAsString();
 
-            try
-            {
+            try {
                 questTriggers.add(IMinecoloniesAPI.getInstance().getQuestTriggerRegistry().get(ResourceLocation.parse(type)).produce(triggerObj));
-            }
-            catch (final Exception ex)
-            {
+            } catch (final Exception ex) {
                 throw new Exception("Failed loading triggers for type: " + type, ex);
             }
         }
 
         final List<IQuestObjectiveTemplate> questObjectives = new ArrayList<>();
-        for (final JsonElement objectivesJson : jsonObject.get(QUEST_OBJECTIVES).getAsJsonArray())
-        {
+        for (final JsonElement objectivesJson : jsonObject.get(QUEST_OBJECTIVES).getAsJsonArray()) {
             final JsonObject objectiveObj = objectivesJson.getAsJsonObject();
             final String type = objectiveObj.get(TYPE).getAsString();
-            try
-            {
+            try {
                 questObjectives.add(IMinecoloniesAPI.getInstance().getQuestObjectiveRegistry().get(ResourceLocation.parse(type)).produce(provider, objectiveObj));
-            }
-            catch (final Exception ex)
-            {
+            } catch (final Exception ex) {
                 throw new Exception("Failed loading objectives for type: " + type, ex);
             }
         }
 
         String order = "";
-        if (jsonObject.has(TRIGGER_ORDER))
-        {
+        if (jsonObject.has(TRIGGER_ORDER)) {
             order = jsonObject.get(TRIGGER_ORDER).getAsString();
         }
 
         final int maxOccurrences;
-        if (jsonObject.has(MAX_OCC))
-        {
+        if (jsonObject.has(MAX_OCC)) {
             maxOccurrences = jsonObject.get(MAX_OCC).getAsInt();
-        }
-        else
-        {
+        } else {
             maxOccurrences = 1;
         }
 
         final int questTimeout;
-        if (jsonObject.has(TIMEOUT))
-        {
+        if (jsonObject.has(TIMEOUT)) {
             questTimeout = jsonObject.get(TIMEOUT).getAsInt();
-        }
-        else
-        {
+        } else {
             questTimeout = 10;
         }
 
         final Component questName = Component.translatableEscape(jsonObject.get(NAME).getAsString());
 
         final List<IQuestRewardTemplate> questRewards = new ArrayList<>();
-        for (final JsonElement objectivesJson : jsonObject.get(QUEST_REWARDS).getAsJsonArray())
-        {
+        for (final JsonElement objectivesJson : jsonObject.get(QUEST_REWARDS).getAsJsonArray()) {
             final JsonObject objectiveObj = objectivesJson.getAsJsonObject();
             final String type = objectiveObj.get(TYPE).getAsString();
-            try
-            {
+            try {
                 questRewards.add(IMinecoloniesAPI.getInstance().getQuestRewardRegistry().get(ResourceLocation.parse(type)).produce(provider, objectiveObj));
-            }
-            catch (final Exception ex)
-            {
+            } catch (final Exception ex) {
                 throw new Exception("Failed loading rewards for type: " + type, ex);
             }
         }
 
         final List<ResourceLocation> parents = new ArrayList<>();
-        for (final JsonElement objectivesJson : jsonObject.get(QUEST_PARENTS).getAsJsonArray())
-        {
-            try
-            {
+        for (final JsonElement objectivesJson : jsonObject.get(QUEST_PARENTS).getAsJsonArray()) {
+            try {
                 parents.add(ResourceLocation.parse(objectivesJson.getAsString()));
-            }
-            catch (final Exception ex)
-            {
+            } catch (final Exception ex) {
                 throw new Exception("Failed loading parents: ", ex);
             }
         }
@@ -244,23 +208,17 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
     }
 
     // Unused yet
-    private static Function<IColony, List<ITriggerReturnData<?>>> parseTriggerOrder(final ResourceLocation questId, final String order, final List<IQuestTriggerTemplate> triggers)
-    {
+    private static Function<IColony, List<ITriggerReturnData<?>>> parseTriggerOrder(final ResourceLocation questId, final String order, final List<IQuestTriggerTemplate> triggers) {
         // Default and.
-        if (order.isEmpty())
-        {
+        if (order.isEmpty()) {
             return colony -> {
                 final List<ITriggerReturnData<?>> returnList = new ArrayList<>();
 
-                for (final IQuestTriggerTemplate trigger: triggers)
-                {
+                for (final IQuestTriggerTemplate trigger : triggers) {
                     ITriggerReturnData<?> returnData = trigger.canTriggerQuest(questId, colony);
-                    if (returnData.isPositive())
-                    {
+                    if (returnData.isPositive()) {
                         returnList.add(returnData);
-                    }
-                    else
-                    {
+                    } else {
                         return null;
                     }
                 }
@@ -274,56 +232,43 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
         //order = order.replaceAll("\\s+", "");
 
         // Split by words and braces, but keep the chars
-        final List<String> values = Arrays.asList(order.replaceAll("\\s+","").split("((?<=\\w)|(?=\\w)|(?<=[)(])|(?=[)(]))"));
+        final List<String> values = Arrays.asList(order.replaceAll("\\s+", "").split("((?<=\\w)|(?=\\w)|(?<=[)(])|(?=[)(]))"));
 
         final List<String> types = new ArrayList<>();
-        for (String value : values)
-        {
-            try
-            {
+        for (String value : values) {
+            try {
                 // Try parsing to number. We only allow numbers.
                 Integer.parseInt(value);
-                if (!types.contains(value))
-                {
+                if (!types.contains(value)) {
                     types.add(value);
                 }
-            }
-            catch (final Exception ex)
-            {
+            } catch (final Exception ex) {
                 //ignore
             }
         }
 
-        if (types.size() != triggers.size())
-        {
+        if (types.size() != triggers.size()) {
             Log.getLogger().error("Failed to Parse Quest Triggers. Mismatch number of triggers in order for quest: " + questId.toString());
             return null;
         }
 
         final Map<String, IQuestTriggerTemplate> triggerMap = new HashMap<>();
-        for (int i = 0; i < triggers.size(); i++)
-        {
-            triggerMap.put(String.valueOf(i+1), triggers.get(i));
+        for (int i = 0; i < triggers.size(); i++) {
+            triggerMap.put(String.valueOf(i + 1), triggers.get(i));
         }
 
-        if (values.isEmpty())
-        {
+        if (values.isEmpty()) {
             return colony -> new ArrayList<>();
-        }
-        else
-        {
+        } else {
             ExpressionNode expressionTree = null;
 
             int[] depth = new int[100];
             int current = 0;
-            for (int i = values.size() - 1; i >= 0; i--)
-            {
+            for (int i = values.size() - 1; i >= 0; i--) {
                 final String arg = values.get(i);
-                switch (arg)
-                {
+                switch (arg) {
                     case BRACE_OPEN:
-                        for (int d = 0; d < depth[current]; d++)
-                        {
+                        for (int d = 0; d < depth[current]; d++) {
                             expressionTree = expressionTree.parent;
                         }
 
@@ -338,23 +283,16 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
                     case NOT:
                         // make this depth dependent, and allow between insertion.
                         final ExpressionNode node = new ExpressionNode(arg);
-                        if (expressionTree.parent != null)
-                        {
+                        if (expressionTree.parent != null) {
                             ExpressionNode previous = expressionTree.parent;
-                            while (true)
-                            {
-                                if (previous.childB == expressionTree)
-                                {
+                            while (true) {
+                                if (previous.childB == expressionTree) {
                                     previous.childB = node;
                                     break;
-                                }
-                                else if (previous.childA == expressionTree)
-                                {
+                                } else if (previous.childA == expressionTree) {
                                     previous.childA = node;
                                     break;
-                                }
-                                else
-                                {
+                                } else {
                                     previous = previous.parent;
                                 }
                             }
@@ -370,20 +308,16 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
                         break;
                     default:
-                        if (expressionTree == null)
-                        {
+                        if (expressionTree == null) {
                             expressionTree = new ExpressionNode(arg);
-                        }
-                        else
-                        {
+                        } else {
                             expressionTree = expressionTree.append(arg);
                         }
                         break;
                 }
             }
             ExpressionNode root = expressionTree;
-            while (root.parent != null)
-            {
+            while (root.parent != null) {
                 root = root.parent;
             }
             final ExpressionNode finalExpressionTree = root;
@@ -397,55 +331,42 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
      * @param colony the colony.
      * @return predicate from data
      */
-    private static List<ITriggerReturnData<?>> evaluate(final IColony colony, final Map<String, IQuestTriggerTemplate> triggerMap, final ExpressionNode expressionTree, final Map<String, ITriggerReturnData<?>> triggerDataCache, final ResourceLocation questId)
-    {
-        switch (expressionTree.expression)
-        {
-            case OR ->
-            {
-                if (expressionTree.childB != null)
-                {
+    private static List<ITriggerReturnData<?>> evaluate(final IColony colony, final Map<String, IQuestTriggerTemplate> triggerMap, final ExpressionNode expressionTree, final Map<String, ITriggerReturnData<?>> triggerDataCache, final ResourceLocation questId) {
+        switch (expressionTree.expression) {
+            case OR -> {
+                if (expressionTree.childB != null) {
                     final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childB, triggerDataCache, questId);
-                    if (immReturn != null)
-                    {
+                    if (immReturn != null) {
                         return immReturn;
                     }
                 }
-                if (expressionTree.childA != null)
-                {
+                if (expressionTree.childA != null) {
                     return evaluate(colony, triggerMap, expressionTree.childA, triggerDataCache, questId);
                 }
                 return null;
             }
-            case AND ->
-            {
+            case AND -> {
                 final List<ITriggerReturnData<?>> returnDataList = new ArrayList<>();
-                if (expressionTree.childB != null)
-                {
+                if (expressionTree.childB != null) {
                     final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childB, triggerDataCache, questId);
-                    if (immReturn == null)
-                    {
+                    if (immReturn == null) {
                         return null;
                     }
                     returnDataList.addAll(immReturn);
                 }
-                if (expressionTree.childA != null)
-                {
+                if (expressionTree.childA != null) {
                     final List<ITriggerReturnData<?>> immReturn = evaluate(colony, triggerMap, expressionTree.childA, triggerDataCache, questId);
-                    if (immReturn == null)
-                    {
+                    if (immReturn == null) {
                         return null;
                     }
                     returnDataList.addAll(immReturn);
                 }
                 return returnDataList;
             }
-            default ->
-            {
+            default -> {
                 final IQuestTriggerTemplate trigger = triggerMap.get(expressionTree.expression);
                 final ITriggerReturnData<?> returnData = triggerDataCache.computeIfAbsent(expressionTree.expression, s -> trigger.canTriggerQuest(questId, colony));
-                if (returnData.isPositive())
-                {
+                if (returnData.isPositive()) {
                     return List.of(returnData);
                 }
                 return null;
@@ -453,28 +374,22 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
         }
     }
 
-    public static class ExpressionNode
-    {
+    public static class ExpressionNode {
         public String expression;
         public ExpressionNode childA;
         public ExpressionNode childB;
         public ExpressionNode parent;
 
-        public ExpressionNode(final String expression)
-        {
+        public ExpressionNode(final String expression) {
             this.expression = expression;
         }
 
-        public ExpressionNode append(String expression)
-        {
-            if (childA == null)
-            {
+        public ExpressionNode append(String expression) {
+            if (childA == null) {
                 childA = new ExpressionNode(expression);
                 childA.parent = this;
                 return childA;
-            }
-            else if (childB == null)
-            {
+            } else if (childB == null) {
                 childB = new ExpressionNode(expression);
                 childB.parent = this;
                 return childB;

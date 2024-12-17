@@ -12,8 +12,7 @@ import java.util.function.Function;
  * Entry for the {@link AbstractRecipeType} registry.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public final class RecipeTypeEntry
-{
+public final class RecipeTypeEntry {
 
     private final Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer;
     private final ResourceLocation registryName;
@@ -21,10 +20,9 @@ public final class RecipeTypeEntry
     /**
      * Builder for a {@link AbstractRecipeType}.
      */
-    public static final class Builder
-    {
+    public static final class Builder {
         private Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer;
-        private ResourceLocation                registryName;
+        private ResourceLocation registryName;
 
         /**
          * Setter the for the producer.
@@ -32,8 +30,7 @@ public final class RecipeTypeEntry
          * @param recipeTypeProducer The producer for {@link AbstractRecipeType}.
          * @return The builder.
          */
-        public Builder setRecipeTypeProducer(final Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer)
-        {
+        public Builder setRecipeTypeProducer(final Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer) {
             this.recipeTypeProducer = recipeTypeProducer;
             return this;
         }
@@ -44,8 +41,7 @@ public final class RecipeTypeEntry
          * @param registryName The registry name.
          * @return The builder.
          */
-        public Builder setRegistryName(final ResourceLocation registryName)
-        {
+        public Builder setRegistryName(final ResourceLocation registryName) {
             this.registryName = registryName;
             return this;
         }
@@ -56,8 +52,7 @@ public final class RecipeTypeEntry
          * @return The created {@link RecipeTypeEntry}.
          */
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder is explicitly allowed to create one.
-        public RecipeTypeEntry createRecipeTypeEntry()
-        {
+        public RecipeTypeEntry createRecipeTypeEntry() {
             Objects.requireNonNull(recipeTypeProducer);
             Objects.requireNonNull(registryName);
 
@@ -70,14 +65,12 @@ public final class RecipeTypeEntry
      *
      * @return The created {@link AbstractRecipeType}.
      */
-    public Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> getHandlerProducer()
-    {
+    public Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> getHandlerProducer() {
         return recipeTypeProducer;
     }
 
     private RecipeTypeEntry(
-      final Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer, final ResourceLocation registryName)
-    {
+            final Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer, final ResourceLocation registryName) {
         super();
         this.recipeTypeProducer = recipeTypeProducer;
         this.registryName = registryName;

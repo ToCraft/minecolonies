@@ -9,14 +9,13 @@ import com.minecolonies.api.quests.IQuestRewardTemplate;
 import com.minecolonies.core.colony.CitizenData;
 import net.minecraft.world.entity.player.Player;
 
-import static com.minecolonies.api.util.constant.HappinessConstants.QUEST;
 import static com.minecolonies.api.quests.QuestParseConstant.*;
+import static com.minecolonies.api.util.constant.HappinessConstants.QUEST;
 
 /**
  * Happiness inducing reward.
  */
-public class HappinessRewardTemplate implements IQuestRewardTemplate
-{
+public class HappinessRewardTemplate implements IQuestRewardTemplate {
     /**
      * Happiness boost.
      */
@@ -35,8 +34,7 @@ public class HappinessRewardTemplate implements IQuestRewardTemplate
     /**
      * Setup the research reward.
      */
-    public HappinessRewardTemplate(final int target, final int qty, final int days)
-    {
+    public HappinessRewardTemplate(final int target, final int qty, final int days) {
         this.target = target;
         this.qty = qty;
         this.days = days;
@@ -44,11 +42,11 @@ public class HappinessRewardTemplate implements IQuestRewardTemplate
 
     /**
      * Create the reward.
+     *
      * @param jsonObject the json to read from.
      * @return the reward object.
      */
-    public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
-    {
+    public static IQuestRewardTemplate createReward(final JsonObject jsonObject) {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
         final int qty = details.get(QUANTITY_KEY).getAsInt();
@@ -58,14 +56,10 @@ public class HappinessRewardTemplate implements IQuestRewardTemplate
     }
 
     @Override
-    public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)
-    {
-        if (this.target == 0)
-        {
+    public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest) {
+        if (this.target == 0) {
             ((CitizenData) colonyQuest.getQuestGiver()).getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(QUEST, 2.0, new StaticHappinessSupplier(qty), days));
-        }
-        else
-        {
+        } else {
             ((CitizenData) colonyQuest.getParticipant(this.target)).getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(QUEST, 2.0, new StaticHappinessSupplier(qty), days));
         }
     }

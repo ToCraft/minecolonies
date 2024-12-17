@@ -34,8 +34,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * Building class for the Barracks.
  */
-public class BuildingBarracks extends AbstractBuilding
-{
+public class BuildingBarracks extends AbstractBuilding {
     /**
      * Name of our building's Schematics.
      */
@@ -67,35 +66,29 @@ public class BuildingBarracks extends AbstractBuilding
      * @param colony Colony the building belongs to.
      * @param pos    Location of the building (it's Hut Block).
      */
-    public BuildingBarracks(@NotNull final IColony colony, final BlockPos pos)
-    {
+    public BuildingBarracks(@NotNull final IColony colony, final BlockPos pos) {
         super(colony, pos);
         keepX.put((stack) -> stack.getItem() == Items.GOLD_INGOT, new Tuple<>(STACKSIZE, true));
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return SCHEMATIC_NAME;
     }
 
     @SuppressWarnings("squid:S109")
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return BARRACKS_HUT_MAX_LEVEL;
     }
 
     @Override
-    public void onDestroyed()
-    {
+    public void onDestroyed() {
         final Level world = getColony().getWorld();
 
-        if (world != null)
-        {
-            for (final BlockPos tower : towers)
-            {
+        if (world != null) {
+            for (final BlockPos tower : towers) {
                 world.setBlockAndUpdate(tower, Blocks.AIR.defaultBlockState());
             }
         }
@@ -104,25 +97,20 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
+    public void onUpgradeComplete(final int newLevel) {
         super.onUpgradeComplete(newLevel);
         colony.getBuildingManager().guardBuildingChangedAt(this, newLevel);
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final BlockState block, @NotNull final BlockPos pos, @NotNull final Level world)
-    {
+    public void registerBlockPosition(@NotNull final BlockState block, @NotNull final BlockPos pos, @NotNull final Level world) {
         super.registerBlockPosition(block, pos, world);
-        if (block.getBlock() == ModBlocks.blockHutBarracksTower)
-        {
+        if (block.getBlock() == ModBlocks.blockHutBarracksTower) {
             final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
-            if (building instanceof BuildingBarracksTower)
-            {
+            if (building instanceof BuildingBarracksTower) {
                 building.setStructurePack(this.getStructurePack());
                 ((BuildingBarracksTower) building).addBarracks(getPosition());
-                if (!towers.contains(pos))
-                {
+                if (!towers.contains(pos)) {
                     towers.add(pos);
                 }
             }
@@ -130,48 +118,36 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
+    public void onColonyTick(@NotNull final IColony colony) {
         super.onColonyTick(colony);
-        if (colony.getWorld().isClientSide)
-        {
+        if (colony.getWorld().isClientSide) {
             return;
         }
 
-        if (colony.getRaiderManager().isRaided())
-        {
-            if (!colony.getRaiderManager().areSpiesEnabled())
-            {
-                if (InventoryUtils.tryRemoveStackFromItemHandler(getItemHandlerCap(), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST)))
-                {
+        if (colony.getRaiderManager().isRaided()) {
+            if (!colony.getRaiderManager().areSpiesEnabled()) {
+                if (InventoryUtils.tryRemoveStackFromItemHandler(getItemHandlerCap(), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST))) {
                     colony.getRaiderManager().setSpiesEnabled(true);
                     colony.markDirty();
                 }
             }
-        }
-        else
-        {
+        } else {
             colony.getRaiderManager().setSpiesEnabled(false);
         }
     }
 
     @Override
-    public int getClaimRadius(final int newLevel)
-    {
-        if (newLevel <= 0)
-        {
+    public int getClaimRadius(final int newLevel) {
+        if (newLevel <= 0) {
             return 0;
         }
 
         // tower levels must all be 4+ to get increased radius of 3 
         int barracksClaimRadius = 3;
-        for (final BlockPos pos : towers)
-        {
+        for (final BlockPos pos : towers) {
             final IBuilding building = colony.getBuildingManager().getBuilding(pos);
-            if (building != null)
-            {
-                if (building.getBuildingLevel() < 4) 
-                { 
+            if (building != null) {
+                if (building.getBuildingLevel() < 4) {
                     barracksClaimRadius = 2;
                     break;
                 }
@@ -181,18 +157,16 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
-    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
-    {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound) {
         super.deserializeNBT(provider, compound);
         towers.clear();
         towers.addAll(NBTUtils.streamCompound(compound.getList(TAG_TOWERS, Tag.TAG_COMPOUND))
-                        .map(resultCompound -> BlockPosUtil.read(resultCompound, TAG_POS))
-                        .collect(Collectors.toList()));
+                .map(resultCompound -> BlockPosUtil.read(resultCompound, TAG_POS))
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         final CompoundTag compound = super.serializeNBT(provider);
         final ListTag towerTagList = towers.stream().map(pos -> BlockPosUtil.write(new CompoundTag(), TAG_POS, pos)).collect(NBTUtils.toListNBT());
         compound.put(TAG_TOWERS, towerTagList);
@@ -200,31 +174,27 @@ public class BuildingBarracks extends AbstractBuilding
         return compound;
     }
 
-    public List<BlockPos> getTowers()
-    {
+    public List<BlockPos> getTowers() {
         return towers;
     }
 
     /**
      * Barracks building View.
      */
-    public static class View extends AbstractBuildingView
-    {
+    public static class View extends AbstractBuildingView {
         /**
          * Instantiate the barracks view.
          *
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final IColonyView c, final BlockPos l)
-        {
+        public View(final IColonyView c, final BlockPos l) {
             super(c, l);
         }
 
         @NotNull
         @Override
-        public BOWindow getWindow()
-        {
+        public BOWindow getWindow() {
             return new WindowBarracksBuilding(this);
         }
     }

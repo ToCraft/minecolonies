@@ -21,17 +21,14 @@ import static com.minecolonies.core.client.gui.questlog.Constants.*;
 /**
  * Window quest log renderer for available quests.
  */
-public class WindowQuestLogAvailableQuestModule implements WindowQuestLogQuestModule<IQuestInstance>
-{
+public class WindowQuestLogAvailableQuestModule implements WindowQuestLogQuestModule<IQuestInstance> {
     @Override
-    public List<IQuestInstance> getQuestItems(final IColonyView colonyView)
-    {
+    public List<IQuestInstance> getQuestItems(final IColonyView colonyView) {
         return colonyView.getQuestManager().getAvailableQuests();
     }
 
     @Override
-    public void renderQuestItem(final IQuestInstance quest, final IColonyView colonyView, final Pane row)
-    {
+    public void renderQuestItem(final IQuestInstance quest, final IColonyView colonyView, final Pane row) {
         IQuestTemplate questTemplate = IQuestManager.GLOBAL_SERVER_QUESTS.get(quest.getId());
 
         setText(row, LABEL_QUEST_NAME, Component.translatableEscape(QUEST_LOG_NAME_PREFIX).append(questTemplate.getName()));
@@ -39,8 +36,7 @@ public class WindowQuestLogAvailableQuestModule implements WindowQuestLogQuestMo
     }
 
     @Override
-    public void trackQuest(final IQuestInstance quest)
-    {
+    public void trackQuest(final IQuestInstance quest) {
         HighlightManager.addHighlight(HIGHLIGHT_QUEST_LOG_TRACKER_KEY, new CitizenRenderData(quest.getQuestGiverId(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
     }
 
@@ -51,17 +47,15 @@ public class WindowQuestLogAvailableQuestModule implements WindowQuestLogQuestMo
      * @param id        the id of the text element.
      * @param component the text component to write as text on the element.
      */
-    private void setText(final Pane container, final String id, final Component component)
-    {
+    private void setText(final Pane container, final String id, final Component component) {
         final Text label = container.findPaneOfTypeByID(id, Text.class);
         label.setText(component);
 
-        if (label.getRenderedTextWidth() > label.getWidth())
-        {
+        if (label.getRenderedTextWidth() > label.getWidth()) {
             PaneBuilders.tooltipBuilder()
-              .append(component)
-              .hoverPane(label)
-              .build();
+                    .append(component)
+                    .hoverPane(label)
+                    .build();
         }
     }
 
@@ -72,11 +66,9 @@ public class WindowQuestLogAvailableQuestModule implements WindowQuestLogQuestMo
      * @param quest      the quest instance.
      * @return the component containing the name of the citizen.
      */
-    private Component getQuestGiverName(final IColonyView colonyView, final IQuestInstance quest)
-    {
+    private Component getQuestGiverName(final IColonyView colonyView, final IQuestInstance quest) {
         final ICitizenDataView citizen = colonyView.getCitizen(quest.getQuestGiverId());
-        if (citizen != null)
-        {
+        if (citizen != null) {
             return Component.literal(citizen.getName());
         }
         return Component.empty();

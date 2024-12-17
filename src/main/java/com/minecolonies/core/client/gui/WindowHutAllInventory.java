@@ -6,13 +6,13 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.render.worldevent.HighlightManager;
 import com.minecolonies.core.client.render.worldevent.highlightmanager.TimedBoxRenderData;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -37,8 +37,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for a hut name entry.
  */
-public class WindowHutAllInventory extends AbstractWindowSkeleton
-{
+public class WindowHutAllInventory extends AbstractWindowSkeleton {
 
     /**
      * List of all item stacks in the warehouse.
@@ -81,8 +80,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      * @param b    {@link AbstractBuilding}
      * @param prev the previous window.
      */
-    public WindowHutAllInventory(final IBuildingView b, final BOWindow prev)
-    {
+    public WindowHutAllInventory(final IBuildingView b, final BOWindow prev) {
         super(Constants.MOD_ID + HUT_ALL_INVENTORY_SUFFIX);
         this.building = b;
         registerButton(BUTTON_SORT, this::setSortFlag);
@@ -94,8 +92,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
         window.findPaneOfTypeByID("names", TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
-            if (!newFilter.equals(filter))
-            {
+            if (!newFilter.equals(filter)) {
                 filter = newFilter;
                 this.tick = 10;
             }
@@ -103,17 +100,14 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onUpdate()
-    {
+    public void onUpdate() {
         super.onUpdate();
-        if (tick > 0 && --tick == 0)
-        {
+        if (tick > 0 && --tick == 0) {
             updateResources();
         }
     }
 
-    private void locate(final Button button)
-    {
+    private void locate(final Button button) {
         final int row = stackList.getListElementIndexByPane(button);
         final ItemStorage storage = allItems.get(row);
         final Set<BlockPos> containerList = new HashSet<>(building.getContainerList());
@@ -123,23 +117,20 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         MessageUtils.format(MESSAGE_LOCATING_ITEMS).sendTo(Minecraft.getInstance().player);
         close();
 
-        for (BlockPos blockPos : containerList)
-        {
+        for (BlockPos blockPos : containerList) {
             final BlockEntity rack = Minecraft.getInstance().level.getBlockEntity(blockPos);
-            if (rack instanceof TileEntityRack)
-            {
+            if (rack instanceof TileEntityRack) {
                 int count = ((TileEntityRack) rack).getCount(storage.getItemStack(), storage.ignoreDamageValue(), false);
-                if (count > 0)
-                {
+                if (count > 0) {
                     // Varies the color between red(1 pc) over yellow(32 pcs) to green(64+ pcs)
                     // mixing equation: alpha | red part | green part 
                     final int color = 0x80000000 | (Mth.clamp((int) (0xff * (2.0f - count / 32.0f)), 0, 255) << 16)
-                        | (Mth.clamp((int) (0xff * count / 32.0f), 0, 255) << 8);
+                            | (Mth.clamp((int) (0xff * count / 32.0f), 0, 255) << 8);
                     HighlightManager.addHighlight("inventoryHighlight" + blockPos,
-                      new TimedBoxRenderData(blockPos)
-                        .setDuration(Duration.ofSeconds(60))
-                        .addText("" + count)
-                        .setColor(color));
+                            new TimedBoxRenderData(blockPos)
+                                    .setDuration(Duration.ofSeconds(60))
+                                    .addText("" + count)
+                                    .setColor(color));
                 }
             }
         }
@@ -148,8 +139,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     /**
      * On prev clicked.
      */
-    private void back()
-    {
+    private void back() {
         this.prev.open();
     }
 
@@ -157,15 +147,12 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      * Increments the sortDescriptor and sets the GUI Button accordingly Valid Stages 0 - 4 NO_SORT 0   No Sorting, like wysiwyg ASC_SORT 1   Name Ascending DESC_SORT 2   Name
      * Descending COUNT_ASC_SORT 3   Itemcount Ascending COUNT_DESC_SORT 4   Itemcount Descending
      **/
-    private void setSortFlag()
-    {
+    private void setSortFlag() {
         sortDescriptor++;
-        if (sortDescriptor > 4)
-        {
+        if (sortDescriptor > 4) {
             sortDescriptor = NO_SORT;
         }
-        switch (sortDescriptor)
-        {
+        switch (sortDescriptor) {
             case NO_SORT:
                 findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText(Component.literal("v^"));
                 break;
@@ -191,29 +178,22 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     /**
      * Update the item list.
      */
-    private void updateResources()
-    {
+    private void updateResources() {
         final Set<BlockPos> containerList = new HashSet<>(building.getContainerList());
 
         final Map<ItemStorage, Integer> storedItems = new HashMap<>();
         final Level world = building.getColony().getWorld();
         containerList.add(building.getPosition());
 
-        for (final BlockPos blockPos : containerList)
-        {
+        for (final BlockPos blockPos : containerList) {
             final BlockEntity rack = world.getBlockEntity(blockPos);
-            if (rack instanceof TileEntityRack)
-            {
+            if (rack instanceof TileEntityRack) {
                 final Map<ItemStorage, Integer> rackStorage = ((TileEntityRack) rack).getAllContent();
 
-                for (final Map.Entry<ItemStorage, Integer> entry : rackStorage.entrySet())
-                {
-                    if (storedItems.containsKey(entry.getKey()))
-                    {
+                for (final Map.Entry<ItemStorage, Integer> entry : rackStorage.entrySet()) {
+                    if (storedItems.containsKey(entry.getKey())) {
                         storedItems.put(entry.getKey(), storedItems.get(entry.getKey()) + entry.getValue());
-                    }
-                    else
-                    {
+                    } else {
                         storedItems.put(entry.getKey(), entry.getValue());
                     }
                 }
@@ -226,26 +206,22 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             filterItems.add(storage);
         });
         final Predicate<ItemStorage> filterPredicate = stack -> filter.isEmpty()
-                                                                  || stack.getItemStack().getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                  || getString(stack.getItemStack())
-                                                                       .toLowerCase(Locale.US)
-                                                                       .contains(filter.toLowerCase(Locale.US));
+                || stack.getItemStack().getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                || getString(stack.getItemStack())
+                .toLowerCase(Locale.US)
+                .contains(filter.toLowerCase(Locale.US));
 
         allItems.clear();
-        if (filter.isEmpty())
-        {
+        if (filter.isEmpty()) {
             allItems.addAll(filterItems);
-        }
-        else
-        {
+        } else {
             allItems.addAll(filterItems.stream().filter(filterPredicate).collect(Collectors.toList()));
         }
         allItems.sort(Comparator.comparingInt(s1 -> StringUtils.getLevenshteinDistance(s1.getItemStack().getHoverName().getString(), filter)));
 
         final Comparator<ItemStorage> compareByName = Comparator.comparing((ItemStorage o) -> o.getItemStack().getHoverName().getString());
         final Comparator<ItemStorage> compareByCount = Comparator.comparingInt(ItemStorage::getAmount);
-        switch (sortDescriptor)
-        {
+        switch (sortDescriptor) {
             case NO_SORT:
                 break;
             case ASC_SORT:
@@ -269,14 +245,13 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
     /**
      * Get identifying string from itemstack.
+     *
      * @param stack the stack to gen the string from.
      * @return a single string.
      */
-    private static String getString(final ItemStack stack)
-    {
+    private static String getString(final ItemStack stack) {
         final StringBuilder output = new StringBuilder();
-        for (final Component comp : stack.getTooltipLines(Item.TooltipContext.of(Minecraft.getInstance().level), Minecraft.getInstance().player, TooltipFlag.Default.NORMAL))
-        {
+        for (final Component comp : stack.getTooltipLines(Item.TooltipContext.of(Minecraft.getInstance().level), Minecraft.getInstance().player, TooltipFlag.Default.NORMAL)) {
             output.append(comp.getString()).append(" ");
         }
         return output.toString();
@@ -285,20 +260,17 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     /**
      * Updates the resource list in the GUI with the info we need.
      */
-    private void updateResourceList()
-    {
+    private void updateResourceList() {
         stackList.enable();
 
         //Creates a dataProvider for the unemployed stackList.
-        stackList.setDataProvider(new ScrollingList.DataProvider()
-        {
+        stackList.setDataProvider(new ScrollingList.DataProvider() {
             /**
              * The number of rows of the list.
              * @return the number.
              */
             @Override
-            public int getElementCount()
-            {
+            public int getElementCount() {
                 return allItems.size();
             }
 
@@ -308,19 +280,15 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
+            public void updateElement(final int index, @NotNull final Pane rowPane) {
                 final ItemStorage resource = allItems.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("ressourceStackName", Text.class);
                 final String name = resource.getItemStack().getHoverName().getString();
                 resourceLabel.setText(Component.literal(name.substring(0, Math.min(17, name.length()))));
                 final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);
-                if (!Screen.hasShiftDown())
-                {
+                if (!Screen.hasShiftDown()) {
                     qtys.setText(Component.literal(Utils.format(resource.getAmount())));
-                }
-                else
-                {
+                } else {
                     qtys.setText(Component.literal(Integer.toString(resource.getAmount())));
                 }
                 final ItemStack imageStk = resource.getItemStack().copy();

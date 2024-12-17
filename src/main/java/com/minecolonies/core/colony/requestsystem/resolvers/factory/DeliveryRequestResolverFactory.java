@@ -13,43 +13,39 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
-public class DeliveryRequestResolverFactory implements IRequestResolverFactory<DeliveryRequestResolver>
-{
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN    = "Token";
+public class DeliveryRequestResolverFactory implements IRequestResolverFactory<DeliveryRequestResolver> {
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_TOKEN = "Token";
     private static final String NBT_LOCATION = "Location";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
     @Override
-    public TypeToken<? extends DeliveryRequestResolver> getFactoryOutputType()
-    {
+    public TypeToken<? extends DeliveryRequestResolver> getFactoryOutputType() {
         return TypeToken.of(DeliveryRequestResolver.class);
     }
 
     @NotNull
     @Override
-    public TypeToken<? extends ILocation> getFactoryInputType()
-    {
+    public TypeToken<? extends ILocation> getFactoryInputType() {
         return TypeConstants.ILOCATION;
     }
 
     @NotNull
     @Override
     public DeliveryRequestResolver getNewInstance(
-      @NotNull final IFactoryController factoryController,
-      @NotNull final ILocation iLocation,
-      @NotNull final Object... context)
-      throws IllegalArgumentException
-    {
+            @NotNull final IFactoryController factoryController,
+            @NotNull final ILocation iLocation,
+            @NotNull final Object... context)
+            throws IllegalArgumentException {
         return new DeliveryRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }
 
     @NotNull
     @Override
     public CompoundTag serialize(
-      @NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final DeliveryRequestResolver deliveryRequestResolver)
-    {
+            @NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final DeliveryRequestResolver deliveryRequestResolver) {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_TOKEN, controller.serializeTag(provider, deliveryRequestResolver.getId()));
         compound.put(NBT_LOCATION, controller.serializeTag(provider, deliveryRequestResolver.getLocation()));
@@ -58,8 +54,7 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
 
     @NotNull
     @Override
-    public DeliveryRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
-    {
+    public DeliveryRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) {
         final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserializeTag(provider, nbt.getCompound(NBT_LOCATION));
 
@@ -67,15 +62,13 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
     }
 
     @Override
-    public void serialize(IFactoryController controller, DeliveryRequestResolver input, RegistryFriendlyByteBuf packetBuffer)
-    {
+    public void serialize(IFactoryController controller, DeliveryRequestResolver input, RegistryFriendlyByteBuf packetBuffer) {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @Override
-    public DeliveryRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
-    {
+    public DeliveryRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 
@@ -83,8 +76,7 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
     }
 
     @Override
-    public short getSerializationId()
-    {
+    public short getSerializationId() {
         return SerializationIdentifierConstants.DELIVERY_REQUEST_RESOLVER_ID;
     }
 }

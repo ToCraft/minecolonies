@@ -3,25 +3,21 @@ package com.minecolonies.core.client.render.worldevent;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4fStack;
 
 /**
  * Main class for handling world rendering.
  * Also holds all possible values which may be needed during rendering.
  */
-public class WorldEventContext extends WorldRenderMacros
-{
+public class WorldEventContext extends WorldRenderMacros {
     public static final WorldEventContext INSTANCE = new WorldEventContext();
 
-    private WorldEventContext()
-    {
+    private WorldEventContext() {
         // singleton
     }
 
@@ -29,10 +25,8 @@ public class WorldEventContext extends WorldRenderMacros
     public IColonyView nearestColony;
 
     @Override
-    protected void renderWithinContext(final Stage stage)
-    {
-        if (stage == STAGE_FOR_LINES)
-        {
+    protected void renderWithinContext(final Stage stage) {
+        if (stage == STAGE_FOR_LINES) {
             ColonyBorderRenderer.render(this); // renders directly (not into bufferSource)
             ColonyBlueprintRenderer.renderBlueprints(this);
             ColonyWaypointRenderer.render(this);
@@ -45,8 +39,7 @@ public class WorldEventContext extends WorldRenderMacros
         }
     }
 
-    boolean hasNearestColony()
-    {
+    boolean hasNearestColony() {
         return nearestColony != null;
     }
 
@@ -55,16 +48,13 @@ public class WorldEventContext extends WorldRenderMacros
      *
      * @param level
      */
-    public void checkNearbyColony(final Level level)
-    {
-        if (clientPlayer != null)
-        {
+    public void checkNearbyColony(final Level level) {
+        if (clientPlayer != null) {
             nearestColony = IColonyManager.getInstance().getClosestColonyView(level, clientPlayer.blockPosition());
         }
     }
 
-    public void renderLineBoxWithShadow(final BlockPos pos, final int argbColor, final float lineWidth)
-    {
+    public void renderLineBoxWithShadow(final BlockPos pos, final int argbColor, final float lineWidth) {
         final int red = FastColor.ARGB32.red(argbColor);
         final int green = FastColor.ARGB32.green(argbColor);
         final int blue = FastColor.ARGB32.blue(argbColor);
@@ -74,8 +64,7 @@ public class WorldEventContext extends WorldRenderMacros
         renderLineBox(LINES_WITH_WIDTH, pos, pos, red, green, blue, alpha, lineWidth);
     }
 
-    public void renderLineAABBWithShadow(final AABB aabb, final int argbColor, final float lineWidth)
-    {
+    public void renderLineAABBWithShadow(final AABB aabb, final int argbColor, final float lineWidth) {
         final int red = FastColor.ARGB32.red(argbColor);
         final int green = FastColor.ARGB32.green(argbColor);
         final int blue = FastColor.ARGB32.blue(argbColor);

@@ -17,15 +17,13 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Colton
  */
-public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "build_request", BuildRequestMessage::new);
 
     /**
      * The request mode.
      */
-    public enum Mode
-    {
+    public enum Mode {
         BUILD,
         REPAIR,
         REMOVE
@@ -48,39 +46,31 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
      * @param mode     Mode of the request, 1 is repair, 0 is build.
      * @param builder  the builder we're assinging the request to
      */
-    public BuildRequestMessage(@NotNull final IBuildingView building, final Mode mode, final BlockPos builder)
-    {
+    public BuildRequestMessage(@NotNull final IBuildingView building, final Mode mode, final BlockPos builder) {
         super(TYPE, building);
         this.mode = mode;
         this.builder = builder;
     }
 
-    protected BuildRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected BuildRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         mode = Mode.values()[buf.readInt()];
         builder = buf.readBlockPos();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(mode.ordinal());
         buf.writeBlockPos(builder);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (building.hasWorkOrder())
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (building.hasWorkOrder()) {
             building.removeWorkOrder();
-        }
-        else
-        {
-            switch (mode)
-            {
+        } else {
+            switch (mode) {
                 case BUILD:
                     building.requestUpgrade(player, builder);
                     break;
@@ -89,11 +79,9 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
                     break;
                 case REMOVE:
                     building.requestRemoval(player, builder);
-                    for (final BlockPos childPos : building.getChildren())
-                    {
+                    for (final BlockPos childPos : building.getChildren()) {
                         final IBuilding childBuilding = colony.getBuildingManager().getBuilding(childPos);
-                        if (childBuilding != null)
-                        {
+                        if (childBuilding != null) {
                             childBuilding.requestRemoval(player, builder);
                         }
                     }

@@ -12,8 +12,7 @@ import java.util.function.Consumer;
 /**
  * Statemachine with an added tickrate limiting of transitions, allowing transitions to be checked at a lower rate. Default tickrate is 20 tps (Minecraft default).
  */
-public class TickRateStateMachine<S extends IState> extends BasicStateMachine<ITickingTransition<S>, S> implements ITickRateStateMachine<S>
-{
+public class TickRateStateMachine<S extends IState> extends BasicStateMachine<ITickingTransition<S>, S> implements ITickRateStateMachine<S> {
     /**
      * TPS factor of the server
      */
@@ -42,8 +41,7 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
      * @param exceptionHandler the exception handler.
      * @param initialState     the initial state.
      */
-    public TickRateStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)
-    {
+    public TickRateStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler) {
         super(initialState, exceptionHandler);
 
         // Initial Lists
@@ -61,8 +59,7 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
      * @param exceptionHandler the exception handler.
      * @param initialState     the initial state.
      */
-    public TickRateStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler, final int tickRate)
-    {
+    public TickRateStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler, final int tickRate) {
         this(initialState, exceptionHandler);
         setTickRate(tickRate);
     }
@@ -71,36 +68,27 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
      * Tick the statemachine.
      */
     @Override
-    public void tick()
-    {
-        for (int i = 0, aiBlockingTransitionsSize = aiBlockingTransitions.size(); i < aiBlockingTransitionsSize; i++)
-        {
-            if (checkTransition(aiBlockingTransitions.get(i)))
-            {
+    public void tick() {
+        for (int i = 0, aiBlockingTransitionsSize = aiBlockingTransitions.size(); i < aiBlockingTransitionsSize; i++) {
+            if (checkTransition(aiBlockingTransitions.get(i))) {
                 return;
             }
         }
 
-        for (int i = 0, eventTransitionsSize = eventTransitions.size(); i < eventTransitionsSize; i++)
-        {
-            if (checkTransition(eventTransitions.get(i)))
-            {
+        for (int i = 0, eventTransitionsSize = eventTransitions.size(); i < eventTransitionsSize; i++) {
+            if (checkTransition(eventTransitions.get(i))) {
                 return;
             }
         }
 
-        for (int i = 0, stateBlockingTransitionsSize = stateBlockingTransitions.size(); i < stateBlockingTransitionsSize; i++)
-        {
-            if (checkTransition(stateBlockingTransitions.get(i)))
-            {
+        for (int i = 0, stateBlockingTransitionsSize = stateBlockingTransitions.size(); i < stateBlockingTransitionsSize; i++) {
+            if (checkTransition(stateBlockingTransitions.get(i))) {
                 return;
             }
         }
 
-        for (int i = 0, currentStateTransitionsSize = currentStateTransitions.size(); i < currentStateTransitionsSize; i++)
-        {
-            if (checkTransition(currentStateTransitions.get(i)))
-            {
+        for (int i = 0, currentStateTransitionsSize = currentStateTransitions.size(); i < currentStateTransitionsSize; i++) {
+            if (checkTransition(currentStateTransitions.get(i))) {
                 return;
             }
         }
@@ -113,11 +101,9 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
      * @return true if this target worked and we should stop executing this tick
      */
     @Override
-    public boolean checkTransition(@NotNull final ITickingTransition<S> transition)
-    {
+    public boolean checkTransition(@NotNull final ITickingTransition<S> transition) {
         // Check if the target should be run this Tick
-        if (transition.countdownTicksToUpdate(tickRate) > 0)
-        {
+        if (transition.countdownTicksToUpdate(tickRate) > 0) {
             return false;
         }
 
@@ -127,20 +113,17 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     }
 
     @Override
-    public int getTickRate()
-    {
+    public int getTickRate() {
         return tickRate;
     }
 
     @Override
-    public void setTickRate(final int tickRate)
-    {
+    public void setTickRate(final int tickRate) {
         this.tickRate = tickRate;
     }
 
     @Override
-    public void setCurrentDelay(final int ticksToNext)
-    {
+    public void setCurrentDelay(final int ticksToNext) {
         executedTransition.setTicksToUpdate(ticksToNext);
     }
 }

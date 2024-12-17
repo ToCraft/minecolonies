@@ -14,7 +14,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -24,46 +23,39 @@ import java.util.stream.Collectors;
 /**
  * ------------ Class not Documented ------------
  */
-public class StandardPlayerRequestResolverFactory implements IFactory<IRequestManager, StandardPlayerRequestResolver>
-{
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN             = "Token";
-    private static final String NBT_LOCATION          = "Location";
+public class StandardPlayerRequestResolverFactory implements IFactory<IRequestManager, StandardPlayerRequestResolver> {
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_TOKEN = "Token";
+    private static final String NBT_LOCATION = "Location";
     private static final String NBT_ASSIGNED_REQUESTS = "Requests";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    /// /// --------------------------- NBTConstants --------------------------- \\\\\\
 
     private static final Integer CONST_PLAYER_RESOLVER_ID_SCALE = -1;
 
     @NotNull
     @Override
-    public TypeToken<? extends StandardPlayerRequestResolver> getFactoryOutputType()
-    {
+    public TypeToken<? extends StandardPlayerRequestResolver> getFactoryOutputType() {
         return TypeToken.of(StandardPlayerRequestResolver.class);
     }
 
     @NotNull
     @Override
-    public TypeToken<? extends IRequestManager> getFactoryInputType()
-    {
+    public TypeToken<? extends IRequestManager> getFactoryInputType() {
         return TypeToken.of(IRequestManager.class);
     }
 
     @NotNull
     @Override
     public StandardPlayerRequestResolver getNewInstance(
-      @NotNull final IFactoryController factoryController,
-      @NotNull final IRequestManager iRequestManager,
-      @NotNull final Object... context)
-      throws IllegalArgumentException
-    {
+            @NotNull final IFactoryController factoryController,
+            @NotNull final IRequestManager iRequestManager,
+            @NotNull final Object... context)
+            throws IllegalArgumentException {
         final ILocation location;
-        try
-        {
+        try {
             location =
-              factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getDimension());
-        }
-        catch (final Exception ex)
-        {
+                    factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getDimension());
+        } catch (final Exception ex) {
             throw ex;
         }
 
@@ -73,8 +65,7 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardPlayerRequestResolver playerRequestResolver)
-    {
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardPlayerRequestResolver playerRequestResolver) {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_TOKEN, controller.serializeTag(provider, playerRequestResolver.getId()));
         compound.put(NBT_LOCATION, controller.serializeTag(provider, playerRequestResolver.getLocation()));
@@ -84,13 +75,12 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
 
     @NotNull
     @Override
-    public StandardPlayerRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
-    {
+    public StandardPlayerRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) {
         final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserializeTag(provider, nbt.getCompound(NBT_LOCATION));
 
         final Set<IToken<?>> assignedRequests =
-          NBTUtils.streamCompound(nbt.getList(NBT_ASSIGNED_REQUESTS, Tag.TAG_COMPOUND)).map(c -> (IToken<?>) controller.deserializeTag(provider, c)).collect(Collectors.toSet());
+                NBTUtils.streamCompound(nbt.getList(NBT_ASSIGNED_REQUESTS, Tag.TAG_COMPOUND)).map(c -> (IToken<?>) controller.deserializeTag(provider, c)).collect(Collectors.toSet());
 
         final StandardPlayerRequestResolver resolver = new StandardPlayerRequestResolver(location, token);
         resolver.setAllAssignedRequests(assignedRequests);
@@ -99,8 +89,7 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
     }
 
     @Override
-    public void serialize(IFactoryController controller, StandardPlayerRequestResolver input, RegistryFriendlyByteBuf packetBuffer)
-    {
+    public void serialize(IFactoryController controller, StandardPlayerRequestResolver input, RegistryFriendlyByteBuf packetBuffer) {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
         packetBuffer.writeInt(input.getAllAssignedRequests().size());
@@ -108,15 +97,13 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
     }
 
     @Override
-    public StandardPlayerRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
-    {
+    public StandardPlayerRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 
         final Set<IToken<?>> requests = new HashSet<>();
         final int requestsSize = buffer.readInt();
-        for (int i = 0; i < requestsSize; ++i)
-        {
+        for (int i = 0; i < requestsSize; ++i) {
             requests.add(controller.deserialize(buffer));
         }
 
@@ -127,8 +114,7 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
     }
 
     @Override
-    public short getSerializationId()
-    {
+    public short getSerializationId() {
         return SerializationIdentifierConstants.STANDARD_PLAYER_REQUEST_RESOLVER_ID;
     }
 }

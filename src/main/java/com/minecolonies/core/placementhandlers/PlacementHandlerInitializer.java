@@ -5,20 +5,17 @@ import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 /**
  * Registers all minecolonies placement handlers
  */
-public final class PlacementHandlerInitializer
-{
+public final class PlacementHandlerInitializer {
     /**
      * Private constructor to hide implicit one.
      */
-    private PlacementHandlerInitializer()
-    {
+    private PlacementHandlerInitializer() {
         /*
          * Intentionally left empty.
          */
     }
 
-    public static void initHandlers()
-    {
+    public static void initHandlers() {
         PlacementHandlers.add(new GeneralBlockPlacementHandler(), PlacementHandlers.GeneralBlockPlacementHandler.class);
         PlacementHandlers.add(new JigsawPlacementHandler());
         PlacementHandlers.add(new BuilderIgnorePlacementHandler());

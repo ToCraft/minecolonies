@@ -10,37 +10,32 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.function.UnaryOperator;
 
-public record PatrolTarget(BlockPos pos)
-{
+public record PatrolTarget(BlockPos pos) {
     public static final PatrolTarget EMPTY = new PatrolTarget(BlockPosUtil.SAFE_ZERO);
 
     public static final Codec<PatrolTarget> CODEC = RecordCodecBuilder.create(
-      builder -> builder
-                   .group(BlockPos.CODEC.fieldOf("pos").forGetter(PatrolTarget::pos))
-                   .apply(builder, PatrolTarget::new));
+            builder -> builder
+                    .group(BlockPos.CODEC.fieldOf("pos").forGetter(PatrolTarget::pos))
+                    .apply(builder, PatrolTarget::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PatrolTarget> STREAM_CODEC =
-      StreamCodec.composite(BlockPos.STREAM_CODEC,
-        PatrolTarget::pos,
-        PatrolTarget::new);
+            StreamCodec.composite(BlockPos.STREAM_CODEC,
+                    PatrolTarget::pos,
+                    PatrolTarget::new);
 
-    public boolean hasPos()
-    {
+    public boolean hasPos() {
         return !pos.equals(EMPTY.pos);
     }
 
-    public void writeToItemStack(final ItemStack itemStack)
-    {
+    public void writeToItemStack(final ItemStack itemStack) {
         itemStack.set(ModDataComponents.PATROL_TARGET, this);
     }
 
-    public static PatrolTarget readFromItemStack(final ItemStack itemStack)
-    {
+    public static PatrolTarget readFromItemStack(final ItemStack itemStack) {
         return itemStack.getOrDefault(ModDataComponents.PATROL_TARGET, PatrolTarget.EMPTY);
     }
 
-    public static void updateItemStack(final ItemStack itemStack, final UnaryOperator<PatrolTarget> updater)
-    {
+    public static void updateItemStack(final ItemStack itemStack, final UnaryOperator<PatrolTarget> updater) {
         updater.apply(readFromItemStack(itemStack)).writeToItemStack(itemStack);
     }
 }

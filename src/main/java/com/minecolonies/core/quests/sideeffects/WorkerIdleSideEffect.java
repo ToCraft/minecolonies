@@ -6,13 +6,11 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.UnknownNullability;
 
 /**
  * Quest effect which sets the worker idle
  */
-public class WorkerIdleSideEffect implements IQuestSideEffect, ICitizenQuestSideEffect
-{
+public class WorkerIdleSideEffect implements IQuestSideEffect, ICitizenQuestSideEffect {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "workeridle");
 
     /**
@@ -25,44 +23,37 @@ public class WorkerIdleSideEffect implements IQuestSideEffect, ICitizenQuestSide
      */
     private final IQuestInstance quest;
 
-    public WorkerIdleSideEffect(final IQuestInstance quest)
-    {
+    public WorkerIdleSideEffect(final IQuestInstance quest) {
         this.quest = quest;
     }
 
     @Override
-    public ResourceLocation getID()
-    {
+    public ResourceLocation getID() {
         return ID;
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         //applyToCitizen(quest.getQuestGiver());
     }
 
     @Override
-    public void onFinish()
-    {
+    public void onFinish() {
         citizenData.setIdleDays(0);
     }
 
     @Override
-    public void onCancel()
-    {
+    public void onCancel() {
         citizenData.setIdleDays(0);
     }
 
     @Override
-    public ICitizenData getCitizenData()
-    {
+    public ICitizenData getCitizenData() {
         return citizenData;
     }
 
     @Override
-    public void applyToCitizen(final ICitizenData data)
-    {
+    public void applyToCitizen(final ICitizenData data) {
         citizenData = data;
         /**
          * The amount of idle days to set
@@ -72,14 +63,12 @@ public class WorkerIdleSideEffect implements IQuestSideEffect, ICitizenQuestSide
     }
 
     @Override
-    public CompoundTag serializeNBT(final HolderLookup.Provider provider)
-    {
+    public CompoundTag serializeNBT(final HolderLookup.Provider provider) {
         return null;
     }
 
     @Override
-    public void deserializeNBT(final HolderLookup.Provider provider, final CompoundTag nbt)
-    {
+    public void deserializeNBT(final HolderLookup.Provider provider, final CompoundTag nbt) {
 
     }
 }

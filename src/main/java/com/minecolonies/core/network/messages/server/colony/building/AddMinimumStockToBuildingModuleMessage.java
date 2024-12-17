@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Set a new block to the minimum stock list.
  */
-public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "add_minimum_stock_to_building_module", AddMinimumStockToBuildingModuleMessage::new);
 
     /**
@@ -38,33 +37,28 @@ public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServ
      * @param quantity  of item needed to be transfered
      * @param building  the building we're executing on.
      */
-    public AddMinimumStockToBuildingModuleMessage(final IBuildingView building, final ItemStack itemStack, final int quantity)
-    {
+    public AddMinimumStockToBuildingModuleMessage(final IBuildingView building, final ItemStack itemStack, final int quantity) {
         super(TYPE, building);
         this.itemStack = itemStack;
         this.quantity = quantity;
     }
 
-    protected AddMinimumStockToBuildingModuleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected AddMinimumStockToBuildingModuleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         itemStack = Utils.deserializeCodecMess(buf);
         quantity = buf.readInt();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         Utils.serializeCodecMess(buf, itemStack);
         buf.writeInt(quantity);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (building.hasModule(BuildingModules.MIN_STOCK))
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (building.hasModule(BuildingModules.MIN_STOCK)) {
             building.getModule(BuildingModules.MIN_STOCK).addMinimumStock(itemStack, quantity);
         }
     }

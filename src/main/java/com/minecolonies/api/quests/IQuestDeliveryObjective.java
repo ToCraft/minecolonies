@@ -5,10 +5,10 @@ import net.minecraft.world.entity.player.Player;
 /**
  * Quest objective interface for deliveries.
  */
-public interface IQuestDeliveryObjective extends IDialogueObjectiveTemplate
-{
+public interface IQuestDeliveryObjective extends IDialogueObjectiveTemplate {
     /**
      * Check if the objective is ready to move on.
+     *
      * @param colonyQuest the objective belongs to.
      * @return true if so.
      */
@@ -16,6 +16,7 @@ public interface IQuestDeliveryObjective extends IDialogueObjectiveTemplate
 
     /**
      * Attempt to resolve an objective.
+     *
      * @param colonyQuest the objective belongs to.
      * @return true if so.
      */
@@ -23,6 +24,7 @@ public interface IQuestDeliveryObjective extends IDialogueObjectiveTemplate
 
     /**
      * Dialogue tree when the conditions are fulfilled.
+     *
      * @return the dialogue to play.
      */
     IDialogueObjectiveTemplate.DialogueElement getReadyDialogueTree();

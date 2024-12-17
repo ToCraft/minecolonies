@@ -22,8 +22,7 @@ import java.util.function.Function;
 /**
  * A BlueprintIterator which only iterates over one Y-level (layer) of a blueprint, using the iterator pattern of a different iterator
  */
-public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
-{
+public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper {
     /**
      * The current selected layer
      */
@@ -39,11 +38,11 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
 
     /**
      * Construct a new LayerBlueprintIterator, based on the given iterator strategy and using the given handler
+     *
      * @param iteratorId The iterator strategy. It accepts any of the names of the registered iterators (e.g. inwardcircle, hilbert, default, ...)
-     * @param handler The IStructureHandler to be used with this iterator
+     * @param handler    The IStructureHandler to be used with this iterator
      */
-    public LayerBlueprintIterator(final String iteratorId, final IStructureHandler handler)
-    {
+    public LayerBlueprintIterator(final String iteratorId, final IStructureHandler handler) {
         this(iteratorId, new StructureHandlerWrapper(handler), handler);
     }
 
@@ -51,12 +50,12 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
      * Internally used iterator, with both a handler for the wrapped iterator, and the original one, used by this iterator
      * (This is a trick to have a reference to the handler to pass to both the super class, and to set it to a field at the same time,
      * since you cannot have a variable declaration before a super call in any other way)
-     * @param iteratorId The iterator strategy
-     * @param handler The wrapped structure handler, to be used by the wrapped iterator
+     *
+     * @param iteratorId      The iterator strategy
+     * @param handler         The wrapped structure handler, to be used by the wrapped iterator
      * @param originalHandler The original one
      */
-    private LayerBlueprintIterator(final String iteratorId, final StructureHandlerWrapper handler, final IStructureHandler originalHandler)
-    {
+    private LayerBlueprintIterator(final String iteratorId, final StructureHandlerWrapper handler, final IStructureHandler originalHandler) {
         super(StructureIterators.getIterator(iteratorId, handler));
         this.handler = handler;
         this.originalHandler = originalHandler;
@@ -65,12 +64,11 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
 
     /**
      * Set the layer of this iterator. It resets the blueprint slice used by the wrapped iterator, and resets it to the beginning
+     *
      * @param newLevel the new layer
      */
-    public void setLayer(final int newLevel)
-    {
-        if (layer != newLevel)
-        {
+    public void setLayer(final int newLevel) {
+        if (layer != newLevel) {
             layer = newLevel;
             // Reset the blueprint, as we now need a new layer of the blueprint
             handler.setLayerBlueprint();
@@ -80,54 +78,45 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
 
     /**
      * Get the current layer
+     *
      * @return the current layer
      */
-    public int getLayer()
-    {
+    public int getLayer() {
         return layer;
     }
 
     @Override
-    public void setProgressPos(final BlockPos localPosition)
-    {
-        if (localPosition.equals(NULL_POS))
-        {
+    public void setProgressPos(final BlockPos localPosition) {
+        if (localPosition.equals(NULL_POS)) {
             delegate.setProgressPos(NULL_POS);
-        }
-        else
-        {
+        } else {
             delegate.setProgressPos(localPosition.atY(0));
         }
     }
 
     @Override
-    public BlockPos getProgressPos()
-    {
+    public BlockPos getProgressPos() {
         final BlockPos progressPos = delegate.getProgressPos();
-        if (progressPos.equals(NULL_POS))
-        {
+        if (progressPos.equals(NULL_POS)) {
             return NULL_POS;
         }
         return progressPos.atY(layer);
     }
 
     @Override
-    public BlueprintPositionInfo getBluePrintPositionInfo(final BlockPos localPos)
-    {
+    public BlueprintPositionInfo getBluePrintPositionInfo(final BlockPos localPos) {
         // localPos is relative to the original blueprint, so we need to use the original blueprint to retrieve the information
         return originalHandler.getBluePrint().getBluePrintPositionInfo(localPos, hasEntities());
     }
 
     @Override
-    public BlockPos getSize()
-    {
+    public BlockPos getSize() {
         final Blueprint blueprint = originalHandler.getBluePrint();
         return new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
     }
 
     @Override
-    protected IStructureHandler getStructureHandler()
-    {
+    protected IStructureHandler getStructureHandler() {
         // The LayerIterator uses the original structureHandler, as it handles the original blueprint and positions of the entire blueprint
         return originalHandler;
     }
@@ -148,60 +137,56 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         /**
          * A blueprint slice of the original blueprint
          */
-        private       Blueprint         layerBlueprint;
+        private Blueprint layerBlueprint;
 
         /**
          * Create a new StructureHandlerWrapper
+         *
          * @param delegate The IStructureHandler to wrap
          */
-        private StructureHandlerWrapper(final IStructureHandler delegate)
-        {
+        private StructureHandlerWrapper(final IStructureHandler delegate) {
             this.delegate = delegate;
         }
 
         /**
          * Sets the LayerBlueprintIterator. Because of technical reasons (i.e. an instance of this class is needed when the superclass constructor of LayerBlueprintIterator is called),
          * it is not possible to give an instance of the class in the constructor, or to make this an inner class
+         *
          * @param iterator The iterator
          */
-        private void setOuter(final LayerBlueprintIterator iterator)
-        {
+        private void setOuter(final LayerBlueprintIterator iterator) {
             outer = iterator;
         }
 
         @Override
-        public void setBlueprint(final Blueprint blueprint)
-        {
+        public void setBlueprint(final Blueprint blueprint) {
             delegate.setBlueprint(blueprint);
             layerBlueprint = null;
         }
 
         @Override
-        public void setMd5(final String s)
-        {
+        public void setMd5(final String s) {
             delegate.setMd5(s);
         }
 
         @Override
-        public String getMd5()
-        {
+        public String getMd5() {
             return delegate.getMd5();
         }
 
         /**
          * Helper to get the layer from the iterator. `outer` may temporarily be null, during the super class constructor call of LayerBlueprintIterator
+         *
          * @return the layer, or a default "0" when outer is not initialised yet
          */
-        private int getLayer()
-        {
+        private int getLayer() {
             return outer == null ? 0 : outer.getLayer();
         }
 
         /**
          * Create a new slice of the blueprint based on the current layer of the outer LayerBlueprintIterator (and cache it)
          */
-        private void setLayerBlueprint()
-        {
+        private void setLayerBlueprint() {
             final Blueprint blueprint = delegate.getBluePrint();
 
             final int sizeX = blueprint.getSizeX();
@@ -210,18 +195,15 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
             final CompoundTag[][][] tags = blueprint.getTileEntities();
             final short[][][] structure = blueprint.getStructure();
             final int layer = getLayer();
-            final short[][][] structureAtLayer = new short[][][] { structure[layer] };
+            final short[][][] structureAtLayer = new short[][][]{structure[layer]};
             final List<CompoundTag> tagsAtLayer = new ArrayList<>();
 
-            for (int i = 0; i < sizeZ; i++)
-            {
-                for (int j = 0; j < sizeX; j++)
-                {
-                    if (tags[layer][i][j] != null)
-                    {
+            for (int i = 0; i < sizeZ; i++) {
+                for (int j = 0; j < sizeX; j++) {
+                    if (tags[layer][i][j] != null) {
                         final CompoundTag tag = tags[layer][i][j].copy();
                         // The Blueprint will sort them by stored position again, which will be on the 0'th Y-level in the slice
-                        tag.putShort("y", (short)0);
+                        tag.putShort("y", (short) 0);
                         tagsAtLayer.add(tag);
                     }
                 }
@@ -231,10 +213,8 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         }
 
         @Override
-        public Blueprint getBluePrint()
-        {
-            if (layerBlueprint == null)
-            {
+        public Blueprint getBluePrint() {
+            if (layerBlueprint == null) {
                 setLayerBlueprint();
             }
 
@@ -242,124 +222,104 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         }
 
         @Override
-        public Level getWorld()
-        {
+        public Level getWorld() {
             return delegate.getWorld();
         }
 
         @Override
-        public BlockPos getWorldPos()
-        {
+        public BlockPos getWorldPos() {
             return delegate.getWorldPos()
-                     .subtract(delegate.getBluePrint().getPrimaryBlockOffset())
-                     .offset(layerBlueprint.getPrimaryBlockOffset().atY(getLayer()));
+                    .subtract(delegate.getBluePrint().getPrimaryBlockOffset())
+                    .offset(layerBlueprint.getPrimaryBlockOffset().atY(getLayer()));
         }
 
         @Override
-        public RotationMirror getRotationMirror()
-        {
+        public RotationMirror getRotationMirror() {
             return delegate.getRotationMirror();
         }
 
         @Override
-        public @Nullable IItemHandler getInventory()
-        {
+        public @Nullable IItemHandler getInventory() {
             return delegate.getInventory();
         }
 
         @Override
-        public void triggerSuccess(final BlockPos blockPos, final List<ItemStack> list, final boolean b)
-        {
+        public void triggerSuccess(final BlockPos blockPos, final List<ItemStack> list, final boolean b) {
             delegate.triggerSuccess(blockPos, list, b);
         }
 
         @Override
-        public void triggerEntitySuccess(final BlockPos blockPos, final List<ItemStack> list, final boolean b)
-        {
+        public void triggerEntitySuccess(final BlockPos blockPos, final List<ItemStack> list, final boolean b) {
             delegate.triggerEntitySuccess(blockPos, list, b);
         }
 
         @Override
-        public boolean isCreative()
-        {
+        public boolean isCreative() {
             return delegate.isCreative();
         }
 
         @Override
-        public boolean hasBluePrint()
-        {
+        public boolean hasBluePrint() {
             return delegate.hasBluePrint();
         }
 
         @Override
-        public int getStepsPerCall()
-        {
+        public int getStepsPerCall() {
             return delegate.getStepsPerCall();
         }
 
         @Override
-        public int getMaxBlocksCheckedPerCall()
-        {
+        public int getMaxBlocksCheckedPerCall() {
             return delegate.getMaxBlocksCheckedPerCall();
         }
 
         @Override
-        public boolean isStackFree(@Nullable final ItemStack itemStack)
-        {
+        public boolean isStackFree(@Nullable final ItemStack itemStack) {
             return delegate.isStackFree(itemStack);
         }
 
         @Override
-        public boolean allowReplace()
-        {
+        public boolean allowReplace() {
             return delegate.allowReplace();
         }
 
         @Override
-        public ItemStack getHeldItem()
-        {
+        public ItemStack getHeldItem() {
             return delegate.getHeldItem();
         }
 
         @Override
-        public boolean replaceWithSolidBlock(final BlockState blockState)
-        {
+        public boolean replaceWithSolidBlock(final BlockState blockState) {
             return delegate.replaceWithSolidBlock(blockState);
         }
 
         @Override
-        public boolean fancyPlacement()
-        {
+        public boolean fancyPlacement() {
             return delegate.fancyPlacement();
         }
 
         @Override
-        public boolean shouldBlocksBeConsideredEqual(final BlockState blockState, final BlockState blockState1)
-        {
+        public boolean shouldBlocksBeConsideredEqual(final BlockState blockState, final BlockState blockState1) {
             return delegate.shouldBlocksBeConsideredEqual(blockState, blockState1);
         }
 
         @Override
-        public boolean hasRequiredItems(final List<ItemStack> list)
-        {
+        public boolean hasRequiredItems(final List<ItemStack> list) {
             return delegate.hasRequiredItems(list);
         }
 
         @Override
-        public void prePlacementLogic(final BlockPos blockPos, final BlockState blockState, final List<ItemStack> list)
-        {
+        public void prePlacementLogic(final BlockPos blockPos, final BlockState blockState, final List<ItemStack> list) {
             delegate.prePlacementLogic(blockPos, blockState, list);
         }
 
         @Override
-        public BlockState getSolidBlockForPos(final BlockPos blockPos, @Nullable final Function<BlockPos, BlockState> function)
-        {
+        public BlockState getSolidBlockForPos(final BlockPos blockPos, @Nullable final Function<BlockPos, BlockState> function) {
             return delegate.getSolidBlockForPos(blockPos, function);
         }
 
         @Override
-        public boolean isReady()
-        {
+        public boolean isReady() {
             return delegate.isReady();
         }
     }

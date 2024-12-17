@@ -18,15 +18,14 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Colton
  */
-public class BlockParticleEffectMessage extends AbstractClientPlayMessage
-{
+public class BlockParticleEffectMessage extends AbstractClientPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "block_particle_effect", BlockParticleEffectMessage::new);
 
     public static final int BREAK_BLOCK = -1;
 
-    private final BlockPos   pos;
+    private final BlockPos pos;
     private final BlockState block;
-    private final int        side;
+    private final int side;
 
     /**
      * Sends a message for particle effect.
@@ -35,16 +34,14 @@ public class BlockParticleEffectMessage extends AbstractClientPlayMessage
      * @param state Block State
      * @param side  Side of the block causing effect
      */
-    public BlockParticleEffectMessage(final BlockPos pos, @NotNull final BlockState state, final int side)
-    {
+    public BlockParticleEffectMessage(final BlockPos pos, @NotNull final BlockState state, final int side) {
         super(TYPE);
         this.pos = pos;
         this.block = state;
         this.side = side;
     }
 
-    public BlockParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    public BlockParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         pos = buf.readBlockPos();
         block = Block.stateById(buf.readInt());
@@ -52,22 +49,17 @@ public class BlockParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(pos);
         buf.writeInt(Block.getId(block));
         buf.writeInt(side);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final Player player)
-    {
-        if (side == BREAK_BLOCK)
-        {
+    protected void onExecute(final IPayloadContext ctxIn, final Player player) {
+        if (side == BREAK_BLOCK) {
             Minecraft.getInstance().particleEngine.destroy(pos, block);
-        }
-        else
-        {
+        } else {
             Minecraft.getInstance().particleEngine.crack(pos, Direction.from3DDataValue(side));
         }
     }

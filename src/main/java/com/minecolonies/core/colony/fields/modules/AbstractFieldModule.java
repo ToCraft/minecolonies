@@ -6,8 +6,7 @@ import com.minecolonies.api.colony.fields.modules.IFieldModule;
 /**
  * Abstract class for all field modules.
  */
-public abstract class AbstractFieldModule implements IFieldModule
-{
+public abstract class AbstractFieldModule implements IFieldModule {
     /**
      * The field this module belongs to.
      */
@@ -18,14 +17,12 @@ public abstract class AbstractFieldModule implements IFieldModule
      *
      * @param field the field instance this module is working on.
      */
-    protected AbstractFieldModule(final IField field)
-    {
+    protected AbstractFieldModule(final IField field) {
         this.field = field;
     }
 
     @Override
-    public IField getField()
-    {
+    public IField getField() {
         return field;
     }
 }

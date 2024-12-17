@@ -14,18 +14,15 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
-public class DefaultEntityTypeTagsProvider extends EntityTypeTagsProvider
-{
+public class DefaultEntityTypeTagsProvider extends EntityTypeTagsProvider {
     public DefaultEntityTypeTagsProvider(final PackOutput output,
-      final CompletableFuture<HolderLookup.Provider> lookupProvider,
-      @Nullable final ExistingFileHelper existingFileHelper)
-    {
+                                         final CompletableFuture<HolderLookup.Provider> lookupProvider,
+                                         @Nullable final ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, MOD_ID, existingFileHelper);
     }
 
     @Override
-    protected void addTags(final HolderLookup.Provider holder)
-    {
+    protected void addTags(final HolderLookup.Provider holder) {
         tag(ModTags.hostile).add(EntityType.SLIME);
         tag(ModTags.mobAttackBlacklist).add(EntityType.ENDERMAN, EntityType.LLAMA);
 

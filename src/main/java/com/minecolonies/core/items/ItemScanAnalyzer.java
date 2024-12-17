@@ -32,8 +32,7 @@ import static com.ldtteam.structurize.api.constants.TranslationConstants.MAX_SCH
 /**
  * Item used to analyze schematics or selected blocks
  */
-public class ItemScanAnalyzer extends AbstractItemWithPosSelector
-{
+public class ItemScanAnalyzer extends AbstractItemWithPosSelector {
     /**
      * NBT constants
      */
@@ -47,18 +46,17 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     /**
      * Client side selection caching
      */
-    private static BlockPos  lastPos   = BlockPos.ZERO;
-    private static BlockPos  lastPos2  = BlockPos.ZERO;
-    public static  Blueprint blueprint = null;
+    private static BlockPos lastPos = BlockPos.ZERO;
+    private static BlockPos lastPos2 = BlockPos.ZERO;
+    public static Blueprint blueprint = null;
 
     public ItemScanAnalyzer(
-      @NotNull final String name,
-      final Item.Properties properties)
-    {
+            @NotNull final String name,
+            final Item.Properties properties) {
         super(properties.durability(0)
-            .setNoRepair()
-            .rarity(Rarity.UNCOMMON)
-            .component(ModDataComponents.POS_SELECTION, PosSelection.EMPTY));
+                .setNoRepair()
+                .rarity(Rarity.UNCOMMON)
+                .component(ModDataComponents.POS_SELECTION, PosSelection.EMPTY));
     }
 
     /**
@@ -66,8 +64,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
      *
      * @param properties properties
      */
-    public ItemScanAnalyzer(final Properties properties)
-    {
+    public ItemScanAnalyzer(final Properties properties) {
         super(properties);
     }
 
@@ -76,8 +73,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
      * {@inheritDoc}
      */
     @Override
-    public boolean canAttackBlock(final BlockState state, final Level worldIn, final BlockPos pos, final Player player)
-    {
+    public boolean canAttackBlock(final BlockState state, final Level worldIn, final BlockPos pos, final Player player) {
         checkTimeout(player.getMainHandItem(), worldIn);
         boolean result = super.canAttackBlock(state, worldIn, pos, player);
         openAreaBox(player.getMainHandItem());
@@ -85,8 +81,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     }
 
     @Override
-    public InteractionResult useOn(final UseOnContext context)
-    {
+    public InteractionResult useOn(final UseOnContext context) {
         checkTimeout(context.getItemInHand(), context.getLevel());
         InteractionResult result = super.useOn(context);
         openAreaBox(context.getItemInHand());
@@ -94,19 +89,15 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand handIn)
-    {
+    public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand handIn) {
         checkTimeout(playerIn.getItemInHand(handIn), worldIn);
         return super.use(worldIn, playerIn, handIn);
     }
 
     @Override
-    public InteractionResult onAirRightClick(final BlockPos start, final BlockPos end, final Level worldIn, final Player playerIn, final ItemStack itemStack)
-    {
-        if (worldIn.isClientSide)
-        {
-            if (start != null && end != null && (!lastPos.equals(start) || !lastPos2.equals(end)))
-            {
+    public InteractionResult onAirRightClick(final BlockPos start, final BlockPos end, final Level worldIn, final Player playerIn, final ItemStack itemStack) {
+        if (worldIn.isClientSide) {
+            if (start != null && end != null && (!lastPos.equals(start) || !lastPos2.equals(end))) {
                 lastPos = start;
                 lastPos2 = end;
                 final PosSelection data = PosSelection.readFromItemStack(itemStack);
@@ -120,8 +111,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     }
 
     @Override
-    public AbstractItemWithPosSelector getRegisteredItemInstance()
-    {
+    public AbstractItemWithPosSelector getRegisteredItemInstance() {
         return (AbstractItemWithPosSelector) ModItems.scanAnalyzer;
     }
 
@@ -130,13 +120,11 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
      *
      * @param tool
      */
-    private void openAreaBox(final ItemStack tool)
-    {
+    private void openAreaBox(final ItemStack tool) {
         final PosSelection component = PosSelection.readFromItemStack(tool);
         final BlockPos start = component.startPos().orElse(null);
         final BlockPos end = component.endPos().orElse(null);
-        if (start != null && end != null)
-        {
+        if (start != null && end != null) {
             RenderingCache.queue("analyzer", new BoxPreviewData(start, end, Optional.empty()));
         }
     }
@@ -144,16 +132,13 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     /**
      * Checks the selection timeout
      */
-    protected void checkTimeout(final ItemStack stack, final Level level)
-    {
-        if (stack == null || level == null)
-        {
+    protected void checkTimeout(final ItemStack stack, final Level level) {
+        if (stack == null || level == null) {
             return;
         }
 
         Timestamp.updateItemStack(stack, component -> {
-            if (component.hasTime() && (level.getGameTime() - component.time()) > TIMEOUT_DELAY)
-            {
+            if (component.hasTime() && (level.getGameTime() - component.time()) > TIMEOUT_DELAY) {
                 PosSelection.EMPTY.writeToItemStack(stack);
             }
 
@@ -167,10 +152,8 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
      * @param world  Current world.
      * @param player causing this action.
      */
-    public static Blueprint saveStructure(final Level world, final Player player, AABB box)
-    {
-        if (box.getXsize() * box.getYsize() * box.getZsize() > Structurize.getConfig().getServer().schematicBlockLimit.get())
-        {
+    public static Blueprint saveStructure(final Level world, final Player player, AABB box) {
+        if (box.getXsize() * box.getYsize() * box.getZsize() > Structurize.getConfig().getServer().schematicBlockLimit.get()) {
             player.displayClientMessage(Component.translatableEscape(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()), false);
             return null;
         }
@@ -178,7 +161,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
         final String fileName = TEMP_SCAN;
         final BlockPos zero = new BlockPos((int) box.minX, (int) box.minY, (int) box.minZ);
         final Blueprint bp =
-          BlueprintUtil.createBlueprint(world, zero, false, (short) (box.getXsize() + 1), (short) (box.getYsize() + 1), (short) (box.getZsize() + 1), fileName, Optional.empty());
+                BlueprintUtil.createBlueprint(world, zero, false, (short) (box.getXsize() + 1), (short) (box.getYsize() + 1), (short) (box.getZsize() + 1), fileName, Optional.empty());
 
         return bp;
     }

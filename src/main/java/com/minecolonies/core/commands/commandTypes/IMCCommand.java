@@ -11,8 +11,7 @@ import net.minecraft.world.entity.player.Player;
 /**
  * Interface for commands, uses Mojang's Brigadier command framework, @see <a href=https://github.com/Mojang/brigadier></a> .
  */
-public interface IMCCommand
-{
+public interface IMCCommand {
     int OP_PERM_LEVEL = 4;
 
     /**
@@ -20,8 +19,7 @@ public interface IMCCommand
      *
      * @return the built command.
      */
-    default LiteralArgumentBuilder<CommandSourceStack> build()
-    {
+    default LiteralArgumentBuilder<CommandSourceStack> build() {
         return newLiteral(getName()).executes(this::checkPreConditionAndExecute);
     }
 
@@ -31,13 +29,11 @@ public interface IMCCommand
      * @param name name of the new command.
      * @return the builder.
      */
-    static LiteralArgumentBuilder<CommandSourceStack> newLiteral(final String name)
-    {
+    static LiteralArgumentBuilder<CommandSourceStack> newLiteral(final String name) {
         return LiteralArgumentBuilder.literal(name);
     }
 
-    static <T> RequiredArgumentBuilder<CommandSourceStack, T> newArgument(final String name, final ArgumentType<T> type)
-    {
+    static <T> RequiredArgumentBuilder<CommandSourceStack, T> newArgument(final String name, final ArgumentType<T> type) {
         return RequiredArgumentBuilder.argument(name, type);
     }
 
@@ -47,19 +43,14 @@ public interface IMCCommand
      * @param context the context.
      * @return 1 if successful and 0 if incomplete.
      */
-    default int checkPreConditionAndExecute(final CommandContext<CommandSourceStack> context)
-    {
-        try
-        {
-            if (!checkPreCondition(context))
-            {
+    default int checkPreConditionAndExecute(final CommandContext<CommandSourceStack> context) {
+        try {
+            if (!checkPreCondition(context)) {
                 return 0;
             }
 
             return onExecute(context);
-        }
-        catch (Throwable e)
-        {
+        } catch (Throwable e) {
             Log.getLogger().warn("Error during running command:", e);
         }
 
@@ -72,8 +63,7 @@ public interface IMCCommand
      * @param context the command context.
      * @return true if fine.
      */
-    default boolean checkPreCondition(final CommandContext<CommandSourceStack> context)
-    {
+    default boolean checkPreCondition(final CommandContext<CommandSourceStack> context) {
         return context.getSource().getEntity() instanceof Player || context.getSource().hasPermission(OP_PERM_LEVEL);
     }
 
@@ -92,10 +82,8 @@ public interface IMCCommand
      */
     String getName();
 
-    static boolean isPlayerOped(final Player player)
-    {
-        if (player.getServer() == null)
-        {
+    static boolean isPlayerOped(final Player player) {
+        if (player.getServer() == null) {
             return false;
         }
 

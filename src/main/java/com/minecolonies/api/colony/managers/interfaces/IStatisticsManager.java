@@ -9,12 +9,12 @@ import java.util.Set;
 /**
  * Interface for the statistics manager
  */
-public interface IStatisticsManager
-{
+public interface IStatisticsManager {
     /**
      * Increment a given statistic.
      * Creates a new if it doesn't exist yet.
      * Assigns a timestamp to the entry.
+     *
      * @param id the id of the stat.
      */
     void increment(@NotNull final String id, final int day);
@@ -23,13 +23,15 @@ public interface IStatisticsManager
      * Increment a given statistic by some quantity.
      * Creates a new if it doesn't exist yet.
      * Assigns a timestamp to the entry.
-     * @param id the id of the stat.
+     *
+     * @param id  the id of the stat.
      * @param qty the quantity.
      */
     void incrementBy(@NotNull String id, final int qty, final int day);
 
     /**
      * Get the total for a given stat,
+     *
      * @param id the id of the stat.
      * @return the total since colony creation.
      */
@@ -37,9 +39,10 @@ public interface IStatisticsManager
 
     /**
      * Get the number of occurrences in a given period.
-     * @param id the id of the stat.
+     *
+     * @param id       the id of the stat.
      * @param dayStart the start day.
-     * @param dayEnd the end day.
+     * @param dayEnd   the end day.
      * @return the count.
      */
     int getStatsInPeriod(@NotNull String id, final int dayStart, final int dayEnd);
@@ -54,6 +57,7 @@ public interface IStatisticsManager
 
     /**
      * Deserialize from bytebuf.
+     *
      * @param buf the buffer to read from.
      */
     void deserialize(@NotNull final RegistryFriendlyByteBuf buf);
@@ -74,6 +78,7 @@ public interface IStatisticsManager
 
     /**
      * Getter for the whole stat list.
+     *
      * @return the map of stats.
      */
     @NotNull

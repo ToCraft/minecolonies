@@ -18,8 +18,7 @@ import java.util.Map;
 /**
  * Creates a message to get jei recipes.
  */
-public class TransferRecipeCraftingTeachingMessage extends AbstractServerPlayMessage
-{
+public class TransferRecipeCraftingTeachingMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "transfer_recipe_crafting_teaching", TransferRecipeCraftingTeachingMessage::new);
 
     /**
@@ -38,34 +37,28 @@ public class TransferRecipeCraftingTeachingMessage extends AbstractServerPlayMes
      * @param itemStacks the stack recipes to register.
      * @param complete   whether we're complete
      */
-    public TransferRecipeCraftingTeachingMessage(final Map<Integer, ItemStack> itemStacks, final boolean complete)
-    {
+    public TransferRecipeCraftingTeachingMessage(final Map<Integer, ItemStack> itemStacks, final boolean complete) {
         super(TYPE);
         this.itemStacks = itemStacks;
         this.complete = complete;
     }
 
-    protected TransferRecipeCraftingTeachingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected TransferRecipeCraftingTeachingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         itemStacks = buf.readMap(FriendlyByteBuf::readInt, b -> ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) b));
         complete = buf.readBoolean();
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         buf.writeMap(itemStacks, FriendlyByteBuf::writeInt, (b, v) -> ItemStack.OPTIONAL_STREAM_CODEC.encode((RegistryFriendlyByteBuf) b, v));
         buf.writeBoolean(complete);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
-    {
-        if (player.containerMenu instanceof final ContainerCrafting container)
-        {
-            if (complete)
-            {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player) {
+        if (player.containerMenu instanceof final ContainerCrafting container) {
+            if (complete) {
                 container.handleSlotClick(container.getSlot(1), itemStacks.getOrDefault(0, ItemStackUtils.EMPTY));
                 container.handleSlotClick(container.getSlot(2), itemStacks.getOrDefault(1, ItemStackUtils.EMPTY));
                 container.handleSlotClick(container.getSlot(3), itemStacks.getOrDefault(2, ItemStackUtils.EMPTY));
@@ -75,9 +68,7 @@ public class TransferRecipeCraftingTeachingMessage extends AbstractServerPlayMes
                 container.handleSlotClick(container.getSlot(7), itemStacks.getOrDefault(6, ItemStackUtils.EMPTY));
                 container.handleSlotClick(container.getSlot(8), itemStacks.getOrDefault(7, ItemStackUtils.EMPTY));
                 container.handleSlotClick(container.getSlot(9), itemStacks.getOrDefault(8, ItemStackUtils.EMPTY));
-            }
-            else
-            {
+            } else {
                 container.handleSlotClick(container.getSlot(1), itemStacks.getOrDefault(0, ItemStackUtils.EMPTY));
                 container.handleSlotClick(container.getSlot(2), itemStacks.getOrDefault(1, ItemStackUtils.EMPTY));
                 container.handleSlotClick(container.getSlot(3), itemStacks.getOrDefault(3, ItemStackUtils.EMPTY));
@@ -85,13 +76,9 @@ public class TransferRecipeCraftingTeachingMessage extends AbstractServerPlayMes
             }
 
             container.broadcastChanges();
-        }
-        else if (player.containerMenu instanceof final ContainerCraftingFurnace container)
-        {
+        } else if (player.containerMenu instanceof final ContainerCraftingFurnace container) {
             container.setFurnaceInput(itemStacks.getOrDefault(0, ItemStack.EMPTY));
-        }
-        else if (player.containerMenu instanceof final ContainerCraftingBrewingstand container)
-        {
+        } else if (player.containerMenu instanceof final ContainerCraftingBrewingstand container) {
             container.setInput(itemStacks.getOrDefault(0, ItemStack.EMPTY));
             container.setContainer(itemStacks.getOrDefault(1, ItemStack.EMPTY));
         }

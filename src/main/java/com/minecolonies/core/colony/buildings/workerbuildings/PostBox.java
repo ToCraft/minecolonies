@@ -17,16 +17,15 @@ import com.minecolonies.core.client.gui.WindowPostBox;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class used to manage the postbox building block.
  */
-public class PostBox extends AbstractBuilding implements IRSComponent
-{
+public class PostBox extends AbstractBuilding implements IRSComponent {
     /**
      * Description of the block used to set this block.
      */
@@ -38,86 +37,73 @@ public class PostBox extends AbstractBuilding implements IRSComponent
      * @param c the colony.
      * @param l the location.
      */
-    public PostBox(final IColony c, final BlockPos l)
-    {
+    public PostBox(final IColony c, final BlockPos l) {
         super(c, l);
     }
 
     @Override
-    public ImmutableCollection<IRequestResolver<?>> createResolvers()
-    {
+    public ImmutableCollection<IRequestResolver<?>> createResolvers() {
         return ImmutableList.of();
     }
 
     @NotNull
     @Override
-    public String getSchematicName()
-    {
+    public String getSchematicName() {
         return POST_BOX;
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
+    public int getMaxBuildingLevel() {
         return 0;
     }
 
     @Override
-    public boolean canBeGathered()
-    {
+    public boolean canBeGathered() {
         return false;
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
         super.onRequestedRequestCancelled(manager, request);
-        if (request.getState() == RequestState.FAILED && request.getRequest() instanceof Stack)
-        {
+        if (request.getState() == RequestState.FAILED && request.getRequest() instanceof Stack) {
             final IDeliverable req = ((Stack) request.getRequest()).copyWithCount(((Stack) request.getRequest()).getCount());
             createRequest(req, false);
         }
     }
 
     @Override
-    public Tuple<BlockPos, BlockPos> getCorners()
-    {
-        return new Tuple<>(getPosition(),getPosition());
+    public Tuple<BlockPos, BlockPos> getCorners() {
+        return new Tuple<>(getPosition(), getPosition());
     }
 
     @Override
-    public RotationMirror getRotationMirror()
-    {
+    public RotationMirror getRotationMirror() {
         return RotationMirror.NONE;
     }
 
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingView
-    {
+    public static class View extends AbstractBuildingView {
         /**
          * Instantiates the view of the building.
          *
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final IColonyView c, final BlockPos l)
-        {
+        public View(final IColonyView c, final BlockPos l) {
             super(c, l);
         }
 
         @NotNull
         @Override
-        public BOWindow getWindow()
-        {
+        public BOWindow getWindow() {
             return new WindowPostBox(this);
         }
 
         @NotNull
         @Override
-        public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-        {
+        public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) {
             return Component.translatableEscape("block.minecolonies.blockpostbox.name");
         }
     }

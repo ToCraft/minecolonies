@@ -20,8 +20,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_DONE;
 /**
  * Gui for hiring mercenaries
  */
-public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
-{
+public class WindowTownHallMercenary extends BOWindow implements ButtonHandler {
     /**
      * The xml file for this gui
      */
@@ -37,8 +36,7 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
      *
      * @param c {@link ColonyView}
      */
-    public WindowTownHallMercenary(final IColonyView c)
-    {
+    public WindowTownHallMercenary(final IColonyView c) {
         super(ResourceLocation.parse(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX));
         this.colony = c;
 
@@ -49,8 +47,7 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
         int startX = 160;
         final int startY = 40;
 
-        for (int i = 0; i < Math.min(amountOfMercenaries, 9); i++)
-        {
+        for (int i = 0; i < Math.min(amountOfMercenaries, 9); i++) {
 
             final Image newImage = new Image();
             newImage.setImage(new ResourceLocation("minecolonies", "textures/entity_icon/citizen/default/citizenmale3" + CitizenData.SUFFIXES.get(ColonyConstants.rand.nextInt(CitizenData.SUFFIXES.size())) + ".png"), false);
@@ -63,10 +60,8 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
     }
 
     @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        if (button.getID().equals(BUTTON_DONE))
-        {
+    public void onButtonClicked(@NotNull final Button button) {
+        if (button.getID().equals(BUTTON_DONE)) {
             colony.usedMercenaries();
             new HireMercenaryMessage(colony).sendToServer();
             Minecraft.getInstance().player.playSound(SoundEvents.LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);

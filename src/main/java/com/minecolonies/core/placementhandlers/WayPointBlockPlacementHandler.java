@@ -18,33 +18,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WayPointBlockPlacementHandler implements IPlacementHandler
-{
+public class WayPointBlockPlacementHandler implements IPlacementHandler {
     @Override
-    public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
-    {
+    public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState) {
         return blockState.getBlock() instanceof BlockWaypoint;
     }
 
     @Override
     public ActionProcessingResult handle(
-      @NotNull final Level world,
-      @NotNull final BlockPos pos,
-      @NotNull final BlockState blockState,
-      @Nullable final CompoundTag tileEntityData,
-      final boolean complete,
-      final BlockPos centerPos)
-    {
+            @NotNull final Level world,
+            @NotNull final BlockPos pos,
+            @NotNull final BlockState blockState,
+            @Nullable final CompoundTag tileEntityData,
+            final boolean complete,
+            final BlockPos centerPos) {
         world.removeBlock(pos, false);
         final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
-        if (colony != null)
-        {
-            if (!complete)
-            {
+        if (colony != null) {
+            if (!complete) {
                 colony.addWayPoint(pos, Blocks.AIR.defaultBlockState());
-            }
-            else
-            {
+            } else {
                 world.setBlockAndUpdate(pos, blockState);
             }
         }
@@ -53,14 +46,12 @@ public class WayPointBlockPlacementHandler implements IPlacementHandler
 
     @Override
     public List<ItemStack> getRequiredItems(
-      @NotNull final Level world,
-      @NotNull final BlockPos pos,
-      @NotNull final BlockState blockState,
-      @Nullable final CompoundTag tileEntityData,
-      final boolean complete)
-    {
-        if (complete)
-        {
+            @NotNull final Level world,
+            @NotNull final BlockPos pos,
+            @NotNull final BlockState blockState,
+            @Nullable final CompoundTag tileEntityData,
+            final boolean complete) {
+        if (complete) {
             return Collections.singletonList(BlockUtils.getItemStackFromBlockState(blockState));
         }
         return new ArrayList<>();

@@ -25,33 +25,28 @@ import java.util.Optional;
 /**
  * JEI recipe transfer handler for teaching furnace recipes
  */
-public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCraftingFurnace, RecipeHolder<SmeltingRecipe>>
-{
+public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCraftingFurnace, RecipeHolder<SmeltingRecipe>> {
     private final IRecipeTransferHandlerHelper handlerHelper;
 
-    public PrivateSmeltingTeachingTransferHandler(@NotNull final IRecipeTransferHandlerHelper handlerHelper)
-    {
+    public PrivateSmeltingTeachingTransferHandler(@NotNull final IRecipeTransferHandlerHelper handlerHelper) {
         this.handlerHelper = handlerHelper;
     }
 
     @NotNull
     @Override
-    public Optional<MenuType<ContainerCraftingFurnace>> getMenuType()
-    {
+    public Optional<MenuType<ContainerCraftingFurnace>> getMenuType() {
         return Optional.empty();
     }
 
     @NotNull
     @Override
-    public RecipeType<RecipeHolder<SmeltingRecipe>> getRecipeType()
-    {
+    public RecipeType<RecipeHolder<SmeltingRecipe>> getRecipeType() {
         return RecipeTypes.SMELTING;
     }
 
     @NotNull
     @Override
-    public Class<ContainerCraftingFurnace> getContainerClass()
-    {
+    public Class<ContainerCraftingFurnace> getContainerClass() {
         return ContainerCraftingFurnace.class;
     }
 
@@ -63,16 +58,14 @@ public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHa
             @NotNull final IRecipeSlotsView recipeSlots,
             @NotNull final Player player,
             final boolean maxTransfer,
-            final boolean doTransfer)
-    {
+            final boolean doTransfer) {
         // we only care about the first input ingredient for furnace recipes
         final ItemStack input = recipeSlots.getSlotViews(RecipeIngredientRole.INPUT).stream()
                 .flatMap(slot -> slot.getDisplayedIngredient(VanillaTypes.ITEM_STACK).stream())
                 .findFirst()
                 .orElse(ItemStack.EMPTY);
 
-        if (!input.isEmpty() && doTransfer)
-        {
+        if (!input.isEmpty() && doTransfer) {
             craftingGUIBuilding.setFurnaceInput(input);
 
             final Map<Integer, ItemStack> guiIngredients = new HashMap<>();

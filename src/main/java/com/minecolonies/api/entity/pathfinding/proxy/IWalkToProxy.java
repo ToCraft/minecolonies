@@ -11,8 +11,7 @@ import java.util.Set;
 /**
  * Interface which defines the walkToProxy.
  */
-public interface IWalkToProxy
-{
+public interface IWalkToProxy {
     /**
      * Leads the entity to a certain position due to proxies.
      *

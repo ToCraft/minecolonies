@@ -10,8 +10,7 @@ import static com.minecolonies.api.quests.QuestParseConstant.QUANTITY_KEY;
 /**
  * Quest reputation quest trigger.
  */
-public class QuestReputationTriggerTemplate implements IQuestTriggerTemplate
-{
+public class QuestReputationTriggerTemplate implements IQuestTriggerTemplate {
     /**
      * Min quantity.
      */
@@ -20,23 +19,21 @@ public class QuestReputationTriggerTemplate implements IQuestTriggerTemplate
     /**
      * Create a new instance of this trigger.
      */
-    public QuestReputationTriggerTemplate(final double minQuantity)
-    {
+    public QuestReputationTriggerTemplate(final double minQuantity) {
         this.minQuantity = minQuantity;
     }
 
     /**
      * Create a new trigger directly from json.
+     *
      * @param jsonObj the json associated to this trigger.
      */
-    public static QuestReputationTriggerTemplate createQuestReputationTrigger(final JsonObject jsonObj)
-    {
+    public static QuestReputationTriggerTemplate createQuestReputationTrigger(final JsonObject jsonObj) {
         return new QuestReputationTriggerTemplate(jsonObj.get(QUANTITY_KEY).getAsDouble());
     }
 
     @Override
-    public ITriggerReturnData canTriggerQuest(final IColony colony)
-    {
+    public ITriggerReturnData canTriggerQuest(final IColony colony) {
         return new BooleanTriggerReturnData(colony.getQuestManager().getReputation() >= minQuantity);
     }
 }

@@ -25,8 +25,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message sent to open an inventory.
  */
-public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuilding>
-{
+public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuilding> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "open_crafting_gui", OpenCraftingGUIMessage::new);
 
     /**
@@ -36,91 +35,73 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
 
     /**
      * Creates an open inventory message for a building.
-     * @param id the string id.
+     *
+     * @param id       the string id.
      * @param building {@link AbstractBuildingView}
      */
-    public OpenCraftingGUIMessage(@NotNull final AbstractBuildingView building, final int id)
-    {
+    public OpenCraftingGUIMessage(@NotNull final AbstractBuildingView building, final int id) {
         super(TYPE, building);
         this.id = id;
     }
 
-    protected OpenCraftingGUIMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected OpenCraftingGUIMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.id = buf.readInt();
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(id);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
-    {
-        if (building.getModule(id) instanceof final AbstractCraftingBuildingModule module)
-        {
-            if (module.canLearn(ModCraftingTypes.SMELTING.get()))
-            {
-                player.openMenu(new MenuProvider()
-                {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building) {
+        if (building.getModule(id) instanceof final AbstractCraftingBuildingModule module) {
+            if (module.canLearn(ModCraftingTypes.SMELTING.get())) {
+                player.openMenu(new MenuProvider() {
                     @NotNull
                     @Override
-                    public Component getDisplayName()
-                    {
+                    public Component getDisplayName() {
                         return Component.literal("Furnace Crafting GUI");
                     }
 
                     @NotNull
                     @Override
-                    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
-                    {
+                    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player) {
                         return new ContainerCraftingFurnace(id, inv, building.getID(), module.getProducer().getRuntimeID());
                     }
                 }, buffer -> new RegistryFriendlyByteBuf(new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID())), buffer.registryAccess()));
-            }
-            else if (module.canLearn(ModCraftingTypes.BREWING.get()))
-            {
-                player.openMenu(new MenuProvider()
-                {
+            } else if (module.canLearn(ModCraftingTypes.BREWING.get())) {
+                player.openMenu(new MenuProvider() {
                     @NotNull
                     @Override
-                    public Component getDisplayName()
-                    {
+                    public Component getDisplayName() {
                         return Component.literal("Brewing Crafting GUI");
                     }
 
                     @NotNull
                     @Override
-                    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
-                    {
+                    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player) {
                         return new ContainerCraftingBrewingstand(id, inv, building.getID(), module.getProducer().getRuntimeID());
                     }
                 }, buffer -> new RegistryFriendlyByteBuf(new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID())), buffer.registryAccess()));
-            }
-            else
-            {
-                player.openMenu(new MenuProvider()
-                  {
-                      @NotNull
-                      @Override
-                      public Component getDisplayName()
-                      {
-                          return Component.literal("Crafting GUI");
-                      }
+            } else {
+                player.openMenu(new MenuProvider() {
+                                    @NotNull
+                                    @Override
+                                    public Component getDisplayName() {
+                                        return Component.literal("Crafting GUI");
+                                    }
 
-                      @NotNull
-                      @Override
-                      public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
-                      {
-                          return new ContainerCrafting(id, inv, module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()), building.getID(), module.getProducer().getRuntimeID());
-                      }
-                  },
-                  buffer -> new RegistryFriendlyByteBuf(
-                    new FriendlyByteBuf(buffer.writeBoolean(module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()))), buffer.registryAccess()).writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID()));
+                                    @NotNull
+                                    @Override
+                                    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player) {
+                                        return new ContainerCrafting(id, inv, module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()), building.getID(), module.getProducer().getRuntimeID());
+                                    }
+                                },
+                        buffer -> new RegistryFriendlyByteBuf(
+                                new FriendlyByteBuf(buffer.writeBoolean(module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()))), buffer.registryAccess()).writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID()));
             }
         }
     }

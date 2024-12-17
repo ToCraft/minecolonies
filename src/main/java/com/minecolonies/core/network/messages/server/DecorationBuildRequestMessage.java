@@ -34,8 +34,7 @@ import java.util.Optional;
 /**
  * Adds a entry to the builderRequired map.
  */
-public class DecorationBuildRequestMessage extends AbstractServerPlayMessage
-{
+public class DecorationBuildRequestMessage extends AbstractServerPlayMessage {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "decoration_build_request", DecorationBuildRequestMessage::new);
 
     /**
@@ -76,13 +75,12 @@ public class DecorationBuildRequestMessage extends AbstractServerPlayMessage
     /**
      * Creates a build request for a decoration.
      *
-     * @param pos         the position of it.
-     * @param packName    pack name.
-     * @param path        blueprint path.
-     * @param dimension   the dimension we're executing on.
+     * @param pos       the position of it.
+     * @param packName  pack name.
+     * @param path      blueprint path.
+     * @param dimension the dimension we're executing on.
      */
-    public DecorationBuildRequestMessage(final WorkOrderType workOrderType, @NotNull final BlockPos pos, final String packName, final String path, final ResourceKey<Level> dimension, final RotationMirror rotationMirror, final BlockPos builder)
-    {
+    public DecorationBuildRequestMessage(final WorkOrderType workOrderType, @NotNull final BlockPos pos, final String packName, final String path, final ResourceKey<Level> dimension, final RotationMirror rotationMirror, final BlockPos builder) {
         super(TYPE);
         this.workOrderType = workOrderType;
         this.pos = pos;
@@ -93,8 +91,7 @@ public class DecorationBuildRequestMessage extends AbstractServerPlayMessage
         this.builder = builder;
     }
 
-    protected DecorationBuildRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected DecorationBuildRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         this.workOrderType = WorkOrderType.values()[buf.readInt()];
         this.pos = buf.readBlockPos();
@@ -106,8 +103,7 @@ public class DecorationBuildRequestMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf) {
         buf.writeInt(this.workOrderType.ordinal());
         buf.writeBlockPos(this.pos);
         buf.writeUtf(this.packName);
@@ -118,66 +114,59 @@ public class DecorationBuildRequestMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player) {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromDim(dimension, pos);
-        if (colony == null)
-        {
+        if (colony == null) {
             return;
         }
 
         //Verify player has permission to change this hut its settings
-        if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
-        {
+        if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)) {
             return;
         }
 
         final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
-          .filter(entry -> entry.getValue() instanceof WorkOrderDecoration)
-          .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
+                .filter(entry -> entry.getValue() instanceof WorkOrderDecoration)
+                .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
 
-        if (wo.isPresent())
-        {
+        if (wo.isPresent()) {
             colony.getWorkManager().removeWorkOrder(wo.get().getKey());
             return;
         }
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(packName, path, colony.getWorld().registryAccess()),
-          player.level(),
-          (blueprint -> {
-              if (blueprint == null)
-              {
-                  Log.getLogger().error(String.format("Schematic %s doesn't exist on the server.", path));
-                  return;
-              }
+                player.level(),
+                (blueprint -> {
+                    if (blueprint == null) {
+                        Log.getLogger().error(String.format("Schematic %s doesn't exist on the server.", path));
+                        return;
+                    }
 
-              final String[] split = path.split("/");
-              final String displayName = split[split.length - 1].replace(".blueprint", "");
+                    final String[] split = path.split("/");
+                    final String displayName = split[split.length - 1].replace(".blueprint", "");
 
-              final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
-              final WorkOrderType type = structureState != null && !(structureState.getBlock() instanceof BlockDecorationController)
-                      ? WorkOrderType.BUILD : workOrderType;
+                    final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
+                    final WorkOrderType type = structureState != null && !(structureState.getBlock() instanceof BlockDecorationController)
+                            ? WorkOrderType.BUILD : workOrderType;
 
-              final WorkOrderDecoration order = WorkOrderDecoration.create(
-                  type,
-                  packName,
-                  path,
-                  WordUtils.capitalizeFully(displayName),
-                  pos,
-                  rotationMirror,
-                  0);
+                    final WorkOrderDecoration order = WorkOrderDecoration.create(
+                            type,
+                            packName,
+                            path,
+                            WordUtils.capitalizeFully(displayName),
+                            pos,
+                            rotationMirror,
+                            0);
 
-              if (!builder.equals(BlockPos.ZERO))
-              {
-                  final IBuilding building = colony.getBuildingManager().getBuilding(builder);
-                  if (building instanceof AbstractBuildingStructureBuilder)
-                  {
-                      order.setClaimedBy(builder);
-                  }
-              }
+                    if (!builder.equals(BlockPos.ZERO)) {
+                        final IBuilding building = colony.getBuildingManager().getBuilding(builder);
+                        if (building instanceof AbstractBuildingStructureBuilder) {
+                            order.setClaimedBy(builder);
+                        }
+                    }
 
-              colony.getWorkManager().addWorkOrder(order, false);
-          })));
+                    colony.getWorkManager().addWorkOrder(order, false);
+                })));
     }
 }
 

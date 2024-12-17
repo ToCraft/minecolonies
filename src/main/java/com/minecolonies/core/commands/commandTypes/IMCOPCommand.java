@@ -11,27 +11,22 @@ import static com.minecolonies.api.util.constant.translation.CommandTranslationC
 /**
  * Interface for commands requiring OP rights to execute.
  */
-public interface IMCOPCommand extends IMCCommand
-{
+public interface IMCOPCommand extends IMCCommand {
     /**
      * Executes pre-checks before issuing the command. Checks for the senders type and OP rights.
      */
     @Override
-    default boolean checkPreCondition(final CommandContext<CommandSourceStack> context)
-    {
-        if (context.getSource().hasPermission(OP_PERM_LEVEL))
-        {
+    default boolean checkPreCondition(final CommandContext<CommandSourceStack> context) {
+        if (context.getSource().hasPermission(OP_PERM_LEVEL)) {
             return true;
         }
 
         final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof Player))
-        {
+        if (!(sender instanceof Player)) {
             return false;
         }
 
-        if (!IMCCommand.isPlayerOped((Player) sender))
-        {
+        if (!IMCCommand.isPlayerOped((Player) sender)) {
             MessageUtils.format(COMMAND_REQUIRES_OP).sendTo((Player) sender);
             return false;
         }

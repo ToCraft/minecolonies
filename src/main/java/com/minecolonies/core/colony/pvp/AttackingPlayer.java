@@ -13,8 +13,7 @@ import java.util.Objects;
 /**
  * Represents an attacking player.
  */
-public class AttackingPlayer
-{
+public class AttackingPlayer {
     /**
      * The player which is attacking.
      */
@@ -30,8 +29,7 @@ public class AttackingPlayer
      *
      * @param player the attacking player.
      */
-    public AttackingPlayer(final Player player)
-    {
+    public AttackingPlayer(final Player player) {
         this.player = player;
     }
 
@@ -40,8 +38,7 @@ public class AttackingPlayer
      *
      * @return the PlayerEntity.
      */
-    public Player getPlayer()
-    {
+    public Player getPlayer() {
         return player;
     }
 
@@ -52,21 +49,18 @@ public class AttackingPlayer
      * @param colony  the colony.
      * @return true if so.
      */
-    public static boolean isValidAttack(final AbstractEntityCitizen citizen, final Colony colony)
-    {
+    public static boolean isValidAttack(final AbstractEntityCitizen citizen, final Colony colony) {
         final IColony guardColony = citizen.getCitizenColonyHandler().getColonyOrRegister();
-        if (guardColony == null)
-        {
+        if (guardColony == null) {
             return false;
         }
 
-        if (colony.getPermissions().getRank(guardColony.getPermissions().getOwner()).isHostile())
-        {
+        if (colony.getPermissions().getRank(guardColony.getPermissions().getOwner()).isHostile()) {
             return true;
         }
 
         return guardColony.getPermissions().getRank(colony.getPermissions().getOwner()).isHostile()
-                 && guardColony.getRaiderManager().getColonyRaidLevel() <= colony.getRaiderManager().getColonyRaidLevel() * 2;
+                && guardColony.getRaiderManager().getColonyRaidLevel() <= colony.getRaiderManager().getColonyRaidLevel() * 2;
     }
 
     /**
@@ -74,8 +68,7 @@ public class AttackingPlayer
      *
      * @return an immutable copy the list.
      */
-    public List<AbstractEntityCitizen> getGuards()
-    {
+    public List<AbstractEntityCitizen> getGuards() {
         return ImmutableList.copyOf(guards);
     }
 
@@ -85,10 +78,8 @@ public class AttackingPlayer
      * @param guard the guard to add.
      * @return true if successful
      */
-    public boolean addGuard(final AbstractEntityCitizen guard)
-    {
-        if (!guards.contains(guard))
-        {
+    public boolean addGuard(final AbstractEntityCitizen guard) {
+        if (!guards.contains(guard)) {
             guards.add(guard);
             return true;
         }
@@ -101,10 +92,8 @@ public class AttackingPlayer
      * @param colony the colony to check for.
      * @return true if so.
      */
-    public boolean isValidAttack(final Colony colony)
-    {
-        if (guards.isEmpty())
-        {
+    public boolean isValidAttack(final Colony colony) {
+        if (guards.isEmpty()) {
             return false;
         }
 
@@ -116,8 +105,7 @@ public class AttackingPlayer
      *
      * @param guard the guard to remove.
      */
-    public void removeGuard(final AbstractEntityCitizen guard)
-    {
+    public void removeGuard(final AbstractEntityCitizen guard) {
         guards.add(guard);
     }
 
@@ -126,20 +114,16 @@ public class AttackingPlayer
      *
      * @param colony the colony to refresh it for.
      */
-    public void refreshList(final Colony colony)
-    {
+    public void refreshList(final Colony colony) {
         guards.removeIf(citizen -> citizen.isDead() || !colony.isCoordInColony(colony.getWorld(), citizen.blockPosition()));
     }
 
     @Override
-    public boolean equals(final Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         final AttackingPlayer that = (AttackingPlayer) o;
@@ -147,8 +131,7 @@ public class AttackingPlayer
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(player);
     }
 }

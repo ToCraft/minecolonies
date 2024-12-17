@@ -5,8 +5,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Class which contains all constants required for windows.
  */
-public final class WindowConstants
-{
+public final class WindowConstants {
     /**
      * Id of the exit button in the GUI.
      */
@@ -416,32 +415,32 @@ public final class WindowConstants
      * The builders gui file.
      */
     public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutworkerplaceholder.xml";
-    public static final String LIST_RESOURCES              = "resources";
+    public static final String LIST_RESOURCES = "resources";
 
-    public static final String LIST_WORK_ORDERS          = "workOrders";
-    public static final String RESOURCE_NAME             = "resourceName";
+    public static final String LIST_WORK_ORDERS = "workOrders";
+    public static final String RESOURCE_NAME = "resourceName";
     public static final String RESOURCE_AVAILABLE_NEEDED = "resourceAvailableNeeded";
-    public static final String RESOURCE_MISSING          = "resourceMissing";
-    public static final String RESOURCE_ADD              = "resourceAdd";
-    public static final String RESOURCE_ID               = "resourceId";
+    public static final String RESOURCE_MISSING = "resourceMissing";
+    public static final String RESOURCE_ADD = "resourceAdd";
+    public static final String RESOURCE_ID = "resourceId";
     public static final String RESOURCE_QUANTITY_MISSING = "resourceQuantity";
-    public static final String RESOURCE_ICON             = "resourceIcon";
-    public static final String STAR_IMAGE                = "star";
+    public static final String RESOURCE_ICON = "resourceIcon";
+    public static final String STAR_IMAGE = "star";
 
-    public static final String STOCK_ADD                 = "addStock";
-    public static final String STOCK_REMOVE              = "removeStock";
-    public static final String QUANTITY_LABEL            = "resourceQty";
-    public static final String IN_DELIVERY_ICON          = "indeliveryicon";
-    public static final String IN_DELIVERY_AMOUNT        = "indeliveryamount";
-    public static final String IN_WAREHOUSE_ICON         = "inWarehouseIcon";
-    public static final String IN_WAREHOUSE_AMOUNT       = "inWarehouseAmount";
-    public static final String WORK_ORDER_NAME           = "buildingName";
-    public static final String WORK_ORDER_POS            = "buildingPos";
-    public static final String WORK_ORDER_SELECT         = "manage";
+    public static final String STOCK_ADD = "addStock";
+    public static final String STOCK_REMOVE = "removeStock";
+    public static final String QUANTITY_LABEL = "resourceQty";
+    public static final String IN_DELIVERY_ICON = "indeliveryicon";
+    public static final String IN_DELIVERY_AMOUNT = "indeliveryamount";
+    public static final String IN_WAREHOUSE_ICON = "inWarehouseIcon";
+    public static final String IN_WAREHOUSE_AMOUNT = "inWarehouseAmount";
+    public static final String WORK_ORDER_NAME = "buildingName";
+    public static final String WORK_ORDER_POS = "buildingPos";
+    public static final String WORK_ORDER_SELECT = "manage";
 
     public static final String GUIDE_RESOURCE_SUFFIX = ":gui/windowhutguide.xml";
-    public static final String GUIDE_CONFIRM         = "confirm";
-    public static final String GUIDE_CLOSE           = "close";
+    public static final String GUIDE_CONFIRM = "confirm";
+    public static final String GUIDE_CLOSE = "close";
 
     /**
      * BOWindow resource list gui file.
@@ -455,51 +454,51 @@ public final class WindowConstants
     /**
      * No Sorting stage. how it comes from Database so it gets feeded
      */
-    public static final int    NO_SORT                  = 0;
+    public static final int NO_SORT = 0;
     /**
      * Name Ascending
      */
-    public static final int    ASC_SORT                 = 1;
+    public static final int ASC_SORT = 1;
     /**
      * Name Descending
      */
-    public static final int    DESC_SORT                = 2;
+    public static final int DESC_SORT = 2;
     /**
      * Itemcount Ascending
      */
-    public static final int    COUNT_ASC_SORT           = 3;
+    public static final int COUNT_ASC_SORT = 3;
     /**
      * Itemcount Descending
      */
-    public static final int    COUNT_DESC_SORT          = 4;
+    public static final int COUNT_DESC_SORT = 4;
     /**
      * The Stringdefine for the GUI page
      */
-    public static final String LIST_ALLINVENTORY        = "allinventorylist";
+    public static final String LIST_ALLINVENTORY = "allinventorylist";
     /**
      * The Sort Button
      */
-    public static final String BUTTON_SORT              = "sortStorageFilter";
+    public static final String BUTTON_SORT = "sortStorageFilter";
 
     /**
      * BOWindow resource list gui file.
      */
     public static final String R_TREE_RESOURCE_SUFFIX = ":gui/windowresearch.xml";
 
-    public static final String BUTTON_BUILD        = "build";
-    public static final String BUTTON_REPAIR       = "repair";
-    public static final String BUTTON_INVENTORY    = "inventory";
+    public static final String BUTTON_BUILD = "build";
+    public static final String BUTTON_REPAIR = "repair";
+    public static final String BUTTON_INVENTORY = "inventory";
     public static final String BUTTON_ALLINVENTORY = "allinventory";
     public static final String LABEL_BUILDING_NAME = "name";
-    public static final String BUTTON_PREVPAGE     = "prevPage";
-    public static final String BUTTON_NEXTPAGE     = "nextPage";
-    public static final String LABEL_NO_UPGRADE    = "infotextnoupgrade";
+    public static final String BUTTON_PREVPAGE = "prevPage";
+    public static final String BUTTON_NEXTPAGE = "nextPage";
+    public static final String LABEL_NO_UPGRADE = "infotextnoupgrade";
 
     /**
      * The GuardTower GUI file.
      */
     //GUI List Elements
-    public static final String GUI_LIST_ELEMENT_NAME  = "name";
+    public static final String GUI_LIST_ELEMENT_NAME = "name";
     public static final String GUI_LIST_BUTTON_SWITCH = "switch";
 
     /**
@@ -525,15 +524,15 @@ public final class WindowConstants
     /**
      * Icons used to display the happiness
      */
-    public static final String UNHAPPY_ICON     = "minecolonies:textures/gui/unhappy_icon.png";
+    public static final String UNHAPPY_ICON = "minecolonies:textures/gui/unhappy_icon.png";
     public static final String UNSATISFIED_ICON = "minecolonies:textures/gui/unsatisfied_icon.png";
-    public static final String HAPPY_ICON       = "minecolonies:textures/gui/happy_icon.png";
+    public static final String HAPPY_ICON = "minecolonies:textures/gui/happy_icon.png";
     public static final String SATISFIED_ICON = "minecolonies:textures/gui/satisfied_icon.png";
 
     public static final String LABEL_CONSTRUCTION_NAME = "constructionName";
-    public static final String LABEL_PROGRESS          = "progress";
-    public static final String STEP_PROGRESS           = "stepprogress";
-    public static final String LABEL_WORKERNAME        = "workerName";
+    public static final String LABEL_PROGRESS = "progress";
+    public static final String STEP_PROGRESS = "stepprogress";
+    public static final String LABEL_WORKERNAME = "workerName";
 
     public static final String LABEL_PAGE_NUMBER = "pageNum";
 
@@ -753,14 +752,14 @@ public final class WindowConstants
      * Warehouse constants
      */
     public static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/layouthuts/layoutwarehouseoptions.xml";
-    public static final String SORT_WAREHOUSE_BUTTON         = "sort";
+    public static final String SORT_WAREHOUSE_BUTTON = "sort";
 
     /**
      * Postbox constants.
      */
-    public static final String INPUT_NAME     = "name";
+    public static final String INPUT_NAME = "name";
     public static final String WINDOW_POSTBOX = ":gui/windowpostbox.xml";
-    public static final String INPUT_QTY      = "qty";
+    public static final String INPUT_QTY = "qty";
     public static final String BUTTON_REQUEST = "request";
 
     /**
@@ -932,12 +931,12 @@ public final class WindowConstants
     /**
      * WindowInteraction constants.
      */
-    public static final int    SLIGHTLY_BLUE           = 100;
-    public static final int    BUTTON_HEIGHT           = 17;
-    public static final int    BUTTON_LENGTH           = 129;
-    public static final int    BUTTON_Y_BUFFER           = 3;
-    public static final int    BUTTON_X_BUFFER           = 10;
-    public static final String RESPONSE_BOX_ID         = "responseOptions";
+    public static final int SLIGHTLY_BLUE = 100;
+    public static final int BUTTON_HEIGHT = 17;
+    public static final int BUTTON_LENGTH = 129;
+    public static final int BUTTON_Y_BUFFER = 3;
+    public static final int BUTTON_X_BUFFER = 10;
+    public static final String RESPONSE_BOX_ID = "responseOptions";
     public static final String MEDIUM_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_medium_large.png";
     public static final String MEDIUM_SIZED_BUTTON_DIS = "textures/gui/builderhut/builder_button_medium_large_disabled.png";
 
@@ -949,21 +948,21 @@ public final class WindowConstants
     /**
      * The job modifier page.
      */
-    public static final String JOB_TITLE_LABEL       = "jobLabel";
-    public static final String JOB_DESC_LABEL        = "skillexplanation";
-    public static final String PRIMARY_SKILL_LABEL   = "primary";
-    public static final String PRIMARY_SKILL_COM     = "comp1";
-    public static final String PRIMARY_SKILL_ADV     = "adverse1";
+    public static final String JOB_TITLE_LABEL = "jobLabel";
+    public static final String JOB_DESC_LABEL = "skillexplanation";
+    public static final String PRIMARY_SKILL_LABEL = "primary";
+    public static final String PRIMARY_SKILL_COM = "comp1";
+    public static final String PRIMARY_SKILL_ADV = "adverse1";
     public static final String SECONDARY_SKILL_LABEL = "secondary";
-    public static final String SECONDARY_SKILL_COM   = "comp2";
-    public static final String SECONDARY_SKILL_ADV   = "adverse2";
-    public static final String IMAGE_APPENDIX        = "img";
-    public static final String BASE_IMG_SRC          = "minecolonies:textures/entity/skills/small/";
+    public static final String SECONDARY_SKILL_COM = "comp2";
+    public static final String SECONDARY_SKILL_ADV = "adverse2";
+    public static final String IMAGE_APPENDIX = "img";
+    public static final String BASE_IMG_SRC = "minecolonies:textures/entity/skills/small/";
 
     /**
      * Button prefixes.
      */
-    public static final String PLUS_PREFIX  = "plus_";
+    public static final String PLUS_PREFIX = "plus_";
     public static final String MINUS_PREFIX = "minus_";
 
     public static final String LOCATE = "locate";
@@ -995,20 +994,20 @@ public final class WindowConstants
      */
     public static final String UPGRADE_PROGRESS_LABEL = "upgradeProgress";
 
-    public static final String TOWNHALL_RANK_BUTTON_LIST  = "rankButtonList";
-    public static final String TOWNHALL_RANK_BUTTON       = "rankButton";
-    public static final String BUTTON_ADD_RANK            = "buttonAddRank";
-    public static final String INPUT_ADDRANK_NAME         = "addRankName";
-    public static final String BUTTON_REMOVE_RANK         = "removeRank";
-    public static final String TOWNHALL_RANK_LIST         = "rankList";
-    public static final String TOWNHALL_ADD_RANK_ERROR    = "rankNameError";
-    public static final String TOWNHALL_RANK_PICKER       = "rankPicker";
-    public static final String TOWNHALL_PERM_MANAGEMENT   = "permissionsManagement";
-    public static final String TOWNHALL_PERM_LIST         = "permissionsList";
-    public static final String TOWNHALL_PERM_SETTINGS     = "permissionsSettings";
-    public static final String TOWNHALL_PERM_MODE_TOGGLE  = "permissionsModeToggle";
+    public static final String TOWNHALL_RANK_BUTTON_LIST = "rankButtonList";
+    public static final String TOWNHALL_RANK_BUTTON = "rankButton";
+    public static final String BUTTON_ADD_RANK = "buttonAddRank";
+    public static final String INPUT_ADDRANK_NAME = "addRankName";
+    public static final String BUTTON_REMOVE_RANK = "removeRank";
+    public static final String TOWNHALL_RANK_LIST = "rankList";
+    public static final String TOWNHALL_ADD_RANK_ERROR = "rankNameError";
+    public static final String TOWNHALL_RANK_PICKER = "rankPicker";
+    public static final String TOWNHALL_PERM_MANAGEMENT = "permissionsManagement";
+    public static final String TOWNHALL_PERM_LIST = "permissionsList";
+    public static final String TOWNHALL_PERM_SETTINGS = "permissionsSettings";
+    public static final String TOWNHALL_PERM_MODE_TOGGLE = "permissionsModeToggle";
     public static final String TOWNHALL_BUTTON_SUBSCRIBER = "setSubscriber";
-    public static final String TOWNHALL_RANK_TYPE_PICKER  = "rankTypePicker";
+    public static final String TOWNHALL_RANK_TYPE_PICKER = "rankTypePicker";
 
     /**
      * Input filter id.
@@ -1073,8 +1072,7 @@ public final class WindowConstants
     /**
      * Private constructor to hide implicit public one.
      */
-    private WindowConstants()
-    {
+    private WindowConstants() {
         /*
          * Intentionally left empty.
          */

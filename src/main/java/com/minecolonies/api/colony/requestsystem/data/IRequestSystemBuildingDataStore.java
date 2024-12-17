@@ -6,8 +6,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import java.util.Collection;
 import java.util.Map;
 
-public interface IRequestSystemBuildingDataStore extends IDataStore
-{
+public interface IRequestSystemBuildingDataStore extends IDataStore {
     Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType();
 
     Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen();

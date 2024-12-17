@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <T>  The type of requesttoken.
  * @param <RT> The requesttoken type.
  */
-public interface ITokenFactory<T, RT extends IToken<?>> extends IFactory<T, RT>
-{
+public interface ITokenFactory<T, RT extends IToken<?>> extends IFactory<T, RT> {
 
     /**
      * Method to get a new instance of the output given the input and additional context data.
@@ -24,10 +23,8 @@ public interface ITokenFactory<T, RT extends IToken<?>> extends IFactory<T, RT>
      */
     @NotNull
     @Override
-    default RT getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
-    {
-        if (context.length != 0)
-        {
+    default RT getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException {
+        if (context.length != 0) {
             throw new IllegalArgumentException("Unsupported context - Too many parameters. None is needed.!");
         }
 

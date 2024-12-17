@@ -9,7 +9,9 @@ import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.storage.loot.*;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
@@ -23,22 +25,18 @@ import java.util.function.BiConsumer;
 /**
  * Datagen for fisherman loot tables
  */
-public class DefaultFishermanLootProvider implements LootTableSubProvider
-{
-    public DefaultFishermanLootProvider(@NotNull final HolderLookup.Provider provider)
-    {
+public class DefaultFishermanLootProvider implements LootTableSubProvider {
+    public DefaultFishermanLootProvider(@NotNull final HolderLookup.Provider provider) {
 
     }
 
     @Override
-    public void generate(final BiConsumer<ResourceKey<LootTable>, LootTable.Builder> generator)
-    {
+    public void generate(final BiConsumer<ResourceKey<LootTable>, LootTable.Builder> generator) {
         registerStandardLoot(generator);
         registerBonusLoot(generator);
     }
 
-    private void registerStandardLoot(final BiConsumer<ResourceKey<LootTable>, LootTable.Builder> generator)
-    {
+    private void registerStandardLoot(final BiConsumer<ResourceKey<LootTable>, LootTable.Builder> generator) {
         generator.accept(ModLootTables.FISHING, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .add(NestedLootTable.lootTableReference(ModLootTables.FISHING_JUNK).setWeight(10).setQuality(-2))
@@ -66,8 +64,7 @@ public class DefaultFishermanLootProvider implements LootTableSubProvider
                 ));
     }
 
-    private void registerBonusLoot(final BiConsumer<ResourceKey<LootTable>, LootTable.Builder> generator)
-    {
+    private void registerBonusLoot(final BiConsumer<ResourceKey<LootTable>, LootTable.Builder> generator) {
         final int skillBonus = 1;       // 0.1% bonus chance per skill point (sort of)
         final int spongeWeight = 1;     // 0.1% chance (before skill bonus)
         final int shardWeight = 25;     // 2.5%
@@ -101,12 +98,10 @@ public class DefaultFishermanLootProvider implements LootTableSubProvider
         generator.accept(ModLootTables.FISHERMAN_BONUS.get(5), level45);
     }
 
-    private static LootTable.Builder makeLoot(int emptyWeight, @NotNull final LootPoolSingletonContainer.Builder<?>... entries)
-    {
+    private static LootTable.Builder makeLoot(int emptyWeight, @NotNull final LootPoolSingletonContainer.Builder<?>... entries) {
         final LootPool.Builder pool = LootPool.lootPool();
 
-        for (final LootPoolSingletonContainer.Builder<?> entry : entries)
-        {
+        for (final LootPoolSingletonContainer.Builder<?> entry : entries) {
             pool.add(entry);
             emptyWeight -= getWeightForEntry(entry);
         }
@@ -115,27 +110,19 @@ public class DefaultFishermanLootProvider implements LootTableSubProvider
         return LootTable.lootTable().withPool(pool);
     }
 
-    private static int getWeightForEntry(@NotNull final LootPoolSingletonContainer.Builder<?> entry)
-    {
+    private static int getWeightForEntry(@NotNull final LootPoolSingletonContainer.Builder<?> entry) {
         // because it would be too easy for it to just have a public getter...
-        if (weightField == null)
-        {
-            try
-            {
+        if (weightField == null) {
+            try {
                 weightField = LootPoolSingletonContainer.Builder.class.getDeclaredField("weight");
                 weightField.setAccessible(true);
-            }
-            catch (final NoSuchFieldException | SecurityException e)
-            {
+            } catch (final NoSuchFieldException | SecurityException e) {
                 throw new RuntimeException(e);
             }
         }
-        try
-        {
+        try {
             return weightField.getInt(entry);
-        }
-        catch (final IllegalArgumentException | IllegalAccessException e)
-        {
+        } catch (final IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

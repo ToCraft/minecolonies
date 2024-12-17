@@ -31,19 +31,15 @@ import static com.minecolonies.core.blocks.MinecoloniesFarmland.FLOODED_FARMLAND
  * This class deals with the initialization of blocks and their items.
  */
 @EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
-public final class ModBlocksInitializer
-{
+public final class ModBlocksInitializer {
 
-    private ModBlocksInitializer()
-    {
+    private ModBlocksInitializer() {
         throw new IllegalStateException("Tried to initialize: ModBlockInitializer but this is a Utility class.");
     }
 
     @SubscribeEvent
-    public static void registerBlocks(RegisterEvent event)
-    {
-        if (event.getRegistryKey().equals(Registries.BLOCK))
-        {
+    public static void registerBlocks(RegisterEvent event) {
+        if (event.getRegistryKey().equals(Registries.BLOCK)) {
             ModBlocksInitializer.init(event.getRegistry(Registries.BLOCK));
         }
     }
@@ -54,8 +50,7 @@ public final class ModBlocksInitializer
      * @param registry The registry to register the new blocks.
      */
     @SuppressWarnings("PMD.ExcessiveMethodLength")
-    public static void init(final Registry<Block> registry)
-    {
+    public static void init(final Registry<Block> registry) {
         ModBlocks.blockHutBaker = new BlockHutBaker().registerBlock(registry);
         ModBlocks.blockHutBlacksmith = new BlockHutBlacksmith().registerBlock(registry);
         ModBlocks.blockHutBuilder = new BlockHutBuilder().registerBlock(registry);
@@ -148,10 +143,8 @@ public final class ModBlocksInitializer
     }
 
     @SubscribeEvent
-    public static void registerItems(RegisterEvent event)
-    {
-        if (event.getRegistryKey().equals(Registries.ITEM))
-        {
+    public static void registerItems(RegisterEvent event) {
+        if (event.getRegistryKey().equals(Registries.ITEM)) {
             ModBlocksInitializer.registerBlockItem(event.getRegistry(Registries.ITEM));
         }
     }
@@ -161,8 +154,7 @@ public final class ModBlocksInitializer
      *
      * @param registry The item registry to add the items too.
      */
-    public static void registerBlockItem(final Registry<Item> registry)
-    {
+    public static void registerBlockItem(final Registry<Item> registry) {
         ModBlocks.blockHutBaker.registerBlockItem(registry, new Item.Properties());
         ModBlocks.blockHutBlacksmith.registerBlockItem(registry, new Item.Properties());
         ModBlocks.blockHutBuilder.registerBlockItem(registry, new Item.Properties());

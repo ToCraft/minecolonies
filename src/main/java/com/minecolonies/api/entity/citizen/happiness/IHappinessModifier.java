@@ -9,8 +9,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Interface describing possible happiness factors.
  */
-public interface IHappinessModifier
-{
+public interface IHappinessModifier {
     /**
      * Get the unique happiness id.
      *
@@ -20,6 +19,7 @@ public interface IHappinessModifier
 
     /**
      * Get the factor of the happiness. value between 0 and 1 if negative. value above 1 if positive.
+     *
      * @param data the citizen the factor is for.
      * @return the value of the factor.
      */

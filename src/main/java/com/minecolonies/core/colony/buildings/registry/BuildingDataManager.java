@@ -23,24 +23,19 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LOCATION;
 
-public class BuildingDataManager implements IBuildingDataManager
-{
+public class BuildingDataManager implements IBuildingDataManager {
     @Override
-    public IBuilding createFrom(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
-    {
+    public IBuilding createFrom(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider) {
         final ResourceLocation type = ResourceLocation.parse(compound.getString(TAG_BUILDING_TYPE));
         final BlockPos pos = BlockPosUtil.read(compound, TAG_LOCATION);
 
         IBuilding building = this.createFrom(colony, pos, type);
 
-        try
-        {
+        try {
             building.deserializeNBT(provider, compound);
-        }
-        catch (final Exception ex)
-        {
+        } catch (final Exception ex) {
             Log.getLogger().error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              type, building.getClass().getName()), ex);
+                    type, building.getClass().getName()), ex);
             building = null;
         }
 
@@ -48,19 +43,15 @@ public class BuildingDataManager implements IBuildingDataManager
     }
 
     @Override
-    public IBuilding createFrom(final IColony colony, final AbstractTileEntityColonyBuilding tileEntityColonyBuilding)
-    {
+    public IBuilding createFrom(final IColony colony, final AbstractTileEntityColonyBuilding tileEntityColonyBuilding) {
         return this.createFrom(colony, tileEntityColonyBuilding.getPosition(), tileEntityColonyBuilding.getBuildingName());
     }
 
     @Override
-    public IBuilding createFrom(final IColony colony, final BlockPos position, final ResourceLocation buildingName)
-    {
+    public IBuilding createFrom(final IColony colony, final BlockPos position, final ResourceLocation buildingName) {
         final BuildingEntry entry = IBuildingRegistry.getInstance().get(buildingName);
-        if (entry == null)
-        {
-            if (buildingName.getPath().equals("home"))
-            {
+        if (entry == null) {
+            if (buildingName.getPath().equals("home")) {
                 return ModBuildings.home.get().produceBuilding(position, colony);
             }
             Log.getLogger().error(String.format("Unknown building type '%s'.", buildingName), new Exception());
@@ -70,20 +61,17 @@ public class BuildingDataManager implements IBuildingDataManager
     }
 
     @Override
-    public IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final RegistryFriendlyByteBuf networkBuffer)
-    {
+    public IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final RegistryFriendlyByteBuf networkBuffer) {
         final ResourceLocation buildingName = ResourceLocation.parse(networkBuffer.readUtf(32767));
         final BuildingEntry entry = IBuildingRegistry.getInstance().get(buildingName);
 
-        if (entry == null)
-        {
+        if (entry == null) {
             Log.getLogger().error(String.format("Unknown building type '%s'.", buildingName), new Exception());
             return null;
         }
 
         final IBuildingView view = entry.produceBuildingView(position, colony);
-        if (view != null)
-        {
+        if (view != null) {
             view.deserialize(networkBuffer);
         }
 
@@ -91,8 +79,7 @@ public class BuildingDataManager implements IBuildingDataManager
     }
 
     @Override
-    public void openBuildingBrowser(@NotNull final Block block)
-    {
+    public void openBuildingBrowser(@NotNull final Block block) {
         new WindowBuildingBrowser(block).open();
     }
 }

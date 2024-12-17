@@ -11,8 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public class BuilderSelectWorkOrderMessage extends AbstractBuildingServerMessage<BuildingBuilder>
-{
+public class BuilderSelectWorkOrderMessage extends AbstractBuildingServerMessage<BuildingBuilder> {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "builder_select_work_order", BuilderSelectWorkOrderMessage::new);
 
     private final int workOrder;
@@ -20,31 +19,27 @@ public class BuilderSelectWorkOrderMessage extends AbstractBuildingServerMessage
     /**
      * Creates a new BuilderSetManualModeMessage.
      *
-     * @param building View of the building to read data from.
+     * @param building  View of the building to read data from.
      * @param workOrder workorder id.
      */
-    public BuilderSelectWorkOrderMessage(@NotNull final IBuildingView building, final int workOrder)
-    {
+    public BuilderSelectWorkOrderMessage(@NotNull final IBuildingView building, final int workOrder) {
         super(TYPE, building);
         this.workOrder = workOrder;
     }
 
-    protected BuilderSelectWorkOrderMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-    {
+    protected BuilderSelectWorkOrderMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type) {
         super(buf, type);
         workOrder = buf.readInt();
     }
 
     @Override
-    protected void toBytes(final RegistryFriendlyByteBuf buf)
-    {
+    protected void toBytes(final RegistryFriendlyByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(workOrder);
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingBuilder building)
-    {
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingBuilder building) {
         building.setWorkOrder(workOrder);
     }
 }

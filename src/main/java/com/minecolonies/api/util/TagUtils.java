@@ -10,30 +10,28 @@ import net.minecraft.world.level.block.Block;
 /**
  * Class for specific minecraft tag utilities.
  */
-public final class TagUtils
-{
-    private TagUtils()
-    {
+public final class TagUtils {
+    private TagUtils() {
         throw new IllegalStateException("Tried to initialize: TagUtils but this is a Utility class.");
     }
 
     /**
      * Get a tag for items.
+     *
      * @param resourceLocation the unique id.
      * @return the tag or an empty placeholder if not existant.
      */
-    public static TagKey<Item> getItem(final ResourceLocation resourceLocation)
-    {
+    public static TagKey<Item> getItem(final ResourceLocation resourceLocation) {
         return ItemTags.create(resourceLocation);
     }
 
     /**
      * Get a tag for items.
+     *
      * @param resourceLocation the unique id.
      * @return the tag or an empty placeholder if not existant.
      */
-    public static TagKey<Block> getBlock(final ResourceLocation resourceLocation)
-    {
+    public static TagKey<Block> getBlock(final ResourceLocation resourceLocation) {
         return BlockTags.create(resourceLocation);
     }
 }

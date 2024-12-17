@@ -9,13 +9,15 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Loads and listens to custom visitor data added
  */
-public class CitizenNameListener extends SimpleJsonResourceReloadListener
-{
+public class CitizenNameListener extends SimpleJsonResourceReloadListener {
     /**
      * Gson instance
      */
@@ -29,17 +31,14 @@ public class CitizenNameListener extends SimpleJsonResourceReloadListener
     /**
      * Create a new listener.
      */
-    public CitizenNameListener()
-    {
+    public CitizenNameListener() {
         super(GSON, "citizennames");
     }
 
     @Override
-    protected void apply(final Map<ResourceLocation, JsonElement> jsonElementMap, final @NotNull ResourceManager resourceManager, final @NotNull ProfilerFiller profiler)
-    {
+    protected void apply(final Map<ResourceLocation, JsonElement> jsonElementMap, final @NotNull ResourceManager resourceManager, final @NotNull ProfilerFiller profiler) {
         nameFileMap.clear();
-        for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
-        {
+        for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet()) {
             tryParse(entry);
         }
     }
@@ -49,10 +48,8 @@ public class CitizenNameListener extends SimpleJsonResourceReloadListener
      *
      * @param entry
      */
-    private void tryParse(final Map.Entry<ResourceLocation, JsonElement> entry)
-    {
-        try
-        {
+    private void tryParse(final Map.Entry<ResourceLocation, JsonElement> entry) {
+        try {
             final JsonObject data = (JsonObject) entry.getValue();
 
             final int parts = data.get("parts").getAsInt();
@@ -62,27 +59,22 @@ public class CitizenNameListener extends SimpleJsonResourceReloadListener
             final List<String> surnames = new ArrayList<>();
 
             final JsonArray maleNameJsonArray = data.get("male_firstname").getAsJsonArray();
-            for (final JsonElement maleName : maleNameJsonArray)
-            {
+            for (final JsonElement maleName : maleNameJsonArray) {
                 maleFirstName.add(maleName.getAsString());
             }
 
             final JsonArray femaleNameJsonArray = data.get("female_firstname").getAsJsonArray();
-            for (final JsonElement femaleName : femaleNameJsonArray)
-            {
+            for (final JsonElement femaleName : femaleNameJsonArray) {
                 femaleFirstName.add(femaleName.getAsString());
             }
 
             final JsonArray surnameJsonArray = data.get("surnames").getAsJsonArray();
-            for (final JsonElement surname : surnameJsonArray)
-            {
+            for (final JsonElement surname : surnameJsonArray) {
                 surnames.add(surname.getAsString());
             }
 
             nameFileMap.put(entry.getKey().getPath(), new CitizenNameFile(parts, nameOrder, maleFirstName, femaleFirstName, surnames));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.getLogger().warn("Could not parse visitor for:" + entry.getKey(), e);
         }
     }
