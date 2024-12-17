@@ -122,9 +122,8 @@ public class WindowBannerPicker extends Screen
     /**
      * @param colony            the colony to make the flag for
      * @param hallWindow        the calling town hall window to return to
-     * @param isFeatureUnlocked
      */
-    public WindowBannerPicker(IColonyView colony, AbstractWindowTownHall hallWindow, final AtomicBoolean isFeatureUnlocked)
+    public WindowBannerPicker(IColonyView colony, AbstractWindowTownHall hallWindow)
     {
         super(Component.literal("Flag"));
 
@@ -144,10 +143,6 @@ public class WindowBannerPicker extends Screen
 
         this.patterns = colony.getWorld().registryAccess().registry(Registries.BANNER_PATTERN).get().holders().collect(Collectors.toCollection(LinkedList::new));
         this.patterns.removeAll(exclusion);
-        if (!isFeatureUnlocked.get())
-        {
-            this.patterns.removeIf(key -> key.unwrapKey().get().location().getNamespace().equals(Constants.MOD_ID));
-        }
 
         // Fetch the patterns as a List and not ListNBT
         this.layers = new ArrayList<>(colony.getColonyFlag().layers());

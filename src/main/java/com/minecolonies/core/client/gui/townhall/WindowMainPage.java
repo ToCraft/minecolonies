@@ -1,7 +1,5 @@
 package com.minecolonies.core.client.gui.townhall;
 
-import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
@@ -16,25 +14,15 @@ import com.minecolonies.core.network.messages.server.colony.ColonyStructureStyle
 import com.minecolonies.core.network.messages.server.colony.ColonyTextureStyleMessage;
 import com.minecolonies.core.network.messages.server.colony.TeamColonyColorChangeMessage;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -45,12 +33,6 @@ import static com.minecolonies.core.event.TextureReloadListener.TEXTURE_PACKS;
  */
 public class WindowMainPage extends AbstractWindowTownHall
 {
-
-    /**
-     * Is the special feature unlocked.
-     */
-    private static AtomicBoolean isFeatureUnlocked = new AtomicBoolean(false);
-
     /**
      * Drop down list for style.
      */
@@ -69,12 +51,12 @@ public class WindowMainPage extends AbstractWindowTownHall
     /**
      * The initial texture index.
      */
-    private int initialTextureIndex;
+    private final int initialTextureIndex;
 
     /**
      * The initial texture index.
      */
-    private int initialNamePackIndex;
+    private final int initialNamePackIndex;
 
 
 
@@ -100,13 +82,11 @@ public class WindowMainPage extends AbstractWindowTownHall
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
         registerButton(BUTTON_TOWNHALLMAP, this::mapButtonClicked);
-        registerButton(BUTTON_PATREON, this::patreonClicked);
 
         registerButton(BUTTON_COLONY_SWITCH_STYLE, this::switchPack);
 
         findPaneOfTypeByID(BUTTON_COLONY_SWITCH_STYLE, ButtonImage.class).setText(Component.literal(building.getColony().getStructurePack()));
         registerButton(BUTTON_BANNER_PICKER, this::openBannerPicker);
-        registerButton(BUTTON_RESET_TEXTURE, this::resetTextureStyle);
 
         this.colorDropDownList.setSelectedIndex(building.getColony().getTeamColonyColor().ordinal());
         this.textureDropDownList.setSelectedIndex(TEXTURE_PACKS.indexOf(building.getColony().getTextureStyleId()));
@@ -114,8 +94,6 @@ public class WindowMainPage extends AbstractWindowTownHall
 
         this.nameStyleDropDownList.setSelectedIndex(building.getColony().getNameFileIds().indexOf(building.getColony().getNameStyle()));
         this.initialNamePackIndex = nameStyleDropDownList.getSelectedIndex();
-
-        checkFeatureUnlock();
     }
 
 
@@ -179,6 +157,8 @@ public class WindowMainPage extends AbstractWindowTownHall
                 return Component.literal(TEXTURE_PACKS.get(index));
             }
         });
+        textureDropDownList.enable();
+        textureDropDownList.show();
 
         nameStyleDropDownList = findPaneOfTypeByID(DROPDOWN_NAME_ID, DropDownList.class);
         nameStyleDropDownList.setHandler(this::toggleNameFile);
@@ -196,6 +176,7 @@ public class WindowMainPage extends AbstractWindowTownHall
                 return Component.literal(building.getColony().getNameFileIds().get(index));
             }
         });
+        nameStyleDropDownList.enable();
     }
 
     /**
@@ -241,116 +222,8 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void openBannerPicker(@NotNull final Button button)
     {
-        Screen window = new WindowBannerPicker(building.getColony(), this, isFeatureUnlocked);
+        Screen window = new WindowBannerPicker(building.getColony(), this);
         Minecraft.getInstance().setScreen(window);
-    }
-
-    /**
-     * Reset the texture style.
-     */
-    private void resetTextureStyle()
-    {
-        new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(0)).sendToServer();
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-        final Pane textPane = findPaneByID(DROPDOWN_TEXT_ID);
-        final Pane namePane = findPaneByID(DROPDOWN_NAME_ID);
-        final Pane resetButton = findPaneByID(BUTTON_RESET_TEXTURE);
-
-        if (isFeatureUnlocked.get())
-        {
-            findPaneByID(BUTTON_PATREON).hide();
-            textPane.enable();
-            namePane.enable();
-            textPane.show();
-            resetButton.hide();
-        }
-        else
-        {
-            findPaneByID(BUTTON_PATREON).show();
-            textPane.disable();
-            namePane.disable();
-
-            if (!building.getColony().getTextureStyleId().equals("default"))
-            {
-                resetButton.show();
-                textPane.hide();
-            }
-            else
-            {
-                textPane.show();
-            }
-
-            PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatableEscape("com.minecolonies.core.townhall.patreon.textures"))
-              .paragraphBreak()
-              .appendNL(Component.empty())
-              .appendNL(Component.translatableEscape("com.minecolonies.core.townhall.patreon"))
-              .paragraphBreak()
-              .build();
-
-            PaneBuilders.tooltipBuilder().hoverPane(namePane)
-              .append(Component.translatableEscape("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
-              .appendNL(Component.empty())
-              .appendNL(Component.translatableEscape("com.minecolonies.core.townhall.patreon")).paragraphBreak()
-              .build();
-        }
-    }
-
-    /**
-     * Check if the feature is unlocked through the patreon API.
-     */
-    public void checkFeatureUnlock()
-    {
-        if (isFeatureUnlocked.get() || !building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
-        {
-            return;
-        }
-        final String player = Minecraft.getInstance().player.getStringUUID();
-        new Thread(() -> {
-            try
-            {
-                final SSLSocketFactory sslsocketfactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-                final URL url = new URL("https://auth.minecolonies.com/api/minecraft/" + player + "/features");
-                final HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-
-                conn.setSSLSocketFactory(sslsocketfactory);
-
-                final InputStream responseBody = conn.getInputStream();
-                final BufferedReader reader = new BufferedReader(new InputStreamReader(responseBody));
-
-                String inputLine;
-                final StringBuilder response = new StringBuilder();
-
-                while ((inputLine = reader.readLine()) != null)
-                {
-                    response.append(inputLine);
-                }
-                reader.close();
-                isFeatureUnlocked.set(Boolean.parseBoolean(response.toString()));
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    /**
-     * On Patreon button clicked. Open website link to patreon.
-     */
-    private void patreonClicked()
-    {
-        Minecraft.getInstance().setScreen(new ConfirmLinkScreen((check) -> {
-            if (check) {
-                Util.getPlatform().openUri("https://www.patreon.com/Minecolonies");
-            }
-
-            Minecraft.getInstance().setScreen(this.screen);
-        }, "https://www.patreon.com/Minecolonies", true));
     }
 
     @Override

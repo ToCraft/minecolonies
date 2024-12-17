@@ -73,11 +73,6 @@ public final class WindowConstants
     public static final String BUTTON_RENAME = "rename";
 
     /**
-     * Id of the patreon button in the GUI.
-     */
-    public static final String BUTTON_PATREON = "patreon";
-
-    /**
      * Id of the mercenary button in the GUI.
      */
     public static final String BUTTON_MERCENARY = "mercenaries";
@@ -93,39 +88,9 @@ public final class WindowConstants
     public static final String BUTTON_ADD_PLAYER = "addPlayer";
 
     /**
-     * Id of the toggle job button in the GUI.
-     */
-    public static final String BUTTON_TOGGLE_JOB = "toggleJob";
-
-    /**
-     * Id of the toggle job button in the GUI.
-     */
-    public static final String BUTTON_TOGGLE_HOUSING = "toggleHousing";
-
-    /**
-     * Id of the toggle move in button in the GUI.
-     */
-    public static final String BUTTON_TOGGLE_MOVE_IN = "toggleMoveIn";
-
-    /**
-     * Id of the toggle move in button in the GUI.
-     */
-    public static final String BUTTON_TOGGLE_ENTER_LEAVE_MESSAGES = "toggleentermessages";
-
-    /**
-     * Id of the toggle print progress button in the GUI.
-     */
-    public static final String BUTTON_TOGGLE_PRINT_PROGRESS = "togglePrintProgress";
-
-    /**
      * Id of the toggle to switch colony styl.e
      */
     public static final String BUTTON_COLONY_SWITCH_STYLE = "colonyStylePicker";
-
-    /**
-     * Id of the toggle to reset texture.
-     */
-    public static final String BUTTON_RESET_TEXTURE = "resettexture";
 
     /**
      * Id of the toggle to select a banner.
@@ -181,41 +146,6 @@ public final class WindowConstants
      * Id of the page view in the GUI.
      */
     public static final String VIEW_PAGES = "pages";
-
-    /**
-     * Id of the info page in the GUI.
-     */
-    public static final String PAGE_INFO = "pageInfo";
-
-    /**
-     * Id of the actions page in the GUI.
-     */
-    public static final String PAGE_ACTIONS = "pageActions";
-
-    /**
-     * Id of the settings page in the GUI.
-     */
-    public static final String PAGE_SETTINGS = "pageSettings";
-
-    /**
-     * Id of the permissions page in the GUI.
-     */
-    public static final String PAGE_PERMISSIONS = "pagePermissions";
-
-    /**
-     * Id of the citizens page in the GUI.
-     */
-    public static final String PAGE_CITIZENS = "pageCitizens";
-
-    /**
-     * Id of the citizens page in the GUI.
-     */
-    public static final String PAGE_WORKORDER = "pageWorkOrder";
-
-    /**
-     * Id of the happiness page in the GUI.
-     */
-    public static final String PAGE_HAPPINESS = "pageHappiness";
 
     /**
      * Id of the user list in the GUI.

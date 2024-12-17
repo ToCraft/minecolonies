@@ -2156,7 +2156,6 @@
   "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued": "Added the repair request to the queue of the miner. Miner will pick it up once the current task is finished.",
   "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Citizen Style:",
   "com.minecolonies.coremod.gui.townhall.picknamestyle": "Name Pack:",
-  "com.minecolonies.core.townhall.patreon": "Feature Limited to Contributors and Donors",
   "com.minecolonies.core.townhall.patreon.needs_owner": "Need to be Colony Owner to adjust this Feature",
   "com.minecolonies.coremod.gui.chat.drcat": "Miau, mew, mau, meee, mew, hiss, nyan, mew!!! brrrrrrrrrbrrrrrrbrrrrr",
   "com.minecolonies.coremod.gui.chat.arston": "I am Arston, former military advisor and general of the draconian army. I can offer my expertise to run and strengthen your army",
@@ -2523,8 +2522,6 @@
   "com.minecolonies.coremod.questobjectives.research.progress": "%s is not researched yet!",
   "com.minecolonies.coremod.questobjectives.research":  "I am waiting for the research %s to be completed at the university!",
 
-  "com.minecolonies.coremod.gui.townhall.patreon": "Patreon",
-  "com.minecolonies.coremod.gui.townhall.patreon.hover": "Unlock Custom Citizen Skins, Name Packs and get Access to Official Servers",
   "com.minecolonies.coremod.placement.outofcolony": "Error on placement! Building or Decoration partially outside of the colony!",
   "com.minecolonies.coremod.placement.noperm": "Error on placement! You don't have the permission in this colony!",
   "com.minecolonies.coremod.placement.townhalltooclose": "Error on placement! You are too close to an existing colony!",
