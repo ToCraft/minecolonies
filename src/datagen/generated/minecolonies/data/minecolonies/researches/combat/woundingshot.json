@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:combat",
+  "effects": [
+    {
+      "minecolonies:effects/archerdamageaddition": 4
+    }
+  ],
+  "icon": "minecolonies:firearrow",
+  "parentResearch": "minecolonies:combat/piercingshot",
+  "requirements": [
+    {
+      "building": "barracks",
+      "level": 5
+    },
+    {
+      "items": {
+        "count": 128,
+        "item": "minecraft:flint"
+      }
+    }
+  ],
+  "researchLevel": 5
+}

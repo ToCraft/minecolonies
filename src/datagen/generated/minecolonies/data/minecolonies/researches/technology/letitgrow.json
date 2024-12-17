@@ -1,0 +1,25 @@
+{
+  "branch": "minecolonies:technology",
+  "effects": [
+    {
+      "minecolonies:effects/blockhutplantation": 1
+    }
+  ],
+  "icon": "minecolonies:blockhutplantation",
+  "parentResearch": "minecolonies:technology/biodegradable",
+  "requirements": [
+    {
+      "building": "farmer",
+      "level": 3
+    },
+    {
+      "items": {
+        "count": 16,
+        "item": "minecolonies:compost"
+      }
+    }
+  ],
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "subtitle": "com.minecolonies.research.technology.letitgrow.subtitle"
+}

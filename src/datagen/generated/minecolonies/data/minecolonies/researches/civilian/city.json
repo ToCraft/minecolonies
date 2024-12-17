@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:civilian",
+  "effects": [
+    {
+      "minecolonies:effects/citizencapaddition": 5
+    }
+  ],
+  "icon": "minecolonies:blockhutcitizen:200",
+  "parentResearch": "minecolonies:civilian/village",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 5
+    },
+    {
+      "items": {
+        "count": 512,
+        "item": "minecraft:cooked_beef"
+      }
+    }
+  ],
+  "researchLevel": 5
+}

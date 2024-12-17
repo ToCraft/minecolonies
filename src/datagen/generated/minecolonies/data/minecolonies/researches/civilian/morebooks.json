@@ -1,0 +1,24 @@
+{
+  "branch": "minecolonies:civilian",
+  "effects": [
+    {
+      "minecolonies:effects/teachingmultiplier": 1
+    }
+  ],
+  "icon": "minecolonies:textures/icons/research/xpgain1.png",
+  "parentResearch": "minecolonies:civilian/higherlearning",
+  "requirements": [
+    {
+      "building": "school",
+      "level": 1
+    },
+    {
+      "items": {
+        "count": 6,
+        "item": "minecraft:book"
+      }
+    }
+  ],
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.civilian.morebooks.subtitle"
+}

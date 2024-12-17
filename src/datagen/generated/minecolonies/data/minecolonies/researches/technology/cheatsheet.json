@@ -1,0 +1,25 @@
+{
+  "branch": "minecolonies:technology",
+  "effects": [
+    {
+      "minecolonies:effects/recipesmultiplier": 2
+    }
+  ],
+  "icon": "minecraft:book",
+  "parentResearch": "minecolonies:technology/memoryaid",
+  "requirements": [
+    {
+      "building": "sawmill",
+      "level": 2
+    },
+    {
+      "items": {
+        "count": 64,
+        "item": "minecraft:paper"
+      }
+    }
+  ],
+  "researchLevel": 3,
+  "sortOrder": 1,
+  "subtitle": "com.minecolonies.research.technology.cheatsheet.subtitle"
+}

@@ -1,0 +1,36 @@
+{
+  "branch": "minecolonies:technology",
+  "effects": [
+    {
+      "minecolonies:effects/crushing11unlock": 1
+    }
+  ],
+  "icon": "minecraft:gold_block",
+  "parentResearch": "minecolonies:technology/rockingroll",
+  "requirements": [
+    {
+      "building": "crusher",
+      "level": 3
+    },
+    {
+      "items": {
+        "count": 64,
+        "item": "minecraft:gravel"
+      }
+    },
+    {
+      "items": {
+        "count": 64,
+        "item": "minecraft:sand"
+      }
+    },
+    {
+      "items": {
+        "count": 64,
+        "item": "minecraft:clay"
+      }
+    }
+  ],
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.gildedhammer.subtitle"
+}

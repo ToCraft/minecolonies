@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:civilian",
+  "effects": [
+    {
+      "minecolonies:effects/healingsaturationlimitaddition": 2
+    }
+  ],
+  "icon": "minecraft:potion",
+  "parentResearch": "minecolonies:civilian/resistance",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 3
+    },
+    {
+      "items": {
+        "count": 8,
+        "item": "minecraft:golden_apple"
+      }
+    }
+  ],
+  "researchLevel": 3
+}

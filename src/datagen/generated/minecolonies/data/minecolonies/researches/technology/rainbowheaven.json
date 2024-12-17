@@ -1,0 +1,24 @@
+{
+  "branch": "minecolonies:technology",
+  "effects": [
+    {
+      "minecolonies:effects/blockhutdyer": 1
+    }
+  ],
+  "icon": "minecolonies:blockhutcomposter",
+  "parentResearch": "minecolonies:technology/biodegradable",
+  "requirements": [
+    {
+      "building": "composter",
+      "level": 3
+    },
+    {
+      "items": {
+        "count": 64,
+        "item": "minecraft:poppy"
+      }
+    }
+  ],
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.technology.rainbowheaven.subtitle"
+}

@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:civilian",
+  "effects": [
+    {
+      "minecolonies:effects/healthaddition": 5
+    }
+  ],
+  "icon": "minecolonies:textures/icons/research/hp5.png",
+  "parentResearch": "minecolonies:civilian/lifesaver2",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 5
+    },
+    {
+      "items": {
+        "count": 128,
+        "item": "minecraft:hay_block"
+      }
+    }
+  ],
+  "researchLevel": 5
+}

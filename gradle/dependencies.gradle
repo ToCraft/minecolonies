@@ -26,10 +26,6 @@ dependencies {
         transitive = false
     }
 
-    implementation ("com.ldtteam:multipiston:${project.multiPistonVersion}"){
-        transitive = false
-    }
-
     implementation ("com.ldtteam:datagenerators:${project.dataGeneratorsVersion}:universal") {
         transitive = false
     }

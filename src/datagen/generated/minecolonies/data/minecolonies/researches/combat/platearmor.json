@@ -1,0 +1,24 @@
+{
+  "branch": "minecolonies:combat",
+  "effects": [
+    {
+      "minecolonies:effects/platearmorunlock": 1
+    }
+  ],
+  "icon": "minecolonies:plate_armor_helmet",
+  "parentResearch": "minecolonies:combat/ironarmor",
+  "requirements": [
+    {
+      "level": 4,
+      "mandatory-building": "blacksmith"
+    },
+    {
+      "items": {
+        "count": 32,
+        "item": "minecraft:iron_ingot"
+      }
+    }
+  ],
+  "researchLevel": 5,
+  "sortOrder": 2
+}
